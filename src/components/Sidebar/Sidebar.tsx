@@ -28,55 +28,55 @@ function Sidebar() {
                       <li className='active'>
                         <a href='feed.html'>
                           <img src='src/assets/images/icons/home.png' alt='feeds' className='w-6' />
-                          <span> Feed </span>
+                          <span> Bảng tin </span>
                         </a>
                       </li>
                       <li>
                         <a href='messages.html'>
                           <img src='src/assets/images/icons/message.png' alt='messages' className='w-5' />
-                          <span> messages </span>
+                          <span> Trò chuyện </span>
                         </a>
                       </li>
                       <li>
                         <a href='video.html'>
                           <img src='src/assets/images/icons/video.png' alt='messages' className='w-6' />
-                          <span> video </span>
+                          <span> Video </span>
                         </a>
                       </li>
                       <li>
                         <a href='event.html'>
                           <img src='src/assets/images/icons/event.png' alt='messages' className='w-6' />
-                          <span> event </span>
+                          <span> Sự kiện </span>
                         </a>
                       </li>
                       <li>
                         <a href='pages.html'>
                           <img src='src/assets/images/icons/page.png' alt='pages' className='w-6' />
-                          <span> Pages </span>
+                          <span> Trang </span>
                         </a>
                       </li>
                       <li>
                         <a href='groups.html'>
                           <img src='src/assets/images/icons/group.png' alt='groups' className='w-6' />
-                          <span> Groups </span>
+                          <span> Nhóm </span>
                         </a>
                       </li>
                       <li>
                         <a href='market.html'>
                           <img src='src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
-                          <span> market </span>
+                          <span> Marketing </span>
                         </a>
                       </li>
                       <li>
                         <a href='blog.html'>
                           <img src='src/assets/images/icons/blog.png' alt='blog' className='w-6' />
-                          <span> blog </span>
+                          <span> Blog </span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
                         <a href='games.html'>
                           <img src='src/assets/images/icons/game.png' alt='games' className='w-6' />
-                          <span> games </span>
+                          <span> Games </span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
