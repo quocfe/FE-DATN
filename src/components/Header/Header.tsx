@@ -1,6 +1,15 @@
 import { IonIcon } from '@ionic/react'
+import useAuthStore from '~/store/auth.store'
+import useMutationLogout from './hooks/useMutationLogout'
 
 function Header() {
+  const { profile } = useAuthStore()
+  const logoutMutation = useMutationLogout()
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
+
   return (
     <header className='sky-50 dark:bg-dark2 fixed left-0 top-0 z-[100] flex h-[--m-top] w-full items-center border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-slate-800'>
       <div className='flex w-full items-center px-2 max-lg:gap-10 xl:px-6'>
@@ -76,7 +85,7 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='src/assets/images/avatars/avatar-2.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
                     <div>
                       <div> Jesse Steeve </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -92,7 +101,7 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='src/assets/images/avatars/avatar-2.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
                     <div>
                       <div> Martin Gray </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -562,7 +571,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src={profile?.Profile.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -622,7 +631,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src={profile?.Profile.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -721,7 +730,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src={profile?.Profile.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -861,7 +870,7 @@ function Header() {
                 aria-expanded='false'
               >
                 <img
-                  src='src/assets/images/avatars/avatar-2.jpg'
+                  src={profile?.Profile.profile_picture}
                   alt=''
                   className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
                 />
@@ -873,14 +882,12 @@ function Header() {
               >
                 <a href='timeline.html'>
                   <div className='flex items-center gap-4 p-4 py-5'>
-                    <img
-                      src='src/assets/images/avatars/avatar-2.jpg'
-                      alt=''
-                      className='h-10 w-10 rounded-full shadow'
-                    />
+                    <img src={profile?.Profile.profile_picture} alt='' className='h-10 w-10 rounded-full shadow' />
                     <div className='flex-1'>
-                      <h4 className='text-sm font-medium text-black'>Stell johnson</h4>
-                      <div className='mt-1 text-sm font-light text-blue-600 dark:text-white/70'>@mohnson</div>
+                      <h4 className='text-sm font-medium text-black'>
+                        {profile?.last_name} {profile?.first_name}
+                      </h4>
+                      <div className='mt-1 text-sm font-light text-blue-600 dark:text-white/70'>{profile?.email}</div>
                     </div>
                   </div>
                 </a>
@@ -902,7 +909,7 @@ function Header() {
                           d='M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z'
                         />
                       </svg>
-                      Upgrade To Premium
+                      Nâng cấp tài khoản
                     </div>
                   </a>
                   <a href='setting.html'>
@@ -921,7 +928,7 @@ function Header() {
                           d='M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z'
                         />
                       </svg>
-                      My Billing
+                      Ví của tôi
                     </div>
                   </a>
                   <a href='setting.html'>
@@ -940,7 +947,7 @@ function Header() {
                           d='M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46'
                         />
                       </svg>
-                      Advatacing
+                      Thông báo
                     </div>
                   </a>
                   <a href='setting.html'>
@@ -960,7 +967,7 @@ function Header() {
                         />
                         <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
                       </svg>
-                      My Account
+                      Cài đặt
                     </div>
                   </a>
                   <button type='button' className='w-full'>
@@ -979,14 +986,14 @@ function Header() {
                           d='M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z'
                         />
                       </svg>
-                      Night mode
+                      Chế độ sáng
                       <span className='ml-auto w-9 rounded-full bg-slate-200/40 p-0.5 dark:hover:bg-white/20'>
                         <span className='relative block h-4 w-2 w-4 rounded-full bg-white shadow-md dark:bg-blue-600' />
                       </span>
                     </div>
                   </button>
                   <hr className='-mx-2 my-2 dark:border-gray-600/60' />
-                  <a href='form-login.html'>
+                  <a className='cursor-pointer' onClick={handleLogout}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         className='w-6'
@@ -1002,13 +1009,13 @@ function Header() {
                           d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
                         />
                       </svg>
-                      Log Out
+                      Đăng xuất
                     </div>
                   </a>
                 </nav>
               </div>
               <div className='flex hidden items-center gap-2'>
-                <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='h-9 w-9 rounded-full shadow' />
+                <img src={profile?.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full shadow' />
                 <div className='w-20 font-semibold text-gray-600'> Hamse </div>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
