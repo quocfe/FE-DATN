@@ -16,13 +16,11 @@ const SwiperVideoCard = () => {
   const [activeSlide, setActiveSlide] = useState<number>(0)
 
   const handleSlideChange = (swiper: any) => {
-    console.log(swiper)
     setActiveSlide(swiper.activeIndex)
   }
-  console.log(array.length)
-  console.log('activeSlide', activeSlide)
+
   return (
-    <div className='group relative' tabIndex={-1} uk-slider='finite:true'>
+    <div className='group relative hover:overflow-hidden' tabIndex={-1} uk-slider='finite:true'>
       <div className='uk-slider-container pb-1'>
         <Swiper
           modules={[Navigation]}
@@ -47,14 +45,14 @@ const SwiperVideoCard = () => {
       {/* slide nav icons */}
       <div
         className={
-          'nav-prev custom-prev-button !right-0 !top-20 z-10 hidden  cursor-pointer items-center justify-center text-cyan-400  group-hover:flex'
+          'nav-prev custom-prev-button !right-0 !top-20 left-0 z-10 hidden  cursor-pointer items-center justify-center text-cyan-400  group-hover:flex'
         }
       >
         <IonIcon name='chevron-back' className='text-2xl' />
       </div>
       <div
         className={
-          'nav-next custom-next-button !top-20 z-10 hidden cursor-pointer items-center justify-center text-cyan-400 group-hover:flex'
+          'nav-next custom-next-button !top-20 right-0 z-10 hidden cursor-pointer items-center justify-center text-cyan-400 group-hover:flex'
         }
       >
         <IonIcon name='chevron-forward' className='text-2xl' />

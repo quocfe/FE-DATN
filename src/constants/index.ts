@@ -1,4 +1,3 @@
 export * from './route-path'
-console.log(1)
 
-
+export * from './video-privacy'

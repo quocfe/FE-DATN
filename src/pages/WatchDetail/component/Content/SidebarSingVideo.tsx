@@ -1,5 +1,4 @@
 import { IonIcon } from '@ionic/react'
-import { svg } from '~/assets/images'
 
 const SidebarSingVideo = () => {
   return (
@@ -8,11 +7,7 @@ const SidebarSingVideo = () => {
       <div className='relative aspect-[3/1.5] shrink-0 overflow-hidden rounded-lg lg:h-[80px] lg:w-[130px]'>
         <img className='h-full w-full object-cover' src='assets/images/video/img-2.png' alt='' />
         {/* iconplay */}
-        <img
-          src={svg.icon_play}
-          className='absolute !left-1/2 !top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2'
-          alt=''
-        />
+        <img src='' className='absolute !left-1/2 !top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2' alt='' />
         {/* timer */}
         <div className='absolute bottom-1 right-1 rounded bg-black/70 px-0.5 py-0.5 text-xs font-normal text-white'>
           10:32

@@ -1,6 +1,5 @@
 import { IonIcon } from '@ionic/react'
 import React from 'react'
-import { svg } from '~/assets/images'
 
 const HorizontalVideoCard = () => {
   return (
@@ -9,11 +8,7 @@ const HorizontalVideoCard = () => {
         <a href='video-watch.html'>
           <div className='card-list-media aspect-[3/1.5] sm:aspect-[3/1.2] md:h-[180px] md:w-[320px]'>
             <img src='src/assets/images/video/img-2.png' alt='' />
-            <img
-              src={svg.icon_play}
-              className='absolute !left-1/2 !top-1/2 !h-12 !w-12 -translate-x-1/2 -translate-y-1/2'
-              alt=''
-            />
+            <img src='' className='absolute !left-1/2 !top-1/2 !h-12 !w-12 -translate-x-1/2 -translate-y-1/2' alt='' />
             <span className='absolute bottom-1 right-1 z-10 rounded bg-black bg-opacity-60 px-1.5 py-0.5 text-xs font-semibold text-white'>
               12:21
             </span>
