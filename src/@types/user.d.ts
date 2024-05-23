@@ -15,6 +15,7 @@ type Profile = {
   cover_photo: string
   home_town: string
   education: string
+  relationship_status?: number
   job: string
   alias: string
   user_id: string
@@ -29,3 +30,20 @@ type UserProfile = User & {
   Profile: Profile
   Interests: Interest[]
 }
+
+type UpdateProfile = {
+  phone_number?: string
+  date_of_birth?: string
+  biography?: string
+  profile_picture?: string
+  cover_photo?: string
+  home_town?: string
+  education?: string
+  relationship_status?: number
+  job?: string
+  alias?: string
+}
+
+type ProfileResponse = SuccessResponse<{
+  user: UserProfile
+}>
