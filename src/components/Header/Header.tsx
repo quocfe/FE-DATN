@@ -1,6 +1,7 @@
 import { IonIcon } from '@ionic/react'
 import useAuthStore from '~/store/auth.store'
 import useMutationLogout from './hooks/useMutationLogout'
+import { Link } from 'react-router-dom'
 
 function Header() {
   const { profile } = useAuthStore()
@@ -36,12 +37,12 @@ function Header() {
               />
             </button>
             <div id='logo'>
-              <a href='feed.html'>
+              <Link to={'/'}>
                 <img src='src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
                 <img src='src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
                 <img src='src/assets/images/logo-mobile.png' className='hidden w-20 max-md:block dark:!hidden' alt='' />
                 <img src='src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -880,7 +881,7 @@ function Header() {
                 className='border2 uk-drop hidden w-64 rounded-lg bg-white drop-shadow-xl dark:bg-slate-700'
                 uk-drop='offset:6;pos: bottom-right;animate-out: true; animation: uk-animation-scale-up uk-transform-origin-top-right '
               >
-                <a href='timeline.html'>
+                <Link to={'/profile'}>
                   <div className='flex items-center gap-4 p-4 py-5'>
                     <img src={profile?.Profile.profile_picture} alt='' className='h-10 w-10 rounded-full shadow' />
                     <div className='flex-1'>
@@ -890,7 +891,7 @@ function Header() {
                       <div className='mt-1 text-sm font-light text-blue-600 dark:text-white/70'>{profile?.email}</div>
                     </div>
                   </div>
-                </a>
+                </Link>
                 <hr className='dark:border-gray-600/60' />
                 <nav className='p-2 text-sm font-normal text-black dark:text-white'>
                   <a href='upgrade.html'>

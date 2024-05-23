@@ -5,6 +5,7 @@ import Login from '~/pages/Login'
 import Register from '~/pages/Register'
 import ProtectedRoute from './components/ProtectedRoute'
 import RejectedRoute from './components/RejectedRoute'
+import Profile from '~/pages/Profile/Profile'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -17,6 +18,14 @@ function useRouteElements() {
           element: (
             <MainLayout>
               <Home />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/profile',
+          element: (
+            <MainLayout>
+              <Profile />
             </MainLayout>
           )
         }
