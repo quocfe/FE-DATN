@@ -190,7 +190,7 @@ function Register() {
           <ul className='uk-slideshow-items h-full w-full'>
             <li className='w-full'>
               <img
-                src='https://images.unsplash.com/photo-1539627831859-a911cf04d3cd?q=80&w=1771&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                src='https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
                 alt=''
                 className='uk-animation-kenburns uk-animation-reverse uk-transform-origin-center-left h-full w-full object-cover'
               />
@@ -199,13 +199,12 @@ function Register() {
                   className='relative z-30 mx-auto w-full max-w-xl px-5 pb-32'
                   uk-scrollspy='target: > *; cls: uk-animation-scale-up; delay: 100 ;repeat: true'
                 >
-                  <img className='w-12' src='assets/images/logo-icon.png' alt='Socialite html template' />
                   <h4 className='mt-7 text-2xl font-semibold !text-white' uk-slideshow-parallax='y: 600,0,0'>
-                    Connect With Friends
+                    Kết nối với bạn bè
                   </h4>
                   <p className='mt-7 text-lg leading-8 !text-white' uk-slideshow-parallax='y: 800,0,0;'>
-                    This phrase is more casual and playful. It suggests that you are keeping your friends updated on
-                    what’s happening in your life.
+                    Cụm từ này giản dị và vui tươi hơn. Nó gợi ý rằng bạn đang cập nhật cho bạn bè về những gì đang xảy
+                    ra trong cuộc sống của bạn.
                   </p>
                 </div>
               </div>
@@ -213,7 +212,7 @@ function Register() {
             </li>
             <li className='w-full'>
               <img
-                src='https://images.unsplash.com/photo-1606812667169-0e1991ed3742?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
                 alt=''
                 className='uk-animation-kenburns uk-animation-reverse uk-transform-origin-center-left h-full w-full object-cover'
               />
@@ -222,13 +221,12 @@ function Register() {
                   className='relative z-30 mx-auto w-full max-w-xl px-5 pb-32'
                   uk-scrollspy='target: > *; cls: uk-animation-scale-up; delay: 100 ;repeat: true'
                 >
-                  <img className='w-12' src='assets/images/logo-icon.png' alt='Socialite html template' />
                   <h4 className='mt-7 text-2xl font-semibold !text-white' uk-slideshow-parallax='y: 800,0,0'>
-                    Connect With Friends
+                    Kết nối với bạn bè
                   </h4>
                   <p className='mt-7 text-lg leading-8 !text-white' uk-slideshow-parallax='y: 800,0,0;'>
-                    This phrase is more casual and playful. It suggests that you are keeping your friends updated on
-                    what’s happening in your life.
+                    Cụm từ này giản dị và vui tươi hơn. Nó gợi ý rằng bạn đang cập nhật cho bạn bè về những gì đang xảy
+                    ra trong cuộc sống của bạn.
                   </p>
                 </div>
               </div>
