@@ -11,10 +11,6 @@ class authApi {
     return http.post<RegisterResponse>(AUTH.REGISTER, data)
   }
 
-  register(data: RegisterForm) {
-    return http.post<RegisterResponse>(AUTH.REGISTER, data)
-  }
-
   logout() {
     return http.post<{ message: string }>(AUTH.LOGOUT, {}, { withCredentials: true })
   }
