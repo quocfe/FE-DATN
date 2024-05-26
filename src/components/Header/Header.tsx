@@ -76,7 +76,7 @@ function Header() {
             >
               <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-96 xl:w-[694px]'>
                 <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
-                  <div className=' text-black dark:text-white'>Recent</div>
+                  <div className='text-black dark:text-white'>Recent</div>
                   <button type='button' className='text-blue-500'>
                     Clear
                   </button>

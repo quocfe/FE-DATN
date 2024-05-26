@@ -33,10 +33,10 @@ function Sidebar() {
                         </Link>
                       </li>
                       <li>
-                        <a href='messages.html'>
+                        <Link to={'/message'}>
                           <img src='src/assets/images/icons/message.png' alt='messages' className='w-5' />
                           <span> Trò chuyện </span>
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a href='video.html'>

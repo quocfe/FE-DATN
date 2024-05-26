@@ -8,6 +8,7 @@ import RejectedRoute from './components/RejectedRoute'
 import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import Message from '~/pages/Message'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -30,9 +31,18 @@ function useRouteElements() {
               <Profile />
             </MainLayout>
           )
+        },
+        {
+          path: '/message',
+          element: (
+            <MainLayout>
+              <Message />
+            </MainLayout>
+          )
         }
       ]
     },
+
     {
       path: '',
       element: <RejectedRoute />,

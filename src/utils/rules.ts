@@ -20,6 +20,10 @@ const authSchema = yup.object({
 
 export const registerSchema = authSchema
 export const loginSchema = authSchema.pick(['email', 'password'])
+export const messageSchema = yup.object({
+  body: yup.string().required('Vui điền đầy đủ nội dung tin nhắn!')
+})
 
 export type RegisterForm = yup.InferType<typeof registerSchema>
 export type LoginForm = yup.InferType<typeof loginSchema>
+export type MessageForm = yup.InferType<typeof messageSchema>

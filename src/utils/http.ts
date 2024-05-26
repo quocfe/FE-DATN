@@ -13,11 +13,13 @@ class Http {
 
   constructor() {
     this.access_token = getAccessTokenFromLocalStorage()
+
     this.instance = axios.create({
       baseURL: 'http://localhost:3000/api/v1/',
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: this.access_token ? this.access_token : ''
       }
     })
 

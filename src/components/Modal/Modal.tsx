@@ -30,7 +30,7 @@ function Modal({ isVisible, onClose, children }: Props) {
       onClick={handleClose}
     >
       <div
-        className='dark:bg-dark2 relative mx-auto h-3/4 w-full overflow-hidden overflow-y-scroll rounded-lg bg-white text-sm text-black shadow-xl md:w-[750px]'
+        className='dark:bg-dark2 relative mx-auto h-3/4 w-full overflow-hidden overflow-y-scroll rounded-lg bg-white text-sm text-black shadow-xl md:w-[450px]'
         style={{ scrollbarWidth: 'thin' }}
       >
         {/* close button */}
@@ -41,7 +41,7 @@ function Modal({ isVisible, onClose, children }: Props) {
             viewBox='0 0 24 24'
             strokeWidth='1.5'
             stroke='currentColor'
-            className='h-6 w-6'
+            className='w-6 h-6'
           >
             <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
           </svg>
