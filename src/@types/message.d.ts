@@ -49,10 +49,21 @@ type MessageInput = {
   receiver: string
 }
 
+type ReactMessageInput = {
+  message_id: string
+  emoji: string
+}
+
 type CreateGroupMessageInput = {
   list_user: string
   group_name: string
   group_thumbnail: string
+}
+
+type MessageCenterProps = {
+  groupName: string
+  groupImg: string
+  groupId: string
 }
 
 type ReplyMessageInput = Pick<Message, 'body' | 'group_message_id' | 'type' | 'parent_id'>

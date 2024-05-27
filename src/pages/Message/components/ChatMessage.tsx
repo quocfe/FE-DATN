@@ -5,8 +5,7 @@ import useConversationStore from '~/store/conversation.store'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import useAuthStore from '~/store/auth.store'
 
-const ChatMessage = () => {
-  const { selectedConversation } = useConversationStore()
+const ChatMessage = ({ groupName, groupImg, groupId }: MessageCenterProps) => {
   const { data, isLoading } = useQueryMessage()
   const { profile } = useAuthStore()
 
@@ -16,13 +15,10 @@ const ChatMessage = () => {
   return (
     <>
       <div className='py-10 text-center text-sm lg:pt-8'>
-        <img src={selectedConversation?.group_thumbnail} className='mx-auto mb-3 h-24 w-24 rounded-full' />
+        <img src={groupImg} className='mx-auto mb-3 h-24 w-24 rounded-full' />
         <div className='mt-8'>
-          <div className='text-base font-medium text-black md:text-xl dark:text-white'>
-            {' '}
-            {selectedConversation?.group_name || 'Groupname'}
-          </div>
-          <div className='text-sm text-gray-500 dark:text-white/80'> @{selectedConversation?.group_message_id} </div>
+          <div className='text-base font-medium text-black md:text-xl dark:text-white'> {groupName || 'Groupname'}</div>
+          <div className='text-sm text-gray-500 dark:text-white/80'> @{groupId} </div>
         </div>
         <div className='mt-3.5'>
           <a href='timeline.html' className='inline-block rounded-lg bg-secondery px-4 py-1.5 text-sm font-semibold'>

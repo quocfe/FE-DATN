@@ -4,8 +4,7 @@ import useConversationStore from '~/store/conversation.store'
 import ChatMessage from './ChatMessage'
 import SendMessage from './SendMessage'
 
-function MessageCenter() {
-  const { selectedConversation } = useConversationStore()
+function MessageCenter({ groupName, groupImg, groupId }: MessageCenterProps) {
   return (
     <div className='flex-1'>
       {/* chat heading */}
@@ -17,17 +16,13 @@ function MessageCenter() {
           </button>
           <div className='relative cursor-pointer max-md:hidden' uk-toggle='target: .rightt ; cls: hidden'>
             <img
-              src={
-                selectedConversation?.group_thumbnail
-                  ? selectedConversation?.group_thumbnail
-                  : 'src/assets/images/avatars/avatar-6.jpg'
-              }
+              src={groupImg ? groupImg : 'src/assets/images/avatars/avatar-6.jpg'}
               className='h-8 w-8 rounded-full shadow'
             />
             <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
           </div>
           <div className='cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
-            <div className='text-base font-bold'> {selectedConversation?.group_name || 'Groupname'}</div>
+            <div className='text-base font-bold'> {groupName || 'Groupname'}</div>
             <div className='text-xs font-semibold text-green-500'> Online</div>
           </div>
         </div>
@@ -80,10 +75,10 @@ function MessageCenter() {
       </div>
       {/* chats bubble */}
       <div className='h-[calc(100vh-195px)] w-full overflow-y-auto p-5 py-10 md:h-[calc(100vh-204px)]'>
-        <ChatMessage />
+        <ChatMessage groupName={groupName} groupImg={groupImg} groupId={groupId} />
       </div>
       {/* sending message area */}
-      <SendMessage />
+      <SendMessage groupId={groupId} />
     </div>
   )
 }

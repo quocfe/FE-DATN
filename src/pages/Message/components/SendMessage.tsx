@@ -8,8 +8,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import useConversationStore from '~/store/conversation.store'
 import useMutationSendMessage from '../hooks/useMutationSendMessage'
 import { useSearchParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
-function SendMessage() {
+function SendMessage({ groupId: receiverID }: { groupId: string }) {
   const {
     register,
     handleSubmit,
@@ -23,20 +24,29 @@ function SendMessage() {
 
   const sendMessageMutation = useMutationSendMessage()
   const { selectedConversation } = useConversationStore()
-  const groupID = selectedConversation?.group_message_id
+  const groupID = selectedConversation?.group_message_id ? selectedConversation?.group_message_id : ''
+  const receiver = selectedConversation === null ? receiverID : ''
 
   const handleSendMessage = handleSubmit(({ body }) => {
     const data = {
       body,
       group_message_id: groupID,
-      receiver: ''
+      receiver: receiver
     }
     sendMessageMutation.mutate(data, {
       onSuccess: () => {
         reset()
       },
-      onError: (error) => {
-        console.log('tin nhắn gửi !ok', error)
+      onError: () => {
+        toast.error('tin nhắn gửi !ok', {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        })
       }
     })
   })

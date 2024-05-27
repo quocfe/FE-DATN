@@ -47,3 +47,12 @@ type UpdateProfile = {
 type ProfileResponse = SuccessResponse<{
   user: UserProfile
 }>
+
+type SearchFriend = {
+  user_id: string
+  last_name: string
+  first_name: string
+  Profile: {
+    profile_picture: string
+  }
+}
