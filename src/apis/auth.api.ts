@@ -1,5 +1,5 @@
 import { AUTH } from '~/constants/auth.constant'
-import { USERS } from '~/constants/user.constant'
+import { USER } from '~/constants/user.constant'
 import http from '~/utils/http'
 import { LoginForm, RegisterForm } from '~/utils/rules'
 
@@ -14,10 +14,6 @@ class authApi {
 
   logout() {
     return http.post<{ message: string }>(AUTH.LOGOUT, {}, { withCredentials: true })
-  }
-
-  getUsers() {
-    return http.get(USERS.GET_USERS, { withCredentials: true })
   }
 }
 

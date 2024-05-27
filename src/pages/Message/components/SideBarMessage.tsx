@@ -3,14 +3,33 @@ import { useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 import ModalCreateGroup from './ModalCreateGroup'
+import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
+import { string } from 'yup'
 
 const SideBarMessage = () => {
   const { data, isLoading } = useQueryConversation()
-  const { setSelectedConversation } = useConversationStore()
+  const { setSelectedConversation, setSelectedNoConversation } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
-
+  const [resultSearch, setResultSearch] = useState<any>([])
+  const searchMutaion = useMutaionSearchFriend()
   const handleSelectedConversation = (item: GroupMessage) => {
     setSelectedConversation(item)
+  }
+
+  const handleClickNoConversation = (user: any) => {
+    setSelectedNoConversation(user)
+  }
+
+  let dataUsers = resultSearch?.data?.data?.list
+  const handleSearch = (query: string) => {
+    searchMutaion.mutate(query, {
+      onSuccess: (data: any) => {
+        setResultSearch(data)
+      },
+      onError: () => {
+        setResultSearch([])
+      }
+    })
   }
 
   if (isLoading) {
@@ -69,12 +88,52 @@ const SideBarMessage = () => {
               </button>
             </div>
           </div>
-          {/* search */}
           <div className='relative mt-4'>
-            <div className='absolute bottom-1/2 left-3 flex translate-y-1/2'>
-              <IonIcon icon='search' className='text-xl' />
+            {/* search */}
+            <div
+              className='left-0 z-20 w-screen overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-96 xl:w-[327px] dark:!bg-white/5'
+              tabIndex={0}
+              aria-haspopup='true'
+              aria-expanded='false'
+            >
+              <div className='absolute bottom-1/2 left-3 flex translate-y-1/2'>
+                <IonIcon icon='search' className='text-xl' />
+              </div>
+              <input
+                type='text'
+                placeholder='Search'
+                className='w-full !rounded-lg !py-2 !pl-10'
+                onChange={(e) => handleSearch(e.target.value)}
+              />
             </div>
-            <input type='text' placeholder='Search' className='w-full !rounded-lg !py-2 !pl-10' />
+            {/* search downdown */}
+            <div
+              className='uk- open uk-drop z-10 hidden'
+              uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
+            >
+              <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-96 xl:w-[330px]'>
+                <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
+                  <div className='text-black dark:text-white'>Bạn bè</div>
+                </div>
+                <nav className='text-sm font-medium text-black dark:text-white'>
+                  {dataUsers?.map((user: any, index: number) => (
+                    <a
+                      key={index}
+                      className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
+                      onClick={() => handleClickNoConversation(user)}
+                    >
+                      <img src={user?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
+                      <div>
+                        <div>
+                          {' '}
+                          {user.first_name} {user.last_name}{' '}
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
         {/* users list */}
