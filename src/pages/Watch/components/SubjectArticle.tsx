@@ -2,13 +2,13 @@ import React, { useRef, useState } from 'react'
 import SvgIcon from '~/helpers/SvgIcon'
 import PRIVACY from '../utils'
 import { useOnClickOutside } from '~/hooks/useOnClickOutside'
-import { FormCreateVideo } from '../utils/yup.validate'
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import { cn } from '~/helpers'
+import { FormCreateVideoType } from '../utils/yup.validate'
 
 interface SubjectArticlePropsTypes {
-  setValue: UseFormSetValue<FormCreateVideo>
-  watch: UseFormWatch<FormCreateVideo>
+  setValue: UseFormSetValue<FormCreateVideoType>
+  watch: UseFormWatch<FormCreateVideoType>
 }
 
 const SubjectArticle = ({ setValue, watch }: SubjectArticlePropsTypes) => {
