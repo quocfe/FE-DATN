@@ -45,13 +45,7 @@ function ConfirmOTP() {
             toast.success('Xác thực email thành công')
           },
           onError: (error) => {
-            if (
-              isAxiosError<
-                ErrorResponse<{
-                  message: string
-                }>
-              >(error)
-            ) {
+            if (isAxiosError<ErrorResponse>(error)) {
               setError(error.response?.data.message)
             }
           }
