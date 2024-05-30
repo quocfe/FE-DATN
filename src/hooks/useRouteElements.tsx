@@ -8,6 +8,8 @@ import RejectedRoute from './components/RejectedRoute'
 import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import Dashboard from '~/pages/admin/Dashboard'
+import LoginAdmin from '~/pages/admin/LoginAdmin'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -50,6 +52,14 @@ function useRouteElements() {
     {
       path: '/confirm_otp/:email',
       element: <ConfirmOTP />
+    },
+    {
+      path: '/admin/login',
+      element: <LoginAdmin />
+    },
+    {
+      path: '/admin/dashboard',
+      element: <Dashboard />
     },
     {
       path: '*',
