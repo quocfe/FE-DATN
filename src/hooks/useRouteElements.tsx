@@ -8,6 +8,9 @@ import RejectedRoute from './components/RejectedRoute'
 import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import Fanpage from '~/pages/Fanpage'
+
+
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -30,7 +33,18 @@ function useRouteElements() {
               <Profile />
             </MainLayout>
           )
-        }
+        },
+        {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        
+        
+
       ]
     },
     {

@@ -1,6 +1,14 @@
 import { IonIcon } from '@ionic/react'
+import Story from './Component/ListStory'
+import CreateStory from './Component/CreateStory'
+import ListStory from './Component/ListStory'
+import { useState } from 'react'
 
 function Home() {
+  const [showStory, setShowStory] = useState(false)
+  const handelCheckToggle = (tog: any) => {
+    setShowStory(tog)
+  }
   return (
     <div className='mx-auto max-w-[1065px] gap-12 lg:flex 2xl:gap-16' id='js-oversized'>
       <div className='mx-auto max-w-[680px]'>
@@ -9,132 +17,7 @@ function Home() {
           <h3 className='hidden text-2xl  font-extrabold text-black dark:text-white'> Stories</h3>
           <div className='relative' tabIndex={-1} uk-slider='auto play: true;finite: true' uk-lightbox=''>
             <div className='uk-slider-container py-5'>
-              <ul
-                className='uk-slider-items w-[calc(100%+14px)]'
-                uk-scrollspy='target: > li; cls: uk-animation-scale-up; delay: 20;repeat:true'
-              >
-                <li className='md:pr-3' uk-scrollspy-class='uk-animation-fade'>
-                  <div
-                    className='dark:bg-dark2 relative grid h-12 w-12 shrink-0 place-items-center rounded-full border-2 border-dashed border-slate-300 bg-slate-200 md:h-16 md:w-16 dark:border-slate-700'
-                    uk-toggle='target: #create-story'
-                  >
-                    <IonIcon icon='camera' className='text-2xl' />
-                  </div>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-1.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-2.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-2.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-3.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-4.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-5.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-5.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-6.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-1.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-7.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-1.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-2.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-2.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-3.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-4.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-5.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-5.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-6.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 duration-300 hover:-rotate-2 hover:scale-[1.15] md:pr-3'>
-                  <a href='/src/assets/images/avatars/avatar-lg-1.jpg' data-caption='Caption 1'>
-                    <div className='relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow md:h-16 md:w-16 md:border-4 dark:border-slate-700'>
-                      <img
-                        src='/src/assets/images/avatars/avatar-7.jpg'
-                        alt=''
-                        className='absolute h-full w-full object-cover'
-                      />
-                    </div>
-                  </a>
-                </li>
-                <li className='pr-2 md:pr-3'>
-                  <div className='dark:bg-dark2 h-12 w-12 animate-pulse rounded-full bg-slate-200/60 md:h-16 md:w-16' />
-                </li>
-              </ul>
+              <ListStory handelCheckToggle={handelCheckToggle} />
             </div>
             <div className='max-md:hidden'>
               <button
@@ -154,6 +37,8 @@ function Home() {
             </div>
           </div>
         </div>
+        {/* create story */}
+        {showStory && <CreateStory handelCheckToggle={handelCheckToggle} />}
         {/* feed story */}
         <div className='mx-auto flex-1 space-y-3 md:max-w-[580px] xl:space-y-6'>
           {/* add story */}
@@ -1358,6 +1243,7 @@ function Home() {
           </div>
         </div>
       </div>
+      {showStory && <CreateStory handelCheckToggle={handelCheckToggle} />}
     </div>
   )
 }

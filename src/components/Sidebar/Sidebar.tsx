@@ -63,7 +63,7 @@ function Sidebar() {
                         </a>
                       </li>
                       <li>
-                        <a href='market.html'>
+                        <a href='/market'>
                           <img src='src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
                           <span> Marketing </span>
                         </a>
