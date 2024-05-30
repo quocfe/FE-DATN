@@ -1,10 +1,6 @@
 import { IonIcon } from '@ionic/react'
 
-interface Props {
-  profile: UserProfile | null
-}
-
-function FeedStory({ profile }: Props) {
+function FeedStory() {
   return (
     <div className='flex-1 space-y-3 xl:space-y-6'>
       {/* add story */}
@@ -63,14 +59,11 @@ function FeedStory({ profile }: Props) {
         {/* post heading */}
         <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
           <a href='timeline.html'>
-            <img src={profile?.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full object-cover' />
+            <img src='/src/assets/images/avatars/avatar-3.jpg' alt='' className='h-9 w-9 rounded-full' />
           </a>
           <div className='flex-1'>
             <a href='timeline.html'>
-              <h4 className='text-black dark:text-white'>
-                {' '}
-                {profile?.last_name} {profile?.first_name}{' '}
-              </h4>
+              <h4 className='text-black dark:text-white'> Tao Xinh Gái </h4>
             </a>
             <div className='text-xs text-gray-500 dark:text-white/80'> 2 giờ trước</div>
           </div>
@@ -105,7 +98,7 @@ function FeedStory({ profile }: Props) {
         </div>
         {/* post image */}
         <div className='relative h-full w-full sm:px-4 lg:h-96'>
-          <img src='src/assets/images/post/img-2.jpg' alt='' className='h-full w-full object-cover sm:rounded-lg' />
+          <img src='/src/assets/images/post/img-2.jpg' alt='' className='h-full w-full object-cover sm:rounded-lg' />
         </div>
         {/* post icons */}
         <div className='flex items-center gap-4 p-2.5 text-xs font-semibold sm:p-4'>
@@ -160,7 +153,7 @@ function FeedStory({ profile }: Props) {
         <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40'>
           <div className='relative flex items-start gap-3'>
             <a href='timeline.html'>
-              <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
+              <img src='/src/assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
             </a>
             <div className='flex-1'>
               <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
@@ -171,7 +164,7 @@ function FeedStory({ profile }: Props) {
           </div>
           <div className='relative flex items-start gap-3'>
             <a href='timeline.html'>
-              <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
+              <img src='/src/assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
             </a>
             <div className='flex-1'>
               <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
@@ -187,7 +180,7 @@ function FeedStory({ profile }: Props) {
         </div>
         {/* add comment */}
         <div className='flex items-center gap-1 border-t border-gray-100 p-2.5 sm:px-4 sm:py-3 dark:border-slate-700/40'>
-          <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='h-6 w-6 rounded-full' />
+          <img src='/src/assets/images/avatars/avatar-7.jpg' alt='' className='h-6 w-6 rounded-full' />
           <div className='relative h-10 flex-1 overflow-hidden'>
             <textarea
               placeholder='Add Comment....'
@@ -233,7 +226,7 @@ function FeedStory({ profile }: Props) {
         {/* post heading */}
         <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
           <a href='timeline.html'>
-            <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='h-9 w-9 rounded-full' />
+            <img src='/src/assets/images/avatars/avatar-5.jpg' alt='' className='h-9 w-9 rounded-full' />
           </a>
           <div className='flex-1'>
             <a href='timeline.html'>
@@ -335,7 +328,7 @@ function FeedStory({ profile }: Props) {
         <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40'>
           <div className='relative flex items-start gap-3'>
             <a href='timeline.html'>
-              <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
+              <img src='/src/assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
             </a>
             <div className='flex-1'>
               <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
@@ -346,7 +339,7 @@ function FeedStory({ profile }: Props) {
           </div>
           <div className='relative flex items-start gap-3'>
             <a href='timeline.html'>
-              <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
+              <img src='/src/assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
             </a>
             <div className='flex-1'>
               <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
@@ -357,7 +350,7 @@ function FeedStory({ profile }: Props) {
           </div>
           <div className='relative flex items-start gap-3'>
             <a href='timeline.html'>
-              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
+              <img src='/src/assets/images/avatars/avatar-5.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
             </a>
             <div className='flex-1'>
               <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
@@ -369,7 +362,7 @@ function FeedStory({ profile }: Props) {
         </div>
         {/* add comment */}
         <div className='flex items-center gap-1 border-t border-gray-100 p-2.5 sm:px-4 sm:py-3 dark:border-slate-700/40'>
-          <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='h-6 w-6 rounded-full' />
+          <img src='/src/assets/images/avatars/avatar-7.jpg' alt='' className='h-6 w-6 rounded-full' />
           <div className='relative h-10 flex-1 overflow-hidden'>
             <textarea
               placeholder='Add Comment....'

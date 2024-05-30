@@ -6,7 +6,6 @@ import MyFriends from './MyFriends'
 
 interface Props {
   profile: UserProfile | null
-  setShowModal: (value: React.SetStateAction<boolean>) => void
 }
 
 const relationshipStatuses = [
@@ -29,7 +28,7 @@ const ProfileItem = ({ icon, title, text }: { icon: JSX.Element; title: string; 
   </li>
 )
 
-function Introduce({ profile, setShowModal }: Props) {
+function Introduce({ profile }: Props) {
   const getRelationshipStatus = (status: number) => relationshipStatuses[status] || 'Không xác định'
 
   return (
@@ -41,9 +40,7 @@ function Introduce({ profile, setShowModal }: Props) {
         <div className='box p-5 px-6'>
           <div className='items-ce flex justify-between text-black dark:text-white'>
             <h3 className='text-lg font-bold'> Giới thiệu </h3>
-            <a className='cursor-pointer text-sm text-blue-500' onClick={() => setShowModal(true)}>
-              Chỉnh sửa
-            </a>
+            <a className='cursor-pointer text-sm text-blue-500'>Xem thêm</a>
           </div>
           <ul className='mt-4 space-y-4 text-sm text-gray-700 dark:text-white/80'>
             {profile?.Profile.home_town && (
@@ -95,16 +92,32 @@ function Introduce({ profile, setShowModal }: Props) {
           )}
           <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img
+                src='/src/assets/images/avatars/avatar-5.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover'
+              />
             </div>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img
+                src='/src/assets/images/avatars/avatar-7.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover'
+              />
             </div>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img
+                src='/src/assets/images/avatars/avatar-4.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover'
+              />
             </div>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-6.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img
+                src='/src/assets/images/avatars/avatar-6.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover'
+              />
             </div>
           </div>
         </div>
@@ -121,7 +134,7 @@ function Introduce({ profile, setShowModal }: Props) {
           <div className='side-list'>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-full' />
+                <img src='/src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-full' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
@@ -133,7 +146,7 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-full' />
+                <img src='/src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-full' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
@@ -145,7 +158,7 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-full' />
+                <img src='/src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-full' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
@@ -157,7 +170,7 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-1.jpg' alt='' className='side-list-image rounded-full' />
+                <img src='/src/assets/images/avatars/avatar-1.jpg' alt='' className='side-list-image rounded-full' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
@@ -183,7 +196,7 @@ function Introduce({ profile, setShowModal }: Props) {
           <div className='side-list'>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-md' />
+                <img src='/src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-md' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
@@ -195,7 +208,7 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-md' />
+                <img src='/src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-md' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
@@ -207,7 +220,7 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
             <div className='side-list-item'>
               <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-md' />
+                <img src='/src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-md' />
               </a>
               <div className='flex-1'>
                 <a href='timeline-group.html'>
