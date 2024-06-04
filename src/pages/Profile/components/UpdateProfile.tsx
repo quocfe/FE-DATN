@@ -117,16 +117,6 @@ function UpdateProfile({ onClose }: Props) {
           </div>
         </div>
         <div className='items-center gap-10 md:flex'>
-          <label className='text-right md:w-32'> Giới tính </label>
-          <div className='flex-1 max-md:mt-4'>
-            <select className='w-full !rounded-md !border-0 lg:w-2/4'>
-              <option value={0}>Nam</option>
-              <option value={1}>Nữ</option>
-              <option value={3}>Khác</option>
-            </select>
-          </div>
-        </div>
-        <div className='items-center gap-10 md:flex'>
           <label className='text-right md:w-32'> Tình trạng </label>
           <div className='flex-1 max-md:mt-4'>
             <select className='w-full !rounded-md !border-0 lg:w-2/4' {...register('relationship_status')}>

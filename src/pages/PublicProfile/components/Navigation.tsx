@@ -1,17 +1,63 @@
 import { IonIcon } from '@ionic/react'
-import React from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import useMutationBlockedUser from '~/hooks/mutations/useMutationBlockedUser'
+import useMutationCancelFriendRequest from '~/hooks/mutations/useMutationCancelFriendRequest'
 
-function Navigation() {
+interface Props {
+  profile: UserProfile | null
+  status: string | null
+}
+
+function Navigation({ profile, status }: Props) {
+  // Hooks
+  const navigate = useNavigate()
+  // React Query Hooks
+  const queryClient = useQueryClient()
+  const blockedUserMutation = useMutationBlockedUser()
+  const cancelFriendRequestMutation = useMutationCancelFriendRequest()
+
+  // Hủy kết bạn
+  const handleFriendRequest = () => {
+    if (window.confirm('Xác nhận hủy kết bạn!')) {
+      if (profile) {
+        cancelFriendRequestMutation.mutate(profile.user_id, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
+            toast.success('Hủy kết bạn thành công')
+          },
+          onError: (error) => {
+            toast.error(error.message)
+          }
+        })
+      }
+    }
+  }
+
+  // Chặn người dùng
+  const handleBlockedUser = () => {
+    if (window.confirm('Xác nhận chặn người dùng này!')) {
+      if (profile) {
+        blockedUserMutation.mutate(profile.user_id, {
+          onSuccess: () => {
+            toast.success('Chặn người dùng thành công')
+            navigate('/')
+          },
+          onError: () => {
+            toast.error('Đã có lỗi xảy ra!')
+          }
+        })
+      }
+    }
+  }
+
   return (
     <div
       className='mt-3 flex items-center justify-between border-t border-gray-100 px-2 max-lg:flex-col dark:border-slate-700'
       uk-sticky='offset:50; cls-active: bg-white/80 shadow rounded-b-2xl z-50 backdrop-blur-xl dark:!bg-slate-700/80; animation:uk-animation-slide-top ; media: 992'
     >
       <div className='flex items-center gap-2 py-2 pr-1 text-sm max-md:w-full lg:order-2'>
-        <button className='button flex items-center gap-2 bg-primary px-3.5 py-2 text-white max-md:flex-1'>
-          <IonIcon icon='add-circle' className='text-xl' />
-          <span className='text-sm'> Thêm tin mới</span>
-        </button>
         <button type='submit' className='dark:bg-dark2 flex rounded-lg bg-secondery px-2.5 py-2'>
           <IonIcon icon='search' className='text-xl' />
         </button>
@@ -24,6 +70,34 @@ function Navigation() {
             uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click;offset:10'
           >
             <nav>
+              {status === 'Đã chấp nhận' && (
+                <a
+                  onClick={handleFriendRequest}
+                  className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+                >
+                  <IonIcon icon='close-circle-outline' className='text-[22px]' />
+                  Hủy kết bạn
+                </a>
+              )}
+
+              {status === 'Chờ chấp nhận' && (
+                <>
+                  <a href='#'>
+                    <IonIcon className='text-xl' icon='pricetags-outline' /> Xác nhận
+                  </a>
+                  <a className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
+                    <IonIcon icon='close-circle-outline' className='text-[22px]' />
+                    Xóa lời mời
+                  </a>
+                </>
+              )}
+
+              {status === null && (
+                <a href='#'>
+                  <IonIcon className='text-xl' icon='pricetags-outline' /> Kết bạn
+                </a>
+              )}
+
               <a href='#'>
                 <IonIcon className='text-xl' icon='time-outline' /> Mute story
               </a>
@@ -34,6 +108,12 @@ function Navigation() {
                 <IonIcon className='text-xl' icon='share-outline' /> Chia sẻ trang cá nhân
               </a>
               <hr />
+              <a
+                onClick={handleBlockedUser}
+                className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+              >
+                <IonIcon className='text-xl' icon='stop-circle-outline' /> Chặn người dùng
+              </a>
             </nav>
           </div>
         </div>
