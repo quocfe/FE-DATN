@@ -28,79 +28,79 @@ function Sidebar() {
                     <ul>
                       <li className='active'>
                         <Link to={'/'}>
-                          <img src='src/assets/images/icons/home.png' alt='feeds' className='w-6' />
+                          <img src='/src/assets/images/icons/home.png' alt='feeds' className='w-6' />
                           <span> Bảng tin </span>
                         </Link>
                       </li>
                       <li>
+                        <a href='groups.html'>
+                          <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
+                          <span> Bạn bè </span>
+                        </a>
+                      </li>
+                      <li>
                         <a href='messages.html'>
-                          <img src='src/assets/images/icons/message.png' alt='messages' className='w-5' />
+                          <img src='/src/assets/images/icons/message.png' alt='messages' className='w-5' />
                           <span> Trò chuyện </span>
                         </a>
                       </li>
                       <li>
                         <a href='video.html'>
-                          <img src='src/assets/images/icons/video.png' alt='messages' className='w-6' />
+                          <img src='/src/assets/images/icons/video.png' alt='messages' className='w-6' />
                           <span> Video </span>
                         </a>
                       </li>
                       <li>
                         <a href='event.html'>
-                          <img src='src/assets/images/icons/event.png' alt='messages' className='w-6' />
+                          <img src='/src/assets/images/icons/event.png' alt='messages' className='w-6' />
                           <span> Sự kiện </span>
                         </a>
                       </li>
                       <li>
                         <a href='pages.html'>
-                          <img src='src/assets/images/icons/page.png' alt='pages' className='w-6' />
+                          <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
                         </a>
                       </li>
                       <li>
-                        <a href='groups.html'>
-                          <img src='src/assets/images/icons/group.png' alt='groups' className='w-6' />
-                          <span> Nhóm </span>
-                        </a>
-                      </li>
-                      <li>
                         <a href='market.html'>
-                          <img src='src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
-                          <span> Marketing </span>
+                          <img src='/src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
+                          <span> Cửa hàng </span>
                         </a>
                       </li>
                       <li>
                         <a href='blog.html'>
-                          <img src='src/assets/images/icons/blog.png' alt='blog' className='w-6' />
+                          <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />
                           <span> Blog </span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
                         <a href='games.html'>
-                          <img src='src/assets/images/icons/game.png' alt='games' className='w-6' />
+                          <img src='/src/assets/images/icons/game.png' alt='games' className='w-6' />
                           <span> Games </span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
                         <a href='funding.html'>
-                          <img src='src/assets/images/icons/fund.png' alt='messages' className='w-6' />
+                          <img src='/src/assets/images/icons/fund.png' alt='messages' className='w-6' />
                           <span> Fundraiser</span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
                         <a href='blog-2.html'>
-                          <img src='src/assets/images/icons/blog-2.png' alt='blog' className='w-6' />
+                          <img src='/src/assets/images/icons/blog-2.png' alt='blog' className='w-6' />
                           <span> blog II </span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
                         <a href='event-2.html'>
-                          <img src='src/assets/images/icons/event-2.png' alt='event' className='w-6' />
+                          <img src='/src/assets/images/icons/event-2.png' alt='event' className='w-6' />
                           <span> Event II </span>
                         </a>
                       </li>
                       <li className='!hidden' id='show__more'>
                         <a href='groups-2.html'>
-                          <img src='src/assets/images/icons/group-2.png' alt='groups' className='w-6' />
+                          <img src='/src/assets/images/icons/group-2.png' alt='groups' className='w-6' />
                           <span> Groups II </span>
                         </a>
                       </li>
@@ -123,10 +123,9 @@ function Sidebar() {
                           clipRule='evenodd'
                         />
                       </svg>
-                      <span id='show__more'> See More </span>
+                      <span id='show__more'> Xem thêm </span>
                       <span className='!hidden' id='show__more'>
-                        {' '}
-                        See Less{' '}
+                        See Less
                       </span>
                     </button>
                   </nav>
@@ -137,7 +136,7 @@ function Sidebar() {
                     <a href='#'>
                       <div className='flex items-center gap-2 rounded-xl p-3 px-4 hover:bg-secondery'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src='/src/assets/images/avatars/avatar-2.jpg'
                           alt=''
                           className='w-6 rounded-full object-cover'
                         />
@@ -147,7 +146,7 @@ function Sidebar() {
                     <a href='#'>
                       <div className='flex items-center gap-2 rounded-xl p-3 px-4 hover:bg-secondery'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='w-6 rounded-full object-cover'
                         />
@@ -157,7 +156,7 @@ function Sidebar() {
                     <a href='#'>
                       <div className='flex items-center gap-2 rounded-xl p-3 px-4 hover:bg-secondery'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='w-6 rounded-full object-cover'
                         />

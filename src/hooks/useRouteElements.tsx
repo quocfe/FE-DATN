@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom'
+import { Navigate, useRoutes } from 'react-router-dom'
 import MainLayout from '~/layouts/MainLayout'
 import Home from '~/pages/Home'
 import Login from '~/pages/Login'
@@ -10,6 +10,8 @@ import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
 import Dashboard from '~/pages/admin/Dashboard'
 import LoginAdmin from '~/pages/admin/LoginAdmin'
+import PublicProfile from '~/pages/PublicProfile'
+import { FriendList, FriendRequest, FriendSuggest } from '~/pages/Friend'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -32,6 +34,47 @@ function useRouteElements() {
               <Profile />
             </MainLayout>
           )
+        },
+        {
+          path: '/profile/:user_id',
+          element: (
+            <MainLayout>
+              <PublicProfile />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/friend',
+          children: [
+            {
+              path: '',
+              element: <Navigate to={'/friend/list'} replace />
+            },
+            {
+              path: 'list',
+              element: (
+                <MainLayout>
+                  <FriendList />
+                </MainLayout>
+              )
+            },
+            {
+              path: 'requests',
+              element: (
+                <MainLayout>
+                  <FriendRequest />
+                </MainLayout>
+              )
+            },
+            {
+              path: 'suggests',
+              element: (
+                <MainLayout>
+                  <FriendSuggest />
+                </MainLayout>
+              )
+            }
+          ]
         }
       ]
     },

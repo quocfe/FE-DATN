@@ -3,7 +3,7 @@ import userApi from '~/apis/user.api'
 
 function useMutationUpdateProfile() {
   return useMutation({
-    mutationFn: (profile: UpdateProfile) => userApi.updateProfile(profile)
+    mutationFn: (profile: UpdateProfile | FormData) => userApi.updateProfile(profile)
   })
 }
 
