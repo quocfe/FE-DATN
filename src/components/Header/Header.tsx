@@ -69,7 +69,7 @@ function Header() {
 
               <input
                 type='text'
-                placeholder='Search Friends, videos ..'
+                placeholder='Bạn bè, Fanpage, Video ..'
                 className='h-12 w-full !bg-transparent !pl-10 !text-sm !font-normal'
               />
             </div>
@@ -90,7 +90,7 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
+                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
                     <div>
                       <div> Jesse Steeve </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -106,7 +106,7 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
+                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
                     <div>
                       <div> Martin Gray </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -122,7 +122,11 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='/src/assets/images/group/group-2.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img
+                      src='/src/assets/images/group/group-2.jpg'
+                      className='h-9 w-9 rounded-full object-cover'
+                      alt=''
+                    />
                     <div>
                       <div> Delicious Foods</div>
                       <div className='mt-0.5 text-xs font-medium text-rose-500'> Group </div>
@@ -138,7 +142,11 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='/src/assets/images/group/group-1.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img
+                      src='/src/assets/images/group/group-1.jpg'
+                      className='h-9 w-9 rounded-full object-cover'
+                      alt=''
+                    />
                     <div>
                       <div> Delicious Foods</div>
                       <div className='mt-0.5 text-xs font-medium text-yellow-500'> Page </div>
@@ -154,7 +162,11 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='/src/assets/images/avatars/avatar-6.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img
+                      src='/src/assets/images/avatars/avatar-6.jpg'
+                      className='h-9 w-9 rounded-full object-cover'
+                      alt=''
+                    />
                     <div>
                       <div> John Welim </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -959,7 +971,7 @@ function Header() {
                       Thông báo
                     </div>
                   </a>
-                  <a href='setting.html'>
+                  <Link to={'/setting'}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -978,7 +990,7 @@ function Header() {
                       </svg>
                       Cài đặt
                     </div>
-                  </a>
+                  </Link>
                   <button type='button' className='w-full'>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
@@ -1024,7 +1036,11 @@ function Header() {
                 </nav>
               </div>
               <div className='flex hidden items-center gap-2'>
-                <img src={profile?.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full shadow' />
+                <img
+                  src={profile?.Profile.profile_picture}
+                  alt=''
+                  className='h-9 w-9 rounded-full object-cover shadow'
+                />
                 <div className='w-20 font-semibold text-gray-600'> Hamse </div>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'

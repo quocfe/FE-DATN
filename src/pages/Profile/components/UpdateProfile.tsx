@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import useQueryProfile from '~/hooks/queries/useQueryProfile'
+import useQueryProfile from '~/hooks/queries/user/useQueryProfile'
 import useMutationUpdateProfile from '../hooks/useMutationUpdateProfile'
 import { toast } from 'react-toastify'
 import useAuthStore from '~/store/auth.store'

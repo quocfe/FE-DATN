@@ -1,4 +1,3 @@
-import { IonIcon } from '@ionic/react'
 import { Link } from 'react-router-dom'
 
 function Sidebar() {
@@ -129,47 +128,12 @@ function Sidebar() {
                       </span>
                     </button>
                   </nav>
-                  <div className='mt-2 border-t pt-3 text-sm font-medium text-black dark:border-slate-800 dark:text-white'>
-                    <div className='px-3 pb-2 text-sm font-medium'>
-                      <div className='text-black dark:text-white'>Shortcut</div>
-                    </div>
-                    <a href='#'>
-                      <div className='flex items-center gap-2 rounded-xl p-3 px-4 hover:bg-secondery'>
-                        <img
-                          src='/src/assets/images/avatars/avatar-2.jpg'
-                          alt=''
-                          className='w-6 rounded-full object-cover'
-                        />
-                        <div> Marin Gray</div>
-                      </div>
-                    </a>
-                    <a href='#'>
-                      <div className='flex items-center gap-2 rounded-xl p-3 px-4 hover:bg-secondery'>
-                        <img
-                          src='/src/assets/images/avatars/avatar-7.jpg'
-                          alt=''
-                          className='w-6 rounded-full object-cover'
-                        />
-                        <div> Alexa Stella</div>
-                      </div>
-                    </a>
-                    <a href='#'>
-                      <div className='flex items-center gap-2 rounded-xl p-3 px-4 hover:bg-secondery'>
-                        <img
-                          src='/src/assets/images/avatars/avatar-3.jpg'
-                          alt=''
-                          className='w-6 rounded-full object-cover'
-                        />
-                        <div> Sarah Ali</div>
-                      </div>
-                    </a>
-                  </div>
                   <nav
                     id='side'
                     className='mt-2 border-t pt-3 text-sm font-medium text-black dark:border-slate-800 dark:text-white'
                   >
                     <div className='px-3 pb-2 text-sm font-medium'>
-                      <div className='text-black dark:text-white'>Pages</div>
+                      <div className='text-black dark:text-white'>Trang</div>
                     </div>
                     <ul className='uk-nav mt-2 -space-y-2' uk-nav='multiple: true'>
                       <li>
@@ -189,7 +153,7 @@ function Sidebar() {
                             />
                             <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
                           </svg>
-                          <span> Setting </span>
+                          <span> Cài đặt </span>
                         </a>
                       </li>
                       <li>
@@ -208,7 +172,7 @@ function Sidebar() {
                               d='M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z'
                             />
                           </svg>
-                          <span> Upgrade </span>
+                          <span> Nâng cấp </span>
                         </a>
                       </li>
                       <li>
@@ -227,73 +191,11 @@ function Sidebar() {
                               d='M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9'
                             />
                           </svg>
-                          <span> Authentication </span>
+                          <span> Đăng xuất</span>
                         </a>
-                      </li>
-                      <li className='uk-parent'>
-                        <a href='#' className='group'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            className='h-4 w-4'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z'
-                            />
-                          </svg>
-                          <span> Development </span>
-                          <IonIcon
-                            icon='chevron-down'
-                            className='md hydrated ml-auto text-base duration-200 group-aria-expanded:rotate-180'
-                            role='img'
-                            aria-label='chevron down'
-                          />
-                        </a>
-                        <ul className='my-1 space-y-0 pl-10 text-sm'>
-                          <li>
-                            <a href='components.html' className='-md !rounded !py-2'>
-                              Elements
-                            </a>
-                          </li>
-                          <li>
-                            <a href='components.html' className='-md !rounded !py-2'>
-                              Components
-                            </a>
-                          </li>
-                          <li>
-                            <a href='components.html' className='-md !rounded !py-2'>
-                              Icons
-                            </a>
-                          </li>
-                        </ul>
                       </li>
                     </ul>
                   </nav>
-                  <div className='mt-2 flex flex-wrap gap-2 gap-y-0.5 p-2 text-xs font-medium'>
-                    <a href='#' className='hover:underline'>
-                      About
-                    </a>
-                    <a href='#' className='hover:underline'>
-                      Blog{' '}
-                    </a>
-                    <a href='#' className='hover:underline'>
-                      Careers
-                    </a>
-                    <a href='#' className='hover:underline'>
-                      Support
-                    </a>
-                    <a href='#' className='hover:underline'>
-                      Contact Us{' '}
-                    </a>
-                    <a href='#' className='hover:underline'>
-                      Developer
-                    </a>
-                  </div>
                 </div>
               </div>
             </div>
