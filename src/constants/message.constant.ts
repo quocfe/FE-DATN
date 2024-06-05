@@ -2,6 +2,7 @@ export const MESSAGE = {
   GET_MESSAGE: 'message/getmessage',
   GET_CONVERSATION: 'message/conversation',
   SEND_MESSAGE: 'message/sendmessage',
+  SEND_MESSAGE_ATTACH: 'message/sendmessageattach',
   REPLY_MESSAGE: 'message/replymessage',
   CREATE_GROUP: 'message/creategroup',
   ADD_MEMBERS_TO_GROUP: 'message/addmemberstogroup',

@@ -1,12 +1,39 @@
 import { IonIcon } from '@ionic/react'
-import React from 'react'
-import useConversationStore from '~/store/conversation.store'
+import { useEffect, useRef, useState } from 'react'
 import ChatMessage from './ChatMessage'
 import SendMessage from './SendMessage'
+import useConversationStore from '~/store/conversation.store'
+import { useQueryMessage } from '../hooks/useQueryMessage'
+import ChatMessageSkelaton from './Skelaton/ChatMessageSkelaton'
 
 function MessageCenter({ groupName, groupImg, groupId }: MessageCenterProps) {
+  const { toggleBoxReply } = useConversationStore()
+  const { isLoading } = useQueryMessage()
+  const chatMessageRef = useRef<HTMLInputElement>(null)
+  const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
+  const boxReplyRef = useRef<HTMLInputElement>(null)
+  const [calculateHeight, setCalculateHeight] = useState<string>()
+  const handleScroll = () => {
+    if (chatMessageRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
+      setShowScrollBtn(scrollHeight - scrollTop > clientHeight * 3.5)
+    }
+  }
+
+  useEffect(() => {
+    if (toggleBoxReply) {
+      setCalculateHeight('315')
+    } else {
+      setCalculateHeight('204')
+    }
+  }, [toggleBoxReply])
+
+  if (isLoading) {
+    return <ChatMessageSkelaton />
+  }
+
   return (
-    <div className='flex-1'>
+    <div className='flex-1 '>
       {/* chat heading */}
       <div className='w- uk-animation-slide-top-medium z-10 flex items-center justify-between gap-2 border-b px-6 py-3.5 dark:border-slate-700'>
         <div className='flex items-center gap-2 sm:gap-4'>
@@ -51,6 +78,9 @@ function MessageCenter({ groupName, groupImg, groupId }: MessageCenterProps) {
               />
             </svg>
           </button>
+          <button type='button' className='flex items-center rounded-full p-1.5 hover:bg-slate-100'>
+            <IonIcon icon='search-outline' className='h-6 w-6' />
+          </button>
           <button
             type='button'
             className='rounded-full p-1.5 hover:bg-slate-100'
@@ -74,11 +104,15 @@ function MessageCenter({ groupName, groupImg, groupId }: MessageCenterProps) {
         </div>
       </div>
       {/* chats bubble */}
-      <div className='h-[calc(100vh-195px)] w-full overflow-y-auto p-5 py-10 md:h-[calc(100vh-204px)]'>
-        <ChatMessage groupName={groupName} groupImg={groupImg} groupId={groupId} />
+      <div
+        ref={chatMessageRef}
+        onScroll={handleScroll}
+        className={`h-[calc(100vh-305px)] w-full overflow-y-auto p-5 py-10 md:h-[calc(100vh-${calculateHeight}px)]`}
+      >
+        <ChatMessage showScrollBtn={showScrollBtn} groupName={groupName} groupImg={groupImg} groupId={groupId} />
       </div>
       {/* sending message area */}
-      <SendMessage groupId={groupId} />
+      <SendMessage boxReplyRef={boxReplyRef} groupId={groupId} />
     </div>
   )
 }

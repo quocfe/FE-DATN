@@ -1,6 +1,7 @@
 type Message = {
   message_id: string
   body: string
+  sub_body: string
   status: boolean
   group_message_id: string
   parent_id: string
@@ -10,6 +11,7 @@ type Message = {
   type: number
   createdAt: Date
   updatedAt: Date
+  user_name: string
 }
 
 type GroupMessage = {
@@ -46,7 +48,23 @@ type MessageResponse = {
 type MessageInput = {
   body: string
   group_message_id: string | undefined
-  receiver: string
+  receiver?: string
+  type: number
+}
+
+type MessageMediaInput = {
+  body: string
+  group_message_id: string | undefined
+  receiver?: string
+  type: number
+  uploadData: FormData
+}
+
+type ReplyMessageInput = {
+  body: string
+  group_message_id: string
+  type: number
+  parent_id: string
 }
 
 type ReactMessageInput = {
@@ -64,11 +82,14 @@ type MessageCenterProps = {
   groupName: string
   groupImg: string
   groupId: string
+  showScrollBtn?: boolean
 }
 
 type ReplyMessageInput = Pick<Message, 'body' | 'group_message_id' | 'type' | 'parent_id'>
-
 type ReactMessageInput = Pick<ReactMessage, 'message_id' | 'user_id' | 'emoji' | 'createdBy'>
+type ReplyMessage = Pick<Message, 'body' | 'message_id' | 'type' | 'createdBy'> & {
+  reply_user: stirng
+}
 
 type CreateMemberGroupInput = Pick<MemberGroup, 'group_message_id'> & {
   listUser: string
@@ -76,4 +97,9 @@ type CreateMemberGroupInput = Pick<MemberGroup, 'group_message_id'> & {
 
 type ConvesationSideBar = Pick<GroupMessage> & {
   messsages: Message
+}
+
+type TypeMessage = Pick<Message> & {
+  reactions: ReactMessageAttributes[]
+  replyMessage: ReplyMessage
 }

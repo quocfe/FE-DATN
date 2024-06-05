@@ -29,7 +29,7 @@ const Message = () => {
 
   let show = selectedConversation ? selectedConversation : selectedNoConversation
   return (
-    <div className='relative -m-2.5 overflow-hidden border dark:border-slate-700'>
+    <div className='relative -m-2.5 h-full border'>
       <div className='dark:bg-dark2 flex bg-white'>
         {/* sidebar */}
         <SideBarMessage />

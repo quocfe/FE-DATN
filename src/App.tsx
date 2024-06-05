@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div id='wrapper'>
-      {isFetching + isMutation !== 0 && <Loading />}
+      {/* {isFetching + isMutation !== 0 && <Loading />} */}
       {routeElements}
       <ToastContainer position='bottom-right' />
     </div>

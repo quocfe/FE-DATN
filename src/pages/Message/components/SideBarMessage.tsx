@@ -1,10 +1,13 @@
 import { IonIcon } from '@ionic/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 import ModalCreateGroup from './ModalCreateGroup'
 import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
 import { string } from 'yup'
+import { calculateTimeAgo } from '~/utils/helpers'
+import { checkBodyMessage } from '../utils/checkBodyMessage'
+import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 
 const SideBarMessage = () => {
   const { data: conversation, isLoading } = useQueryConversation()
@@ -12,6 +15,7 @@ const SideBarMessage = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
+
   const handleSelectedConversation = (item: GroupMessage) => {
     setSelectedConversation(item)
   }
@@ -20,7 +24,6 @@ const SideBarMessage = () => {
     setSelectedNoConversation(user)
   }
 
-  let dataUsers = resultSearch?.data?.data?.list
   const handleSearch = (query: string) => {
     searchMutaion.mutate(query, {
       onSuccess: (data: any) => {
@@ -31,9 +34,8 @@ const SideBarMessage = () => {
       }
     })
   }
-
   if (isLoading) {
-    return <div>Loading...</div>
+    return <SideBarMessageSkelaton />
   }
   return (
     <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
@@ -116,7 +118,7 @@ const SideBarMessage = () => {
                   <div className='text-black dark:text-white'>Bạn bè</div>
                 </div>
                 <nav className='text-sm font-medium text-black dark:text-white'>
-                  {dataUsers?.map((user: any, index: number) => (
+                  {resultSearch?.data?.data?.friends?.map((user: any, index: number) => (
                     <a
                       key={index}
                       className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
@@ -135,7 +137,7 @@ const SideBarMessage = () => {
         </div>
         {/* users list */}
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto p-2 md:h-[calc(100vh-204px)]'>
-          {conversation?.data?.data.map((item: ConvesationSideBar, index: number) => {
+          {conversation?.data?.data?.map((item: ConvesationSideBar, index: number) => {
             return (
               <div
                 key={index}
@@ -149,15 +151,17 @@ const SideBarMessage = () => {
                   />
                   <div className='absolute bottom-0 right-0 h-4 w-4 rounded-full border border-white bg-green-500 dark:border-slate-800' />
                 </div>
-                <div className='min-w-0 flex-1'>
-                  <div className='mb-1.5 flex items-center gap-2'>
-                    <div className='mr-auto truncate text-sm font-medium text-black dark:text-white '>
-                      {item?.group_name}
-                    </div>
-                    <div className='text-xs font-light text-gray-500 dark:text-white/70'>09:40AM</div>
+                <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
+                  <div className='mr-auto truncate text-sm font-medium text-black dark:text-white '>
+                    {item?.group_name}
                   </div>
-                  <div className='overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-medium text-gray-800'>
-                    {item?.messages?.body}
+                  <div className='flex items-center gap-2'>
+                    <div className='overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-medium text-gray-800'>
+                      {item?.messages?.body && checkBodyMessage(item?.messages?.body)}
+                    </div>
+                    <div className='flex-shrink-0 text-xs font-light text-gray-500 dark:text-white/70'>
+                      {item?.messages?.createdAt && calculateTimeAgo(item.messages.createdAt)}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -21,3 +21,10 @@ export function calculateTimeAgo(sentAt: string): string {
     return months + ' tháng trước'
   }
 }
+
+export function calculateHoureAgo(sentAt: string): string {
+  const sentTime = new Date(sentAt)
+  const houre = sentTime.getHours().toString().padStart(2, '0')
+  const minutes = sentTime.getMinutes().toString().padStart(2, '0')
+  return `${houre}:${minutes}`
+}

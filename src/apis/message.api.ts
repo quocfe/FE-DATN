@@ -14,6 +14,15 @@ class MessageApi {
     return http.post<MessageResponse>(MESSAGE.SEND_MESSAGE, messageData, { withCredentials: true })
   }
 
+  sendMessageAttach(messageMediaData: FormData) {
+    return http.post<MessageResponse>(MESSAGE.SEND_MESSAGE_ATTACH, messageMediaData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      withCredentials: true
+    })
+  }
+
   replyMessage(replyMessageInput: ReplyMessageInput) {
     return http.post<MessageResponse>(MESSAGE.REPLY_MESSAGE, replyMessageInput, { withCredentials: true })
   }

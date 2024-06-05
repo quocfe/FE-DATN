@@ -9,4 +9,10 @@ function useMutationSendMessage() {
   })
 }
 
-export default useMutationSendMessage
+function useMutationSendMessageAttach() {
+  return useMutation({
+    mutationFn: (data: FormData) => messageApi.sendMessageAttach(data)
+  })
+}
+
+export { useMutationSendMessage, useMutationSendMessageAttach }
