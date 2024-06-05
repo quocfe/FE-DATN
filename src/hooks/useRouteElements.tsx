@@ -12,6 +12,7 @@ import Dashboard from '~/pages/admin/Dashboard'
 import LoginAdmin from '~/pages/admin/LoginAdmin'
 import PublicProfile from '~/pages/PublicProfile'
 import { FriendList, FriendRequest, FriendSuggest } from '~/pages/Friend'
+import Setting from '~/pages/Setting'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -75,6 +76,14 @@ function useRouteElements() {
               )
             }
           ]
+        },
+        {
+          path: '/setting',
+          element: (
+            <MainLayout>
+              <Setting />
+            </MainLayout>
+          )
         }
       ]
     },
