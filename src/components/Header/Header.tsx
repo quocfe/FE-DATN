@@ -959,7 +959,7 @@ function Header() {
                       Thông báo
                     </div>
                   </a>
-                  <a href='setting.html'>
+                  <Link to={'/setting'}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -978,7 +978,7 @@ function Header() {
                       </svg>
                       Cài đặt
                     </div>
-                  </a>
+                  </Link>
                   <button type='button' className='w-full'>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
