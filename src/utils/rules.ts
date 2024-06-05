@@ -18,8 +18,24 @@ const authSchema = yup.object({
     .oneOf([yup.ref('password')], 'Mật khẩu xác nhận không chính xác !')
 })
 
+export const changePasswordSchema = yup.object({
+  currentPassword: yup.string().required('Vui lòng nhập mật khẩu hiện tại'),
+  new_password: yup
+    .string()
+    .required('Vui lòng nhập trường này !')
+    .min(6, 'Độ dài tối thiếu 6 kí tự !')
+    .max(162, 'Độ dài tối đa 162 kí tự'),
+  confirm_password: yup
+    .string()
+    .required('Vui lòng nhập trường này !')
+    .oneOf([yup.ref('new_password')], 'Mật khẩu xác nhận không chính xác !')
+    .min(6, 'Độ dài tối thiếu 6 kí tự !')
+    .max(162, 'Độ dài tối đa 162 kí tự')
+})
+
 export const registerSchema = authSchema
 export const loginSchema = authSchema.pick(['email', 'password'])
 
 export type RegisterForm = yup.InferType<typeof registerSchema>
 export type LoginForm = yup.InferType<typeof loginSchema>
+export type ChangePasswordForm = yup.InferType<typeof changePasswordSchema>

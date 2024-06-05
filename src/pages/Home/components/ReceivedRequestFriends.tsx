@@ -1,5 +1,5 @@
 import React from 'react'
-import useQueryReceivedFriendRequests from '~/hooks/queries/useQueryReceivedFriendRequests'
+import useQueryReceivedFriendRequests from '~/hooks/queries/user/useQueryReceivedFriendRequests'
 import FriendItem from './FriendItem'
 import { Link } from 'react-router-dom'
 

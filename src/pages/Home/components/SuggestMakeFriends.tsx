@@ -1,4 +1,4 @@
-import useQueryUsers from '~/hooks/queries/useQueryUsers'
+import useQueryUsers from '~/hooks/queries/user/useQueryUsers'
 import FriendItem from './FriendItem'
 import { Link } from 'react-router-dom'
 

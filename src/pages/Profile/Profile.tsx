@@ -18,7 +18,7 @@ function Profile() {
 
   return (
     <>
-      <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+      <Modal isVisible={showModal} onClose={() => setShowModal(false)} height='70%'>
         <UpdateProfile onClose={() => setShowModal(false)} />
       </Modal>
       <div className='mx-auto max-w-[1065px] max-lg:-m-2.5'>

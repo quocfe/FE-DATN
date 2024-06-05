@@ -1,10 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import { useRef } from 'react'
-import useMutationUpdateProfile from '../hooks/useMutationUpdateProfile'
-import { toast } from 'react-toastify'
-import { setProfileLocalStorage } from '~/utils/auth'
-import useAuthStore from '~/store/auth.store'
-import { isAxiosError } from '~/utils/utils'
+import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
 
 interface Props {
   profile: UserProfile | null
@@ -12,11 +8,9 @@ interface Props {
 }
 
 function UserInfo({ profile, setShowModal }: Props) {
-  const { setProfile } = useAuthStore()
+  const { updateImage } = useUpdateImage()
   const inputFileProfilePictureRef = useRef<HTMLInputElement | null>(null)
   const inputFileCoverPhotoRef = useRef<HTMLInputElement | null>(null)
-  // React Query
-  const updateProfileMutation = useMutationUpdateProfile()
 
   const handleUpdateImage = (type: 'profile_picture' | 'cover_photo') => {
     let file: File | null = null
@@ -27,25 +21,7 @@ function UserInfo({ profile, setShowModal }: Props) {
     }
 
     if (file) {
-      const formData = new FormData()
-      formData.append(type, file)
-
-      updateProfileMutation.mutate(formData, {
-        onSuccess: (data) => {
-          const userProfile = data.data.data.user
-          setProfile(userProfile)
-          setProfileLocalStorage(userProfile)
-          toast.success(`Cập nhật ${type === 'profile_picture' ? 'ảnh đại diện' : 'ảnh bìa'} thành công!`)
-        },
-        onError: (error) => {
-          if (isAxiosError<ErrorResponse>(error)) {
-            if (error.response) {
-              const formError = error.response.data
-              toast.error(formError.message)
-            }
-          }
-        }
-      })
+      updateImage(type, file)
     }
   }
 

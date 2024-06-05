@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import useQueryPublicProfile from '~/hooks/queries/useQueryPublicProfile'
+import useQueryPublicProfile from '~/hooks/queries/user/useQueryPublicProfile'
 import UserInfo from './components/UserInfo'
 import Navigation from './components/Navigation'
 import FeedStory from './components/FeedStory'
@@ -13,7 +13,7 @@ function PublicProfile() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [])
+  }, [user_id])
 
   // React Query
   const { data, error } = useQueryPublicProfile(user_id ?? '')

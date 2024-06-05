@@ -67,3 +67,8 @@ type UserCompact = {
     profile_picture: string
   }
 }
+
+type ChangePassword = {
+  old_password: string
+  new_password: string
+}
