@@ -1,11 +1,11 @@
 import { IonIcon } from '@ionic/react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
-import { calculateHoureAgo, calculateTimeAgo } from '~/utils/helpers'
+import { calculateHoureAgo } from '~/utils/helpers'
 import useMutationSendReactMessage from '../hooks/useMutationSendReactMessage'
-import ModalUnSendOption from './ModalUnSendOption'
-import { useQueryMessage } from '../hooks/useQueryMessage'
 import { downloadFileFormLink } from '../utils/downloadFileFormLink'
+import ModalUnSendOption from './ModalUnSendOption'
+import { handleToOldMessage } from '../utils/handleToOldMessage'
 
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
 
@@ -14,7 +14,6 @@ const ContentMessage = (params: any) => {
   const [openEmoji, setOpenEmoji] = useState(false)
   const [openOption, setOpenOption] = useState(false)
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
-
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply } = useConversationStore()
   const houreSend = calculateHoureAgo(params.item.createdAt)
@@ -49,43 +48,12 @@ const ContentMessage = (params: any) => {
     }
   }
 
-  if (params.recall) {
-    return (
-      <div
-        ref={widthRef}
-        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
-        ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
-        ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
-        `}
-      >
-        <div
-          className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
-        >
-          Tin nhắn đã được thu hồi
-        </div>
-      </div>
-    )
-  }
-
-  const handleToOldMessage = () => {
-    const messageOldId = params.item.message_id
-    const element = document.getElementById(messageOldId)
-
-    if (element) {
-      element?.scrollIntoView()
-      element.setAttribute('style', 'border: 2px solid #000 ')
-      setTimeout(() => {
-        element.setAttribute('style', 'border: 2px solid bg-transparent')
-      }, 1000)
-    }
-  }
-
   const renderContent = (params: any) => {
     switch (params.item.type) {
       case 1:
         return (
           <p className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
-            {params.item.body}
+            {params.item.status === true ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
         )
       case 2:
@@ -135,29 +103,58 @@ const ContentMessage = (params: any) => {
             <p>{params.item.body}</p>
           </div>
         )
+      case 4:
+        return params.type != 'reply' ? (
+          <video width={300} controls className='rounded-[16px] p-2'>
+            <source src={params.item.sub_body} type='video/mp4' />
+          </video>
+        ) : (
+          <video width={100} className='rounded-[16px]'>
+            <source src={params.item.sub_body} type='video/mp4' />
+          </video>
+        )
       default:
         break
     }
+  }
+
+  if (params.recall) {
+    return (
+      <div
+        ref={widthRef}
+        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
+        ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
+        ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
+        `}
+      >
+        <div
+          className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
+        >
+          Tin nhắn đã được thu hồi
+        </div>
+      </div>
+    )
   }
 
   return (
     <div
       ref={widthRef}
       id={params.item.message_id}
-      onClick={() => (params.type === 'reply' ? handleToOldMessage() : '')}
+      onClick={() =>
+        params.type === 'reply' && params.item.status != true ? handleToOldMessage(params.item.message_id) : ''
+      }
       onMouseLeave={() => {
         setOpenEmoji(false)
         setOpenOption(false)
       }}
-      className={` relative
-      w-fit
-      min-w-[50px] max-w-[500px] cursor-pointer border-[2px]  border-transparent
+      className={` relative cursor-pointer border-[2px]  border-transparent
+      ${params.item.type === 4 ? 'h-[100%]' : ''}
       ${params.me ? 'text-left' : 'text-right'}
       ${params.item.reactions?.length > 0 ? 'mb-3' : ''}
-      ${params.me ? (params.item.type === 2 ? 'bg-transparent' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
+      ${params.me ? (params.item.type === 2 || params.item.type === 4 ? 'bg-transparent' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
       ${
         params.type != 'reply'
-          ? `${params.item.type === 2 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
+          ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
           : `-mb-4 !bg-secondery px-4 py-5 text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }`}
     >
@@ -260,7 +257,7 @@ const ContentMessage = (params: any) => {
       </div>
       {params?.type != 'reply' && (
         <p
-          className={`${params.me ? `${params.item.type === 2 ? 'px-2 py-2 text-gray-700' : ' text-white'}` : ` text-gray-700 ${params.item.type === 2 ? 'px-2 py-1' : ''}`}    text-[11px]`}
+          className={`${params.me ? `${params.item.type === 2 || params.item.type === 4 ? 'px-2 py-2 text-gray-700' : ' text-white'}` : ` text-gray-700 ${params.item.type === 2 ? 'px-2 py-1' : ''}`}    text-[11px]`}
         >
           {houreSend}
         </p>

@@ -7,9 +7,10 @@ import SendMessage from './components/SendMessage'
 import MessageCenter from './components/MessageCenter'
 import EmptyMessage from './components/EmptyMessage'
 import ProfileRight from './components/ProfileRight'
+import ResultSearchMessage from './components/ResultSearchMessage'
 
 const Message = () => {
-  const { selectedConversation, selectedNoConversation } = useConversationStore()
+  const { selectedConversation, selectedNoConversation, toggleBoxSearchMessage } = useConversationStore()
 
   let groupName = selectedConversation
     ? selectedConversation.group_name
@@ -28,11 +29,12 @@ const Message = () => {
       : ''
 
   let show = selectedConversation ? selectedConversation : selectedNoConversation
+
   return (
-    <div className='relative -m-2.5 h-full border'>
-      <div className='dark:bg-dark2 flex bg-white'>
+    <div className='relative -m-2.5 overflow-hidden border dark:border-slate-700'>
+      <div className='dark:bg-dark2 flex bg-white '>
         {/* sidebar */}
-        <SideBarMessage />
+        {toggleBoxSearchMessage ? <ResultSearchMessage /> : <SideBarMessage />}
         {/* message center */}
         {show === null ? (
           <EmptyMessage />

@@ -11,5 +11,6 @@ export const MESSAGE = {
   DELETE_MESSAGE_FROM_ME: 'message/deletemessagefromme',
   SEND_REACT_MESSAGE: 'message/sendReactmessage',
   UPDATE_REACT_MESSAGE: 'message/updateReactmessage',
-  DELETE_REACT_MESSAGE: 'message/deleteReactmessage'
+  DELETE_REACT_MESSAGE: 'message/deleteReactmessage',
+  SEARCH_MESSAGE: '/message/search'
 } as const

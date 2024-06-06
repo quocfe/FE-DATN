@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react'
-import { FileMsg, ImageMsg, TextMsg } from './TypeMessage'
+import { FileMsg, ImageMsg, TextMsg, VideoMsg } from './TypeMessage'
 
 import useConversationStore from '~/store/conversation.store'
 import { useQueryMessage } from '../hooks/useQueryMessage'
@@ -44,6 +44,8 @@ const ChatMessage = ({ groupName, groupImg, groupId, showScrollBtn }: MessageCen
               return <ImageMsg key={index} item={item} userid={profile?.user_id} />
             case 3:
               return <FileMsg key={index} item={item} userid={profile?.user_id} />
+            case 4:
+              return <VideoMsg key={index} item={item} userid={profile?.user_id} />
             default:
               break
           }

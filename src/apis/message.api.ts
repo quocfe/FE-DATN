@@ -50,6 +50,10 @@ class MessageApi {
   deleteMessageFromMe(id: string) {
     return http.delete(`${MESSAGE.DELETE_MESSAGE_FROM_ME}/${id}`, { withCredentials: true })
   }
+
+  searchMessage(query: string, conversationId: string) {
+    return http.get(`${MESSAGE.SEARCH_MESSAGE}/${conversationId}/${query}`)
+  }
 }
 
 export default new MessageApi()

@@ -41,7 +41,7 @@ type ConversationResponse = {
 }
 
 type MessageResponse = {
-  data: Message[]
+  data: TypeMessage[]
   message: string
 }
 
@@ -99,7 +99,23 @@ type ConvesationSideBar = Pick<GroupMessage> & {
   messsages: Message
 }
 
-type TypeMessage = Pick<Message> & {
+type TypeMessage = Pick<
+  Message,
+  | 'message_id'
+  | 'body'
+  | 'sub_body'
+  | 'status'
+  | 'group_message_id'
+  | 'parent_id'
+  | 'detelectedBy'
+  | 'detelectedAt'
+  | 'createdBy'
+  | 'type'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'user_name'
+> & {
   reactions: ReactMessageAttributes[]
   replyMessage: ReplyMessage
+  thumbnail: string
 }

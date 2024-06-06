@@ -10,13 +10,11 @@ import { toast } from 'react-toastify'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationReplyMessage from '../hooks/useMutationReplyMessage'
 
-function SendMessage({
-  groupId: receiverID,
-  boxReplyRef
-}: {
+type SendMessageType = {
   groupId: string
   boxReplyRef: React.LegacyRef<HTMLDivElement>
-}) {
+}
+function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const sendMedia = useMutationSendMessageAttach()
@@ -135,13 +133,24 @@ function SendMessage({
       uploadData.append('messageattach', files[0])
       uploadData.append('body', '')
       uploadData.append('group_message_id', groupID)
-      console.log(files[0].type)
-      files[0].type.split('/')[0] == 'application' ? uploadData.append('type', '3') : uploadData.append('type', '2')
+      const nameFile = files[0].type.split('/')[0]
+      if (nameFile == 'application') {
+        // file docx, xlsx, pptx, pdf
+        uploadData.append('type', '3')
+      } else if (nameFile == 'video') {
+        // video
+        uploadData.append('type', '4')
+      } else {
+        // image
+        uploadData.append('type', '2')
+      }
 
       sendMedia.mutate(uploadData, {
         onSuccess: (response) => {
+          console.log('pending', sendMedia.isPending)
           console.log('sendMedia ok', response)
         },
+
         onError: (error) => {
           console.log('sendMedia fail', error)
         }
