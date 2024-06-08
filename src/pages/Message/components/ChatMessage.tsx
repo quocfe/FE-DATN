@@ -7,19 +7,14 @@ import useAuthStore from '~/store/auth.store'
 import { IonIcon } from '@ionic/react'
 
 const ChatMessage = ({ groupName, groupImg, groupId, showScrollBtn }: MessageCenterProps) => {
-  const { data } = useQueryMessage()
-  const { selectedConversation, setMessages } = useConversationStore()
+  const { selectedConversation, messages } = useConversationStore()
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLInputElement>(null)
   const chatMessageRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView()
-  }, [selectedConversation])
-
-  useEffect(() => {
-    if (data) setMessages(data?.data?.data)
-  }, [data])
+  }, [selectedConversation, messages])
 
   return (
     <div ref={chatMessageRef} className='relative'>
@@ -36,7 +31,7 @@ const ChatMessage = ({ groupName, groupImg, groupId, showScrollBtn }: MessageCen
         </div>
       </div>
       <div className='space-y-2 text-sm font-medium'>
-        {data?.data?.data.map((item: TypeMessage, index: number) => {
+        {messages.map((item: TypeMessage, index: number) => {
           switch (item.type) {
             case 1:
               return <TextMsg key={index} item={item} userid={profile?.user_id} />

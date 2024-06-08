@@ -5,6 +5,7 @@ import './index.css'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { SocketContextProvider } from './context/socket.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <Router>
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} buttonPosition='top-left' />
-      <App />
+      <SocketContextProvider>
+        <App />
+      </SocketContextProvider>
     </QueryClientProvider>
   </Router>
 )

@@ -15,7 +15,7 @@ const ContentMessage = (params: any) => {
   const [openOption, setOpenOption] = useState(false)
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
-  const { setToggleBoxReply } = useConversationStore()
+  const { setToggleBoxReply, setPinMessage } = useConversationStore()
   const houreSend = calculateHoureAgo(params.item.createdAt)
   const emojiUserSelected = params.item.reactions?.filter(
     (reaction: any) => reaction.createdBy === params.item.createdBy
@@ -42,6 +42,7 @@ const ContentMessage = (params: any) => {
         setIsOpenModalOption(true)
         break
       case 'pin':
+        setPinMessage(params.item)
         break
       default:
         break
@@ -51,7 +52,16 @@ const ContentMessage = (params: any) => {
   const renderContent = (params: any) => {
     switch (params.item.type) {
       case 1:
-        return (
+        return params.item.body.includes('youtube') ? (
+          <a
+            href={params.item.body}
+            target='_blank'
+            rel='noopener noreferrer'
+            className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}
+          >
+            {params.item.status === true ? 'Tin nhắn đã thu hồi' : params.item.body}
+          </a>
+        ) : (
           <p className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
             {params.item.status === true ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
@@ -174,6 +184,7 @@ const ContentMessage = (params: any) => {
             ))}
           </div>
         )}
+        {/* content */}
         {renderContent(params)}
         <div
           className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner group-hover:flex`}

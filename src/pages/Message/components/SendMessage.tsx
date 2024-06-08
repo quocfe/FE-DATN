@@ -9,12 +9,14 @@ import { useMutationSendMessage, useMutationSendMessageAttach } from '../hooks/u
 import { toast } from 'react-toastify'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationReplyMessage from '../hooks/useMutationReplyMessage'
+import { useQueryMessage } from '../hooks/useQueryMessage'
 
 type SendMessageType = {
   groupId: string
   boxReplyRef: React.LegacyRef<HTMLDivElement>
 }
 function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
+  const { refetch } = useQueryMessage()
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const sendMedia = useMutationSendMessageAttach()
@@ -41,6 +43,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       sendMessageMutation.mutate(data, {
         onSuccess: () => {
           reset()
+          refetch()
         },
         onError: () => {}
       })
@@ -54,6 +57,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       replyMessageMutation.mutate(data, {
         onSuccess: () => {
           reset()
+          refetch()
           setToggleBoxReply(null)
         },
         onError: () => {
@@ -80,7 +84,9 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
         type: 1
       }
       sendMessageMutation.mutate(data, {
-        onSuccess: () => {},
+        onSuccess: () => {
+          refetch()
+        },
         onError: () => {
           toast.error('tin nhắn gửi !ok', {
             position: 'top-right',
@@ -104,6 +110,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       replyMessageMutation.mutate(data, {
         onSuccess: () => {
           reset()
+          refetch()
           setToggleBoxReply(null)
         },
         onError: () => {
@@ -144,9 +151,11 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
         // image
         uploadData.append('type', '2')
       }
+      // text: 1/ image: 2/ file: 3/ video: 4/ link: 5
 
       sendMedia.mutate(uploadData, {
         onSuccess: (response) => {
+          refetch()
           console.log('pending', sendMedia.isPending)
           console.log('sendMedia ok', response)
         },

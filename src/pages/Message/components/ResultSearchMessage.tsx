@@ -1,13 +1,15 @@
 import useConversationStore from '~/store/conversation.store'
 import useMutationSearchMessage from '../hooks/useSearchMessage'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ResultSearchMessageSkelaton from './Skelaton/ResultSearchMessageSkelaton'
 import { highlightMatchedText } from '../utils/highlightMatchedText'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
+import BoxSearchMessage from './BoxSearchMessage'
 
 function ResultSearchMessage() {
+  const boxSearchRef = useRef<HTMLDivElement>(null)
   const [searchMessages, setSearchMessages] = useState<TypeMessage[]>([])
-  const { searchParam: query, selectedConversation } = useConversationStore()
+  const { searchParam: query, selectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const searchMutation = useMutationSearchMessage()
 
   useEffect(() => {
@@ -34,9 +36,10 @@ function ResultSearchMessage() {
         id='side-chat'
         className='dark:bg-dark2 left-0 top-0 z-50 bg-white max-md:fixed max-md:h-screen max-md:w-5/6 max-md:-translate-x-full max-md:shadow'
       >
-        <div className='border-b p-4 dark:border-slate-700'>
-          <h3 className='mb-2 text-[16px] font-semibold'>Kết quả tìm kiếm</h3>
+        <div className='flex flex-col gap-2 border-b p-4 dark:border-slate-700'>
+          <h3 className='text-[16px] font-semibold'>Kết quả tìm kiếm</h3>
           <p className='text-[14px] '>Nhập nội dung cần tìm trong đoạn hội thoại</p>
+          {toggleBoxSearchMessage && <BoxSearchMessage boxSearchRef={boxSearchRef} />}
         </div>
         {searchMutation.status === 'success' ? (
           <>

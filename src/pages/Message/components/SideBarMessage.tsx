@@ -1,24 +1,33 @@
 import { IonIcon } from '@ionic/react'
 import { useEffect, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import ModalCreateGroup from './ModalCreateGroup'
-import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
-import { string } from 'yup'
 import { calculateTimeAgo } from '~/utils/helpers'
+import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
+import { useQueryConversation } from '../hooks/useQueryConversation'
 import { checkBodyMessage } from '../utils/checkBodyMessage'
+import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
+import { useSocketContext } from '~/context/socket'
+import { useQueryMessage } from '../hooks/useQueryMessage'
 
 const SideBarMessage = () => {
-  const { data: conversation, isLoading } = useQueryConversation()
-  const { setSelectedConversation, setSelectedNoConversation } = useConversationStore()
+  const { data: conversation, isLoading, refetch } = useQueryConversation()
+  const { setSelectedConversation, setSelectedNoConversation, setMessages } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
+  const { onlineUsers, socket } = useSocketContext()
+  const { data } = useQueryMessage()
 
   const handleSelectedConversation = (item: GroupMessage) => {
     setSelectedConversation(item)
+    socket?.emit('room', item.group_message_id)
   }
+
+  useEffect(() => {
+    if (data) setMessages(data?.data?.data)
+    // refetch()
+  }, [data])
 
   const handleClickNoConversation = (user: any) => {
     setSelectedNoConversation(user)
@@ -34,6 +43,7 @@ const SideBarMessage = () => {
       }
     })
   }
+
   if (isLoading) {
     return <SideBarMessageSkelaton />
   }
@@ -138,6 +148,7 @@ const SideBarMessage = () => {
         {/* users list */}
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto p-2 md:h-[calc(100vh-204px)]'>
           {conversation?.data?.data?.map((item: ConvesationSideBar, index: number) => {
+            const isOnline = onlineUsers.includes(item.user_id)
             return (
               <div
                 key={index}
@@ -149,7 +160,9 @@ const SideBarMessage = () => {
                     src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
                     className='h-full w-full rounded-full object-cover'
                   />
-                  <div className='absolute bottom-0 right-0 h-4 w-4 rounded-full border border-white bg-green-500 dark:border-slate-800' />
+                  <div
+                    className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
+                  />
                 </div>
                 <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
                   <div className='mr-auto truncate text-sm font-medium text-black dark:text-white '>

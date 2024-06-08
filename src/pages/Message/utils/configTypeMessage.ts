@@ -1,6 +1,6 @@
 type configType = {
   item: TypeMessage
-  userid: string
+  userid: string | undefined
 }
 
 export function configTypeMessage({ item, userid }: configType) {

@@ -1,12 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { IonIcon } from '@ionic/react'
 import { useForm } from 'react-hook-form'
-import { LoginForm, loginSchema } from '~/utils/rules'
-import useMutationLogin from './hooks/useMutationLogin'
-import { isAxiosError } from '~/utils/utils'
+import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useAuthStore from '~/store/auth.store'
-import { Link } from 'react-router-dom'
+import { LoginForm, loginSchema } from '~/utils/rules'
+import { isAxiosError } from '~/utils/utils'
+import useMutationLogin from './hooks/useMutationLogin'
 
 function Login() {
   const { setIsAuthenticated, setProfile } = useAuthStore()
@@ -27,6 +27,7 @@ function Login() {
         const userProfile = data.data.data.user
         setProfile(userProfile)
         setIsAuthenticated(true)
+
         toast.success('Đăng nhập thành công!')
       },
       onError: (error) => {

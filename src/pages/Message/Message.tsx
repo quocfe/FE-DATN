@@ -8,6 +8,7 @@ import MessageCenter from './components/MessageCenter'
 import EmptyMessage from './components/EmptyMessage'
 import ProfileRight from './components/ProfileRight'
 import ResultSearchMessage from './components/ResultSearchMessage'
+import { useSocketContext } from '~/context/socket'
 
 const Message = () => {
   const { selectedConversation, selectedNoConversation, toggleBoxSearchMessage } = useConversationStore()

@@ -1,4 +1,5 @@
 import Header from '~/components/Header'
+import MessageFixed from '~/components/MessageFixed/MessageFixed'
 import Sidebar from '~/components/Sidebar'
 
 interface Props {

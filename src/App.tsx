@@ -3,6 +3,11 @@ import useRouteElements from './hooks/useRouteElements'
 import 'react-toastify/dist/ReactToastify.css'
 import { useIsFetching, useIsMutating } from '@tanstack/react-query'
 import Loading from './components/Loading'
+import MessageFixed from './components/MessageFixed/MessageFixed'
+import { io } from 'socket.io-client'
+import { useContext, useEffect } from 'react'
+import { getProfileFromLocalStorage } from './utils/auth'
+import { useSocketContext } from './context/socket'
 
 function App() {
   const routeElements = useRouteElements()
@@ -13,6 +18,7 @@ function App() {
     <div id='wrapper'>
       {/* {isFetching + isMutation !== 0 && <Loading />} */}
       {routeElements}
+      <MessageFixed />
       <ToastContainer position='bottom-right' />
     </div>
   )
