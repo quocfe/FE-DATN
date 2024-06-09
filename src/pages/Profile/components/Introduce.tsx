@@ -95,10 +95,14 @@ function Introduce({ profile, setShowModal }: Props) {
           )}
           <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img
+                src='https://res.cloudinary.com/dswainylr/image/upload/v1717866186/50615f8b24c2879cded3_ykqrnu.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover object-center'
+              />
             </div>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='inset-0 h-full w-full object-cover' />
             </div>
             <div className='relative aspect-[4/3] w-full'>
               <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='inset-0 h-full w-full object-cover' />

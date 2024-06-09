@@ -1,12 +1,17 @@
 import { IonIcon } from '@ionic/react'
 import { useRef } from 'react'
-import useUpdateImage from '~/hooks/user/useUpdateImage'
+import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
 import useAuthStore from '~/store/auth.store'
-import ChangePassword from './components/ChangePassword'
-import BasicInfo from './components/BasicInfo'
+import { Link, useLocation } from 'react-router-dom'
+import classNames from 'classnames'
 
-function Setting() {
+interface Props {
+  children: React.ReactNode
+}
+
+function Setting({ children }: Props) {
   // Hooks
+  const { pathname } = useLocation()
   const { profile } = useAuthStore()
   const { updateImage } = useUpdateImage()
   const inputFileProfilePictureRef = useRef<HTMLInputElement | null>(null)
@@ -70,7 +75,8 @@ function Setting() {
             </h3>
             <p className='mt-1 text-sm font-normal text-blue-600'>{profile?.email}</p>
           </div>
-          <button
+          <Link
+            to={'/profile'}
             className='inline-flex items-center gap-1 rounded-full border-2 border-slate-100 bg-slate-50 py-1 pl-2.5 pr-3 dark:bg-slate-700 dark:text-white'
             type='button'
             aria-haspopup='true'
@@ -82,24 +88,33 @@ function Setting() {
               role='img'
               aria-label='chevron down outline'
             />
-            <span className='text-sm font-medium'> Nâng cấp</span>
-          </button>
+            <span className='text-sm font-medium'> Trang cá nhân</span>
+          </Link>
         </div>
-        {/* nav tabs */}
+        {/* Nav Tabs */}
         <div className='relative border-b' tabIndex={-1} uk-slider='finite: true'>
           <nav className='uk-slider-container nav__underline -mb-px overflow-hidden border-transparent p-0 px-6'>
-            <ul
-              className='uk-slider-items w-[calc(100%+10px)] !overflow-hidden'
-              uk-switcher='connect: #setting_tab ; animation: uk-animation-slide-right-medium, uk-animation-slide-left-medium'
-            >
-              <li className='w-auto pr-2.5'>
-                <a href='#'> Cài đặt chung </a>
+            <ul className='uk-slider-items w-[calc(100%+10px)] !overflow-hidden'>
+              <li
+                className={classNames('w-auto pr-2.5', {
+                  'border-b-2 border-gray-600': pathname === '/setting'
+                })}
+              >
+                <Link to={'/setting'}> Cài đặt chung </Link>
               </li>
-              <li className='w-auto pr-2.5'>
-                <a href='#'> Đổi mật khẩu</a>
+              <li
+                className={classNames('w-auto pr-2.5', {
+                  'border-b-2 border-gray-600': pathname === '/setting/password'
+                })}
+              >
+                <Link to={'/setting/password'}> Đổi mật khẩu</Link>
               </li>
-              <li className='w-auto pr-2.5'>
-                <a href='#'> Avatare</a>
+              <li
+                className={classNames('w-auto pr-2.5', {
+                  'border-b-2 border-gray-600': pathname === '/setting/blocks'
+                })}
+              >
+                <Link to={'/setting/blocks'}> Chặn</Link>
               </li>
               <li className='w-auto pr-2.5'>
                 <a href='#'> Cover Photo</a>
@@ -115,15 +130,6 @@ function Setting() {
               </li>
               <li className='w-auto pr-2.5'>
                 <a href='#'> Setting</a>
-              </li>
-              <li className='w-auto pr-2.5'>
-                <a href='#'> anothers</a>
-              </li>
-              <li className='w-auto pr-2.5'>
-                <a href='#'> anothers</a>
-              </li>
-              <li className='w-auto pr-2.5'>
-                <a href='#'> anothers44</a>
               </li>
             </ul>
           </nav>
@@ -142,412 +148,8 @@ function Setting() {
             <IonIcon icon='chevron-forward' className='mr-1 text-2xl' />
           </a>
         </div>
-        <div id='setting_tab' className='uk-switcher overflow-hidden p-6 text-sm text-black md:px-20 md:py-12'>
-          {/* basic info */}
-          <BasicInfo profile={profile} />
-          {/* change password*/}
-          <ChangePassword />
-          {/* tab socialinks */}
-          <div>
-            <div className='mx-auto max-w-md'>
-              <div className='font-normal text-gray-400'>
-                <div>
-                  <h4 className='text-xl font-medium text-black dark:text-white'> Social Links </h4>
-                  <p className='mt-3 font-normal text-gray-600 dark:text-white'>
-                    We may still send you important notifications about your account and content outside of you
-                    preferred notivications settings
-                  </p>
-                </div>
-                <div className='mt-8 space-y-6'>
-                  <div className='flex items-center gap-3'>
-                    <div className='flex rounded-full bg-blue-50 p-2 '>
-                      <IonIcon icon='logo-facebook' className='text-2xl text-blue-600' />
-                    </div>
-                    <div className='flex-1'>
-                      <input type='text' className='w-full' placeholder='http://www.facebook.com/myname' />
-                    </div>
-                  </div>
-                  <div className='flex items-center gap-3'>
-                    <div className='flex rounded-full bg-pink-50 p-2 '>
-                      <IonIcon icon='logo-instagram' className='text-2xl text-pink-600' />
-                    </div>
-                    <div className='flex-1'>
-                      <input type='text' className='w-full' placeholder='http://www.instagram.com/myname' />
-                    </div>
-                  </div>
-                  <div className='flex items-center gap-3'>
-                    <div className='flex rounded-full bg-sky-50 p-2 '>
-                      <IonIcon icon='logo-twitter' className='text-2xl text-sky-600' />
-                    </div>
-                    <div className='flex-1'>
-                      <input type='text' className='w-full' placeholder='http://www.twitter.com/myname' />
-                    </div>
-                  </div>
-                  <div className='flex items-center gap-3'>
-                    <div className='flex rounded-full bg-red-50 p-2 '>
-                      <IonIcon icon='logo-youtube' className='text-2xl text-red-600' />
-                    </div>
-                    <div className='flex-1'>
-                      <input type='text' className='w-full' placeholder='http://www.youtube.com/myname' />
-                    </div>
-                  </div>
-                  <div className='flex items-center gap-3'>
-                    <div className='flex rounded-full bg-slate-50 p-2 '>
-                      <IonIcon icon='logo-github' className='text-2xl text-black' />
-                    </div>
-                    <div className='flex-1'>
-                      <input type='text' className='w-full' placeholder='http://www.github.com/myname' />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-16 flex items-center justify-center gap-4'>
-                <button type='submit' className='button bg-secondery max-md:flex-1 lg:px-6'>
-                  Cancle
-                </button>
-                <button type='submit' className='button bg-primary text-white max-md:flex-1 lg:px-10'>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div>
-              <div className='items-start gap-16 md:flex'>
-                <label className='text-right font-semibold md:w-32'> Notify me when </label>
-                <div className='interactive-effect flex-1 space-y-4 max-md:mt-5'>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox1' defaultValue={3} />
-                      <span className='ml-3'> Someone send me message </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox1' defaultValue={3} />
-                      <span className='ml-3'> Someone liked my photo </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox2' defaultValue={3} />
-                      <span className='ml-3'> Someone shared on my photo </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox2' defaultValue={3} />
-                      <span className='ml-3'> Someone followed me </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox2' defaultValue={3} />
-                      <span className='ml-3'> Someone liked my posts</span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox2' defaultValue={3} />
-                      <span className='ml-3'> Someone mentioned me</span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className='inline-flex items-center'>
-                      <input className='rounded' type='checkbox' name='checkbox2' defaultValue={3} />
-                      <span className='ml-3'> Someone sent me follow requset</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-16 flex items-center justify-center gap-4'>
-                <button type='submit' className='button bg-secondery max-md:flex-1 lg:px-6'>
-                  Cancle
-                </button>
-                <button type='submit' className='button bg-primary text-white max-md:flex-1 lg:px-10'>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* tab toggle options*/}
-          <div>
-            <div>
-              <div className='space-y-6'>
-                <div className='items-start gap-10 md:flex'>
-                  <label className='w-40 text-right font-semibold'> Who can follow me ? </label>
-                  <div className='interactive-effect flex-1 space-y-2 max-md:mt-3'>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s1' defaultValue={1} />
-                        <span className='ml-3'> Everyone</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s1' defaultValue={2} />
-                        <span className='ml-3'> The People I Follow</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s1' defaultValue={3} />
-                        <span className='ml-3'> No body</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div className='items-start gap-10 md:flex'>
-                  <label className='text-right font-semibold md:w-40'> Who can message me ? </label>
-                  <div className='interactive-effect flex-1 space-y-2 max-md:mt-3'>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s2' defaultValue={1} />
-                        <span className='ml-3'> Everyone</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s2' defaultValue={2} />
-                        <span className='ml-3'> The People I Follow</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s2' defaultValue={3} />
-                        <span className='ml-3'> No body</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div className='items-start gap-10 md:flex'>
-                  <label className='text-right font-semibold md:w-40'>Status</label>
-                  <div className='interactive-effect flex-1 space-y-2 max-md:mt-3'>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s3' defaultValue={3} />
-                        <span className='ml-3'> Yes</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s3' defaultValue={3} />
-                        <span className='ml-3'> No</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div className='items-start gap-10 md:flex'>
-                  <label className='text-right font-semibold md:w-40'>Show my activities ?</label>
-                  <div className='interactive-effect flex-1 space-y-2 max-md:mt-3'>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s4' defaultValue={3} />
-                        <span className='ml-3'> Public</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className='inline-flex items-center'>
-                        <input type='radio' name='radio-s4' defaultValue={3} />
-                        <span className='ml-3'> Hide</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-16 flex items-center justify-center gap-4'>
-                <button type='submit' className='button bg-secondery max-md:flex-1 lg:px-6'>
-                  Cancle
-                </button>
-                <button type='submit' className='button bg-primary text-white max-md:flex-1 lg:px-10'>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* tab select dropdown*/}
-          <div>
-            <div>
-              <div className='mx-auto max-w-lg space-y-6 font-medium'>
-                <div className='items-center justify-between gap-16 md:flex'>
-                  <label className='text-right md:w-40'> Who can follow me ? </label>
-                  <div className='flex-1 max-md:mt-4'>
-                    <select className='w-full !rounded-md !border-0'>
-                      <option value={1}>Everyone</option>
-                      <option value={2}>People I Follow</option>
-                    </select>
-                  </div>
-                </div>
-                <div className='items-center justify-between gap-16 md:flex'>
-                  <label className='text-right md:w-40'> Who can message me ? </label>
-                  <div className='flex-1 max-md:mt-4'>
-                    <select className='w-full !rounded-md !border-0'>
-                      <option value={1}>Everyone</option>
-                      <option value={2}>People I Follow</option>
-                      <option value={2}>No body</option>
-                    </select>
-                  </div>
-                </div>
-                <div className='items-center justify-between gap-16 md:flex'>
-                  <label className='text-right md:w-40'> Show my activities ?</label>
-                  <div className='flex-1 max-md:mt-4'>
-                    <select className='w-full !rounded-md !border-0'>
-                      <option value={1}>Yes</option>
-                      <option value={2}>Now</option>
-                    </select>
-                  </div>
-                </div>
-                <div className='items-center justify-between gap-16 md:flex'>
-                  <label className='text-right md:w-40'> Status </label>
-                  <div className='flex-1 max-md:mt-4'>
-                    <select className='w-full !rounded-md !border-0'>
-                      <option value={1}>Online</option>
-                      <option value={2}>Offline</option>
-                    </select>
-                  </div>
-                </div>
-                <div className='items-center justify-between gap-16 md:flex'>
-                  <label className='text-right md:w-40'> Who can see my tags? </label>
-                  <div className='flex-1 max-md:mt-4'>
-                    <select className='w-full !rounded-md !border-0'>
-                      <option value={1}>Everyone</option>
-                      <option value={2}>People I Follow</option>
-                      <option value={2}>No body</option>
-                    </select>
-                  </div>
-                </div>
-                <div className='items-center justify-between gap-16 md:flex'>
-                  <label className='text-right md:w-40'> Allow search engines </label>
-                  <div className='flex-1 max-md:mt-4'>
-                    <select className='w-full !rounded-md !border-0'>
-                      <option value={1}>Yes</option>
-                      <option value={2}>Now</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-16 flex items-center justify-center gap-4'>
-                <button type='submit' className='button bg-secondery max-md:flex-1 lg:px-6'>
-                  Cancle
-                </button>
-                <button type='submit' className='button bg-primary text-white max-md:flex-1 lg:px-10'>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* tab Premision */}
-          <div>
-            <div>
-              <div className='mx-auto max-w-lg text-sm font-normal text-gray-400'>
-                <div>
-                  <h4 className='text-lg font-semibold text-black dark:text-white'> Alerts preferences </h4>
-                  <p className=' mt-3'>
-                    We may still send you important notifications about your account and content outside of you
-                    preferred notivications settings
-                  </p>
-                </div>
-                <div
-                  className='mt-8 space-y-4 md:space-y-8'
-                  uk-scrollspy='target: > div; cls: uk-animation-slide-bottom-medium; delay: 100 ;repeat: true'
-                >
-                  <div className='w-full'>
-                    <label className='switch flex cursor-pointer items-center justify-between gap-4'>
-                      <div className='hidden shrink-0 rounded-full bg-sky-100 p-2 text-sky-500 md:flex'>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth='1.5'
-                          stroke='currentColor'
-                          className='h-6 w-6'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75'
-                          />
-                        </svg>
-                      </div>
-                      <div className='flex-1 md:pr-8'>
-                        <h4 className='mb-1.5 text-base font-medium text-black dark:text-white'>Email notifications</h4>
-                        <p className=''>
-                          You can receive notifications about important updates and content directly to your email
-                          inbox.
-                        </p>
-                      </div>
-                      <input type='checkbox' />
-                      <span className='switch-button !relative' />
-                    </label>
-                  </div>
-                  <div className='w-full'>
-                    <label className='switch flex cursor-pointer items-center justify-between gap-4'>
-                      <div className='hidden shrink-0 rounded-full bg-purple-100 p-2 text-purple-500 md:flex'>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth='1.5'
-                          stroke='currentColor'
-                          className='h-6 w-6'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3'
-                          />
-                        </svg>
-                      </div>
-                      <div className='flex-1 md:pr-8'>
-                        <h4 className='mb-1.5 text-base font-medium text-black dark:text-white'> web notifications</h4>
-                        <p className=''> You can receive notifications through your notifications center </p>
-                      </div>
-                      <input type='checkbox' />
-                      <span className='switch-button !relative' />
-                    </label>
-                  </div>
-                  <div className='w-full'>
-                    <label className='switch flex cursor-pointer items-center justify-between gap-4'>
-                      <div className='hidden shrink-0 rounded-full bg-teal-100 p-2 text-teal-500 md:flex'>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth='1.5'
-                          stroke='currentColor'
-                          className='h-6 w-6'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3'
-                          />
-                        </svg>
-                      </div>
-                      <div className='flex-1 md:pr-8'>
-                        <h4 className='mb-1.5 text-base font-medium text-black dark:text-white'>Phone notifications</h4>
-                        <p className=''>
-                          You can receive notifications on your phone, so you can stay up-to-date even when you’re on
-                          the go
-                        </p>
-                      </div>
-                      <input type='checkbox' />
-                      <span className='switch-button !relative' />
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className='mt-16 flex items-center justify-center gap-4'>
-                <button type='submit' className='button bg-secondery max-md:flex-1 lg:px-6'>
-                  Cancle
-                </button>
-                <button type='submit' className='button bg-primary text-white max-md:flex-1 lg:px-10'>
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Contents */}
+        <div className='overflow-hidden p-6 text-sm text-black md:px-20 md:py-8'>{children}</div>
       </div>
     </div>
   )

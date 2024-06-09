@@ -2,8 +2,8 @@ import { IonIcon } from '@ionic/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import useMutationBlockedUser from '~/hooks/mutations/useMutationBlockedUser'
-import useMutationCancelFriendRequest from '~/hooks/mutations/useMutationCancelFriendRequest'
+import useMutationBlockedUser from '~/hooks/mutations/user/useMutationBlockedUser'
+import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
 
 interface Props {
   profile: UserProfile | null

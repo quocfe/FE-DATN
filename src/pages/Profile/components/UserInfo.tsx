@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import { useRef } from 'react'
-import useUpdateImage from '~/hooks/user/useUpdateImage'
+import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
 
 interface Props {
   profile: UserProfile | null

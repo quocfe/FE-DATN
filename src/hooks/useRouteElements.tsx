@@ -13,6 +13,9 @@ import LoginAdmin from '~/pages/admin/LoginAdmin'
 import PublicProfile from '~/pages/PublicProfile'
 import { FriendList, FriendRequest, FriendSuggest } from '~/pages/Friend'
 import Setting from '~/pages/Setting'
+import BasicInfo from '~/pages/Setting/BasicInfo'
+import ChangePassword from '~/pages/Setting/ChangePassword'
+import ListBlocks from '~/pages/Setting/ListBlocks'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -79,11 +82,38 @@ function useRouteElements() {
         },
         {
           path: '/setting',
-          element: (
-            <MainLayout>
-              <Setting />
-            </MainLayout>
-          )
+          children: [
+            {
+              path: '',
+              element: (
+                <MainLayout>
+                  <Setting>
+                    <BasicInfo />
+                  </Setting>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'password',
+              element: (
+                <MainLayout>
+                  <Setting>
+                    <ChangePassword />
+                  </Setting>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'blocks',
+              element: (
+                <MainLayout>
+                  <Setting>
+                    <ListBlocks />
+                  </Setting>
+                </MainLayout>
+              )
+            }
+          ]
         }
       ]
     },
@@ -106,12 +136,21 @@ function useRouteElements() {
       element: <ConfirmOTP />
     },
     {
-      path: '/admin/login',
-      element: <LoginAdmin />
-    },
-    {
-      path: '/admin/dashboard',
-      element: <Dashboard />
+      path: '/admin',
+      children: [
+        {
+          path: '',
+          element: <Navigate to={'/admin/dashboard'} replace />
+        },
+        {
+          path: 'login',
+          element: <LoginAdmin />
+        },
+        {
+          path: 'dashboard',
+          element: <Dashboard />
+        }
+      ]
     },
     {
       path: '*',

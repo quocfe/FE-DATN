@@ -2,9 +2,9 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import useMutationAcceptFriendRequest from '~/hooks/mutations/useMutationAcceptFriendRequest'
-import useMutationCancelFriendRequest from '~/hooks/mutations/useMutationCancelFriendRequest'
-import useMutationSenderFriendRequest from '~/hooks/mutations/useMutationSenderFriendRequest'
+import useMutationAcceptFriendRequest from '~/hooks/mutations/user/useMutationAcceptFriendRequest'
+import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
+import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
 
 interface Props {
   user: UserCompact
