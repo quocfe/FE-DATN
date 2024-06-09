@@ -31,7 +31,6 @@ function Setting({ children }: Props) {
   return (
     <div className='mx-auto max-w-3xl'>
       <div className='box relative rounded-lg shadow-md'>
-        {/* Head */}
         <div className='flex items-center gap-4 p-6 md:gap-8 md:p-8 md:pb-4'>
           <div className='relative h-12 w-12 shrink-0 md:h-20 md:w-20'>
             <label htmlFor='file' className='cursor-pointer'>
