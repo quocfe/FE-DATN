@@ -7,8 +7,10 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 import ChatMessageSkelaton from './Skelaton/ChatMessageSkelaton'
 import BoxSearchMessage from './BoxSearchMessage'
 import PinMessage from './PinMessage'
+import getInfoConversation from '../utils/getInfoConversation'
 
-function MessageCenter({ groupName, groupImg, groupId }: MessageCenterProps) {
+function MessageCenter() {
+  const { groupId, groupImg, groupName } = getInfoConversation()
   const { toggleBoxReply, toggleBoxSearchMessage, setToggleBoxSearchMessage, pinMessage } = useConversationStore()
   const { isLoading } = useQueryMessage()
   const chatMessageRef = useRef<HTMLInputElement>(null)

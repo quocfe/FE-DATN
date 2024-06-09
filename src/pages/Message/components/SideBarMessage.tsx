@@ -12,7 +12,9 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 
 const SideBarMessage = () => {
   const { data: conversation, isLoading, refetch } = useQueryConversation()
-  const { setSelectedConversation, setSelectedNoConversation, setMessages } = useConversationStore()
+  const { setSelectedConversation, setSelectedNoConversation, setMessages, toggleBoxSearchMessage, notifyMessage } =
+    useConversationStore()
+
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
@@ -44,8 +46,12 @@ const SideBarMessage = () => {
     })
   }
 
+  console.log('notifyMessage', notifyMessage)
+
   if (isLoading) {
     return <SideBarMessageSkelaton />
+  }
+  if (toggleBoxSearchMessage) {
   }
   return (
     <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
@@ -146,14 +152,16 @@ const SideBarMessage = () => {
           </div>
         </div>
         {/* users list */}
-        <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto p-2 md:h-[calc(100vh-204px)]'>
+        <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
           {conversation?.data?.data?.map((item: ConvesationSideBar, index: number) => {
             const isOnline = onlineUsers.includes(item.user_id)
+            const onNotify = notifyMessage === item.group_message_id
+
             return (
               <div
                 key={index}
                 onClick={() => handleSelectedConversation(item)}
-                className='relative flex cursor-pointer items-center gap-4 rounded-xl p-2 duration-200 hover:bg-secondery'
+                className={`relative flex cursor-pointer items-center gap-4 rounded-xl p-2 duration-200 hover:bg-secondery ${onNotify ? 'bg-red-300' : ''}`}
               >
                 <div className='relative h-14 w-14 shrink-0'>
                   <img

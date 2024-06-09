@@ -24,7 +24,6 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { selectedConversation, toggleBoxReply, setToggleBoxReply } = useConversationStore()
   const groupID = selectedConversation?.group_message_id ? selectedConversation?.group_message_id : ''
-  const receiver = selectedConversation === null ? receiverID : ''
   const profile = getProfileFromLocalStorage()
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
@@ -37,7 +36,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       const data = {
         body,
         group_message_id: groupID,
-        receiver: receiver,
+        receiver: receiverID,
         type: 1
       }
       sendMessageMutation.mutate(data, {
@@ -52,7 +51,8 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
         body,
         group_message_id: groupID,
         type: 1,
-        parent_id: toggleBoxReply.message_id
+        parent_id: toggleBoxReply.message_id,
+        receiver: receiverID
       }
       replyMessageMutation.mutate(data, {
         onSuccess: () => {
@@ -80,7 +80,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       const data = {
         body: '👍',
         group_message_id: groupID,
-        receiver: receiver,
+        receiver: receiverID,
         type: 1
       }
       sendMessageMutation.mutate(data, {
@@ -139,6 +139,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       const uploadData = new FormData()
       uploadData.append('messageattach', files[0])
       uploadData.append('body', '')
+      uploadData.append('receiverreceiverID', receiverID)
       uploadData.append('group_message_id', groupID)
       const nameFile = files[0].type.split('/')[0]
       if (nameFile == 'application') {

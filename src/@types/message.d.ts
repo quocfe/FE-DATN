@@ -23,6 +23,7 @@ type GroupMessage = {
   createdBy: string
   createdAt: Date
   updatedAt: Date
+  user_id: string
 }
 
 type ReactMessageAttributes = {
@@ -65,6 +66,7 @@ type ReplyMessageInput = {
   group_message_id: string
   type: number
   parent_id: string
+  receiver?: string
 }
 
 type ReactMessageInput = {

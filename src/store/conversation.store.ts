@@ -9,6 +9,7 @@ interface State {
   searchMessages: TypeMessage[]
   searchParam: string
   pinMessage: TypeMessage[] | null
+  notifyMessage: any
 }
 
 interface Action {
@@ -19,6 +20,7 @@ interface Action {
   setToggleBoxSearchMessage: (toggleBoxSearchMessage: boolean) => void
   setSearchParam: (searchParam: string) => void
   setPinMessage: (pinMessage: TypeMessage | null) => void
+  setNotifyMessage: (notifyMessage: any) => void
 }
 
 export const useConversationStore = create<State & Action>((set: any) => ({
@@ -30,13 +32,15 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   toggleBoxSearchMessage: false,
   searchParam: '',
   pinMessage: null,
+  notifyMessage: null,
   setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
   setMessages: (messages) => set({ messages }),
   setSelectedNoConversation: (selectedNoConversation) => set({ selectedNoConversation }),
   setToggleBoxReply: (toggleBoxReply) => set({ toggleBoxReply }),
   setToggleBoxSearchMessage: (toggleBoxSearchMessage) => set({ toggleBoxSearchMessage }),
   setSearchParam: (searchParam) => set({ searchParam }),
-  setPinMessage: (pinMessage) => set({ pinMessage })
+  setPinMessage: (pinMessage) => set({ pinMessage }),
+  setNotifyMessage: (notifyMessage) => set({ notifyMessage })
 }))
 
 export default useConversationStore

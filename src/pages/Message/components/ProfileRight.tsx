@@ -4,14 +4,10 @@ import ProfileRightOption from './ProfileRightOption'
 import FileRight from './components/FileRight'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
+import getInfoConversation from '../utils/getInfoConversation'
 
-type ProfileRightProps = {
-  groupImg: string
-  groupName: string
-  groupId: string
-}
-
-function ProfileRight({ groupImg, groupName }: ProfileRightProps) {
+function ProfileRight() {
+  const { groupId, groupImg, groupName } = getInfoConversation()
   const [showBox, setShowBox] = useState<boolean>(false)
   const [titleBox, setTitleBox] = useState<string>('')
   const { messages } = useConversationStore()
