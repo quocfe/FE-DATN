@@ -3,16 +3,10 @@ import authApi from '~/apis/auth.api'
 import messageApi from '~/apis/message.api'
 import { MessageForm } from '~/utils/rules'
 
-function useMutationUnSendFromOthers() {
+function useMutationReCallMessage() {
   return useMutation({
-    mutationFn: (id: string) => messageApi.deleteMessageFromOthers(id)
+    mutationFn: (body: ReCallMessageInput) => messageApi.recallMessage(body)
   })
 }
 
-function useMutationUnSendFromMe() {
-  return useMutation({
-    mutationFn: (id: string) => messageApi.deleteMessageFromMe(id)
-  })
-}
-
-export { useMutationUnSendFromOthers, useMutationUnSendFromMe }
+export default useMutationReCallMessage

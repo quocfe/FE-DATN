@@ -26,6 +26,14 @@ type GroupMessage = {
   user_id: string
 }
 
+type RecallMessage = {
+  recall_message_id: string
+  message_id: string
+  user_id: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 type ReactMessageAttributes = {
   react_message_id: string
   user_id: string
@@ -43,6 +51,11 @@ type ConversationResponse = {
 
 type MessageResponse = {
   data: TypeMessage[]
+  message: string
+}
+
+type RecallResponse = {
+  data: RecallMessage[]
   message: string
 }
 
@@ -90,11 +103,18 @@ type MessageCenterProps = {
 type ReplyMessageInput = Pick<Message, 'body' | 'group_message_id' | 'type' | 'parent_id'>
 type ReactMessageInput = Pick<ReactMessage, 'message_id' | 'user_id' | 'emoji' | 'createdBy'>
 type ReplyMessage = Pick<Message, 'body' | 'message_id' | 'type' | 'createdBy'> & {
-  reply_user: stirng
+  reply_user: string
+} & {
+  recallInReply: []
 }
 
 type CreateMemberGroupInput = Pick<MemberGroup, 'group_message_id'> & {
   listUser: string
+}
+
+type ReCallMessageInput = {
+  message_id: string
+  forAll: boolean
 }
 
 type ConvesationSideBar = Pick<GroupMessage> & {
@@ -117,6 +137,7 @@ type TypeMessage = Pick<
   | 'updatedAt'
   | 'user_name'
 > & {
+  recalls: []
   reactions: ReactMessageAttributes[]
   replyMessage: ReplyMessage
   thumbnail: string

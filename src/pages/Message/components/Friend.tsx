@@ -28,7 +28,6 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch }) => {
   }, [querySearch])
 
   const handleCheckboxChange = (user: any) => {
-    console.log('click')
     setListUser((prevList: string[]) =>
       prevList.includes(user.user_id) ? prevList.filter((id) => id !== user.user_id) : [...prevList, user.user_id]
     )

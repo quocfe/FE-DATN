@@ -64,11 +64,11 @@ const ContentMessage = (params: any) => {
             rel='noopener noreferrer'
             className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}
           >
-            {params.item.status === true ? 'Tin nhắn đã thu hồi' : params.item.body}
+            {params.item.status === false ? 'Tin nhắn đã thu hồi' : params.item.body}
           </a>
         ) : (
           <p className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
-            {params.item.status === true ? 'Tin nhắn đã thu hồi' : params.item.body}
+            {params.item.status === false ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
         )
       case 2:
@@ -95,6 +95,8 @@ const ContentMessage = (params: any) => {
               </div>
             </div>
           </div>
+        ) : params.item.status === false ? (
+          'Tin nhắn đã thu hồi'
         ) : (
           <img
             alt={params.item?.body}
@@ -114,8 +116,8 @@ const ContentMessage = (params: any) => {
             }
             className={`flex items-center gap-2 `}
           >
-            <IonIcon icon='document' className='h-5 w-5' />
-            <p>{params.item.body}</p>
+            <IonIcon icon='document' className='h-5 w-5 flex-shrink-0' />
+            <p> {params.item.status === false ? 'Tin nhắn đã thu hồi' : params.item.body}</p>
           </div>
         )
       case 4:
@@ -123,8 +125,10 @@ const ContentMessage = (params: any) => {
           <video width={300} controls className='rounded-[16px] p-2'>
             <source src={params.item.sub_body} type='video/mp4' />
           </video>
+        ) : params.item.status === false ? (
+          'Tin nhắn đã thu hồi'
         ) : (
-          <video width={100} className='rounded-[16px]'>
+          <video width={100} className='rounded-[8px]'>
             <source src={params.item.sub_body} type='video/mp4' />
           </video>
         )
@@ -156,7 +160,7 @@ const ContentMessage = (params: any) => {
       ref={widthRef}
       id={params.item.message_id}
       onClick={() =>
-        params.type === 'reply' && params.item.status != true ? handleToOldMessage(params.item.message_id) : ''
+        params.type === 'reply' && params.item.status === true ? handleToOldMessage(params.item.message_id) : ''
       }
       onMouseLeave={() => {
         setOpenEmoji(false)

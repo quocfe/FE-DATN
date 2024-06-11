@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Modal from '~/components/Modal'
-import { useMutationUnSendFromMe, useMutationUnSendFromOthers } from '../hooks/useMutationUnSend'
 import { getProfileFromLocalStorage } from '~/utils/auth'
+import { useQueryMessage } from '../hooks/useQueryMessage'
+import useMutationReCallMessage from './../hooks/useMutationUnSend'
 
 type ModalTypes = {
   isOpen: boolean
@@ -11,24 +12,34 @@ type ModalTypes = {
 
 const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
   const [type, setType] = useState<string>('')
-  const mutationFromMe = useMutationUnSendFromMe()
-  const mutationFromOthers = useMutationUnSendFromOthers()
+  const { refetch } = useQueryMessage()
+  const mutationRecall = useMutationReCallMessage()
   const profile = getProfileFromLocalStorage() || {}
 
   const handleClickUnSend = () => {
     if (type === 'everyone') {
-      mutationFromMe.mutate(message.message_id, {
+      const data = {
+        message_id: message.message_id,
+        forAll: true
+      }
+      mutationRecall.mutate(data, {
         onSuccess: () => {
           onClose()
+          refetch()
         },
         onError: (error) => {
           console.log(error)
         }
       })
     } else {
-      mutationFromOthers.mutate(message.message_id, {
+      const data = {
+        message_id: message.message_id,
+        forAll: false
+      }
+      mutationRecall.mutate(data, {
         onSuccess: () => {
           onClose()
+          refetch()
         },
         onError: (error) => {
           console.log(error)

@@ -1,33 +1,45 @@
 // CustomFileInput.tsx
 
 import { IonIcon } from '@ionic/react'
-import React, { useState } from 'react'
+import axios from 'axios'
+import { head } from 'lodash'
+import React, { useCallback, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
 
 type CustomFileInputProps = {
   iconName: string
+  setFile: (file: any) => void
+  file: File | null
 }
 
-const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile }) => {
+  const [preview, setPreview] = useState<string | null>(null)
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) setSelectedFile(file)
-  }
-
-  const handleFileInputClick = () => {
-    const inputElement = document.getElementById('fileInput') as HTMLInputElement
-    inputElement.click()
-  }
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      const file = acceptedFiles[0]
+      setFile(file)
+      setPreview(URL.createObjectURL(file))
+    },
+    accept: {
+      'image/png': ['.png', '.jpg', '.jpeg', '.webp']
+    }
+  })
 
   return (
     <label
+      {...getRootProps()}
       htmlFor='fileInput'
-      className='flex cursor-pointer items-center gap-3 rounded-full border border-dashed border-gray-300 bg-gray-50 p-4'
-      onClick={handleFileInputClick}
+      className={`flex cursor-pointer  items-center rounded-full border border-dashed border-gray-300 bg-gray-50 ${!preview ? 'gap-3 p-4' : ''} `}
     >
-      <IonIcon icon={iconName} />
-      <input type='file' id='fileInput' name='doc' accept='.png, .jpg' onChange={handleFileChange} className='hidden' />
+      {preview ? (
+        <div>
+          <img src={preview} alt='Selected' className='h-14 w-16 shrink-0 overflow-hidden rounded-full object-cover' />
+        </div>
+      ) : (
+        <IonIcon icon={iconName} />
+      )}
+      <input {...getInputProps()} className='hidden' />
     </label>
   )
 }

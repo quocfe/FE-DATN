@@ -10,6 +10,10 @@ class MessageApi {
     return http.get<MessageResponse>(`${MESSAGE.GET_MESSAGE}/${id}`, { withCredentials: true })
   }
 
+  getRecall() {
+    return http.get<RecallResponse>(`${MESSAGE.GET_RECALL}`, { withCredentials: true })
+  }
+
   sendMessage(messageData: MessageInput) {
     return http.post<MessageResponse>(MESSAGE.SEND_MESSAGE, messageData, { withCredentials: true })
   }
@@ -39,16 +43,12 @@ class MessageApi {
     return http.post(MESSAGE.ADD_MEMBERS_TO_GROUP, memberGroupData, { withCredentials: true })
   }
 
+  recallMessage(body: ReCallMessageInput) {
+    return http.post(`${MESSAGE.RECALL_MESSAGE}`, body, { withCredentials: true })
+  }
+
   deleteConversation(id: string) {
     return http.delete(`${MESSAGE.DELETE_CONVERSATION}/${id}`, { withCredentials: true })
-  }
-
-  deleteMessageFromOthers(id: string) {
-    return http.delete(`${MESSAGE.DELETE_MESSAGE_FROM_OTHERS}/${id}`, { withCredentials: true })
-  }
-
-  deleteMessageFromMe(id: string) {
-    return http.delete(`${MESSAGE.DELETE_MESSAGE_FROM_ME}/${id}`, { withCredentials: true })
   }
 
   searchMessage(query: string, conversationId: string) {

@@ -5,11 +5,16 @@ import { configTypeMessage } from '../utils/configTypeMessage'
 
 type TypeMsg = {
   item: TypeMessage
-  userid: string | undefined
+  userid: string
 }
 
 export const TextMsg = ({ item, userid }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
+  // console.log('recall', recall)
+  // console.log('item', item)
+  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const check2 = check.some((re: any) => re.user_id === userid)
+
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>
@@ -25,17 +30,21 @@ export const TextMsg = ({ item, userid }: TypeMsg) => {
                 mt-2 flex flex-col ${me ? 'items-end' : 'items-start'} 
               `}
           >
-            {!recall && (
+            {!recall && !check2 ? (
               <div className='flex items-center gap-2'>
                 <IonIcon icon='arrow-undo' className='text-[17px]' />
                 <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
               </div>
+            ) : (
+              ''
             )}
             <div
               className={`rounded-[14px] 
                 ${me ? 'items-end' : 'items-start'} flex w-fit flex-col `}
             >
-              {!recall && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />}
+              {!recall
+                ? !check2 && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />
+                : ''}
               <ContentMessage me={me} recall={recall} item={item} />
             </div>
           </div>
@@ -49,7 +58,8 @@ export const TextMsg = ({ item, userid }: TypeMsg) => {
 
 export const ImageMsg = ({ item, userid }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-
+  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const check2 = check.some((re: any) => re.user_id === userid)
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>
@@ -76,7 +86,9 @@ export const ImageMsg = ({ item, userid }: TypeMsg) => {
                 className={`rounded-[14px] 
                 ${me ? 'items-end' : 'items-start'} flex w-fit flex-col `}
               >
-                {!recall && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />}
+                {!recall
+                  ? !check2 && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />
+                  : ''}
                 <ContentMessage me={me} recall={recall} item={item} />
               </div>
             </div>
@@ -91,6 +103,8 @@ export const ImageMsg = ({ item, userid }: TypeMsg) => {
 
 export const FileMsg = ({ item, userid }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
+  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const check2 = check.some((re: any) => re.user_id === userid)
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>
@@ -117,7 +131,9 @@ export const FileMsg = ({ item, userid }: TypeMsg) => {
                 className={`rounded-[14px] 
                 ${me ? 'items-end' : 'items-start'} flex w-fit flex-col `}
               >
-                {!recall && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />}
+                {!recall
+                  ? !check2 && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />
+                  : ''}
                 <ContentMessage me={me} recall={recall} item={item} />
               </div>
             </div>
@@ -132,7 +148,8 @@ export const FileMsg = ({ item, userid }: TypeMsg) => {
 
 export const VideoMsg = ({ item, userid }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-
+  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const check2 = check.some((re: any) => re.user_id === userid)
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>
@@ -149,17 +166,21 @@ export const VideoMsg = ({ item, userid }: TypeMsg) => {
                 mt-2 flex flex-col ${me ? 'items-end' : 'items-start'} 
               `}
             >
-              {!recall && (
+              {!recall && !check2 ? (
                 <div className='flex items-center gap-2'>
                   <IonIcon icon='arrow-undo' className='text-[17px]' />
                   <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
                 </div>
+              ) : (
+                ''
               )}
               <div
                 className={`rounded-[14px] 
                 ${me ? 'items-end' : 'items-start'} flex w-fit flex-col `}
               >
-                {!recall && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />}
+                {!recall
+                  ? !check2 && <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />
+                  : ''}
                 <ContentMessage me={me} recall={recall} item={item} />
               </div>
             </div>

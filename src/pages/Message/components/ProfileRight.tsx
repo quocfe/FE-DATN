@@ -5,6 +5,7 @@ import FileRight from './components/FileRight'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import getInfoConversation from '../utils/getInfoConversation'
+import { useQueryRecallMessage } from '../hooks/useQueryRecallMessage'
 
 function ProfileRight() {
   const { groupId, groupImg, groupName } = getInfoConversation()
@@ -14,11 +15,12 @@ function ProfileRight() {
   const { user_id } = getProfileFromLocalStorage()
 
   const renderList = (type: number) => {
-    const listTemp = messages.filter((message: Message) => {
-      return message.type === type && message.status != true
+    const listTemp = messages.filter((message: TypeMessage) => {
+      return message.type === type && message.status === true
     })
-    const list = listTemp.filter((message: Message) => {
-      return message.status === null || (message.status === false && message.detelectedBy != user_id)
+
+    const list = listTemp.filter((item) => {
+      return item?.recalls.every((recall: any) => recall.user_id != user_id)
     })
 
     return list

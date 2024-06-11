@@ -39,6 +39,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
         receiver: receiverID,
         type: 1
       }
+
       sendMessageMutation.mutate(data, {
         onSuccess: () => {
           reset()
@@ -155,10 +156,8 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       // text: 1/ image: 2/ file: 3/ video: 4/ link: 5
 
       sendMedia.mutate(uploadData, {
-        onSuccess: (response) => {
+        onSuccess: () => {
           refetch()
-          console.log('pending', sendMedia.isPending)
-          console.log('sendMedia ok', response)
         },
 
         onError: (error) => {

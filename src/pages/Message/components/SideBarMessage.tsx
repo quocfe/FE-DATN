@@ -23,7 +23,7 @@ const SideBarMessage = () => {
 
   const handleSelectedConversation = (item: GroupMessage) => {
     setSelectedConversation(item)
-    socket?.emit('room', item.group_message_id)
+    socket?.emit('seenMessage', item.group_message_id)
   }
 
   useEffect(() => {
@@ -45,8 +45,6 @@ const SideBarMessage = () => {
       }
     })
   }
-
-  console.log('notifyMessage', notifyMessage)
 
   if (isLoading) {
     return <SideBarMessageSkelaton />
@@ -155,13 +153,13 @@ const SideBarMessage = () => {
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
           {conversation?.data?.data?.map((item: ConvesationSideBar, index: number) => {
             const isOnline = onlineUsers.includes(item.user_id)
-            const onNotify = notifyMessage === item.group_message_id
+            // const onNotify = notifyMessage === item.group_message_id
 
             return (
               <div
                 key={index}
                 onClick={() => handleSelectedConversation(item)}
-                className={`relative flex cursor-pointer items-center gap-4 rounded-xl p-2 duration-200 hover:bg-secondery ${onNotify ? 'bg-red-300' : ''}`}
+                className={`relative flex cursor-pointer items-center gap-4 rounded-xl p-2 duration-200 hover:bg-secondery `}
               >
                 <div className='relative h-14 w-14 shrink-0'>
                   <img

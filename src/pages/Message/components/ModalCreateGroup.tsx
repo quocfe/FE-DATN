@@ -7,28 +7,42 @@ import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 import Friend from './Friend'
 import _ from 'lodash'
+import axios from 'axios'
+import Spinner from './Skelaton/Spinner'
+import uploadApi from '../utils/uploadApi'
+import useFileUpload from '../utils/uploadApi'
 
 const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const [listUser, setListUser] = useState<string[]>([])
   const [groupName, setGroupName] = useState<string>('')
   const [querySearch, setQuerySearch] = useState<string>('')
+  const [file, setFile] = useState<File | null>(null)
   const createMessageMutation = useMutationCreateMessage()
   const { refetch } = useQueryConversation()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { upload } = useFileUpload()
 
-  const data = {
-    list_user: JSON.stringify(listUser),
-    group_name: groupName,
-    group_thumbnail: ''
-  }
+  const handleCreate = async () => {
+    const dataGroup = {
+      list_user: JSON.stringify(listUser),
+      group_name: groupName,
+      group_thumbnail: ''
+    }
+    if (file) {
+      setIsLoading(true)
+      const url = await upload(file)
+      dataGroup.group_thumbnail = url
+    }
 
-  const handleCreate = () => {
-    createMessageMutation.mutate(data, {
+    createMessageMutation.mutate(dataGroup, {
       onSuccess: () => {
         toast.success('Tạo nhóm ok ')
         refetch()
+        onClose()
+        setIsLoading(false)
       },
       onError: () => {
-        toast.error('Cần 3 người')
+        toast.error('Cần tối thiểu 3 thành viên để tạo nhóm')
       }
     })
   }
@@ -42,7 +56,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
           </div>
           <div className='p-6 py-0'>
             <div className='mb-4 flex w-full gap-2'>
-              <CustomFileInput iconName={'image-outline'} />
+              <CustomFileInput iconName={'image-outline'} setFile={setFile} file={file} />
               <div className='group relative z-0 w-full border-0 border-b-2 !border-gray-600'>
                 <input
                   type='text'
@@ -81,10 +95,14 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
             <button className='cursor-not-allowed rounded-md bg-gray-400 px-5 py-1.5 text-white' type='button'>
               Tạo
             </button>
+          ) : isLoading ? (
+            <button className='uk-modal-close  rounded-md bg-primary px-5 py-1.5 text-white' type='button'>
+              <Spinner />
+            </button>
           ) : (
             <button
               onClick={handleCreate}
-              className='uk-modal-close rounded-md bg-primary px-5 py-1.5 text-white'
+              className='uk-modal-close  rounded-md bg-primary px-5 py-1.5 text-white'
               type='button'
             >
               Tạo
