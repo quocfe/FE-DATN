@@ -5,6 +5,7 @@ function MyFriends() {
   // React Query
   const { data } = useQueryListMyFriends()
 
+  // Danh sách bạn bè
   const friends = data?.data.data.friends ?? []
 
   return (

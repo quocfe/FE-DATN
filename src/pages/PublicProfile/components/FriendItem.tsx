@@ -6,6 +6,7 @@ interface Props {
 }
 
 function FriendItem({ friend }: Props) {
+  // Hooks
   const { profile } = useAuthStore()
 
   return (

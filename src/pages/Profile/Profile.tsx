@@ -9,6 +9,7 @@ import CreateStory from '~/components/CreateStory'
 import FeedStory from './components/FeedStory'
 
 function Profile() {
+  // Hooks
   const [showModal, setShowModal] = useState<boolean>(false)
   const { profile } = useAuthStore()
 

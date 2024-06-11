@@ -18,7 +18,7 @@ function MyFriends() {
     }
   }, [user_id, refetch])
 
-  // Bạn bè của bạn bè
+  // Danh sách bạn bè của bạn bè
   const friends = data?.data.data.friends ?? []
 
   return (

@@ -7,6 +7,7 @@ import { isAxiosError } from '~/utils/utils'
 import Dialog from '~/components/Dialog'
 
 function ChangePassword() {
+  // React Hook Form
   const {
     register,
     handleSubmit,
@@ -20,6 +21,7 @@ function ChangePassword() {
   // React Query
   const changePasswordMutation = useMutationChangePassword()
 
+  // Thay đổi mật khẩu
   const handleChangePassword = handleSubmit((dataChangePassword) => {
     const data: ChangePassword = {
       old_password: dataChangePassword.currentPassword,
@@ -48,7 +50,14 @@ function ChangePassword() {
 
   return (
     <div>
-      {/* <Dialog isVisible={true} onClose={() => false} type='notification' /> */}
+      {/* <Dialog
+        isVisible={true}
+        onClose={() => false}
+        type='success'
+        title='Thay đổi mật khẩu thành công'
+        description='Bạn đã thay đổi mật khẩu thành công. Mật khẩu mới của bạn đã được cập nhật và có hiệu lực ngay lập tức. Vui lòng sử dụng mật khẩu mới để đăng nhập vào các lần sau.'
+        textBtn='Đăng xuất'
+      /> */}
       <form onSubmit={handleChangePassword}>
         <div className='mx-auto max-w-lg space-y-6'>
           <div>

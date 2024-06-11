@@ -7,9 +7,12 @@ import useMutationRegister from './hooks/useMutationRegister'
 import { toast } from 'react-toastify'
 
 function Register() {
+  // Hooks
   const navigate = useNavigate()
+  // React Query
   const registerMutation = useMutationRegister()
 
+  // React Hook Form
   const {
     register,
     handleSubmit,
@@ -18,6 +21,7 @@ function Register() {
     resolver: yupResolver(registerSchema)
   })
 
+  // Đăng ký
   const handleRegister = handleSubmit((data) => {
     registerMutation.mutate(data, {
       onSuccess: () => {
