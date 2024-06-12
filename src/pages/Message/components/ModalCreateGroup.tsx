@@ -1,16 +1,14 @@
 import { IonIcon } from '@ionic/react'
+import _ from 'lodash'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
 import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
 import { useQueryConversation } from '../hooks/useQueryConversation'
-import Friend from './Friend'
-import _ from 'lodash'
-import axios from 'axios'
-import Spinner from './Skelaton/Spinner'
-import uploadApi from '../utils/uploadApi'
 import useFileUpload from '../utils/uploadApi'
+import Friend from './Friend'
+import Spinner from './Skelaton/Spinner'
 
 const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const [listUser, setListUser] = useState<string[]>([])
@@ -36,7 +34,6 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
 
     createMessageMutation.mutate(dataGroup, {
       onSuccess: () => {
-        toast.success('Tạo nhóm ok ')
         refetch()
         onClose()
         setIsLoading(false)

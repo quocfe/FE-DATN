@@ -1,14 +1,13 @@
 import { IonIcon } from '@ionic/react'
 import { useEffect, useState } from 'react'
+import { useSocketContext } from '~/context/socket'
 import useConversationStore from '~/store/conversation.store'
-import { calculateTimeAgo } from '~/utils/helpers'
 import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
 import { useQueryConversation } from '../hooks/useQueryConversation'
-import { checkBodyMessage } from '../utils/checkBodyMessage'
+import { useQueryMessage } from '../hooks/useQueryMessage'
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
-import { useSocketContext } from '~/context/socket'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import Conversation from './components/Conversation'
 
 const SideBarMessage = () => {
   const { data: conversation, isLoading, refetch } = useQueryConversation()
@@ -18,13 +17,8 @@ const SideBarMessage = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
-  const { onlineUsers, socket } = useSocketContext()
+  const { onlineUsers } = useSocketContext()
   const { data } = useQueryMessage()
-
-  const handleSelectedConversation = (item: GroupMessage) => {
-    setSelectedConversation(item)
-    socket?.emit('seenMessage', item.group_message_id)
-  }
 
   useEffect(() => {
     if (data) setMessages(data?.data?.data)
@@ -153,38 +147,7 @@ const SideBarMessage = () => {
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
           {conversation?.data?.data?.map((item: ConvesationSideBar, index: number) => {
             const isOnline = onlineUsers.includes(item.user_id)
-            // const onNotify = notifyMessage === item.group_message_id
-
-            return (
-              <div
-                key={index}
-                onClick={() => handleSelectedConversation(item)}
-                className={`relative flex cursor-pointer items-center gap-4 rounded-xl p-2 duration-200 hover:bg-secondery `}
-              >
-                <div className='relative h-14 w-14 shrink-0'>
-                  <img
-                    src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
-                    className='h-full w-full rounded-full object-cover'
-                  />
-                  <div
-                    className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
-                  />
-                </div>
-                <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
-                  <div className='mr-auto truncate text-sm font-medium text-black dark:text-white '>
-                    {item?.group_name}
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <div className='overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-medium text-gray-800'>
-                      {item?.messages?.body && checkBodyMessage(item?.messages?.body)}
-                    </div>
-                    <div className='flex-shrink-0 text-xs font-light text-gray-500 dark:text-white/70'>
-                      {item?.messages?.createdAt && calculateTimeAgo(item.messages.createdAt)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
+            return <Conversation key={index} item={item} isOnline={isOnline} />
           })}
         </div>
       </div>
