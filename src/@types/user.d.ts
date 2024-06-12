@@ -56,3 +56,27 @@ type SearchFriend = {
     profile_picture: string
   }
 }
+type ProfilePublicResponse = SuccessResponse<{
+  user: UserProfile
+  relationship: { status: string } | null
+}>
+
+type UserListReponse = SuccessResponse<{
+  users: UserCompact[]
+  friends: UserCompact[]
+}>
+
+// user đơn giản
+type UserCompact = {
+  user_id: string
+  first_name: string
+  last_name: string
+  Profile: null | {
+    profile_picture: string
+  }
+}
+
+type ChangePassword = {
+  old_password: string
+  new_password: string
+}

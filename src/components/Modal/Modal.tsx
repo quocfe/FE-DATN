@@ -6,10 +6,9 @@ interface Props {
   children: React.ReactNode
   width?: string
   height?: string
-  overFlow?: boolean
 }
 
-function Modal({ isVisible, onClose, children, overFlow, height }: Props) {
+function Modal({ isVisible, onClose, children, height, width }: Props) {
   useEffect(() => {
     document.body.style.overflowY = isVisible ? 'hidden' : 'auto'
 
@@ -33,8 +32,8 @@ function Modal({ isVisible, onClose, children, overFlow, height }: Props) {
       onClick={handleClose}
     >
       <div
-        className={`${overFlow ? 'overflow-hidden overflow-y-scroll' : ' '} dark:bg-dark2 relative mx-auto h-${height}  w-full  rounded-lg bg-white text-sm text-black shadow-xl md:w-[450px]`}
-        style={{ scrollbarWidth: 'thin' }}
+        className='dark:bg-dark2 relative mx-auto w-full overflow-hidden overflow-y-scroll rounded-lg bg-white text-sm text-black shadow-xl md:w-[750px]'
+        style={{ width: width ? width : 'full', height: height ? height : 'full', scrollbarWidth: 'none' }}
       >
         {/* close button */}
         <button onClick={onClose} type='button' className='button-icon absolute  right-0 top-4 m-2.5'>

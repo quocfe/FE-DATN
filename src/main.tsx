@@ -10,7 +10,8 @@ import { SocketContextProvider } from './context/socket.tsx'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
+      retry: 1
     }
   }
 })

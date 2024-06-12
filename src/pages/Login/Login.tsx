@@ -35,11 +35,13 @@ function Login() {
           if (error.response) {
             const formError = error.response.data.errors
 
-            Object.keys(formError).forEach((key) => {
-              setError(key as keyof LoginForm, {
-                message: formError[key as keyof LoginForm]
+            if (formError) {
+              Object.keys(formError).forEach((key) => {
+                setError(key as keyof LoginForm, {
+                  message: formError[key as keyof LoginForm]
+                })
               })
-            })
+            }
           }
         }
       }
