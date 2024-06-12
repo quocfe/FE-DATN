@@ -25,9 +25,6 @@ function Navigation() {
           >
             <nav>
               <a href='#'>
-                <IonIcon className='text-xl' icon='pricetags-outline' /> Hủy kết bạn
-              </a>
-              <a href='#'>
                 <IonIcon className='text-xl' icon='time-outline' /> Mute story
               </a>
               <a href='#'>
@@ -37,9 +34,6 @@ function Navigation() {
                 <IonIcon className='text-xl' icon='share-outline' /> Chia sẻ trang cá nhân
               </a>
               <hr />
-              <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                <IonIcon className='text-xl' icon='stop-circle-outline' /> Chặn người dùng
-              </a>
             </nav>
           </div>
         </div>

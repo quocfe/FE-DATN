@@ -158,7 +158,7 @@ function NotFound() {
           />
         </svg>
         <div className='flex flex-col items-center justify-center'>
-          <p className='mt-12 text-3xl text-gray-800 md:text-4xl lg:text-5xl'>Không Tìm Thấy Trang</p>
+          <p className='mt-12 text-3xl text-gray-800 md:text-4xl lg:text-5xl'>Không Tìm Thấy Trang Này!</p>
           <p className='mt-8 text-gray-600 md:text-lg lg:text-xl'>
             Xin lỗi, trang bạn đang tìm kiếm không thể tìm thấy.
           </p>

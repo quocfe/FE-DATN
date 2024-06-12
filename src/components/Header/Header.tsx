@@ -38,10 +38,14 @@ function Header() {
             </button>
             <div id='logo'>
               <Link to={'/'}>
-                <img src='src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
-                <img src='src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
-                <img src='src/assets/images/logo-mobile.png' className='hidden w-20 max-md:block dark:!hidden' alt='' />
-                <img src='src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
+                <img src='/src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
+                <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
+                <img
+                  src='/src/assets/images/logo-mobile.png'
+                  className='hidden w-20 max-md:block dark:!hidden'
+                  alt=''
+                />
+                <img src='/src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
               </Link>
             </div>
           </div>
@@ -65,7 +69,7 @@ function Header() {
 
               <input
                 type='text'
-                placeholder='Search Friends, videos ..'
+                placeholder='Bạn bè, Fanpage, Video ..'
                 className='h-12 w-full !bg-transparent !pl-10 !text-sm !font-normal'
               />
             </div>
@@ -86,7 +90,7 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
+                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
                     <div>
                       <div> Jesse Steeve </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -102,7 +106,7 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
+                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
                     <div>
                       <div> Martin Gray </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -118,7 +122,11 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='src/assets/images/group/group-2.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img
+                      src='/src/assets/images/group/group-2.jpg'
+                      className='h-9 w-9 rounded-full object-cover'
+                      alt=''
+                    />
                     <div>
                       <div> Delicious Foods</div>
                       <div className='mt-0.5 text-xs font-medium text-rose-500'> Group </div>
@@ -134,7 +142,11 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='src/assets/images/group/group-1.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img
+                      src='/src/assets/images/group/group-1.jpg'
+                      className='h-9 w-9 rounded-full object-cover'
+                      alt=''
+                    />
                     <div>
                       <div> Delicious Foods</div>
                       <div className='mt-0.5 text-xs font-medium text-yellow-500'> Page </div>
@@ -150,7 +162,11 @@ function Header() {
                     href='#!'
                     className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                   >
-                    <img src='src/assets/images/avatars/avatar-6.jpg' className='h-9 w-9 rounded-full' alt='' />
+                    <img
+                      src='/src/assets/images/avatars/avatar-6.jpg'
+                      className='h-9 w-9 rounded-full object-cover'
+                      alt=''
+                    />
                     <div>
                       <div> John Welim </div>
                       <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
@@ -357,7 +373,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/group.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/group.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Groups </h4>
@@ -371,7 +387,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/page.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/page.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Pages </h4>
@@ -383,7 +399,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/event.png' className='w-7' />
+                    <img src='/src/assets/images/icons/event.png' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
@@ -395,7 +411,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/market.png' className='-ml-1 w-8' />
+                    <img src='/src/assets/images/icons/market.png' className='-ml-1 w-8' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
@@ -407,7 +423,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/game.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/game.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Games </h4>
@@ -514,7 +530,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -534,7 +550,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -553,7 +569,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-6.jpg'
+                          src='/src/assets/images/avatars/avatar-6.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -593,7 +609,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -613,7 +629,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -651,7 +667,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -753,7 +769,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -774,7 +790,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-5.jpg'
+                          src='/src/assets/images/avatars/avatar-5.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -795,7 +811,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -817,7 +833,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -838,7 +854,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -873,7 +889,7 @@ function Header() {
                 <img
                   src={profile?.Profile.profile_picture}
                   alt=''
-                  className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
+                  className='h-7 w-7 shrink-0 rounded-full object-cover shadow sm:h-9 sm:w-9'
                 />
               </div>
               {/* fix */}
@@ -883,7 +899,11 @@ function Header() {
               >
                 <Link to={'/profile'}>
                   <div className='flex items-center gap-4 p-4 py-5'>
-                    <img src={profile?.Profile.profile_picture} alt='' className='h-10 w-10 rounded-full shadow' />
+                    <img
+                      src={profile?.Profile.profile_picture}
+                      alt=''
+                      className='h-10 w-10 rounded-full object-cover shadow'
+                    />
                     <div className='flex-1'>
                       <h4 className='text-sm font-medium text-black'>
                         {profile?.last_name} {profile?.first_name}
@@ -951,7 +971,7 @@ function Header() {
                       Thông báo
                     </div>
                   </a>
-                  <a href='setting.html'>
+                  <Link to={'/setting'}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -970,7 +990,7 @@ function Header() {
                       </svg>
                       Cài đặt
                     </div>
-                  </a>
+                  </Link>
                   <button type='button' className='w-full'>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
@@ -1016,7 +1036,11 @@ function Header() {
                 </nav>
               </div>
               <div className='flex hidden items-center gap-2'>
-                <img src={profile?.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full shadow' />
+                <img
+                  src={profile?.Profile.profile_picture}
+                  alt=''
+                  className='h-9 w-9 rounded-full object-cover shadow'
+                />
                 <div className='w-20 font-semibold text-gray-600'> Hamse </div>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'

@@ -2,6 +2,7 @@ import EducationIcon from '~/components/icons/Profile/EducationIcon'
 import HomeTownIcon from '~/components/icons/Profile/HomeTownIcon'
 import JobIcon from '~/components/icons/Profile/JobIcon'
 import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
+import MyFriends from './MyFriends'
 
 interface Props {
   profile: UserProfile | null
@@ -94,10 +95,14 @@ function Introduce({ profile, setShowModal }: Props) {
           )}
           <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img
+                src='https://res.cloudinary.com/dswainylr/image/upload/v1717866186/50615f8b24c2879cded3_ykqrnu.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover object-center'
+              />
             </div>
             <div className='relative aspect-[4/3] w-full'>
-              <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='inset-0 h-full w-full object-cover' />
             </div>
             <div className='relative aspect-[4/3] w-full'>
               <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='inset-0 h-full w-full object-cover' />
@@ -107,79 +112,8 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
           </div>
         </div>
-        <div className='box p-5 px-6'>
-          <div className='items-ce flex justify-between text-black dark:text-white'>
-            <h3 className='text-lg font-bold'>
-              Bạn bè
-              <span className='mt-0. block text-sm font-normal text-gray-500 dark:text-white'> 3489 Bạn bè </span>
-            </h3>
-            <a href='#' className='text-sm text-blue-500'>
-              Tìm bạn
-            </a>
-          </div>
-          <div className='mb-2 mt-4 grid grid-cols-3 gap-2 gap-y-5 text-center text-sm'>
-            <div>
-              <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
-                <img
-                  src='src/assets/images/avatars/avatar-7.jpg'
-                  alt=''
-                  className='inset-0 h-full w-full object-cover'
-                />
-              </div>
-              <div className='mt-2 line-clamp-1'> Jesse Steeve </div>
-            </div>
-            <div>
-              <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
-                <img
-                  src='src/assets/images/avatars/avatar-2.jpg'
-                  alt=''
-                  className='inset-0 h-full w-full object-cover'
-                />
-              </div>
-              <div className='mt-2 line-clamp-1'> John Michael </div>
-            </div>
-            <div>
-              <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
-                <img
-                  src='src/assets/images/avatars/avatar-3.jpg'
-                  alt=''
-                  className='inset-0 h-full w-full object-cover'
-                />
-              </div>
-              <div className='mt-2 line-clamp-1'> Monroe Parker </div>
-            </div>
-            <div>
-              <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
-                <img
-                  src='src/assets/images/avatars/avatar-4.jpg'
-                  alt=''
-                  className='inset-0 h-full w-full object-cover'
-                />
-              </div>
-              <div className='mt-2 line-clamp-1'> Martin Gray </div>
-            </div>
-            <div>
-              <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
-                <img
-                  src='src/assets/images/avatars/avatar-5.jpg'
-                  alt=''
-                  className='inset-0 h-full w-full object-cover'
-                />
-              </div>
-              <div className='mt-2 line-clamp-1'> James Lewis </div>
-            </div>
-            <div>
-              <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
-                <img
-                  src='src/assets/images/avatars/avatar-6.jpg'
-                  alt=''
-                  className='inset-0 h-full w-full object-cover'
-                />
-              </div>
-              <div className='mt-2 line-clamp-1'> Alexa stella </div>
-            </div>
-          </div>
-        </div>
+        {/* Bạn bè */}
+        <MyFriends />
         {/* Groups You Manage  */}
         <div className='border1 dark:bg-dark2 rounded-xl bg-white p-5 px-6 shadow'>
           <div className='flex items-baseline justify-between text-black dark:text-white'>
