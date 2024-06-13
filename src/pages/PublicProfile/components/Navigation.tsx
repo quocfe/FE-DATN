@@ -6,13 +6,18 @@ import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import useMutationBlockedUser from '~/hooks/mutations/user/useMutationBlockedUser'
 import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
+import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
 
 interface Props {
   profile: UserProfile | null
-  status: string | null
+  relationship: {
+    user_id: string
+    friend_id: string
+    status: string
+  } | null
 }
 
-function Navigation({ profile, status }: Props) {
+function Navigation({ profile, relationship }: Props) {
   // Hooks
   const [showDialogBlockUser, setShowDialogBlockUser] = useState<boolean>(false)
   const [showDialogCancelFriendRequest, setShowDialogCancelFriendRequest] = useState<boolean>(false)
@@ -21,7 +26,24 @@ function Navigation({ profile, status }: Props) {
   // React Query
   const queryClient = useQueryClient()
   const blockedUserMutation = useMutationBlockedUser()
+  const senderFriendRequestMutation = useMutationSenderFriendRequest()
   const cancelFriendRequestMutation = useMutationCancelFriendRequest()
+
+  // Gửi lời mời kết bạn
+  const handleSenderFriendRequest = (friend_id: string) => () => {
+    if (profile) {
+      senderFriendRequestMutation.mutate(friend_id, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
+          toast.success('Gửi lời mời kết bạn thành công')
+        },
+        onError: (error) => {
+          toast.error('Đã có lỗi xảy ra')
+          console.log(error)
+        }
+      })
+    }
+  }
 
   // Hủy kết bạn
   const handleCancelFriendRequest = () => {
@@ -29,8 +51,10 @@ function Navigation({ profile, status }: Props) {
       cancelFriendRequestMutation.mutate(profile.user_id, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
-          setShowDialogCancelFriendRequest(false)
-          toast.success('Hủy kết bạn thành công')
+          if (showDialogCancelFriendRequest) {
+            setShowDialogCancelFriendRequest(false)
+          }
+          toast.success('Hủy thành công')
         },
         onError: (error) => {
           toast.error(error.message)
@@ -91,7 +115,15 @@ function Navigation({ profile, status }: Props) {
               uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click;offset:10'
             >
               <nav>
-                {status === 'Đã chấp nhận' && (
+                {/* không có bản ghi nào */}
+                {relationship === null && (
+                  <a onClick={handleSenderFriendRequest(profile?.user_id ?? '')} className='cursor-pointer'>
+                    <IonIcon className='text-xl' icon='pricetags-outline' /> Kết bạn
+                  </a>
+                )}
+
+                {/* Đã là bạn bè */}
+                {relationship?.status === 'Đã chấp nhận' && (
                   <a
                     onClick={() => setShowDialogCancelFriendRequest(true)}
                     className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
@@ -101,22 +133,29 @@ function Navigation({ profile, status }: Props) {
                   </a>
                 )}
 
-                {status === 'Chờ chấp nhận' && (
+                {/* status:  chờ chấp nhận &&  người gửi chính là tôi */}
+                {relationship?.status === 'Chờ chấp nhận' && relationship.user_id !== profile?.user_id && (
                   <>
-                    <a href='#'>
-                      <IonIcon className='text-xl' icon='pricetags-outline' /> Xác nhận
-                    </a>
-                    <a className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
+                    <a
+                      onClick={handleCancelFriendRequest}
+                      className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+                    >
                       <IonIcon icon='close-circle-outline' className='text-[22px]' />
                       Xóa lời mời
                     </a>
                   </>
                 )}
 
-                {status === null && (
-                  <a href='#'>
-                    <IonIcon className='text-xl' icon='pricetags-outline' /> Kết bạn
-                  </a>
+                {relationship?.status === 'Chờ chấp nhận' && relationship.friend_id !== profile?.user_id && (
+                  <>
+                    <a href='#' style={{ color: 'rgb(57 190 106)' }}>
+                      <IonIcon name='checkmark-done-outline' className='text-xl' /> Chấp nhận
+                    </a>
+                    <a className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
+                      <IonIcon icon='close-circle-outline' className='text-[22px]' />
+                      Xóa lời mời
+                    </a>
+                  </>
                 )}
 
                 <a href='#'>

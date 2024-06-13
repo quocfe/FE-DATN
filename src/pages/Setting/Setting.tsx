@@ -118,19 +118,16 @@ function Setting({ children }: Props) {
                 <Link to={'/setting/blocks'}> Chặn</Link>
               </li>
               <li className='w-auto pr-2.5'>
-                <a href='#'> Cover Photo</a>
+                <a href='#'> Riêng tư</a>
               </li>
               <li className='w-auto pr-2.5'>
-                <a href='#'> Invites</a>
+                <a href='#'> Bài viết</a>
               </li>
               <li className='w-auto pr-2.5'>
-                <a href='#'> Finish</a>
+                <a href='#'> Ngôn ngữ </a>
               </li>
               <li className='w-auto pr-2.5'>
-                <a href='#'> Description </a>
-              </li>
-              <li className='w-auto pr-2.5'>
-                <a href='#'> Setting</a>
+                <a href='#'> Chờ cập nhật </a>
               </li>
             </ul>
           </nav>
