@@ -50,7 +50,7 @@ type ProfileResponse = SuccessResponse<{
 
 type ProfilePublicResponse = SuccessResponse<{
   user: UserProfile
-  relationship: { status: string } | null
+  relationship: { user_id: string; friend_id: string; status: string } | null
 }>
 
 type UserListReponse = SuccessResponse<{

@@ -22,7 +22,7 @@ function PublicProfile() {
     navigate('*')
   }
 
-  const status = data?.data.data.relationship?.status ?? null
+  const relationship = data?.data.data.relationship ?? null
   const profile = data?.data.data.user ?? null
 
   return (
@@ -37,7 +37,7 @@ function PublicProfile() {
         {/* User Info */}
         <UserInfo profile={profile} />
         {/* Navigations */}
-        <Navigation profile={profile} status={status} />
+        <Navigation profile={profile} relationship={relationship} />
       </div>
       <div className='mt-8 flex gap-10 max-lg:flex-col 2xl:gap-12' id='js-oversized'>
         {/* Feed Story */}
