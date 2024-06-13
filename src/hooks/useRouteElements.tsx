@@ -16,6 +16,8 @@ import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
+import Game from '~/pages/Game'
+import GamePlay from '~/pages/GamePlay'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -75,6 +77,27 @@ function useRouteElements() {
               element: (
                 <MainLayout>
                   <FriendSuggest />
+                </MainLayout>
+              )
+            }
+          ]
+        },
+        {
+          path: '/game',
+          children: [
+            {
+              path: '',
+              element: (
+                <MainLayout>
+                  <Game />
+                </MainLayout>
+              )
+            },
+            {
+              path: 'play/:id',
+              element: (
+                <MainLayout>
+                  <GamePlay />
                 </MainLayout>
               )
             }
@@ -151,6 +174,10 @@ function useRouteElements() {
           element: <Dashboard />
         }
       ]
+    },
+    {
+      path: '/not_found',
+      element: <NotFound />
     },
     {
       path: '*',
