@@ -68,6 +68,10 @@ type UserCompact = {
   }
 }
 
+type UserCompactWithStatus = UserCompact & {
+  status: string
+}
+
 type ChangePassword = {
   old_password: string
   new_password: string
