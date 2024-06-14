@@ -9,7 +9,7 @@ import SideBarMessage from './components/SideBarMessage'
 const Message = () => {
   useMessageSocket()
   const { selectedConversation, selectedNoConversation, toggleBoxSearchMessage } = useConversationStore()
-  let showMessage = selectedConversation ? selectedConversation : selectedNoConversation
+  let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
 
   return (
     <div className='relative -m-2.5 overflow-hidden border dark:border-slate-700'>
@@ -17,7 +17,7 @@ const Message = () => {
         {/* sidebar */}
         {toggleBoxSearchMessage ? <ResultSearchMessage /> : <SideBarMessage />}
         {/* message center */}
-        {showMessage === null ? <EmptyMessage /> : <MessageCenter />}
+        {showMessage ? <MessageCenter /> : <EmptyMessage />}
         {/* user profile right info */}
         <ProfileRight />
       </div>

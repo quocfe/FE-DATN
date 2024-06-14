@@ -8,26 +8,15 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 
 const SideBarMessage = () => {
   const { data: conversation, isLoading, refetch } = useQueryConversation()
-  const { setSelectedConversation, setSelectedNoConversation, setMessages, toggleBoxSearchMessage, notifyMessage } =
-    useConversationStore()
-
+  const { setSelectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
   const { onlineUsers } = useSocketContext()
-  const { data } = useQueryMessage()
-
-  useEffect(() => {
-    if (data) setMessages(data?.data?.data)
-    // refetch()
-  }, [data])
-
-  const handleClickNoConversation = (user: any) => {
-    setSelectedNoConversation(user)
-  }
 
   const handleSearch = (query: string) => {
     searchMutaion.mutate(query, {
@@ -43,8 +32,7 @@ const SideBarMessage = () => {
   if (isLoading) {
     return <SideBarMessageSkelaton />
   }
-  if (toggleBoxSearchMessage) {
-  }
+
   return (
     <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
       <div
@@ -130,7 +118,12 @@ const SideBarMessage = () => {
                     <a
                       key={index}
                       className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                      onClick={() => handleClickNoConversation(user)}
+                      onClick={() =>
+                        setSelectedConversation({
+                          id: user.user_id,
+                          type: 1
+                        })
+                      }
                     >
                       <img src={user?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
                       <div>
@@ -145,10 +138,20 @@ const SideBarMessage = () => {
         </div>
         {/* users list */}
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
-          {conversation?.data?.data?.map((item: ConvesationSideBar, index: number) => {
-            const isOnline = onlineUsers.includes(item.user_id)
-            return <Conversation key={index} item={item} isOnline={isOnline} />
-          })}
+          {conversation?.data?.data
+            ?.sort((a: ConvesationSideBar, b: ConvesationSideBar) => {
+              if (a?.messages?.createdAt && b?.messages?.createdAt && a.messages?.createdAt > b.messages?.createdAt) {
+                return -1
+              }
+              if (a?.messages?.createdAt && b?.messages?.createdAt && a.messages?.createdAt < b.messages?.createdAt) {
+                return 1
+              }
+              return 0
+            })
+            .map((item: ConvesationSideBar, index: number) => {
+              const isOnline = onlineUsers.includes(item.user_id)
+              return <Conversation key={index} item={item} isOnline={isOnline} />
+            })}
         </div>
       </div>
       {/* overly */}

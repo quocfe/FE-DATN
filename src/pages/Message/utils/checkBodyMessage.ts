@@ -5,8 +5,9 @@ export function checkBodyMessage(url: string) {
   let videoExtensions = ['mp4', 'mpeg', 'webm']
 
   // Tách phần mở rộng từ URL bằng cách sử dụng phương thức split('.')
+
   let urlParts = url?.split('.')
-  let extension = urlParts[urlParts?.length - 1].toLowerCase() // Lấy phần mở rộng và chuyển đổi thành chữ thường
+  let extension = urlParts[urlParts?.length - 1]?.toLowerCase() // Lấy phần mở rộng và chuyển đổi thành chữ thường
 
   // Kiểm tra xem phần mở rộng có trong danh sách cho phép không
   if (ImgExtensions.includes(extension)) {

@@ -1,4 +1,4 @@
-export function calculateTimeAgo(sentAt: string): string {
+export function calculateTimeAgo(sentAt: string | Date): string {
   const sentTime = new Date(sentAt)
   const currentTime = new Date()
 

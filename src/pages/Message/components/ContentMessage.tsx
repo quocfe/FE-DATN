@@ -6,13 +6,12 @@ import useMutationSendReactMessage from '../hooks/useMutationSendReactMessage'
 import { downloadFileFormLink } from '../utils/downloadFileFormLink'
 import ModalUnSendOption from './ModalUnSendOption'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
-import getInfoConversation from '../utils/getInfoConversation'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
 const ContentMessage = (params: any) => {
-  const { groupId } = getInfoConversation()
-  const { refetch } = useQueryMessage()
+  const { refetch, data } = useQueryMessage()
+  const groupId = data?.data?.data.info.group_id
   const widthRef = useRef<HTMLDivElement>(null)
   const [openEmoji, setOpenEmoji] = useState(false)
   const [openOption, setOpenOption] = useState(false)

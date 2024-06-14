@@ -1,7 +1,10 @@
 import { create } from 'zustand'
 
 interface State {
-  selectedConversation: GroupMessage | null
+  selectedConversation: {
+    [key: string]: any
+    [key: number]: any
+  }
   messages: TypeMessage[]
   selectedNoConversation: SearchFriend | null
   toggleBoxReply: Message | null
@@ -9,38 +12,34 @@ interface State {
   searchMessages: TypeMessage[]
   searchParam: string
   pinMessage: TypeMessage[] | null
-  notifyMessage: any
 }
 
 interface Action {
-  setSelectedConversation: (selectedConversation: GroupMessage | null) => void
+  setSelectedConversation: (selectedConversation: {}) => void
   setMessages: (messages: TypeMessage[] | any) => void
   setSelectedNoConversation: (selectedNoConversation: {}) => void
   setToggleBoxReply: (toggleBoxReply: Message | null) => void
   setToggleBoxSearchMessage: (toggleBoxSearchMessage: boolean) => void
   setSearchParam: (searchParam: string) => void
   setPinMessage: (pinMessage: TypeMessage | null) => void
-  setNotifyMessage: (notifyMessage: any) => void
 }
 
 export const useConversationStore = create<State & Action>((set: any) => ({
   messages: [],
   searchMessages: [],
-  selectedConversation: null,
+  selectedConversation: {},
   selectedNoConversation: null,
   toggleBoxReply: null,
   toggleBoxSearchMessage: false,
   searchParam: '',
   pinMessage: null,
-  notifyMessage: null,
   setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
   setMessages: (messages) => set({ messages }),
   setSelectedNoConversation: (selectedNoConversation) => set({ selectedNoConversation }),
   setToggleBoxReply: (toggleBoxReply) => set({ toggleBoxReply }),
   setToggleBoxSearchMessage: (toggleBoxSearchMessage) => set({ toggleBoxSearchMessage }),
   setSearchParam: (searchParam) => set({ searchParam }),
-  setPinMessage: (pinMessage) => set({ pinMessage }),
-  setNotifyMessage: (notifyMessage) => set({ notifyMessage })
+  setPinMessage: (pinMessage) => set({ pinMessage })
 }))
 
 export default useConversationStore

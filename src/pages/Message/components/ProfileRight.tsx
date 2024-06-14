@@ -4,26 +4,81 @@ import ProfileRightOption from './ProfileRightOption'
 import FileRight from './components/FileRight'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import getInfoConversation from '../utils/getInfoConversation'
 import { useQueryRecallMessage } from '../hooks/useQueryRecallMessage'
+import { useQueryMembers } from '../hooks/useQueryMembers'
+import { Link } from 'react-router-dom'
+import { useQueryMessage } from '../hooks/useQueryMessage'
+import useFileUpload from '../utils/uploadApi'
+import { useQueryConversation } from '../hooks/useQueryConversation'
+import useMutationChangePassword from '~/pages/Setting/ChangePassword/hooks/useMutationChangePassword'
+import useMutationChangeImageGroup from '../hooks/useMutaionChangeImageGroup'
+import Loading from '~/components/Loading'
+import EmojiBox from './EmojiBox'
+import useEmojiStore from '~/store/emoji.store'
 
 function ProfileRight() {
-  const { groupId, groupImg, groupName } = getInfoConversation()
+  const { data: dataMessage } = useQueryMessage()
+  const avatar = dataMessage?.data?.data?.info?.avatar
+  const group_name = dataMessage?.data?.data?.info?.group_name
+  const messages = dataMessage?.data?.data?.messages
   const [showBox, setShowBox] = useState<boolean>(false)
   const [titleBox, setTitleBox] = useState<string>('')
-  const { messages } = useConversationStore()
+  const [loading, setLoading] = useState<boolean>(false)
   const { user_id } = getProfileFromLocalStorage()
+  const { data } = useQueryMembers()
+  const { refetch } = useQueryConversation()
+  const changeImage = useMutationChangeImageGroup()
+  const { setEmoji, emoji } = useEmojiStore()
+  const { upload } = useFileUpload()
+  const { selectedConversation, setSelectedConversation } = useConversationStore()
+  const members = data?.data.data
 
   const renderList = (type: number) => {
-    const listTemp = messages.filter((message: TypeMessage) => {
+    const listTemp = messages?.filter((message: TypeMessage) => {
       return message.type === type && message.status === true
     })
 
-    const list = listTemp.filter((item) => {
+    const list = listTemp?.filter((item) => {
       return item?.recalls.every((recall: any) => recall.user_id != user_id)
     })
 
     return list
+  }
+
+  const handleSelect = (member: TypeMembersGroup) => {
+    setSelectedConversation({
+      id: member.user_id,
+      type: 1
+    })
+  }
+
+  const handleChangeImage = async (e: HTMLInputElement) => {
+    const body = {
+      group_id: selectedConversation.group_id,
+      image: ''
+    }
+    if (e.files) {
+      setLoading(true)
+      const url = await upload(e.files[0])
+      body.image = url
+      changeImage.mutate(body, {
+        onSuccess: () => {
+          refetch()
+          setLoading(false)
+        },
+        onError: () => {
+          setLoading(false)
+        }
+      })
+    }
+  }
+
+  const handleEmojiSelect = (emoji: EmojiType) => {
+    setEmoji(emoji.native)
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   return (
@@ -49,11 +104,11 @@ function ProfileRight() {
         ) : (
           <>
             <div className='mx-3 border-b-[1px] py-10 pt-2 text-center text-sm'>
-              <img src={groupImg} className='mx-auto mb-3 h-14 w-14 rounded-full' />
+              <img src={avatar} className='mx-auto mb-3 h-14 w-14 rounded-full' />
               <div className='mt-3'>
                 <div className='text-base font-medium text-black md:text-xl dark:text-white'>
                   {' '}
-                  {groupName || 'Groupname'}
+                  {group_name || 'group_name'}
                 </div>
               </div>
               <div className='mt-3'>
@@ -71,7 +126,8 @@ function ProfileRight() {
               </div>
             </div>
             <ul className='relative mx-2 space-y-3 p-3' uk-accordion='active: 0'>
-              <li className='uk-open '>
+              {/* ảnh video */}
+              <li className='uk-close '>
                 <a
                   className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white '
                   href='#'
@@ -107,7 +163,8 @@ function ProfileRight() {
                   </button>
                 </div>
               </li>
-              <li className='uk-open '>
+              {/* File */}
+              <li className='uk-close '>
                 <a
                   className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white'
                   href='#'
@@ -151,7 +208,128 @@ function ProfileRight() {
                   </button>
                 </div>
               </li>
-              <li className='uk-open '>
+              {/* Member */}
+              {selectedConversation.type === 2 && (
+                <li className='uk-close '>
+                  <a
+                    className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white'
+                    href='#'
+                  >
+                    Thành viên đoạn chat
+                    <svg
+                      className='h-5 w-5 duration-200 group-aria-expanded:rotate-180'
+                      xmlns='http://www.w3.org/2000/svg'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                      fill='none'
+                      strokeWidth={2}
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    >
+                      <polyline points='6 9 12 15 18 9' />
+                    </svg>
+                  </a>
+                  <div className='uk-accordion-content dark:text-white/80'>
+                    <div className='flex w-full flex-col gap-2'>
+                      {members?.map((member) => (
+                        <div key={member.user_id}>
+                          <div className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-1 hover:bg-slate-100'>
+                            <div className='flex items-center justify-center rounded-full bg-slate-300 hover:bg-primary-soft'>
+                              <img src={member.avatar} className='h-8 w-8 rounded-full' />
+                            </div>
+                            <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
+                              <p className='text-sm text-slate-800'>{member.fullname}</p>
+                              {member.role && <p className='text-[12px] font-thin'>Người tạo nhóm</p>}
+                            </div>
+                            <div className='uk-inline'>
+                              <button
+                                className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
+                                type='button'
+                              >
+                                <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
+                              </button>
+                              <div uk-dropdown='mode: click' className='w-[200px]'>
+                                <div
+                                  onClick={() => handleSelect(member)}
+                                  className='flex items-center justify-start gap-2 rounded-[4px] p-2 hover:bg-slate-100'
+                                >
+                                  <IonIcon icon='chatbubble-ellipses-outline' className='text-[12px]' />
+                                  <p className='text-[14px] font-semibold'>Gửi tin nhắn</p>
+                                </div>
+                                <Link
+                                  to={`/profile/${member.user_id}`}
+                                  className='flex items-center justify-start gap-2 rounded-[4px] p-2 hover:bg-slate-100'
+                                >
+                                  <IonIcon icon='person-circle-outline' className='text-[12px]' />
+                                  <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowBox(true)
+                        setTitleBox('Thành viên')
+                      }}
+                      className='button-icon mt-4 w-full rounded-lg bg-primary-soft text-xs font-bold'
+                    >
+                      Xem tất cả
+                    </button>
+                  </div>
+                </li>
+              )}
+              {/* Option */}
+              <li className='uk-close '>
+                <a
+                  className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white'
+                  href='#'
+                >
+                  Tùy chỉnh đoạn chat
+                  <svg
+                    className='h-5 w-5 duration-200 group-aria-expanded:rotate-180'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                    fill='none'
+                    strokeWidth={2}
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                  >
+                    <polyline points='6 9 12 15 18 9' />
+                  </svg>
+                </a>
+                <div className='uk-accordion-content dark:text-white/80'>
+                  <div className='flex w-full flex-col gap-2'>
+                    <div className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                      <IonIcon icon='pencil-outline' className='text-[22px]' />
+                      <p className='text-[14px] font-semibold'>Đổi tên đoạn chat</p>
+                    </div>
+                    <label className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                      <input type='file' accept='image/*' hidden onChange={(e) => handleChangeImage(e.target)} />
+                      <IonIcon icon='image' className='text-[22px]' />
+                      <p className='text-[14px] font-semibold'>Thay đổi ảnh</p>
+                    </label>
+                    <div className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                      <div className='rounded-full p-1 shadow'>👍</div>
+                      <p className='text-[14px] font-semibold'>Thay đổi biểu tượng cảm xúc</p>
+                      <EmojiBox onEmojiSelect={handleEmojiSelect} />
+                    </div>
+
+                    <button
+                      type='button'
+                      className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-green-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'
+                    >
+                      <IonIcon className='flex text-2xl' icon='happy-outline' />
+                    </button>
+                    <EmojiBox onEmojiSelect={handleEmojiSelect} />
+                  </div>
+                </div>
+              </li>
+              {/* Setting */}
+              <li className='uk-close '>
                 <a
                   className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white'
                   href='#'
@@ -224,3 +402,19 @@ function ProfileRight() {
 }
 
 export default ProfileRight
+//  <div className='absolute rounded-full shadow-sm uk-inline right-8 '>
+//         <button
+//           className='flex items-center justify-center w-6 h-6 rounded-full shadow-sm uk-button uk-button-default hover:bg-slate-100'
+//           type='button'
+//         >
+//           <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
+//         </button>
+//         <div uk-dropdown='mode: click' className='w-[250px]'>
+//           <div className='p-2'>
+//             <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+
+//             </div>
+
+//           </div>
+//         </div>
+//       </div>

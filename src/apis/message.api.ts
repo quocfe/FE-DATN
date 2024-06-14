@@ -6,8 +6,16 @@ class MessageApi {
     return http.get<ConversationResponse>(`${MESSAGE.GET_CONVERSATION}`, { withCredentials: true })
   }
 
-  getMessage(id: string) {
-    return http.get<MessageResponse>(`${MESSAGE.GET_MESSAGE}/${id}`, { withCredentials: true })
+  getMembersGroup(id: string) {
+    return http.get<MembersGroupResponse>(`${MESSAGE.GET_MEMBERS}/${id}`, { withCredentials: true })
+  }
+
+  getGroupMessage(id: string) {
+    return http.get<MessageResponse>(`${MESSAGE.GET_GROUP_MESSAGE}/${id}`, { withCredentials: true })
+  }
+
+  getOneToOneMessage(id: string) {
+    return http.get<MessageResponse>(`${MESSAGE.GET_ONE_TO_ONE}/${id}`, { withCredentials: true })
   }
 
   getRecall() {
@@ -53,6 +61,10 @@ class MessageApi {
 
   searchMessage(query: string, conversationId: string) {
     return http.get(`${MESSAGE.SEARCH_MESSAGE}/${conversationId}/${query}`)
+  }
+
+  changeImageGroup(body: { group_id: string; image: string }) {
+    return http.post(`${MESSAGE.UPDATE_IMAGE_GROUP}`, body, { withCredentials: true })
   }
 }
 

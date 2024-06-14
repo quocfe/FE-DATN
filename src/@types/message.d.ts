@@ -14,6 +14,12 @@ type Message = {
   user_name: string
 }
 
+type InfoMessage = {
+  group_id: string
+  avatar: string
+  group_name: string
+}
+
 type GroupMessage = {
   group_message_id: string
   group_name: string
@@ -24,6 +30,21 @@ type GroupMessage = {
   createdAt: Date
   updatedAt: Date
   user_id: string
+}
+
+type MembersGroup = {
+  member_group_id: string
+  user_id: string
+  group_message_id: string
+  role: boolean
+  status: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+type TypeMembersGroup = Pick<MembersGroup, 'user_id' | 'role'> & {
+  avatar: string
+  fullname: string
 }
 
 type RecallMessage = {
@@ -49,8 +70,16 @@ type ConversationResponse = {
   message: string
 }
 
+type MembersGroupResponse = {
+  data: TypeMembersGroup[]
+  message: string
+}
+
 type MessageResponse = {
-  data: TypeMessage[]
+  data: {
+    info: InfoMessage
+    messages: TypeMessage[]
+  }
   message: string
 }
 
@@ -87,6 +116,11 @@ type ReactMessageInput = {
   emoji: string
 }
 
+type ChangeImageInput = {
+  group_id: string
+  image: string
+}
+
 type CreateGroupMessageInput = {
   list_user: string
   group_name: string
@@ -94,9 +128,6 @@ type CreateGroupMessageInput = {
 }
 
 type MessageCenterProps = {
-  groupName: string
-  groupImg: string
-  groupId: string
   showScrollBtn?: boolean
 }
 
@@ -117,8 +148,8 @@ type ReCallMessageInput = {
   forAll: boolean
 }
 
-type ConvesationSideBar = Pick<GroupMessage> & {
-  messsages: Message
+type ConvesationSideBar = GroupMessage & {
+  messages?: Message
 }
 
 type TypeMessage = Pick<

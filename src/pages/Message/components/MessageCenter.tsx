@@ -7,15 +7,14 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 import ChatMessageSkelaton from './Skelaton/ChatMessageSkelaton'
 import BoxSearchMessage from './BoxSearchMessage'
 import PinMessage from './PinMessage'
-import getInfoConversation from '../utils/getInfoConversation'
 
 function MessageCenter() {
-  const { groupId, groupImg, groupName } = getInfoConversation()
   const { toggleBoxReply, toggleBoxSearchMessage, setToggleBoxSearchMessage, pinMessage } = useConversationStore()
-  const { isLoading } = useQueryMessage()
+  const { isLoading, data } = useQueryMessage()
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
+  const infoMessage = data?.data?.data?.info
 
   const [calculateHeight, setCalculateHeight] = useState<string>()
   const handleScroll = () => {
@@ -50,14 +49,11 @@ function MessageCenter() {
             <IonIcon icon='chevron-back-outline' className='-ml-4 text-2xl' />
           </button>
           <div className='relative cursor-pointer max-md:hidden' uk-toggle='target: .rightt ; cls: hidden'>
-            <img
-              src={groupImg ? groupImg : 'src/assets/images/avatars/avatar-6.jpg'}
-              className='h-8 w-8 rounded-full shadow'
-            />
+            <img src={infoMessage?.avatar} className='h-8 w-8 rounded-full shadow' />
             <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
           </div>
           <div className='cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
-            <div className='text-base font-bold'> {groupName || 'Groupname'}</div>
+            <div className='text-base font-bold'> {infoMessage?.group_name}</div>
             <div className='text-xs font-semibold text-green-500'> Online</div>
           </div>
         </div>
@@ -124,10 +120,10 @@ function MessageCenter() {
         onScroll={handleScroll}
         className={`h-[calc(100vh-305px)] w-full overflow-y-auto p-5 py-10 md:h-[calc(100vh-${calculateHeight}px)]`}
       >
-        <ChatMessage showScrollBtn={showScrollBtn} groupName={groupName} groupImg={groupImg} groupId={groupId} />
+        <ChatMessage showScrollBtn={showScrollBtn} />
       </div>
       {/* sending message area */}
-      <SendMessage boxReplyRef={boxReplyRef} groupId={groupId} />
+      <SendMessage boxReplyRef={boxReplyRef} />
     </div>
   )
 }

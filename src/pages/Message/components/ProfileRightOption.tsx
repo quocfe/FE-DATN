@@ -2,15 +2,16 @@ import { IonIcon } from '@ionic/react'
 
 type ProfileRightOptionProps = {
   title: string
-  listImage: Message[]
-  listFile: Message[]
+  listImage: TypeMessage[] | undefined
+  listFile: TypeMessage[] | undefined
 }
 
 const data = [
   {
     title: 'Ảnh - Video'
   },
-  { title: 'File' }
+  { title: 'File' },
+  { title: 'Thành viên' }
 ]
 function ProfileRightOption({ title, listImage, listFile }: ProfileRightOptionProps) {
   return (
@@ -33,7 +34,7 @@ function ProfileRightOption({ title, listImage, listFile }: ProfileRightOptionPr
         <div id='group-tabs' className='uk-switcher mt-2 text-sm ' style={{ touchAction: 'pan-y pinch-zoom' }}>
           <div className='uk-child-width-1-3@m' uk-grid='true' uk-lightbox='animation: slide'>
             <div className='grid grid-cols-3 gap-1 p-4'>
-              {listImage.map((image, index) => (
+              {listImage?.map((image, index) => (
                 <a key={index} className='uk-inline' href={image.sub_body}>
                   <img
                     src={image.sub_body}
@@ -48,7 +49,7 @@ function ProfileRightOption({ title, listImage, listFile }: ProfileRightOptionPr
           <div className='uk-active'>
             <div className='flex flex-col space-y-2 p-2'>
               {/* map  */}
-              {listFile.map((file, index) => (
+              {listFile?.map((file, index) => (
                 <div key={index} className='flex cursor-pointer gap-3 p-2 shadow-sm'>
                   <div className='flex  items-center rounded-[10px] bg-secondery p-2 '>
                     <IonIcon icon='document' className='h-6 w-6' />

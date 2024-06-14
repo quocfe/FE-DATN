@@ -12,18 +12,18 @@ import useMutationReplyMessage from '../hooks/useMutationReplyMessage'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 
 type SendMessageType = {
-  groupId: string
   boxReplyRef: React.LegacyRef<HTMLDivElement>
 }
-function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
-  const { refetch } = useQueryMessage()
+function SendMessage({ boxReplyRef }: SendMessageType) {
+  const { refetch, data } = useQueryMessage()
+  const receiverID = data?.data?.data?.info?.group_id
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const sendMedia = useMutationSendMessageAttach()
   const [checkInput, setCheckInput] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const { selectedConversation, toggleBoxReply, setToggleBoxReply } = useConversationStore()
-  const groupID = selectedConversation?.group_message_id ? selectedConversation?.group_message_id : ''
+  const groupID = selectedConversation?.group_id
   const profile = getProfileFromLocalStorage()
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
@@ -39,6 +39,8 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
         receiver: receiverID,
         type: 1
       }
+
+      console.log('data sent', data)
 
       sendMessageMutation.mutate(data, {
         onSuccess: () => {
@@ -84,6 +86,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
         receiver: receiverID,
         type: 1
       }
+      console.log(data)
       sendMessageMutation.mutate(data, {
         onSuccess: () => {
           refetch()
@@ -140,7 +143,7 @@ function SendMessage({ groupId: receiverID, boxReplyRef }: SendMessageType) {
       const uploadData = new FormData()
       uploadData.append('messageattach', files[0])
       uploadData.append('body', '')
-      uploadData.append('receiverreceiverID', receiverID)
+      uploadData.append('receiverreceiverID', receiverID ? receiverID : '')
       uploadData.append('group_message_id', groupID)
       const nameFile = files[0].type.split('/')[0]
       if (nameFile == 'application') {

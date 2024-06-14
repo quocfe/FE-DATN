@@ -4,9 +4,20 @@ import useConversationStore from '~/store/conversation.store'
 
 export const useQueryMessage = () => {
   const { selectedConversation } = useConversationStore()
-  return useQuery({
-    queryKey: ['message', selectedConversation?.group_message_id],
-    queryFn: () => messageApi.getMessage(selectedConversation ? selectedConversation.group_message_id : ''),
-    enabled: selectedConversation?.group_message_id != null
-  })
+
+  if (selectedConversation.type === 1) {
+    return useQuery({
+      queryKey: ['message', selectedConversation.id],
+      queryFn: () => messageApi.getOneToOneMessage(selectedConversation.id),
+      enabled: selectedConversation.id != null,
+      staleTime: Infinity
+    })
+  } else {
+    return useQuery({
+      queryKey: ['message', selectedConversation.id],
+      queryFn: () => messageApi.getGroupMessage(selectedConversation.id),
+      enabled: selectedConversation.id != null,
+      staleTime: Infinity
+    })
+  }
 }

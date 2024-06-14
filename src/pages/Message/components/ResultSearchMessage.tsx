@@ -16,7 +16,7 @@ function ResultSearchMessage() {
     searchMutation.mutate(
       {
         query,
-        conversationId: selectedConversation?.group_message_id ? selectedConversation?.group_message_id : ''
+        conversationId: selectedConversation?.group_id ? selectedConversation?.group_id : ''
       }, // Fix the argument structure
       {
         onSuccess: (data: any) => {
