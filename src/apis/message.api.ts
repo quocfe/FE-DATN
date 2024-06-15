@@ -66,6 +66,10 @@ class MessageApi {
   changeImageGroup(body: { group_id: string; image: string }) {
     return http.post(`${MESSAGE.UPDATE_IMAGE_GROUP}`, body, { withCredentials: true })
   }
+
+  changeGroupName(body: { group_id: string | undefined; group_name: string }) {
+    return http.post(`${MESSAGE.UPDATE_GROUP_NAME}`, body, { withCredentials: true })
+  }
 }
 
 export default new MessageApi()

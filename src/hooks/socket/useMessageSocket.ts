@@ -17,20 +17,28 @@ type NewMessagetype = {
 
 const useMessageSocket = () => {
   const { socket } = useSocketContext()
-  const { refetch, data } = useQueryMessage()
+  const { refetch: refetchMessage, data } = useQueryMessage()
   const { refetch: refetchConversation } = useQueryConversation()
 
   useEffect(() => {
     ;(socket as Socket | null)?.on('newMessage', () => {
       refetchConversation()
-      refetch()
+      refetchMessage()
     })
     ;(socket as Socket | null)?.on('reactMessage', () => {
       refetchConversation()
-      refetch()
+      refetchMessage()
     })
     ;(socket as Socket | null)?.on('newConversation', () => {
       refetchConversation()
+    })
+    ;(socket as Socket | null)?.on('newGroupImage', (data) => {
+      refetchConversation()
+      refetchMessage()
+    })
+    ;(socket as Socket | null)?.on('newGroupName', (data) => {
+      refetchConversation()
+      refetchMessage()
     })
     // ;(socket as Socket | null)?.on('notifyMessage', (group_message_id) => {
     //   console.log('notify message socket', group_message_id)

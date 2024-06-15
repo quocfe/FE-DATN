@@ -15,5 +15,6 @@ export const MESSAGE = {
   UPDATE_REACT_MESSAGE: 'message/updateReactmessage',
   DELETE_REACT_MESSAGE: 'message/deleteReactmessage',
   SEARCH_MESSAGE: '/message/search',
-  UPDATE_IMAGE_GROUP: 'message/changeimagegroup'
+  UPDATE_IMAGE_GROUP: 'message/changeimagegroup',
+  UPDATE_GROUP_NAME: 'message/changegroupname'
 } as const

@@ -5,6 +5,7 @@ type configType = {
 
 export function configTypeMessage({ item, userid }: configType) {
   const me = item.createdBy === userid
+
   const deleteFromOthers = item.recalls.find((r: any) => r.user_id === userid)
   const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
   const check2 = check.some((re: any) => re.user_id === userid)
@@ -20,6 +21,9 @@ export function configTypeMessage({ item, userid }: configType) {
         ? `${item.user_name} đã trả lời chính mình`
         : `${item.user_name}  đã trả lời bạn`
     : ''
+
+  const meMessage = item.createdBy === userid ? item : ''
+  const ortherMessage = item.createdBy != userid ? item : ''
 
   return {
     me,

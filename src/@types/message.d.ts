@@ -121,6 +121,11 @@ type ChangeImageInput = {
   image: string
 }
 
+type ChangeNameGroupInput = {
+  group_id: string | undefined
+  group_name: string
+}
+
 type CreateGroupMessageInput = {
   list_user: string
   group_name: string

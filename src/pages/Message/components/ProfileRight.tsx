@@ -15,13 +15,20 @@ import useMutationChangeImageGroup from '../hooks/useMutaionChangeImageGroup'
 import Loading from '~/components/Loading'
 import EmojiBox from './EmojiBox'
 import useEmojiStore from '~/store/emoji.store'
+import ModalChangeGroupName from './ModalChangeGroupName'
+import _ from 'lodash'
+import useMutationChangeGroupName from '../hooks/useMutaionChangeGroupName'
+import { toast } from 'react-toastify'
 
 function ProfileRight() {
   const { data: dataMessage } = useQueryMessage()
   const avatar = dataMessage?.data?.data?.info?.avatar
   const group_name = dataMessage?.data?.data?.info?.group_name
+  const group_id = dataMessage?.data?.data?.info?.group_id
   const messages = dataMessage?.data?.data?.messages
   const [showBox, setShowBox] = useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [groupName, setGroupName] = useState<string>('')
   const [titleBox, setTitleBox] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const { user_id } = getProfileFromLocalStorage()
@@ -32,6 +39,7 @@ function ProfileRight() {
   const { upload } = useFileUpload()
   const { selectedConversation, setSelectedConversation } = useConversationStore()
   const members = data?.data.data
+  const changeGroupNameMutation = useMutationChangeGroupName()
 
   const renderList = (type: number) => {
     const listTemp = messages?.filter((message: TypeMessage) => {
@@ -73,6 +81,22 @@ function ProfileRight() {
     }
   }
 
+  const handChageGroupName = async () => {
+    const dataGroup = {
+      group_id,
+      group_name: groupName
+    }
+    changeGroupNameMutation.mutate(dataGroup, {
+      onSuccess: () => {
+        refetch()
+        setIsOpen(false)
+      },
+      onError: () => {
+        toast.error('Có lỗi rồi')
+      }
+    })
+  }
+
   const handleEmojiSelect = (emoji: EmojiType) => {
     setEmoji(emoji.native)
   }
@@ -98,7 +122,6 @@ function ProfileRight() {
           </button>
         </div>
         {/* content */}
-
         {showBox ? (
           <ProfileRightOption title={titleBox} listImage={renderList(2)} listFile={renderList(3)} />
         ) : (
@@ -106,10 +129,35 @@ function ProfileRight() {
             <div className='mx-3 border-b-[1px] py-10 pt-2 text-center text-sm'>
               <img src={avatar} className='mx-auto mb-3 h-14 w-14 rounded-full' />
               <div className='mt-3'>
-                <div className='text-base font-medium text-black md:text-xl dark:text-white'>
-                  {' '}
-                  {group_name || 'group_name'}
-                </div>
+                {isOpen ? (
+                  <div className='flex items-center justify-center gap-4'>
+                    <input
+                      type='text'
+                      className='w-[50%]'
+                      defaultValue={group_name}
+                      onChange={_.debounce((e) => setGroupName(e.target.value), 500)}
+                    />
+
+                    <div className='flex items-center gap-1'>
+                      <div
+                        onClick={handChageGroupName}
+                        className='flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary'
+                      >
+                        <IonIcon className='text-white' icon='save' />
+                      </div>
+                      <div
+                        onClick={() => setIsOpen(false)}
+                        className='flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-500'
+                      >
+                        <IonIcon className='text-white' icon='close' />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className='text-base font-medium text-black md:text-xl dark:text-white'>
+                    {group_name || 'group_name'}
+                  </div>
+                )}
               </div>
               <div className='mt-3'>
                 <div className='flex items-center justify-center gap-4'>
@@ -303,7 +351,10 @@ function ProfileRight() {
                 </a>
                 <div className='uk-accordion-content dark:text-white/80'>
                   <div className='flex w-full flex-col gap-2'>
-                    <div className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                    <div
+                      onClick={() => setIsOpen(true)}
+                      className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                    >
                       <IonIcon icon='pencil-outline' className='text-[22px]' />
                       <p className='text-[14px] font-semibold'>Đổi tên đoạn chat</p>
                     </div>
@@ -312,19 +363,6 @@ function ProfileRight() {
                       <IonIcon icon='image' className='text-[22px]' />
                       <p className='text-[14px] font-semibold'>Thay đổi ảnh</p>
                     </label>
-                    <div className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                      <div className='rounded-full p-1 shadow'>👍</div>
-                      <p className='text-[14px] font-semibold'>Thay đổi biểu tượng cảm xúc</p>
-                      <EmojiBox onEmojiSelect={handleEmojiSelect} />
-                    </div>
-
-                    <button
-                      type='button'
-                      className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-green-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'
-                    >
-                      <IonIcon className='flex text-2xl' icon='happy-outline' />
-                    </button>
-                    <EmojiBox onEmojiSelect={handleEmojiSelect} />
                   </div>
                 </div>
               </li>
@@ -389,7 +427,6 @@ function ProfileRight() {
             </ul>
           </>
         )}
-
         {/* close button */}
       </div>
       {/* overly */}

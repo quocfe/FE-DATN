@@ -10,8 +10,6 @@ type TypeMsg = {
 
 export const TextMsg = ({ item, userid }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-  // console.log('recall', recall)
-  // console.log('item', item)
   const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
   const check2 = check.some((re: any) => re.user_id === userid)
 
