@@ -1,21 +1,31 @@
+import { useQuery } from '@tanstack/react-query'
 import HorizontalVideoCard from './components/HorizontalVideoCard'
-import SwiperVideoCard from './components/SwiperVideoCard'
+// import SwiperVideoCard from './components/SwiperVideoCard'
 import FormCreateVideo from './components/form-create-video'
-
-const array = [1, 2, 3, 4, 5, 6, 7, 8]
+import videoApi from '~/apis/video.api'
 
 function Watch() {
+  const { data } = useQuery({
+    queryKey: ['getVideos'],
+    queryFn: async () => {
+      return await videoApi.get()
+    }
+  })
+
   return (
     <div>
       <FormCreateVideo />
 
       {/* Swiper video media */}
-      <SwiperVideoCard />
+      {/* <SwiperVideoCard /> */}
       {/* card list  */}
-      <div className='box mt-6 p-6'>
-        {array.map((item) => {
-          return <HorizontalVideoCard key={item} />
-        })}
+      <div className='mx-auto md:max-w-[80%] lg:max-w-[70%]'>
+        <div className='box mt-6 py-2'>
+          {data &&
+            data?.data?.map((item: DataVideoResponse) => {
+              return <HorizontalVideoCard key={item.id} video={item} />
+            })}
+        </div>
       </div>
       {/* load more */}
       <div className='my-6 flex justify-center'>

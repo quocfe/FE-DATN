@@ -1,47 +1,61 @@
 import { IonIcon } from '@ionic/react'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import React from 'react'
+import { Link } from 'react-router-dom'
+import likeVideoApi from '~/apis/like-video.api'
+import { Video } from '~/components/design-systems'
+import { ROUTE_PATH } from '~/constants'
+import { cn } from '~/helpers'
+import SvgIcon from '~/helpers/SvgIcon'
+import useAuthStore from '~/store/auth.store'
+import { calculateTimeAgo } from '~/utils/helpers'
 
-const HorizontalVideoCard = () => {
+interface HorizontalVideoCardProps {
+  video: DataVideoResponse
+}
+
+const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
+  const { profile } = useAuthStore()
+
+  const { data: likeVideo, refetch } = useQuery({
+    queryKey: ['getLikeVideos'],
+    queryFn: async () => {
+      const res = await likeVideoApi.getLikeVideo(video.id)
+      return res.data
+    }
+  })
+
+  const { mutate: handlePatchLikeVideo } = useMutation({
+    mutationFn: async () => {
+      const res = await likeVideoApi.pathLikeVideo(video.id)
+      return res.data
+    },
+    onSuccess: () => {
+      refetch()
+    }
+  })
+
   return (
     <React.Fragment>
-      <div className='card-list'>
-        <a href='video-watch.html'>
-          <div className='card-list-media aspect-[3/1.5] sm:aspect-[3/1.2] md:h-[180px] md:w-[320px]'>
-            <img src='src/assets/images/video/img-2.png' alt='' />
-            <img src='' className='absolute !left-1/2 !top-1/2 !h-12 !w-12 -translate-x-1/2 -translate-y-1/2' alt='' />
-            <span className='absolute bottom-1 right-1 z-10 rounded bg-black bg-opacity-60 px-1.5 py-0.5 text-xs font-semibold text-white'>
-              12:21
-            </span>
-          </div>
-        </a>
-        <div className='card-list-body relative'>
-          <a href='video-watch.html'>
-            <h3 className='card-list-title lg:mt-2 lg:line-clamp-1'>
-              Great drone jet testing range flat model show with advance
-            </h3>
-          </a>
-          <p className='card-list-text'>
-            consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat. Ut wisi enim ad minim veniam,
-          </p>
-          <a href='timeline.html'>
-            <div className='card-list-link mt-5'> John Michael </div>
-          </a>
-          <div className='flex items-center justify-between'>
-            <div className='card-list-info'>
-              <div> 27 weeks ago</div>
-              <div className='hidden md:block'>·</div>
-              <div> 156.9K views</div>
+      <div className='flex flex-col gap-y-2'>
+        <div className='flex items-start justify-between px-2'>
+          <div className=''>
+            <div className='flex gap-x-2'>
+              <div className='relative shrink-0 cursor-pointer rounded-full'>
+                <img
+                  className='sm:w-h-11 h-10 w-11 shrink-0 rounded-full shadow sm:h-11'
+                  src={profile?.Profile.profile_picture}
+                  alt=''
+                />
+              </div>
+              <div className=''>
+                <p className='font-medium text-black'>{profile?.first_name}</p>
+                <p className='text-sm'>{calculateTimeAgo(video.createdAt as unknown as string)}</p>
+              </div>
             </div>
-            <button
-              type='button'
-              className=' bg-second ery border2 hidden rounded-lg px-3.5 py-1.5 text-sm md:inline-block'
-            >
-              Add favorites
-            </button>
+            <div className='mt-2 text-sm'>{video.content}</div>
           </div>
-          {/* dropdown menu */}
-          <div className=' absolute right-0 top-0 -m-1'>
+          <div className=''>
             <button type='button' className='grid h-10 w-10 place-items-center rounded-full hover:bg-secondery'>
               <IonIcon className='text-2xl' name='ellipsis-horizontal' />
             </button>
@@ -70,8 +84,50 @@ const HorizontalVideoCard = () => {
             </div>
           </div>
         </div>
+        <div className='h-[428px] w-full bg-black'>
+          {/* <img src='src/assets/images/video/img-2.png' alt='' />
+            <img src='' className='absolute !left-1/2 !top-1/2 !h-12 !w-12 -translate-x-1/2 -translate-y-1/2' alt='' /> */}
+          <Video link={video.url} />
+        </div>
+        <div className='card-list-body relative mt-2 flex items-center justify-between'>
+          <div className='flex items-center gap-x-4'>
+            <button
+              className={cn(
+                'relative flex items-center gap-x-2 rounded-md px-3 py-[6px] hover:bg-secondery dark:text-white',
+                {
+                  'text-blue-500': likeVideo?.data.isLike
+                }
+              )}
+              onClick={() => {
+                console.log('Click like')
+                handlePatchLikeVideo()
+              }}
+            >
+              <SvgIcon name='like' className='h-5 w-5' />
+              <p className='text-xs font-medium'>Thích</p>
+            </button>
+            <Link
+              to={ROUTE_PATH.WATCH + '/' + video.id}
+              className='relative flex items-center gap-x-2 rounded-md px-3 py-[6px] hover:bg-secondery dark:text-white'
+            >
+              <SvgIcon name='comment' className='h-5 w-5' />
+              <p className='text-xs font-medium'>Bình luận</p>
+            </Link>
+            <button className='relative flex items-center gap-x-2 rounded-md px-3 py-[6px] hover:bg-secondery dark:text-white'>
+              <SvgIcon name='share' className='h-5 w-5' />
+              <p className='text-xs font-medium'>Chia sẻ</p>
+            </button>
+          </div>
+          <div className='flex items-center gap-x-4 px-2'>
+            <div className='flex gap-2'>
+              <div className='flex items-center justify-center rounded-full bg-blue-600 p-[6px]'>
+                <SvgIcon name='like' className='h-3 w-3 text-white' />
+              </div>
+              <p className='text-sm'>{likeVideo?.data.list_like.length}</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <hr className='card-list-divider' />
     </React.Fragment>
   )
 }

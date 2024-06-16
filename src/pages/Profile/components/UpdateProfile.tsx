@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import useQueryProfile from '~/hooks/queries/useQueryProfile'
+import useQueryProfile from '~/hooks/queries/user/useQueryProfile'
 import useMutationUpdateProfile from '../hooks/useMutationUpdateProfile'
 import { toast } from 'react-toastify'
 import useAuthStore from '~/store/auth.store'
@@ -114,16 +114,6 @@ function UpdateProfile({ onClose }: Props) {
           <label className='text-right md:w-32'> Công việc </label>
           <div className='flex-1 max-md:mt-4'>
             <input type='text' placeholder='Chưa cập nhật ...' className='lg:w-5/6' {...register('job')} />
-          </div>
-        </div>
-        <div className='items-center gap-10 md:flex'>
-          <label className='text-right md:w-32'> Giới tính </label>
-          <div className='flex-1 max-md:mt-4'>
-            <select className='w-full !rounded-md !border-0 lg:w-2/4'>
-              <option value={0}>Nam</option>
-              <option value={1}>Nữ</option>
-              <option value={3}>Khác</option>
-            </select>
           </div>
         </div>
         <div className='items-center gap-10 md:flex'>

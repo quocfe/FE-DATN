@@ -5,13 +5,11 @@ import Content from './component/Content'
 function WatchDetail() {
   return (
     <div>
-      <>
-        <Content />
-        {/* open chat box */}
-        <ChatBox />
-        {/* post preview modal */}
-        {/* <PreviewModal /> */}
-      </>
+      <Content />
+      {/* open chat box */}
+      <ChatBox />
+      {/* post preview modal */}
+      {/* <PreviewModal /> */}
     </div>
   )
 }
