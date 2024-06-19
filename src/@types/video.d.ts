@@ -49,4 +49,6 @@ interface VideoDetail {
       cover_photo: string
     }
   }
+  like_count: number
+  isLike: number
 }

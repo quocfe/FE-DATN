@@ -19,7 +19,9 @@ interface CommentVideoItem {
   }
   user_id: string
   video_id: string
-  children_count: number
+  like_count: number
+  isLike: number
+  reply_count: number
 }
 
 interface CommentVideoPartentItemResponse extends SuccessResponse {

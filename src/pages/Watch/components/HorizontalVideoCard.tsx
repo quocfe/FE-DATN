@@ -18,9 +18,9 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
   const { profile } = useAuthStore()
 
   const { data: likeVideo, refetch } = useQuery({
-    queryKey: ['getLikeVideos'],
+    queryKey: ['getLikeVideos', video.id],
     queryFn: async () => {
-      const res = await likeVideoApi.getLikeVideo(video.id)
+      const res = await likeVideoApi.getLikeCountVideo(video.id)
       return res.data
     }
   })
@@ -95,7 +95,7 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
               className={cn(
                 'relative flex items-center gap-x-2 rounded-md px-3 py-[6px] hover:bg-secondery dark:text-white',
                 {
-                  'text-blue-500': likeVideo?.data.isLike
+                  'text-blue-500': likeVideo?.data?.isLike
                 }
               )}
               onClick={() => {
@@ -123,7 +123,7 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
               <div className='flex items-center justify-center rounded-full bg-blue-600 p-[6px]'>
                 <SvgIcon name='like' className='h-3 w-3 text-white' />
               </div>
-              <p className='text-sm'>{likeVideo?.data.list_like.length}</p>
+              <p className='text-sm'>{likeVideo?.data?.likeCount}</p>
             </div>
           </div>
         </div>

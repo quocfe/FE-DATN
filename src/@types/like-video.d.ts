@@ -16,3 +16,11 @@ interface LikeVideoItem {
   user_id: string
   video_id: string
 }
+
+interface GetLikeCountVideoItemResponse extends SuccessResponse {
+  data: {
+    count: number
+    likeCount: number
+    isLike: number
+  }
+}

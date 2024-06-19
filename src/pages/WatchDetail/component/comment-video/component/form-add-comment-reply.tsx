@@ -30,9 +30,9 @@ const FormAddCommentReply = ({
   }
 
   return (
-    <div className='relative flex w-full px-[23px]'>
+    <div className='relative flex w-full items-center px-[23px]'>
       <div
-        className='mt-5 h-3 w-[32px] border-b-[2px]'
+        className='-mt-3 mr-2 h-3 w-[32px] border-b-[2px]'
         style={{
           borderBottomLeftRadius: '10px',
           borderLeftStyle: 'solid',

@@ -78,7 +78,7 @@ const Comment = ({ comment, refetchComment }: CommnetVideoItemProps) => {
       />
 
       {isSuccessCommentParent ||
-        (comment?.children_count > 0 && (
+        (comment?.reply_count > 0 && (
           <div className='relative flex h-[36px] items-center gap-x-2 px-[23px]'>
             <div
               className='h-3 w-[32px] -translate-y-1/3 border-b-[2px]'
@@ -97,7 +97,7 @@ const Comment = ({ comment, refetchComment }: CommnetVideoItemProps) => {
                   getCommentPartent()
                 }}
               >
-                Xem tất cả <span>{comment.children_count}</span> phản hồi
+                Xem tất cả <span>{comment.reply_count}</span> phản hồi
               </button>
             </div>
           </div>
@@ -107,7 +107,7 @@ const Comment = ({ comment, refetchComment }: CommnetVideoItemProps) => {
           return (
             <CommnetReplyItem
               key={item.id}
-              item={item}
+              comment_reply={item}
               comment={comment}
               handClickReply={handClickReply}
               getCommentPartent={getCommentPartent}
