@@ -18,8 +18,6 @@ const CommentVideo = ({ refetchCommentVideo }: CommentVideoProps) => {
     queryKey: ['getCommentVideoItem', refetchCommentVideo],
     queryFn: async () => {
       const res = await commentVideoApi.getCommentVideoItem(video_id as string)
-      console.log(res.status)
-
       return res.data.data
     }
   })

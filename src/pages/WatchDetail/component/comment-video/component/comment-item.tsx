@@ -2,6 +2,7 @@ import { IonIcon } from '@ionic/react'
 import { QueryObserverResult, RefetchOptions, useMutation } from '@tanstack/react-query'
 import React, { useRef, useState } from 'react'
 import commentVideoApi from '~/apis/comment-video.api'
+import { useConfirm } from '~/components/design-systems/comfirm/confirm-provider'
 import { cn } from '~/helpers'
 import { useOnClickOutside } from '~/hooks/useOnClickOutside'
 import useAuthStore from '~/store/auth.store'
@@ -20,6 +21,8 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
 
   const refActionComment = useRef(null)
 
+  const coreConfirm = useConfirm()
+
   useOnClickOutside(refActionComment, () => {
     setOpenActionComment(false)
   })
@@ -34,6 +37,18 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
       return data
     }
   })
+
+  const handleClickDeleteComment = () => {
+    coreConfirm({
+      title: 'Xóa bình luận?',
+      confirmOk: 'Xóa',
+      confirmCancel: 'Không',
+      content: 'Bạn có chắc chắn muốn xóa bình luận này không?',
+      callbackOK: () => {
+        deleteCommentPartent()
+      }
+    })
+  }
 
   const heightBrear = commentPartents ? 'calc(100% - 50px)' : 'calc(100% - 61px)'
 
@@ -83,10 +98,7 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
               >
                 <div
                   className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'
-                  onClick={() => {
-                    console.log('delete')
-                    deleteCommentPartent()
-                  }}
+                  onClick={handleClickDeleteComment}
                 >
                   Xóa
                 </div>

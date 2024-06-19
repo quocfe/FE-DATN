@@ -70,7 +70,12 @@ const Comment = ({ comment, refetchComment }: CommnetVideoItemProps) => {
 
   return (
     <div className='relative mt-5'>
-      <CommentItem refetchComment={refetchComment} comment={comment} commentPartents={commentPartents} handClickReply={handClickReply} />
+      <CommentItem
+        refetchComment={refetchComment}
+        comment={comment}
+        commentPartents={commentPartents}
+        handClickReply={handClickReply}
+      />
 
       {isSuccessCommentParent ||
         (comment?.children_count > 0 && (

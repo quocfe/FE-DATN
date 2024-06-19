@@ -2,28 +2,57 @@ import { IonIcon } from '@ionic/react'
 import React, { useState } from 'react'
 import Sidebar from './Sidebar'
 import { Video } from '~/components/design-systems'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQueries } from '@tanstack/react-query'
 import videoApi from '~/apis/video.api'
 import { useParams } from 'react-router-dom'
 import SvgIcon from '~/helpers/SvgIcon'
 import AddCommentVideo from '../add-comment-video'
 import CommentVideo from '../comment-video'
+import likeVideoApi from '~/apis/like-video.api'
+import { cn } from '~/helpers'
+import { GetLikeVideoItemResponse } from '~/@types/like-video'
 
 const Content = () => {
   const { id } = useParams()
 
   const [refetchComment, setRefetchComment] = useState<boolean>(false)
 
-  const { data: videoData } = useQuery({
-    queryKey: ['getOne'],
-    queryFn: async () => {
-      const res = await videoApi.getOneVideo(id)
-      return res?.data
+  const queries = [
+    {
+      queryKey: ['getOne', id],
+      queryFn: async () => {
+        const res = await videoApi.getOneVideo(id)
+        return res?.data
+      }
+    },
+    {
+      queryKey: ['getLikeVideos', id],
+      queryFn: async () => {
+        const res = await likeVideoApi.getLikeVideo(id as string)
+        return res.data?.data
+      }
+    }
+  ]
+
+  const results = useQueries({ queries })
+
+  const [getOneQuery, getLikeVideosQuery] = results
+
+  const videoData = getOneQuery.data as VideoDetail
+  const likedVideo = getLikeVideosQuery as GetLikeVideoItemResponse
+
+  const { mutate: handlePatchLikeVideo } = useMutation({
+    mutationFn: async () => {
+      const res = await likeVideoApi.pathLikeVideo(id as string)
+      return res.data
+    },
+    onSuccess: () => {
+      getLikeVideosQuery.refetch()
     }
   })
 
   return (
-    <div className='mx-auto grid w-full max-w-max grid-cols-3 gap-6'>
+    <div className='mx-auto grid w-full grid-cols-3 gap-6'>
       <div className='col-span-3 lg:col-span-2'>
         {/*  post image*/}
         <div className='border1 dark:bg-dark2 rounded-xl bg-white text-sm font-medium shadow-sm'>
@@ -74,11 +103,70 @@ const Content = () => {
           </div>
           <p className='px-6 text-sm font-normal leading-6'>{videoData?.content}</p>
           {/* post icons */}
-          <div className='flex items-center gap-4 text-xs font-semibold sm:p-4'>
-            <div className='card-list-body relative px-3'>
+          <div className='flex gap-2 px-6 pb-2'>
+            {likedVideo?.data?.isLike ||
+              (likedVideo?.data?.list_like.length > 0 && (
+                <img
+                  src="data:image/svg+xml,%3Csvg fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint0_linear_15251_63610)'/%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint1_radial_15251_63610)'/%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint2_radial_15251_63610)' fill-opacity='.5'/%3E%3Cpath d='M7.3014 3.8662a.6974.6974 0 0 1 .6974-.6977c.6742 0 1.2207.5465 1.2207 1.2206v1.7464a.101.101 0 0 0 .101.101h1.7953c.992 0 1.7232.9273 1.4917 1.892l-.4572 1.9047a2.301 2.301 0 0 1-2.2374 1.764H6.9185a.5752.5752 0 0 1-.5752-.5752V7.7384c0-.4168.097-.8278.2834-1.2005l.2856-.5712a3.6878 3.6878 0 0 0 .3893-1.6509l-.0002-.4496ZM4.367 7a.767.767 0 0 0-.7669.767v3.2598a.767.767 0 0 0 .767.767h.767a.3835.3835 0 0 0 .3835-.3835V7.3835A.3835.3835 0 0 0 5.134 7h-.767Z' fill='%23fff'/%3E%3Cdefs%3E%3CradialGradient id='paint1_radial_15251_63610' cx='0' cy='0' r='1' gradientUnits='userSpaceOnUse' gradientTransform='rotate(90 .0005 8) scale(7.99958)'%3E%3Cstop offset='.5618' stop-color='%230866FF' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%230866FF' stop-opacity='.1'/%3E%3C/radialGradient%3E%3CradialGradient id='paint2_radial_15251_63610' cx='0' cy='0' r='1' gradientUnits='userSpaceOnUse' gradientTransform='rotate(45 -4.5257 10.9237) scale(10.1818)'%3E%3Cstop offset='.3143' stop-color='%2302ADFC'/%3E%3Cstop offset='1' stop-color='%2302ADFC' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='paint0_linear_15251_63610' x1='2.3989' y1='2.3999' x2='13.5983' y2='13.5993' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%2302ADFC'/%3E%3Cstop offset='.5' stop-color='%230866FF'/%3E%3Cstop offset='1' stop-color='%232B7EFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
+                  alt=''
+                  className='w-5'
+                />
+              ))}
+            <div className='text-sm'>
+              {likedVideo?.data?.isLike && 'Bạn'}
+              {likedVideo?.data?.isLike && likedVideo?.data?.list_like.length - 1 > 0 && ' và'}
+              {likedVideo?.data?.list_like.length > 0 && `  ${likedVideo?.data?.list_like.length} `}
+              {likedVideo?.data?.isLike && 'người khác'}
+            </div>
+          </div>
+          <div className='flex items-center gap-4 border-y border-[#CED0D4] text-xs font-semibold sm:p-2'>
+            <div className='card-list-body relative px-1'>
               <div className='flex items-center gap-x-4'>
-                <button className='relative flex items-center gap-x-2 rounded-md py-[6px] hover:bg-secondery dark:text-white'>
-                  <SvgIcon name='like' className='h-5 w-5' />
+                <button
+                  className={cn(
+                    'relative flex items-center gap-x-2 rounded-md px-3 py-[6px] hover:bg-secondery dark:text-white',
+                    {
+                      'text-blue-500': likedVideo && likedVideo?.data?.isLike
+                    }
+                  )}
+                  onClick={() => {
+                    console.log('Click like')
+                    handlePatchLikeVideo()
+                  }}
+                >
+                  {/* <SvgIcon name='like' className='h-5 w-5' /> */}
+                  {likedVideo?.data?.isLike ? (
+                    <i
+                      data-visualcompletion='css-img'
+                      className=''
+                      style={{
+                        backgroundImage:
+                          'url("https://static.xx.fbcdn.net/rsrc.php/v3/yw/r/0uJRGjrhtZ5.png?_nc_eui2=AeHF16rb7SQL7LXaN2QOxoPLuKGrgKwm-de4oauArCb51yEJmhEPngB58zz87jnnnLZvQh1GPcSfqKiCpy4DBlmm")',
+                        backgroundPosition: '0px -634px',
+                        backgroundSize: 'auto',
+                        width: '20px',
+                        height: '20px',
+                        backgroundRepeat: 'no-repeat',
+                        display: 'inline-block'
+                      }}
+                    ></i>
+                  ) : (
+                    <i
+                      data-visualcompletion='css-img'
+                      className=''
+                      style={{
+                        backgroundImage:
+                          'url("https://static.xx.fbcdn.net/rsrc.php/v3/yw/r/0uJRGjrhtZ5.png?_nc_eui2=AeHF16rb7SQL7LXaN2QOxoPLuKGrgKwm-de4oauArCb51yEJmhEPngB58zz87jnnnLZvQh1GPcSfqKiCpy4DBlmm")',
+                        backgroundPosition: '0px -718px',
+                        backgroundSize: 'auto',
+                        width: '20px',
+                        height: '20px',
+                        backgroundRepeat: 'no-repeat',
+                        display: 'inline-block'
+                      }}
+                    ></i>
+                  )}
+
                   <p className='text-xs font-medium'>Thích</p>
                 </button>
                 <button
@@ -157,6 +245,7 @@ const Content = () => {
         <br />
         <br />
       </div>
+      {/* <div className="col-span-1">hello</div> */}
       {/* sidebar */}
       <div className='bottom-0 right-0 top-[75px] !h-[calc(100vh-5.5rem)] !w-auto pr-2 sm:col-span-3 lg:fixed lg:col-span-1'>
         <Sidebar />

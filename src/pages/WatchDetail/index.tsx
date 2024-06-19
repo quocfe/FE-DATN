@@ -1,16 +1,17 @@
+import React from 'react'
 import ChatBox from './component/ChatBox'
 import Content from './component/Content'
 // import PreviewModal from './component/PreviewModal'
 
 function WatchDetail() {
   return (
-    <div>
+    <React.Fragment>
       <Content />
       {/* open chat box */}
       <ChatBox />
       {/* post preview modal */}
       {/* <PreviewModal /> */}
-    </div>
+    </React.Fragment>
   )
 }
 

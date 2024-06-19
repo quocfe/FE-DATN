@@ -7,7 +7,7 @@ interface VideoProps {
 
 export const Video = ({ link, className }: VideoProps) => {
   return (
-    <div className='h-full w-full'>
+    <div className='h-full w-full bg-black'>
       {/* <source
         key={typeof link !== 'string' ? URL.createObjectURL(link) : ''}
         src={typeof link !== 'string' ? URL.createObjectURL(link) : ''}

@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import commentVideoApi from '~/apis/comment-video.api'
 import { UseMutateFunction, useMutation } from '@tanstack/react-query'
+import { useConfirm } from '~/components/design-systems/comfirm/confirm-provider'
 
 interface CommnetReplyItemProps {
   item: Omit<CommentVideoItem, 'children_count'>
@@ -20,6 +21,8 @@ interface CommnetReplyItemProps {
 const CommnetReplyItem = ({ item, handClickReply, comment, getCommentPartent }: CommnetReplyItemProps) => {
   const { profile } = useAuthStore()
   const [editComment, setEditComment] = useState<boolean>(false)
+
+  const coreConfirm = useConfirm()
 
   const refActionComment = useRef(null)
 
@@ -66,6 +69,17 @@ const CommnetReplyItem = ({ item, handClickReply, comment, getCommentPartent }: 
     return
   }
 
+  const handleClickDeleteComment = (comment_id: string) => {
+    coreConfirm({
+      title: 'Xóa bình luận?',
+      confirmOk: 'Xóa',
+      confirmCancel: 'Không',
+      content: 'Bạn có chắc chắn muốn xóa bình luận này không?',
+      callbackOK: () => {
+        deleteCommentPartent(comment_id)
+      }
+    })
+  }
   return (
     <div className='flex items-start gap-x-1 px-[23px]'>
       <div
@@ -207,7 +221,7 @@ const CommnetReplyItem = ({ item, handClickReply, comment, getCommentPartent }: 
                         </div>
                         <div
                           className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'
-                          onClick={() => deleteCommentPartent(item.id)}
+                          onClick={() => handleClickDeleteComment(item.id)}
                         >
                           Xóa
                         </div>

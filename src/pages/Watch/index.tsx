@@ -20,7 +20,7 @@ function Watch() {
       {/* <SwiperVideoCard /> */}
       {/* card list  */}
       <div className='mx-auto md:max-w-[80%] lg:max-w-[70%]'>
-        <div className='box mt-6 py-2'>
+        <div className='box mt-6 flex flex-col gap-y-10 py-2 '>
           {data &&
             data?.data?.map((item: DataVideoResponse) => {
               return <HorizontalVideoCard key={item.id} video={item} />
