@@ -29,7 +29,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
     if (file) {
       setIsLoading(true)
       const url = await upload(file)
-      dataGroup.group_thumbnail = url
+      dataGroup.group_thumbnail = url.url
     }
 
     createMessageMutation.mutate(dataGroup, {
@@ -53,7 +53,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
           </div>
           <div className='p-6 py-0'>
             <div className='mb-4 flex w-full gap-2'>
-              <CustomFileInput iconName={'image-outline'} setFile={setFile} file={file} />
+              <CustomFileInput type={1} iconName={'image-outline'} setFile={setFile} file={file} />
               <div className='group relative z-0 w-full border-0 border-b-2 !border-gray-600'>
                 <input
                   type='text'

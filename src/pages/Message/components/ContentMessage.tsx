@@ -165,14 +165,14 @@ const ContentMessage = (params: any) => {
         setOpenEmoji(false)
         setOpenOption(false)
       }}
-      className={` relative cursor-pointer border-[2px]  border-transparent
+      className={` relative min-w-[80px]  cursor-pointer border-[2px] border-transparent
       ${params.item.type === 4 ? 'h-[100%]' : ''}
       ${params.me ? 'text-left' : 'text-right'}
       ${params.item.reactions?.length > 0 ? 'mb-3' : ''}
-      ${params.me ? (params.item.type === 2 || params.item.type === 4 ? 'bg-transparent' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
+      ${params.me ? (params.item.type === 2 || params.item.type === 4 ? 'bg-transparent ' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
       ${
         params.type != 'reply'
-          ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
+          ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'max-w-[60%] px-4 py-2'} group  rounded-[14px] text-white shadow`
           : `-mb-4 !bg-secondery px-4 py-5 text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }`}
     >
@@ -276,7 +276,7 @@ const ContentMessage = (params: any) => {
       </div>
       {params?.type != 'reply' && (
         <p
-          className={`${params.me ? `${params.item.type === 2 || params.item.type === 4 ? 'px-2 py-2 text-gray-700' : ' text-white'}` : ` text-gray-700 ${params.item.type === 2 ? 'px-2 py-1' : ''}`}    text-[11px]`}
+          className={`${params.me ? `${params.item.type === 2 || params.item.type === 4 ? 'px-2 py-2 text-gray-700' : ' text-white'}` : ` text-gray-700 ${params.item.type === 2 ? 'px-2 py-1' : ''}`} mt-2 text-[11px]`}
         >
           {houreSend}
         </p>

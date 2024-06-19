@@ -7,23 +7,38 @@ import { useState } from 'react'
 import Dialog from '~/components/Dialog'
 import useMutationDeleteMessage from '../../hooks/useMutationDeleteGroup'
 import { useQueryConversation } from '../../hooks/useQueryConversation'
+import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
 
 type ConversationType = {
   item: ConvesationSideBar
   isOnline: boolean
+  notifyData?: []
 }
 
-function Conversation({ item, isOnline }: ConversationType) {
-  const { setSelectedConversation } = useConversationStore()
+function Conversation({ item, isOnline, notifyData }: ConversationType) {
+  const { setSelectedConversation, selectedConversation } = useConversationStore()
+  const deleteNotify = useMutationDeleteNotify()
   const deleteConversatonMuation = useMutationDeleteMessage()
   const { refetch } = useQueryConversation()
   const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
   const { socket } = useSocketContext()
+  const notify = notifyData && notifyData?.length > 0 ? true : false
+  const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
   const body =
     item?.messages?.type === 1 || 3
       ? item?.messages?.body
       : item?.messages?.sub_body && checkBodyMessage(item?.messages?.sub_body)
+  const checkBody =
+    notifyData &&
+    notifyData.map((item: any) => {
+      if (item.type === 1) {
+        return body
+      } else {
+        return item.content
+      }
+    })
   const handleSelectedConversation = (item: GroupMessage) => {
     if (item.type === 1) {
       setSelectedConversation({
@@ -37,7 +52,11 @@ function Conversation({ item, isOnline }: ConversationType) {
         id: item.group_message_id,
         type: 2
       })
+    } else {
+      return body
     }
+
+    notify && deleteNotify.mutate(item.group_message_id)
     socket?.emit('seenMessage', item.group_message_id)
   }
 
@@ -54,8 +73,16 @@ function Conversation({ item, isOnline }: ConversationType) {
   }
 
   return (
-    <div className={`group relative flex cursor-pointer items-center  rounded-xl p-2 duration-200 hover:bg-secondery `}>
-      <div onClick={() => handleSelectedConversation(item)} className='flex flex-1 flex-row items-center gap-3'>
+    <div
+      className={`
+    group relative flex cursor-pointer items-center rounded-xl p-2 duration-200 
+    ${selectedConversation?.group_id === item?.group_message_id ? 'bg-primary-soft hover:bg-none' : 'hover:bg-secondery'}
+    `}
+    >
+      <div
+        onClick={() => handleSelectedConversation(item)}
+        className='flex w-full flex-1 flex-row items-center justify-between gap-2'
+      >
         <div className='relative h-14 w-14 shrink-0'>
           <img
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
@@ -65,19 +92,23 @@ function Conversation({ item, isOnline }: ConversationType) {
             className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
           />
         </div>
-        <div className='flex h-full min-w-0 flex-col justify-evenly gap-1'>
+        <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
           <div className='mr-auto truncate text-sm font-medium text-black dark:text-white '>{item?.group_name}</div>
-          <div className='flex items-center gap-2'>
-            <div className='w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-medium text-gray-800'>
-              {body}
-            </div>
-            <div className='flex-shrink-0 text-xs font-light text-gray-500 dark:text-white/70'>
-              {item?.messages?.createdAt && calculateTimeAgo(item?.messages?.createdAt)}
-            </div>
+          <div className='flex items-center justify-between gap-2'>
+            <p
+              className={`w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]  text-gray-600
+                ${notify ? 'font-semibold' : 'font-thin'}
+                `}
+            >
+              {notify ? checkBody : body}
+            </p>
           </div>
         </div>
       </div>
-      <div className='uk-inline absolute right-8 rounded-full shadow-sm '>
+      <div className='absolute right-2 top-[15px] text-xs font-light text-gray-500 group-hover:hidden dark:text-white/70'>
+        {item?.messages?.createdAt && calculateTimeAgo(item?.messages?.createdAt)}
+      </div>
+      <div className='uk-inline absolute right-2 top-1 hidden rounded-full shadow-sm group-hover:block '>
         <button
           className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
           type='button'
@@ -139,6 +170,11 @@ function Conversation({ item, isOnline }: ConversationType) {
           </div>
         </div>
       </div>
+      {notify && (
+        <div className='absolute bottom-4 right-2 flex h-[20px] w-[20px] items-center justify-center rounded-full  bg-red-500'>
+          <p className='text-[10px] text-white'>{numberNotify}</p>
+        </div>
+      )}
     </div>
   )
 }

@@ -297,18 +297,29 @@ function ProfileRight() {
                                 <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
                               </button>
                               <div uk-dropdown='mode: click' className='w-[200px]'>
-                                <div
-                                  onClick={() => handleSelect(member)}
-                                  className='flex items-center justify-start gap-2 rounded-[4px] p-2 hover:bg-slate-100'
-                                >
-                                  <IonIcon icon='chatbubble-ellipses-outline' className='text-[12px]' />
-                                  <p className='text-[14px] font-semibold'>Gửi tin nhắn</p>
-                                </div>
+                                {member.user_id === user_id ? (
+                                  <div
+                                    onClick={() => handleSelect(member)}
+                                    className='flex items-center justify-start gap-2 rounded-[4px] p-2 hover:bg-slate-100'
+                                  >
+                                    <IonIcon icon='log-out-outline' className='text-[20px]' />
+                                    <p className='text-[14px] font-semibold'>Rời khỏi nhóm</p>
+                                  </div>
+                                ) : (
+                                  <div
+                                    onClick={() => handleSelect(member)}
+                                    className='flex items-center justify-start gap-2 rounded-[4px] p-2 hover:bg-slate-100'
+                                  >
+                                    <IonIcon icon='chatbubble-ellipses-outline' className='text-[20px]' />
+                                    <p className='text-[14px] font-semibold'>Gửi tin nhắn</p>
+                                  </div>
+                                )}
+
                                 <Link
                                   to={`/profile/${member.user_id}`}
                                   className='flex items-center justify-start gap-2 rounded-[4px] p-2 hover:bg-slate-100'
                                 >
-                                  <IonIcon icon='person-circle-outline' className='text-[12px]' />
+                                  <IonIcon icon='person-circle-outline' className='text-[20px]' />
                                   <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
                                 </Link>
                               </div>

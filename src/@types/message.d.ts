@@ -97,17 +97,17 @@ type MessageInput = {
 
 type MessageMediaInput = {
   body: string
+  sub_body: string
   group_message_id: string | undefined
   receiver?: string
   type: number
-  uploadData: FormData
 }
 
 type ReplyMessageInput = {
   body: string
   group_message_id: string
   type: number
-  parent_id: string
+  parent_id: string | undefined
   receiver?: string
 }
 

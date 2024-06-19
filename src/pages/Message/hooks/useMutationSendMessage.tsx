@@ -11,7 +11,7 @@ function useMutationSendMessage() {
 
 function useMutationSendMessageAttach() {
   return useMutation({
-    mutationFn: (data: FormData) => messageApi.sendMessageAttach(data)
+    mutationFn: (data: MessageMediaInput) => messageApi.sendMessageAttach(data)
   })
 }
 

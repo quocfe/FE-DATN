@@ -10,14 +10,14 @@ import PinMessage from './PinMessage'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 
 function MessageCenter() {
-  const { toggleBoxReply, toggleBoxSearchMessage, setToggleBoxSearchMessage, pinMessage } = useConversationStore()
+  const { toggleBoxReply, togglePreviewImg, setToggleBoxSearchMessage, pinMessage } = useConversationStore()
   const { isLoading, data } = useQueryMessage()
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
-
   const [calculateHeight, setCalculateHeight] = useState<string>()
+
   const handleScroll = () => {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
@@ -26,22 +26,22 @@ function MessageCenter() {
   }
 
   useEffect(() => {
-    if (toggleBoxReply || toggleBoxSearchMessage) {
+    if (toggleBoxReply || togglePreviewImg) {
       if (boxReplyRef.current) {
         const height = boxReplyRef.current.getBoundingClientRect().height
+
         setCalculateHeight(height.toString())
       }
     } else {
       setCalculateHeight('204')
     }
-  }, [toggleBoxReply])
-
+  }, [toggleBoxReply, togglePreviewImg])
   if (isLoading) {
     return <ChatMessageSkelaton />
   }
 
   return (
-    <div className='flex-1 h-full '>
+    <div className='h-full flex-1 '>
       {/* chat heading */}
       <div className='w- uk-animation-slide-top-medium relative z-10 flex  items-center justify-between gap-2 border-b px-6 py-3.5 dark:border-slate-700'>
         <div className='flex items-center gap-2 sm:gap-4'>
@@ -50,8 +50,8 @@ function MessageCenter() {
             <IonIcon icon='chevron-back-outline' className='-ml-4 text-2xl' />
           </button>
           <div className='relative cursor-pointer max-md:hidden' uk-toggle='target: .rightt ; cls: hidden'>
-            <img src={infoMessage?.avatar} className='w-8 h-8 rounded-full shadow' />
-            <div className='absolute bottom-0 right-0 w-2 h-2 m-px bg-teal-500 rounded-full' />
+            <img src={infoMessage?.avatar} className='h-8 w-8 rounded-full object-cover shadow' />
+            <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
           </div>
           <div className='cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
             <div className='text-base font-bold'> {infoMessage?.group_name}</div>
@@ -60,7 +60,7 @@ function MessageCenter() {
         </div>
         <div className='flex items-center gap-2'>
           <button type='button' className='button__ico'>
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' className='w-6 h-6'>
+            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' className='h-6 w-6'>
               <path
                 fillRule='evenodd'
                 d='M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z'
@@ -75,7 +75,7 @@ function MessageCenter() {
               viewBox='0 0 24 24'
               strokeWidth='1.5'
               stroke='currentColor'
-              className='w-6 h-6'
+              className='h-6 w-6'
             >
               <path
                 strokeLinecap='round'
@@ -88,7 +88,7 @@ function MessageCenter() {
             type='button'
             className='flex items-center rounded-full p-1.5 hover:bg-slate-100'
           >
-            <IonIcon icon='search-outline' className='w-6 h-6' />
+            <IonIcon icon='search-outline' className='h-6 w-6' />
           </button>
           <button
             type='button'
@@ -101,7 +101,7 @@ function MessageCenter() {
               viewBox='0 0 24 24'
               strokeWidth='1.5'
               stroke='currentColor'
-              className='w-6 h-6'
+              className='h-6 w-6'
             >
               <path
                 strokeLinecap='round'

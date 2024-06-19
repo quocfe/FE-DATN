@@ -1,176 +1,127 @@
 import { IonIcon } from '@ionic/react'
-import React, { ChangeEvent, useRef, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import EmojiBox from './EmojiBox'
+import CustomFileInput from '~/components/InputFile/CustomFileInput'
+import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
-import { MessageForm, messageSchema } from '~/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { MessageForm, messageSchema } from '~/utils/rules'
 import useConversationStore from '~/store/conversation.store'
 import { useMutationSendMessage, useMutationSendMessageAttach } from '../hooks/useMutationSendMessage'
-import { toast } from 'react-toastify'
-import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationReplyMessage from '../hooks/useMutationReplyMessage'
 import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useSocketContext } from '~/context/socket'
+import useFileUpload from '../utils/uploadApi'
+import { getProfileFromLocalStorage } from '~/utils/auth'
+import isTypingLogo from '../../../assets/images/isTyping.gif'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
 }
+
 function SendMessage({ boxReplyRef }: SendMessageType) {
   const { refetch, data } = useQueryMessage()
   const receiverID = data?.data?.data?.info?.group_id
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const sendMedia = useMutationSendMessageAttach()
-  const [checkInput, setCheckInput] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
-  const { selectedConversation, toggleBoxReply, setToggleBoxReply } = useConversationStore()
+  const { upload } = useFileUpload()
+  const { socket } = useSocketContext()
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<any>(null)
+  const [values, setValues] = useState('')
+
+  const {
+    selectedConversation,
+    toggleBoxReply,
+    setToggleBoxReply,
+    isTyping,
+    isNotTyping,
+    setTogglePreviewImg,
+    togglePreviewImg
+  } = useConversationStore()
+
   const groupID = selectedConversation?.group_id
   const profile = getProfileFromLocalStorage()
+  const fullname = `${profile?.first_name} ${profile?.last_name}`
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
-  const { register, handleSubmit, setValue, getValues, reset } = useForm<MessageForm>({
-    resolver: yupResolver(messageSchema)
-  })
-
-  const handleSendMessage = handleSubmit(({ body }) => {
-    if (!toggleBoxReply) {
-      const data = {
-        body,
+  const handleSendMessage = useCallback(async () => {
+    try {
+      const baseData = {
+        body: values,
         group_message_id: groupID,
         receiver: receiverID,
-        type: 1
-      }
-
-      console.log('data sent', data)
-
-      sendMessageMutation.mutate(data, {
-        onSuccess: () => {
-          reset()
-          refetch()
-        },
-        onError: () => {}
-      })
-    } else {
-      const data = {
-        body,
-        group_message_id: groupID,
         type: 1,
-        parent_id: toggleBoxReply.message_id,
-        receiver: receiverID
-      }
-      replyMessageMutation.mutate(data, {
-        onSuccess: () => {
-          reset()
-          refetch()
-          setToggleBoxReply(null)
-        },
-        onError: () => {
-          toast.error('tin nhắn trả lời !ok', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined
-          })
-        }
-      })
-    }
-  })
-
-  const handSendLike = () => {
-    if (!toggleBoxReply) {
-      const data = {
-        body: '👍',
-        group_message_id: groupID,
-        receiver: receiverID,
-        type: 1
-      }
-      console.log(data)
-      sendMessageMutation.mutate(data, {
-        onSuccess: () => {
-          refetch()
-        },
-        onError: () => {
-          toast.error('tin nhắn gửi !ok', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined
-          })
-        }
-      })
-    } else {
-      const data = {
-        body: '👍',
-        group_message_id: groupID,
-        type: 1,
-        parent_id: toggleBoxReply.message_id
+        parent_id: ''
       }
 
-      replyMessageMutation.mutate(data, {
-        onSuccess: () => {
-          reset()
-          refetch()
-          setToggleBoxReply(null)
-        },
-        onError: () => {
-          toast.error('tin nhắn trả lời !ok', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined
-          })
-        }
-      })
-    }
-  }
-
-  const handleEmojiSelect = (emoji: EmojiType) => {
-    const currentValue = getValues('body') || ''
-    setValue('body', currentValue + emoji.native, { shouldValidate: true })
-  }
-
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files && files.length > 0) {
-      const uploadData = new FormData()
-      uploadData.append('messageattach', files[0])
-      uploadData.append('body', '')
-      uploadData.append('receiverreceiverID', receiverID ? receiverID : '')
-      uploadData.append('group_message_id', groupID)
-      const nameFile = files[0].type.split('/')[0]
-      if (nameFile == 'application') {
-        // file docx, xlsx, pptx, pdf
-        uploadData.append('type', '3')
-      } else if (nameFile == 'video') {
-        // video
-        uploadData.append('type', '4')
+      if (toggleBoxReply) {
+        baseData.parent_id = toggleBoxReply.message_id
+        await replyMessageMutation.mutateAsync(baseData)
+        setToggleBoxReply(null)
       } else {
-        // image
-        uploadData.append('type', '2')
-      }
-      // text: 1/ image: 2/ file: 3/ video: 4/ link: 5
-
-      sendMedia.mutate(uploadData, {
-        onSuccess: () => {
-          refetch()
-        },
-
-        onError: (error) => {
-          console.log('sendMedia fail', error)
+        if (togglePreviewImg && values == '') {
+          await handleFileUpload()
+        } else {
+          await sendMessageMutation.mutateAsync(baseData)
+          await handleFileUpload()
         }
-      })
-    }
-  }
+        setFile(null)
+        setPreview(null)
+      }
 
-  const typeBodyReply = () => {
+      setValues('')
+      refetch()
+    } catch (error) {
+      toast.error('Error sending message', { position: 'top-right', autoClose: 5000 })
+    }
+  }, [values, groupID, receiverID, toggleBoxReply, togglePreviewImg])
+
+  const handleSendLike = useCallback(async () => {
+    try {
+      const likeData = {
+        body: '👍',
+        group_message_id: groupID,
+        receiver: receiverID,
+        type: 1,
+        parent_id: toggleBoxReply?.message_id
+      }
+
+      await (toggleBoxReply ? replyMessageMutation.mutateAsync(likeData) : sendMessageMutation.mutateAsync(likeData))
+      setValues('')
+      refetch()
+      setToggleBoxReply(null)
+    } catch (error) {
+      toast.error('Error sending like', { position: 'top-right', autoClose: 5000 })
+    }
+  }, [groupID, receiverID, toggleBoxReply])
+
+  const handleEmojiSelect = useCallback((emoji: EmojiType) => {
+    setValues((prev) => prev + emoji.native)
+  }, [])
+
+  const handleFileUpload = useCallback(async () => {
+    if (file) {
+      try {
+        const url = await upload(file)
+
+        const mediaData = {
+          body: url.original_filename,
+          sub_body: url.url,
+          receiver: receiverID,
+          group_message_id: groupID,
+          type: url.resource_type === 'application' ? 3 : url.resource_type === 'video' ? 4 : 2
+        }
+
+        await sendMedia.mutateAsync(mediaData)
+      } catch (error) {
+        toast.error('File upload failed', { position: 'top-right', autoClose: 5000 })
+      }
+    }
+  }, [file, groupID, receiverID])
+
+  const typeBodyReply = useCallback(() => {
     switch (toggleBoxReply?.type) {
       case 1:
         return (
@@ -179,46 +130,71 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
           </div>
         )
       case 2:
-        return <img src={toggleBoxReply?.sub_body} className='h-10 w-10 object-contain' />
+        return <img src={toggleBoxReply?.sub_body} className='object-contain w-10 h-10' />
       case 3:
         return <p className='text-sm'>{toggleBoxReply?.body}</p>
       default:
-        break
+        return null
     }
-  }
+  }, [toggleBoxReply])
+
+  useEffect(() => {
+    setTogglePreviewImg(preview)
+  }, [preview])
 
   return (
-    <div>
+    <div className='relative'>
       {toggleBoxReply && (
-        <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm '>
-          <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
-            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+        <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
+          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
+            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               <span className='mb-2 block text-[14px] font-light'>
-                Trả lời tin nhắn <strong className='font-semibold'> {user_name}</strong>
+                Trả lời tin nhắn <strong className='font-semibold'>{user_name}</strong>
               </span>
               {typeBodyReply()}
             </div>
             <IonIcon
               onClick={() => setToggleBoxReply(null)}
               icon='close'
-              className='cursor-pointer rounded-full bg-primary p-2 text-white'
+              className='p-2 text-white rounded-full cursor-pointer bg-primary'
             />
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 overflow-hidden p-2 md:gap-4 md:p-3'>
-        <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
-          <div className=''>
-            <input ref={inputRef} type='file' hidden onChange={handleFileUpload} />
-            <button
-              onClick={() => inputRef.current?.click()}
-              type='button'
-              className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-sky-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'
-            >
-              <IonIcon className='flex text-2xl' icon='image' />
-            </button>
+      {preview && (
+        <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
+          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
+            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+              {preview.type.includes('video') ? (
+                <video
+                  src={URL.createObjectURL(preview)}
+                  className='object-cover w-16 overflow-hidden rounded-sm h-14 shrink-0'
+                ></video>
+              ) : (
+                <img src={URL.createObjectURL(preview)} className='h-[50px] w-[100px] object-cover' />
+              )}
+            </div>
+            <IonIcon
+              onClick={() => {
+                setTogglePreviewImg(false)
+                setPreview(null)
+              }}
+              icon='close'
+              className='p-2 text-white rounded-full cursor-pointer bg-primary'
+            />
           </div>
-
+        </div>
+      )}
+      <div className='flex items-center gap-2 p-2 overflow-hidden md:gap-4 md:p-3'>
+        <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
+          <CustomFileInput
+            type={2}
+            iconName={'image'}
+            setPreview={setPreview}
+            preview={preview}
+            setFile={setFile}
+            file={file}
+          />
           <button
             type='button'
             className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-green-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'
@@ -227,29 +203,44 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
           </button>
           <EmojiBox onEmojiSelect={handleEmojiSelect} />
         </div>
-        <form className='relative flex-1' onSubmit={handleSendMessage}>
+        <div className='relative flex-1'>
           <textarea
             id='body'
-            {...register('body')}
-            onChange={(e) => setCheckInput(e.target.value)}
+            onChange={(e) => {
+              setValues(e.target.value)
+              const data = { user_id: profile.user_id, groupID }
+              e.target.value === ''
+                ? socket?.emit('isNotTyping', JSON.stringify(data))
+                : socket?.emit('isTyping', JSON.stringify(data))
+            }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSendMessage()
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleSendMessage()
+              }
             }}
             placeholder='Write your message'
+            value={values}
             rows={1}
-            className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
+            className='w-full p-2 pl-4 pr-8 rounded-full resize-none no-scrollbar bg-secondery focus:ring-transparent'
           ></textarea>
-          {!checkInput ? (
-            <span onClick={handSendLike} className='absolute right-0 top-0 mr-1 shrink-0 cursor-pointer text-[25px]'>
+          {!values && !togglePreviewImg ? (
+            <span onClick={handleSendLike} className='absolute right-0 top-0 mr-1 shrink-0 cursor-pointer text-[25px]'>
               👍
             </span>
           ) : (
-            <button type={'submit'} className='text-dark absolute right-0 top-0 shrink-0 p-2'>
+            <button onClick={handleSendMessage} className='absolute top-0 right-0 p-2 text-dark shrink-0'>
               <IonIcon className='flex text-xl font-bold text-primary' icon='send' />
             </button>
           )}
-        </form>
+        </div>
       </div>
+      {isTyping !== fullname && !isNotTyping && (
+        <div className='absolute -top-[25px] left-0 flex items-center justify-center bg-white p-1 text-[12px] shadow-sm'>
+          <p>{isTyping} đang nhập</p>
+          <img src={isTypingLogo} className='object-cover w-10 h-4' alt='Typing...' />
+        </div>
+      )}
     </div>
   )
 }

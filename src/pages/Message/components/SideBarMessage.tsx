@@ -9,14 +9,19 @@ import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
 import { getProfileFromLocalStorage } from '~/utils/auth'
+import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
 
 const SideBarMessage = () => {
+  useNotifyMessageSocket()
   const { data: conversation, isLoading, refetch } = useQueryConversation()
   const { setSelectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
   const { onlineUsers } = useSocketContext()
+  const { data, refetch: refetchNotifyMessage } = useQueryNotifyMessage()
+  const { user_id } = getProfileFromLocalStorage()
 
   const handleSearch = (query: string) => {
     searchMutaion.mutate(query, {
@@ -140,17 +145,21 @@ const SideBarMessage = () => {
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
           {conversation?.data?.data
             ?.sort((a: ConvesationSideBar, b: ConvesationSideBar) => {
-              if (a?.messages?.createdAt && b?.messages?.createdAt && a.messages?.createdAt > b.messages?.createdAt) {
+              if (a?.messages?.updatedAt && b?.messages?.updatedAt && a.messages?.updatedAt > b.messages?.updatedAt) {
                 return -1
               }
-              if (a?.messages?.createdAt && b?.messages?.createdAt && a.messages?.createdAt < b.messages?.createdAt) {
+              if (a?.messages?.updatedAt && b?.messages?.updatedAt && a.messages?.updatedAt < b.messages?.updatedAt) {
                 return 1
               }
               return 0
             })
             .map((item: ConvesationSideBar, index: number) => {
               const isOnline = onlineUsers.includes(item.user_id)
-              return <Conversation key={index} item={item} isOnline={isOnline} />
+              const notifyData = data?.data?.data.filter((data: any) => {
+                return data.group_message_id === item.group_message_id && data.receiver_id === user_id ? data : null
+              })
+
+              return <Conversation notifyData={notifyData} key={index} item={item} isOnline={isOnline} />
             })}
         </div>
       </div>
