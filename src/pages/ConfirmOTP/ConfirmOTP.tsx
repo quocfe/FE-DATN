@@ -63,7 +63,11 @@ function ConfirmOTP() {
         toast.success('Gửi lại mã OTP mới thành công!')
       },
       onError: (error) => {
-        toast.error(error.message)
+        if (isAxiosError<ErrorResponse>(error)) {
+          if (error.response) {
+            toast.error(error.response.data.message)
+          }
+        }
       }
     })
   }

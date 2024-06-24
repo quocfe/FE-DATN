@@ -1,5 +1,7 @@
-import useQueryListMyFriends from '../hooks/useQueryListMyFriends'
+import React from 'react'
 import FriendItem from './FriendItem'
+import { Link } from 'react-router-dom'
+import useQueryListMyFriends from '~/hooks/queries/user/useQueryListMyFriends'
 
 function MyFriends() {
   // React Query
@@ -11,15 +13,18 @@ function MyFriends() {
   return (
     <div className='box p-5 px-6'>
       <div className='items-ce flex justify-between text-black dark:text-white'>
-        <h3 className='text-lg font-bold'>Bạn bè</h3>
-        <a href='#' className='text-sm text-blue-500'>
-          Tìm bạn
-        </a>
+        <div>
+          <h3 className='text-lg font-bold'>Bạn bè</h3>
+          <span className='mt-0. block text-sm font-normal text-gray-500 dark:text-white'>{friends.length} Bạn bè</span>
+        </div>
+        <Link to={'/profile/my_friends'} className='text-sm text-blue-500'>
+          Xem tất cả
+        </Link>
       </div>
       <div className='mb-2 mt-4 grid grid-cols-3 gap-2 gap-y-5 text-center text-sm'>
         {friends && friends.length !== 0 ? (
           <>
-            {friends.map((friend) => (
+            {friends.slice(0, 6).map((friend) => (
               <FriendItem key={friend.user_id} friend={friend} />
             ))}
           </>
@@ -31,4 +36,4 @@ function MyFriends() {
   )
 }
 
-export default MyFriends
+export default React.memo(MyFriends)

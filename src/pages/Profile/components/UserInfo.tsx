@@ -1,13 +1,13 @@
 import { IonIcon } from '@ionic/react'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
+import useAuthStore from '~/store/auth.store'
 
-interface Props {
-  profile: UserProfile | null
-  setShowModal: (value: React.SetStateAction<boolean>) => void
-}
+function UserInfo() {
+  console.log('re-render trang cá nhân')
+  console.log('call all api')
 
-function UserInfo({ profile, setShowModal }: Props) {
+  const { profile } = useAuthStore()
   const { updateImage } = useUpdateImage()
   const inputFileProfilePictureRef = useRef<HTMLInputElement | null>(null)
   const inputFileCoverPhotoRef = useRef<HTMLInputElement | null>(null)
@@ -69,10 +69,7 @@ function UserInfo({ profile, setShowModal }: Props) {
           </h3>
           <p className='mt-2 text-center text-gray-500 dark:text-white/80'>
             {profile?.Profile.biography}
-            <a
-              className='ml-4 block cursor-pointer text-center text-base text-blue-500'
-              onClick={() => setShowModal(true)}
-            >
+            <a className='ml-4 block cursor-pointer text-center text-base text-blue-500'>
               {profile?.Profile.biography ? 'Chỉnh sửa' : 'Thêm tiểu sử'}
             </a>
           </p>
@@ -86,4 +83,4 @@ function UserInfo({ profile, setShowModal }: Props) {
   )
 }
 
-export default UserInfo
+export default React.memo(UserInfo)

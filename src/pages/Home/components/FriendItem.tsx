@@ -91,7 +91,7 @@ function FriendItem({ user, type }: Props) {
               className='button bg-primary-soft text-primary dark:text-white'
               onClick={handleSenderFriendRequest(user.user_id)}
             >
-              Kết bạn
+              Thêm bạn bè
             </button>
           )}
         </div>

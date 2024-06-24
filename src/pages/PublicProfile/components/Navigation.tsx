@@ -1,12 +1,12 @@
 import { IonIcon } from '@ionic/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
-import useMutationBlockedUser from '~/hooks/mutations/user/useMutationBlockedUser'
+import useMutationAcceptFriendRequest from '~/hooks/mutations/user/useMutationAcceptFriendRequest'
 import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
 import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
+import useBlockedUser from '~/hooks/user/useBlockedUser'
 
 interface Props {
   profile: UserProfile | null
@@ -21,13 +21,15 @@ function Navigation({ profile, relationship }: Props) {
   // Hooks
   const [showDialogBlockUser, setShowDialogBlockUser] = useState<boolean>(false)
   const [showDialogCancelFriendRequest, setShowDialogCancelFriendRequest] = useState<boolean>(false)
-  const navigate = useNavigate()
 
   // React Query
   const queryClient = useQueryClient()
-  const blockedUserMutation = useMutationBlockedUser()
   const senderFriendRequestMutation = useMutationSenderFriendRequest()
+  const acceptFriendRequestMutation = useMutationAcceptFriendRequest()
   const cancelFriendRequestMutation = useMutationCancelFriendRequest()
+
+  // Custom Hooks React Query
+  const { handleBlockedUser } = useBlockedUser(profile?.user_id)
 
   // Gửi lời mời kết bạn
   const handleSenderFriendRequest = (friend_id: string) => () => {
@@ -45,16 +47,13 @@ function Navigation({ profile, relationship }: Props) {
     }
   }
 
-  // Hủy kết bạn
-  const handleCancelFriendRequest = () => {
+  // Chấp nhận lời mời kết bạn
+  const handleAcceptFriendRequest = () => {
     if (profile) {
-      cancelFriendRequestMutation.mutate(profile.user_id, {
+      acceptFriendRequestMutation.mutate(profile.user_id, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
-          if (showDialogCancelFriendRequest) {
-            setShowDialogCancelFriendRequest(false)
-          }
-          toast.success('Hủy thành công')
+          toast.success('Đã chấp nhận lời mời kết bạn')
         },
         onError: (error) => {
           toast.error(error.message)
@@ -63,16 +62,19 @@ function Navigation({ profile, relationship }: Props) {
     }
   }
 
-  // Chặn người dùng
-  const handleBlockedUser = () => {
+  // Hủy kết bạn + lời mời
+  const handleCancelFriendRequest = (notifi: string) => () => {
     if (profile) {
-      blockedUserMutation.mutate(profile.user_id, {
+      cancelFriendRequestMutation.mutate(profile.user_id, {
         onSuccess: () => {
-          toast.success('Chặn người dùng thành công')
-          navigate('/')
+          queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
+          if (showDialogCancelFriendRequest) {
+            setShowDialogCancelFriendRequest(false)
+          }
+          toast.success(notifi)
         },
-        onError: () => {
-          toast.error('Đã có lỗi xảy ra!')
+        onError: (error) => {
+          toast.error(error.message)
         }
       })
     }
@@ -96,7 +98,7 @@ function Navigation({ profile, relationship }: Props) {
         title={`Chắc chắn hủy kết bạn ${profile?.last_name} ${profile?.first_name}!`}
         description=' Khi hủy kết bạn, mối quan hệ trực tiếp giữa hai tài khoản sẽ được chấm dứt, và họ sẽ không còn nhìn thấy bài viết hay thông tin cá nhân của nhau trong nguồn cấp dữ liệu hoặc danh sách bạn bè, giúp người dùng có thêm quyền kiểm soát về mối quan hệ và thông tin cá nhân họ muốn chia sẻ.'
         textBtn='Hủy kết bạn'
-        callback={handleCancelFriendRequest}
+        callback={handleCancelFriendRequest(`Đã hủy kết bạn với ${profile?.last_name} ${profile?.first_name}`)}
       />
       <div
         className='mt-3 flex items-center justify-between border-t border-gray-100 px-2 max-lg:flex-col dark:border-slate-700'
@@ -137,18 +139,24 @@ function Navigation({ profile, relationship }: Props) {
                 {relationship?.status === 'Chờ chấp nhận' && relationship.user_id !== profile?.user_id && (
                   <>
                     <a
-                      onClick={handleCancelFriendRequest}
+                      onClick={handleCancelFriendRequest(
+                        `Đã hủy lời mời kết bạn ${profile?.last_name} ${profile?.first_name}`
+                      )}
                       className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
                     >
                       <IonIcon icon='close-circle-outline' className='text-[22px]' />
-                      Xóa lời mời
+                      Hủy lời mời
                     </a>
                   </>
                 )}
 
                 {relationship?.status === 'Chờ chấp nhận' && relationship.friend_id !== profile?.user_id && (
                   <>
-                    <a href='#' style={{ color: 'rgb(57 190 106)' }}>
+                    <a
+                      onClick={handleAcceptFriendRequest}
+                      style={{ color: 'rgb(57 190 106)' }}
+                      className='cursor-pointer'
+                    >
                       <IonIcon name='checkmark-done-outline' className='text-xl' /> Chấp nhận
                     </a>
                     <a className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>

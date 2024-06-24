@@ -258,7 +258,11 @@ function Home() {
             <div className='uk-visible-toggle relative sm:px-4' tabIndex={-1} uk-slideshow='animation: push;ratio: 4:3'>
               <ul className='uk-slideshow-items overflow-hidden rounded-xl' uk-lightbox='animation: fade'>
                 <li className='w-full'>
-                  <a className='inline' href='https://getuikit.com/docs/images/photo3.jpg' data-caption='Caption 1'>
+                  <a
+                    className='inline'
+                    href='https://cdn.trangcongnghe.com.vn/uploads/posts/2023-09/one-pice.jpg'
+                    data-caption='Caption 1'
+                  >
                     <img
                       src='https://cdn.trangcongnghe.com.vn/uploads/posts/2023-09/one-pice.jpg'
                       alt=''
@@ -267,7 +271,11 @@ function Home() {
                   </a>
                 </li>
                 <li className='w-full'>
-                  <a className='inline' href='https://getuikit.com/docs/images/photo2.jpg' data-caption='Caption 2'>
+                  <a
+                    className='inline'
+                    href='https://pic0.iqiyipic.com/image/20240108/f2/2e/a_100421840_m_601_en_m5_1013_569.jpg'
+                    data-caption='Caption 2'
+                  >
                     <img
                       src='https://pic0.iqiyipic.com/image/20240108/f2/2e/a_100421840_m_601_en_m5_1013_569.jpg'
                       alt=''
@@ -276,9 +284,13 @@ function Home() {
                   </a>
                 </li>
                 <li className='w-full'>
-                  <a className='inline' href='https://getuikit.com/docs/images/photo.jpg' data-caption='Caption 3'>
+                  <a
+                    className='inline'
+                    href='https://asset.gecdesigns.com/img/wallpapers/beautiful-magical-misty-mountains-reflection-river-ultra-hd-wallpaper-4k-sr10012420-1706505766369-cover.webp'
+                    data-caption='Caption 3'
+                  >
                     <img
-                      src='https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1200,height=675/catalog/crunchyroll/a249096c7812deb8c3c2c907173f3774.jpe'
+                      src='https://asset.gecdesigns.com/img/wallpapers/beautiful-magical-misty-mountains-reflection-river-ultra-hd-wallpaper-4k-sr10012420-1706505766369-cover.webp'
                       alt=''
                       className='insta-0 absolute h-full w-full object-cover'
                     />
