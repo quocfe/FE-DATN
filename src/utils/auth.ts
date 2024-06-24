@@ -24,7 +24,8 @@ export const getProfileFromLocalStorage = () => {
 }
 
 export const clearLocalStorage = () => {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('refresh_token')
-  localStorage.removeItem('profile')
+  localStorage.clear()
+  // localStorage.removeItem('access_token')
+  // localStorage.removeItem('refresh_token')
+  // localStorage.removeItem('profile')
 }

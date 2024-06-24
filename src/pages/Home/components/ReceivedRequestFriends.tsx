@@ -20,7 +20,7 @@ function ReceivedRequestFriends() {
       </div>
       <div className='side-list'>
         {friendRequests && friendRequests.length !== 0 ? (
-          friendRequests.map((friend) => <FriendItem type='request' user={friend} key={friend.user_id} />)
+          friendRequests.slice(0, 4).map((friend) => <FriendItem type='request' user={friend} key={friend.user_id} />)
         ) : (
           <div className='mt-2 text-center text-sm'>Hiện không có lời mời nào</div>
         )}

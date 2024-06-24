@@ -32,10 +32,10 @@ function Sidebar() {
                         </Link>
                       </li>
                       <li>
-                        <a href='groups.html'>
+                        <Link to={'/friend/suggests'}>
                           <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
                           <span> Bạn bè </span>
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a href='messages.html'>

@@ -1,19 +1,29 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import useQuerySearchAll from '~/hooks/queries/common/useQuerySearchAll'
 import SearchItem from './SearchItem'
+import useQuerySearchHistories from '../hooks/useQuerySearchHistories'
+import Dialog from '~/components/Dialog'
+import useMutationClearSearchHistories from '../hooks/useMutationClearSearchHistories'
 
 interface Props {
   profile: UserProfile | null
 }
 
 function Search({ profile }: Props) {
+  // Hooks
+  // const [showDialog, setShowdialog] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState<string>('')
-  const { data } = useQuerySearchAll(searchValue)
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(() => {
+    return localStorage.getItem('isSearchFocused') === 'true'
+  })
 
-  // debounce với useMemo -> tạo 1 lần
-  // nếu không có useMemo -> debounce tạo lại mỗi khi re-render
+  // React Query
+  const { data: resSearchAll } = useQuerySearchAll(searchValue)
+  const { data: resSearchHistories } = useQuerySearchHistories(isSearchFocused)
+  const clearSearchHistoriesMutation = useMutationClearSearchHistories()
+
   const debounceFn = useMemo(() => _.debounce(handleDebounceFn, 1000), [])
 
   function handleDebounceFn(searchValue: string) {
@@ -25,17 +35,38 @@ function Search({ profile }: Props) {
     debounceFn(e.target.value)
   }
 
+  const handleFocus = () => {
+    if (!isSearchFocused) {
+      setIsSearchFocused(true)
+      localStorage.setItem('isSearchFocused', 'true')
+    }
+  }
+
+  const handleClearSearchHistories = () => {
+    clearSearchHistoriesMutation.mutate()
+  }
+
   // Danh sách tìm kiếm (user | fanpage)
-  const listSearch = data?.data.data.list ?? []
+  const listSearch = resSearchAll?.data.data.list ?? []
+  const listSearchHistories = resSearchHistories?.data.data.list ?? []
 
   return (
     <>
+      {/* <Dialog
+        isVisible={showDialog}
+        onClose={() => setShowdialog(false)}
+        title='Xóa tất cả lượt tìm kiếm và lượt truy cập?'
+        description='Hành động này sẽ xóa gỡ toàn bộ lịch sử tìm kiếm trên mọi thiết bị và không thể hoàn tác được!'
+        type='warning'
+        textBtn='Xóa tất cả'
+      /> */}
       <div
         id='search--box'
         className='left-0 z-20 w-screen overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-96 xl:w-[680px] dark:!bg-white/5'
         tabIndex={0}
         aria-haspopup='true'
         aria-expanded='false'
+        onFocus={handleFocus}
       >
         <IonIcon
           icon='search'
@@ -61,128 +92,23 @@ function Search({ profile }: Props) {
             <>
               <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
                 <div className=' text-black dark:text-white'>Gần đây</div>
-                <button type='button' className='text-blue-500'>
-                  Xóa tất cả
-                </button>
+                {listSearchHistories.length !== 0 && (
+                  <button onClick={handleClearSearchHistories} type='button' className='text-blue-500'>
+                    Xóa tất cả
+                  </button>
+                )}
               </div>
-              <nav className='text-sm font-medium text-black dark:text-white'>
-                <a
-                  href='#!'
-                  className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
-                  <div>
-                    <div> Jesse Steeve </div>
-                    <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                  </div>
-                  <IonIcon
-                    icon='close'
-                    className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                    role='img'
-                    aria-label='close'
-                  />
-                </a>
-                <a
-                  href='#!'
-                  className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
-                  <div>
-                    <div> Martin Gray </div>
-                    <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                  </div>
-                  <IonIcon
-                    icon='close'
-                    className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                    role='img'
-                    aria-label='close'
-                  />
-                </a>
-                <a
-                  href='#!'
-                  className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <img
-                    src='/src/assets/images/group/group-2.jpg'
-                    className='h-9 w-9 rounded-full object-cover'
-                    alt=''
-                  />
-                  <div>
-                    <div> Delicious Foods</div>
-                    <div className='mt-0.5 text-xs font-medium text-rose-500'> Group </div>
-                  </div>
-                  <IonIcon
-                    icon='close'
-                    className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                    role='img'
-                    aria-label='close'
-                  />
-                </a>
-                <a
-                  href='#!'
-                  className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <img
-                    src='/src/assets/images/group/group-1.jpg'
-                    className='h-9 w-9 rounded-full object-cover'
-                    alt=''
-                  />
-                  <div>
-                    <div> Delicious Foods</div>
-                    <div className='mt-0.5 text-xs font-medium text-yellow-500'> Page </div>
-                  </div>
-                  <IonIcon
-                    icon='close'
-                    className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                    role='img'
-                    aria-label='close'
-                  />
-                </a>
-                <a
-                  href='#!'
-                  className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <img
-                    src='/src/assets/images/avatars/avatar-6.jpg'
-                    className='h-9 w-9 rounded-full object-cover'
-                    alt=''
-                  />
-                  <div>
-                    <div> John Welim </div>
-                    <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                  </div>
-                  <IonIcon
-                    icon='close'
-                    className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                    role='img'
-                    aria-label='close'
-                  />
-                </a>
-                <a
-                  href='#!'
-                  className='relative flex  hidden items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <IonIcon
-                    icon='search-outline'
-                    className='md hydrated text-2xl'
-                    role='img'
-                    aria-label='search outline'
-                  />
-                  Creative ideas about Business
-                </a>
-                <a
-                  href='#!'
-                  className='relative flex hidden   items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <IonIcon
-                    icon='search-outline'
-                    className='md hydrated text-2xl'
-                    role='img'
-                    aria-label='search outline'
-                  />
-                  8 Facts About Writting
-                </a>
-              </nav>
+              {listSearchHistories.length !== 0 ? (
+                <>
+                  <nav className='text-sm font-medium text-black dark:text-white'>
+                    {listSearchHistories.map((user) => (
+                      <SearchItem key={user.user_id} user={user} isHistory={true} />
+                    ))}
+                  </nav>
+                </>
+              ) : (
+                <p className='pb-2 text-center text-sm'>Lịch sử tìm kiếm hiện đang trống!</p>
+              )}
             </>
           ) : listSearch.length === 0 ? (
             <div className='mt-5 text-center text-sm'>
@@ -191,7 +117,7 @@ function Search({ profile }: Props) {
           ) : (
             <nav className='text-sm font-medium text-black dark:text-white'>
               {listSearch.map((user) => (
-                <SearchItem key={user.user_id} user={user} />
+                <SearchItem key={user.user_id} user={user} isHistory={false} />
               ))}
             </nav>
           )}

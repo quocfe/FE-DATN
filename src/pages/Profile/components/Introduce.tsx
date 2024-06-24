@@ -3,6 +3,7 @@ import HomeTownIcon from '~/components/icons/Profile/HomeTownIcon'
 import JobIcon from '~/components/icons/Profile/JobIcon'
 import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
 import MyFriends from './MyFriends'
+import React from 'react'
 
 interface Props {
   profile: UserProfile | null
@@ -14,7 +15,6 @@ const relationshipStatuses = [
   'Đang hẹn hò',
   'Đang tìm hiểu',
   'Phức tạp',
-  'Đã kết hôn',
   'Đã kết hôn',
   'Đã ly hôn',
   'Không xác định'
@@ -53,7 +53,7 @@ function Introduce({ profile, setShowModal }: Props) {
               <ProfileItem icon={<EducationIcon />} title='Học tại' text={profile.Profile.education} />
             )}
             {profile?.Profile.job && <ProfileItem icon={<JobIcon />} title='Làm việc tại' text={profile.Profile.job} />}
-            {profile?.Profile.relationship_status && profile.Profile.relationship_status < 6 && (
+            {profile?.Profile.relationship_status && profile.Profile.relationship_status < 7 && (
               <ProfileItem
                 icon={<RelationshipIcon />}
                 title='Tình trạng'
@@ -228,4 +228,4 @@ function Introduce({ profile, setShowModal }: Props) {
   )
 }
 
-export default Introduce
+export default React.memo(Introduce)

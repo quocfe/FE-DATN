@@ -11,13 +11,17 @@ import NotFound from '~/pages/NotFound/NotFound'
 import Dashboard from '~/pages/admin/Dashboard'
 import LoginAdmin from '~/pages/admin/LoginAdmin'
 import PublicProfile from '~/pages/PublicProfile'
-import { FriendList, FriendRequest, FriendSuggest } from '~/pages/Friend'
+import { Game, GamePlay } from '~/pages/Game'
 import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
-import Game from '~/pages/Game'
-import GamePlay from '~/pages/GamePlay'
+import PersonalPage from '~/pages/Profile/PersonalPage'
+import MyFriends from '~/pages/Profile/MyFriends'
+import FriendRequest from '~/pages/Friend/FriendRequest'
+import FriendSuggest from '~/pages/Friend/FriendSuggest'
+import FriendLayout from '~/pages/Friend/FriendLayout'
+import SentFriendRequests from '~/pages/Friend/SentFriendRequests'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -35,11 +39,28 @@ function useRouteElements() {
         },
         {
           path: '/profile',
-          element: (
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          )
+          children: [
+            {
+              path: '',
+              element: (
+                <MainLayout>
+                  <Profile>
+                    <PersonalPage />
+                  </Profile>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'my_friends',
+              element: (
+                <MainLayout>
+                  <Profile>
+                    <MyFriends />
+                  </Profile>
+                </MainLayout>
+              )
+            }
+          ]
         },
         {
           path: '/profile/:user_id',
@@ -54,21 +75,15 @@ function useRouteElements() {
           children: [
             {
               path: '',
-              element: <Navigate to={'/friend/list'} replace />
-            },
-            {
-              path: 'list',
-              element: (
-                <MainLayout>
-                  <FriendList />
-                </MainLayout>
-              )
+              element: <Navigate to={'/profile/my_friends'} replace />
             },
             {
               path: 'requests',
               element: (
                 <MainLayout>
-                  <FriendRequest />
+                  <FriendLayout>
+                    <FriendRequest />
+                  </FriendLayout>
                 </MainLayout>
               )
             },
@@ -76,7 +91,19 @@ function useRouteElements() {
               path: 'suggests',
               element: (
                 <MainLayout>
-                  <FriendSuggest />
+                  <FriendLayout>
+                    <FriendSuggest />
+                  </FriendLayout>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'sent_requests',
+              element: (
+                <MainLayout>
+                  <FriendLayout>
+                    <SentFriendRequests />
+                  </FriendLayout>
                 </MainLayout>
               )
             }

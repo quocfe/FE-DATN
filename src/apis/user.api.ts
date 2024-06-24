@@ -75,6 +75,36 @@ class UserApi {
   changePassword(data: ChangePassword) {
     return http.post(USER.CHANGE_PASSWORD, data)
   }
+
+  // Tìm kiếm bạn bè
+  searchFriends(query: string) {
+    return http.get<UserListReponse>(`${USER.SEARCH_FRIEND}/${query}`)
+  }
+
+  // Danh sách lời mời kết bạn đã gửi
+  fetchAllSendFriendRequests() {
+    return http.get<UserListReponse>(USER.SEND_FRIEND_REQUESTS)
+  }
+
+  // Thêm mới lịch sử tìm kiếm
+  addNewSearchHistory(data: CreateSearchHistory) {
+    return http.post(USER.CREATE_SEARCH_HISTORY, data)
+  }
+
+  // Lịch sử tìm kiếm
+  fetchAllSearchHistories() {
+    return http.get<SearchHistory>(USER.LIST_SEARCH_HISTORIES)
+  }
+
+  // Xóa lịch sử tìm kiếm
+  deleteSearchHistory(target_id: string) {
+    return http.delete(`${USER.DELETE_SEARCH_HISTORY}/${target_id}`)
+  }
+
+  // Xóa tất cả lịch sử tìm kiếm
+  clearSearchHistories() {
+    return http.delete(USER.CLEAR_SEARCH_HISTORIES)
+  }
 }
 
 export default new UserApi()

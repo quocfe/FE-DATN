@@ -65,6 +65,7 @@ type UserCompact = {
   last_name: string
   Profile: null | {
     profile_picture: string
+    cover_photo: string
   }
 }
 
@@ -76,3 +77,7 @@ type ChangePassword = {
   old_password: string
   new_password: string
 }
+
+type SearchHistory = SuccessResponse<{
+  list: UserCompactWithStatus[]
+}>

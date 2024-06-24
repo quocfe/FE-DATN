@@ -5,7 +5,7 @@ function useQueryProfile() {
   return useQuery({
     queryKey: ['profile'],
     queryFn: userApi.fetchProfile,
-    staleTime: 30 * 60 * 1000
+    staleTime: 15 * 60 * 1000
   })
 }
 

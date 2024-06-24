@@ -39,7 +39,7 @@ function PublicProfile() {
         {/* Navigations */}
         <Navigation profile={profile} relationship={relationship} />
       </div>
-      <div className='mt-8 flex gap-10 max-lg:flex-col 2xl:gap-12' id='js-oversized'>
+      <div className='mt-6 flex gap-8 max-lg:flex-col 2xl:gap-12' id='js-oversized'>
         {/* Feed Story */}
         <FeedStory />
         {/* Introduce */}

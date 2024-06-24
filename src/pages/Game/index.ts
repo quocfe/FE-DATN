@@ -1,3 +1,4 @@
 import Game from './Game'
+import GamePlay from './GamePlay'
 
-export default Game
+export { Game, GamePlay }
