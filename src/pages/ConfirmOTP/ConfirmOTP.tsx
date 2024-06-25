@@ -7,10 +7,11 @@ import useMutationSendNewOTP from './hooks/useMutationSendNewOTP'
 
 function ConfirmOTP() {
   // Hooks
-  const [error, setError] = useState<string | undefined>('')
-  const { email } = useParams()
   const navigate = useNavigate()
+  const { email } = useParams()
+  const [error, setError] = useState<string | undefined>('')
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
   // React Query
   const confirmEmailMutation = useMutationConfirmEmail()
   const sendNewOTPMutation = useMutationSendNewOTP()

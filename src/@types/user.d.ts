@@ -56,6 +56,8 @@ type ProfilePublicResponse = SuccessResponse<{
 type UserListReponse = SuccessResponse<{
   users: UserCompact[]
   friends: UserCompact[]
+  pages: number | string
+  total: number | string
 }>
 
 // user đơn giản
@@ -81,3 +83,8 @@ type ChangePassword = {
 type SearchHistory = SuccessResponse<{
   list: UserCompactWithStatus[]
 }>
+
+type UserConfigParams = {
+  _page: string
+  _limit: string
+}

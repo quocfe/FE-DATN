@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import useQueryFriendsOfFriends from '~/hooks/queries/useQueryFriendsOfFriends'
+import useQueryFriendsOfFriends from '~/hooks/queries/user/useQueryFriendsOfFriends'
 import FriendItem from './FriendItem'
 import { useEffect } from 'react'
 

@@ -1,12 +1,9 @@
 import { IonIcon } from '@ionic/react'
 import React, { useRef } from 'react'
-import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
+import useUpdateImage from '~/hooks/user/useUpdateImage'
 import useAuthStore from '~/store/auth.store'
 
 function UserInfo() {
-  console.log('re-render trang cá nhân')
-  console.log('call all api')
-
   const { profile } = useAuthStore()
   const { updateImage } = useUpdateImage()
   const inputFileProfilePictureRef = useRef<HTMLInputElement | null>(null)

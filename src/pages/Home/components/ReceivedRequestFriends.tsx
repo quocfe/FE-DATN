@@ -2,10 +2,14 @@ import React from 'react'
 import useQueryReceivedFriendRequests from '~/hooks/queries/user/useQueryReceivedFriendRequests'
 import FriendItem from './FriendItem'
 import { Link } from 'react-router-dom'
+import useUserConfigParams from '~/hooks/user/useUserConfigParams'
 
 function ReceivedRequestFriends() {
+  // Hooks
+  const userConfigParams = useUserConfigParams()
+
   // React Query Hooks
-  const receivedFriendRequestQuery = useQueryReceivedFriendRequests()
+  const receivedFriendRequestQuery = useQueryReceivedFriendRequests(userConfigParams)
 
   // danh sách lời mời kết bạn
   const friendRequests = receivedFriendRequestQuery.data?.data.data.friends

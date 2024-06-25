@@ -4,22 +4,25 @@ import useQuerySearchFriends from '~/hooks/queries/user/useQuerySearchFriends'
 import _ from 'lodash'
 import { useQueryClient } from '@tanstack/react-query'
 import useQueryListMyFriends from '~/hooks/queries/user/useQueryListMyFriends'
+import useUserConfigParams from '~/hooks/user/useUserConfigParams'
+import Pagination from '~/components/Pagination'
 
 function MyFriends() {
   // Hooks
   const [searchValue, setSearchValue] = useState<string>('')
   const [hasSearched, setHasSearched] = useState<boolean>(false)
+  const userConfigParams = useUserConfigParams()
 
   // React Query
   const queryClient = useQueryClient()
-  const { data: resListMyFriends } = useQueryListMyFriends()
+  const { data: resListMyFriends } = useQueryListMyFriends(userConfigParams)
   const { data: resSearchFriends } = useQuerySearchFriends(searchValue)
 
   useEffect(() => {
     if (resSearchFriends) {
-      queryClient.setQueryData(['my_friends'], resSearchFriends)
+      queryClient.setQueryData(['my_friends', userConfigParams], resSearchFriends)
     } else if (searchValue === '' && hasSearched) {
-      queryClient.invalidateQueries({ queryKey: ['my_friends'] })
+      queryClient.invalidateQueries({ queryKey: ['my_friends', userConfigParams] })
     }
   }, [searchValue, resSearchFriends, queryClient])
 
@@ -37,6 +40,10 @@ function MyFriends() {
     debounceFn(e.target.value)
   }
 
+  // Phân trang
+  const pages = resListMyFriends?.data.data.pages ?? 1
+  const total = resListMyFriends?.data.data.total
+
   // Danh sách bạn bè
   const friends = resListMyFriends?.data.data.friends ?? []
 
@@ -51,7 +58,7 @@ function MyFriends() {
           </h1>
         ) : (
           <h1>
-            <span className='font-semibold'>{friends.length}</span> <span className='text-gray-800'>bạn bè</span>
+            <span className='font-semibold'>{total}</span> <span className='text-gray-800'>bạn bè</span>
           </h1>
         )}
 
@@ -87,81 +94,10 @@ function MyFriends() {
           <MyFriendItem friend={friend} key={friend.user_id} />
         ))}
       </div>
-      <div className='mt-6 flex items-center justify-between'>
-        <a
-          href='#'
-          className='flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800'
-        >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth='1.5'
-            stroke='currentColor'
-            className='h-5 w-5 rtl:-scale-x-100'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18' />
-          </svg>
-          <span>Trang đầu</span>
-        </a>
-        <div className='hidden items-center gap-x-3 md:flex'>
-          <a href='#' className='rounded-md bg-blue-100/60 px-2 py-1 text-sm text-blue-500 dark:bg-gray-800'>
-            1
-          </a>
-          <a
-            href='#'
-            className='rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
-            2
-          </a>
-          <a
-            href='#'
-            className='rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
-            3
-          </a>
-          <a
-            href='#'
-            className='rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
-            ...
-          </a>
-          <a
-            href='#'
-            className='rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
-            12
-          </a>
-          <a
-            href='#'
-            className='rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
-            13
-          </a>
-          <a
-            href='#'
-            className='rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
-            14
-          </a>
-        </div>
-        <a
-          href='#'
-          className='flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800'
-        >
-          <span>Trang cuối</span>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth='1.5'
-            stroke='currentColor'
-            className='h-5 w-5 rtl:-scale-x-100'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3' />
-          </svg>
-        </a>
-      </div>
+      {/* Pagination */}
+      {resSearchFriends?.data.data.friends.length !== 0 && total !== 0 && (
+        <Pagination basePath='/profile/my_friends' configParams={userConfigParams} pages={pages} />
+      )}
     </div>
   )
 }
