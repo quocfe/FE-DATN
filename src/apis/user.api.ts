@@ -2,9 +2,16 @@ import { USER } from '~/constants/user.constant'
 import http from '~/utils/http'
 
 class UserApi {
-  // Danh sách người dùng
-  fetchAllUsers() {
-    return http.get<UserListReponse>(USER.LIST)
+  // Danh sách tất cả người dùng
+  fetchAllUsers(userConfigParams: UserConfigParams) {
+    const { _page, _limit } = userConfigParams
+
+    return http.get<UserListReponse>(USER.LIST, {
+      params: {
+        _page,
+        _limit
+      }
+    })
   }
 
   // Thông tin người dùng
