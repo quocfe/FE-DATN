@@ -1,18 +1,19 @@
 import useQueryUsers from '~/hooks/queries/user/useQueryUsers'
 import FriendItem from './components/FriendItem'
-import useUserConfigParams from './hooks/useUserConfigParams'
 import Pagination from '~/components/Pagination'
+import useUserConfigParams from '~/hooks/user/useUserConfigParams'
+import { ENDPOINT } from '~/constants/endpoint.constant'
 
 function FriendSuggest() {
   // React Query Hooks
   const userConfigParams = useUserConfigParams()
-  const userQuery = useQueryUsers(userConfigParams)
+  const { data } = useQueryUsers(userConfigParams)
 
   // Tổng số trang
-  const pages = userQuery.data?.data.data.pages ?? 1
+  const pages = data?.data.data.pages ?? 1
 
   // Danh sách gợi ý kết bạn
-  const suggestMakeFriends = userQuery.data?.data.data.users ?? []
+  const suggestMakeFriends = data?.data.data.users ?? []
 
   return (
     <>
@@ -23,7 +24,7 @@ function FriendSuggest() {
           <span>Hiện không có lời mời kết bạn nào!</span>
         )}
       </div>
-      <Pagination<UserConfigParams> pages={pages} basePath='/friend/suggests' configParams={userConfigParams} />
+      <Pagination<UserConfigParams> pages={pages} basePath={ENDPOINT.FRIEND_SUGGESTS} configParams={userConfigParams} />
     </>
   )
 }

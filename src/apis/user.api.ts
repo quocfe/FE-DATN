@@ -25,13 +25,24 @@ class UserApi {
   }
 
   // Lời mời kết bạn
-  fetchAllReceivedFriendRequest() {
-    return http.get<UserListReponse>(USER.RECEIVERD_FRIEND_REQUEST)
+  fetchAllReceivedFriendRequest(userConfigParams: UserConfigParams) {
+    const { _page, _limit } = userConfigParams
+
+    return http.get<UserListReponse>(USER.RECEIVERD_FRIEND_REQUEST, {
+      params: {
+        _page,
+        _limit
+      }
+    })
   }
 
   // Danh sách bạn bè của tôi
-  fetchAllMyFriends() {
-    return http.get<UserListReponse>(USER.FRIENDS)
+  fetchAllMyFriends(userConfigParams: UserConfigParams) {
+    const { _page, _limit } = userConfigParams
+
+    return http.get<UserListReponse>(USER.FRIENDS, {
+      params: { _page, _limit }
+    })
   }
 
   // Cập nhật thông tin người dùng
@@ -89,8 +100,15 @@ class UserApi {
   }
 
   // Danh sách lời mời kết bạn đã gửi
-  fetchAllSendFriendRequests() {
-    return http.get<UserListReponse>(USER.SEND_FRIEND_REQUESTS)
+  fetchAllSendFriendRequests(userConfigParams: UserConfigParams) {
+    const { _page, _limit } = userConfigParams
+
+    return http.get<UserListReponse>(USER.SEND_FRIEND_REQUESTS, {
+      params: {
+        _page,
+        _limit
+      }
+    })
   }
 
   // Thêm mới lịch sử tìm kiếm

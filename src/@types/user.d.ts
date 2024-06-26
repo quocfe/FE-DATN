@@ -57,6 +57,7 @@ type UserListReponse = SuccessResponse<{
   users: UserCompact[]
   friends: UserCompact[]
   pages: number | string
+  total: number | string
 }>
 
 // user đơn giản

@@ -1,9 +1,9 @@
 import { IonIcon } from '@ionic/react'
 import { useRef } from 'react'
-import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
 import useAuthStore from '~/store/auth.store'
 import { Link, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
+import useUpdateImage from '~/hooks/user/useUpdateImage'
 
 interface Props {
   children: React.ReactNode

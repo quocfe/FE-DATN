@@ -93,7 +93,12 @@ function Pagination<TypeConfigParams>({ pages, basePath, configParams }: Props<T
             _page: '1'
           }).toString()
         }}
-        className='flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800'
+        className={classNames(
+          'flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800',
+          {
+            'cursor-not-allowed': currentPage === 1
+          }
+        )}
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -116,7 +121,12 @@ function Pagination<TypeConfigParams>({ pages, basePath, configParams }: Props<T
             _page: pages.toString()
           }).toString()
         }}
-        className='flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800'
+        className={classNames(
+          'flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800',
+          {
+            'cursor-not-allowed': currentPage === pages
+          }
+        )}
       >
         <span>Trang cuối</span>
         <svg

@@ -9,13 +9,14 @@ function MyFriends() {
 
   // Danh sách bạn bè
   const friends = data?.data.data.friends ?? []
+  const totalFriends = data?.data.data.total
 
   return (
     <div className='box p-5 px-6'>
       <div className='items-ce flex justify-between text-black dark:text-white'>
         <div>
           <h3 className='text-lg font-bold'>Bạn bè</h3>
-          <span className='mt-0. block text-sm font-normal text-gray-500 dark:text-white'>{friends.length} Bạn bè</span>
+          <span className='mt-0. block text-sm font-normal text-gray-500 dark:text-white'>{totalFriends} Bạn bè</span>
         </div>
         <Link to={'/profile/my_friends'} className='text-sm text-blue-500'>
           Xem tất cả
