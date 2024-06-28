@@ -1,47 +1,66 @@
 import { IonIcon } from '@ionic/react'
-import { useEffect, useRef, useState } from 'react'
-import ChatMessage from './ChatMessage'
-import SendMessage from './SendMessage'
+import { useCallback, useRef, useState } from 'react'
+import { useSocketContext } from '~/context/socket'
 import useConversationStore from '~/store/conversation.store'
 import { useQueryMessage } from '../hooks/useQueryMessage'
-import ChatMessageSkelaton from './Skelaton/ChatMessageSkelaton'
-import BoxSearchMessage from './BoxSearchMessage'
+import ChatMessage from './ChatMessage'
 import PinMessage from './PinMessage'
-import { useQueryConversation } from '../hooks/useQueryConversation'
+import SendMessage from './SendMessage'
+import ChatMessageSkelaton from './Skelaton/ChatMessageSkelaton'
 
 function MessageCenter() {
-  const { toggleBoxReply, togglePreviewImg, setToggleBoxSearchMessage, pinMessage } = useConversationStore()
+  const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
+    useConversationStore()
   const { isLoading, data } = useQueryMessage()
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
+  const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
+  const previewUploadRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
-  const [calculateHeight, setCalculateHeight] = useState<string>()
 
-  const handleScroll = () => {
+  const [calculateHeight, setCalculateHeight] = useState<string>()
+  const [calculateNaturalHeight, setCalculateNaturalHeight] = useState<string>()
+  const { onlineUsers } = useSocketContext()
+  const isOnline = onlineUsers.includes(infoMessage?.group_id)
+
+  const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
       setShowScrollBtn(scrollHeight - scrollTop > clientHeight * 3.5)
+      // setIsAtBottom(scrollHeight === scrollTop + clientHeight)
+      setIsAtBottom(scrollHeight - (scrollTop + clientHeight) < 20 ? true : false)
+      // console.log('scrollHeight', scrollHeight)
+      // console.log('scrollTop + clientHeight', scrollTop + clientHeight)
     }
-  }
+  }, [])
 
-  useEffect(() => {
-    if (toggleBoxReply || togglePreviewImg) {
-      if (boxReplyRef.current) {
-        const height = boxReplyRef.current.getBoundingClientRect().height
+  // useEffect(() => {
+  //   if (toggleBoxReply || togglePreviewBox) {
+  //     let height = 0
 
-        setCalculateHeight(height.toString())
-      }
-    } else {
-      setCalculateHeight('204')
-    }
-  }, [toggleBoxReply, togglePreviewImg])
+  //     if (boxReplyRef.current) {
+  //       height = boxReplyRef.current.getBoundingClientRect().height
+  //     }
+
+  //     if (previewUploadRef.current) {
+  //       height += previewUploadRef.current.getBoundingClientRect().height
+  //     }
+
+  //     setCalculateHeight(height.toString())
+  //     setCalculateNaturalHeight('204')
+  //   } else {
+  //     setCalculateHeight('204')
+  //     setCalculateNaturalHeight('195')
+  //   }
+  // }, [toggleBoxReply, togglePreviewBox])
+
   if (isLoading) {
     return <ChatMessageSkelaton />
   }
 
   return (
-    <div className='h-full flex-1 '>
+    <div className='flex-1 '>
       {/* chat heading */}
       <div className='w- uk-animation-slide-top-medium relative z-10 flex  items-center justify-between gap-2 border-b px-6 py-3.5 dark:border-slate-700'>
         <div className='flex items-center gap-2 sm:gap-4'>
@@ -51,11 +70,11 @@ function MessageCenter() {
           </button>
           <div className='relative cursor-pointer max-md:hidden' uk-toggle='target: .rightt ; cls: hidden'>
             <img src={infoMessage?.avatar} className='h-8 w-8 rounded-full object-cover shadow' />
-            <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
+            {isOnline && <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />}
           </div>
           <div className='cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
             <div className='text-base font-bold'> {infoMessage?.group_name}</div>
-            <div className='text-xs font-semibold text-green-500'> Online</div>
+            {isOnline && <div className='text-xs font-semibold text-green-500'>Đang hoạt động</div>}
           </div>
         </div>
         <div className='flex items-center gap-2'>
@@ -119,12 +138,13 @@ function MessageCenter() {
       <div
         ref={chatMessageRef}
         onScroll={handleScroll}
-        className={`h-[calc(100vh-305px)] w-full overflow-y-auto p-5 py-10 md:h-[calc(100vh-${calculateHeight}px)]`}
+        className={`h-[calc(100vh-195px)] w-full overflow-y-auto p-5 pb-4 pt-10 md:h-[calc(100vh-204px)] 
+        `}
       >
-        <ChatMessage showScrollBtn={showScrollBtn} />
+        <ChatMessage showScrollBtn={showScrollBtn} isAtBottom={isAtBottom} />
       </div>
       {/* sending message area */}
-      <SendMessage boxReplyRef={boxReplyRef} />
+      <SendMessage boxReplyRef={boxReplyRef} previewUploadRef={previewUploadRef} />
     </div>
   )
 }

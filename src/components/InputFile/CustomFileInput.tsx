@@ -36,7 +36,7 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, ty
       <label
         {...getRootProps()}
         htmlFor='fileInput'
-        className={`flex cursor-pointer  items-center rounded-full border border-dashed border-gray-300 bg-gray-50 ${!preview ? 'gap-3 p-4' : ''} `}
+        className={`flex cursor-pointer  items-center rounded-full border border-dashed border-gray-300 bg-gray-50 ${!previewInner ? 'gap-3 p-4' : ''} `}
       >
         {previewInner ? (
           <div>

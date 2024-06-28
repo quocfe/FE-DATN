@@ -45,6 +45,7 @@ type MembersGroup = {
 type TypeMembersGroup = Pick<MembersGroup, 'user_id' | 'role'> & {
   avatar: string
   fullname: string
+  group_message_id: string
 }
 
 type RecallMessage = {
@@ -66,7 +67,14 @@ type ReactMessageAttributes = {
 }
 
 type ConversationResponse = {
-  data: GroupMessage[]
+  data: {
+    data: GroupMessage[]
+    pagination: {
+      totalPage: number
+      page: number
+      limit: number
+    }
+  }
   message: string
 }
 
@@ -75,13 +83,15 @@ type MembersGroupResponse = {
   message: string
 }
 
-type MessageResponse = {
+type MessageApiResponse = {
   data: {
     info: InfoMessage
     messages: TypeMessage[]
   }
   message: string
 }
+
+type MessageResponse = Pick<MessageApiResponse, 'data'>
 
 type RecallResponse = {
   data: RecallMessage[]

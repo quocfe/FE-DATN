@@ -1,24 +1,19 @@
 import { IonIcon } from '@ionic/react'
-import React, { useState } from 'react'
-import ProfileRightOption from './ProfileRightOption'
-import FileRight from './components/FileRight'
-import useConversationStore from '~/store/conversation.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
-import { useQueryRecallMessage } from '../hooks/useQueryRecallMessage'
-import { useQueryMembers } from '../hooks/useQueryMembers'
+import _ from 'lodash'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Loading from '~/components/Loading'
+import useConversationStore from '~/store/conversation.store'
+import useEmojiStore from '~/store/emoji.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
+import useMutationChangeGroupName from '../hooks/useMutaionChangeGroupName'
+import useMutationChangeImageGroup from '../hooks/useMutaionChangeImageGroup'
+import { useQueryConversation } from '../hooks/useQueryConversation'
+import { useQueryMembers } from '../hooks/useQueryMembers'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import useMutationChangePassword from '~/pages/Setting/ChangePassword/hooks/useMutationChangePassword'
-import useMutationChangeImageGroup from '../hooks/useMutaionChangeImageGroup'
-import Loading from '~/components/Loading'
-import EmojiBox from './EmojiBox'
-import useEmojiStore from '~/store/emoji.store'
-import ModalChangeGroupName from './ModalChangeGroupName'
-import _ from 'lodash'
-import useMutationChangeGroupName from '../hooks/useMutaionChangeGroupName'
-import { toast } from 'react-toastify'
+import ProfileRightOption from './ProfileRightOption'
 
 function ProfileRight() {
   const { data: dataMessage } = useQueryMessage()
@@ -36,7 +31,7 @@ function ProfileRight() {
   const { refetch } = useQueryConversation()
   const changeImage = useMutationChangeImageGroup()
   const { setEmoji, emoji } = useEmojiStore()
-  const { upload } = useFileUpload()
+  const { uploadNoPreview } = useFileUpload()
   const { selectedConversation, setSelectedConversation } = useConversationStore()
   const members = data?.data.data
   const changeGroupNameMutation = useMutationChangeGroupName()
@@ -54,10 +49,18 @@ function ProfileRight() {
   }
 
   const handleSelect = (member: TypeMembersGroup) => {
-    setSelectedConversation({
-      id: member.user_id,
-      type: 1
-    })
+    if (member.group_message_id) {
+      setSelectedConversation({
+        group_id: member.group_message_id,
+        id: member.user_id,
+        type: 1
+      })
+    } else {
+      setSelectedConversation({
+        id: member.user_id,
+        type: 1
+      })
+    }
   }
 
   const handleChangeImage = async (e: HTMLInputElement) => {
@@ -67,8 +70,8 @@ function ProfileRight() {
     }
     if (e.files) {
       setLoading(true)
-      const url = await upload(e.files[0])
-      body.image = url
+      const fileUpload = await uploadNoPreview(e.files[0])
+      body.image = fileUpload.url
       changeImage.mutate(body, {
         onSuccess: () => {
           refetch()
@@ -123,7 +126,12 @@ function ProfileRight() {
         </div>
         {/* content */}
         {showBox ? (
-          <ProfileRightOption title={titleBox} listImage={renderList(2)} listFile={renderList(3)} />
+          <ProfileRightOption
+            title={titleBox}
+            listImage={renderList(2)}
+            listVideo={renderList(4)}
+            listFile={renderList(3)}
+          />
         ) : (
           <>
             <div className='mx-3 border-b-[1px] py-10 pt-2 text-center text-sm'>
@@ -195,9 +203,12 @@ function ProfileRight() {
                   </svg>
                 </a>
                 <div className='uk-accordion-content dark:text-white/80'>
-                  <div className='grid grid-cols-4 grid-rows-1 gap-2'>
+                  <div className='grid grid-cols-3 grid-rows-1 gap-2'>
                     {renderList(2)?.map(({ sub_body }: { sub_body: string }) => (
-                      <img src={sub_body} key={sub_body} className='h-[90px] w-[90px] rounded-md object-cover' />
+                      <img src={sub_body} key={sub_body} className='h-[90px] w-fit rounded-md object-cover' />
+                    ))}
+                    {renderList(4)?.map(({ sub_body }: { sub_body: string }) => (
+                      <video src={sub_body} key={sub_body} className='h-[90px] w-fit rounded-md object-cover' />
                     ))}
                   </div>
                   <button

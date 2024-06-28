@@ -8,7 +8,8 @@ interface State {
   messages: TypeMessage[]
   selectedNoConversation: SearchFriend | null
   toggleBoxReply: Message | null
-  togglePreviewImg: any
+  previewImg: any
+  togglePreviewBox: boolean
   toggleBoxSearchMessage: boolean
   searchMessages: TypeMessage[]
   searchParam: string
@@ -22,7 +23,8 @@ interface Action {
   setMessages: (messages: TypeMessage[] | any) => void
   setSelectedNoConversation: (selectedNoConversation: {}) => void
   setToggleBoxReply: (toggleBoxReply: Message | null) => void
-  setTogglePreviewImg: (togglePreviewImg: any) => void
+  setPreviewImg: (previewImg: any) => void
+  setTogglePreviewBox: (togglePreviewBox: boolean) => void
   setToggleBoxSearchMessage: (toggleBoxSearchMessage: boolean) => void
   setSearchParam: (searchParam: string) => void
   setPinMessage: (pinMessage: TypeMessage | null) => void
@@ -36,7 +38,8 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   selectedConversation: {},
   selectedNoConversation: null,
   toggleBoxReply: null,
-  togglePreviewImg: null,
+  previewImg: null,
+  togglePreviewBox: false,
   toggleBoxSearchMessage: false,
   searchParam: '',
   pinMessage: null,
@@ -46,7 +49,8 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   setMessages: (messages) => set({ messages }),
   setSelectedNoConversation: (selectedNoConversation) => set({ selectedNoConversation }),
   setToggleBoxReply: (toggleBoxReply) => set({ toggleBoxReply }),
-  setTogglePreviewImg: (togglePreviewImg) => set({ togglePreviewImg }),
+  setPreviewImg: (previewImg) => set({ previewImg }),
+  setTogglePreviewBox: (togglePreviewBox) => set({ togglePreviewBox }),
   setToggleBoxSearchMessage: (toggleBoxSearchMessage) => set({ toggleBoxSearchMessage }),
   setSearchParam: (searchParam) => set({ searchParam }),
   setPinMessage: (pinMessage) => set({ pinMessage }),

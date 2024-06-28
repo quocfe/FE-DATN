@@ -8,7 +8,7 @@ import SideBarMessage from './components/SideBarMessage'
 
 const Message = () => {
   useMessageSocket()
-  const { selectedConversation, selectedNoConversation, toggleBoxSearchMessage } = useConversationStore()
+  const { selectedConversation, toggleBoxSearchMessage } = useConversationStore()
   let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
 
   return (

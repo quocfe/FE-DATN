@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
 
@@ -8,14 +8,11 @@ interface FriendProps {
   setListUser: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const ImgaeTemplate = 'https://www.vietnamworks.com/hrinsider/wp-content/uploads/2023/12/anh-den-ngau.jpeg'
-
 const Friend: React.FC<FriendProps> = ({ setListUser, querySearch }) => {
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
   const profile = getProfileFromLocalStorage() || {}
-  const [currentUserSelect, setCurrentUserSelect] = useState<string[]>([profile.profile_picture || ImgaeTemplate])
-
+  const [currentUserSelect, setCurrentUserSelect] = useState<string[]>([profile.Profile.profile_picture])
   useEffect(() => {
     searchMutaion.mutate(querySearch, {
       onSuccess: (data: any) => {
@@ -32,7 +29,7 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch }) => {
       prevList.includes(user.user_id) ? prevList.filter((id) => id !== user.user_id) : [...prevList, user.user_id]
     )
 
-    let checkImg = user.Profile?.profile_picture ? user.Profile.profile_picture : ImgaeTemplate
+    let checkImg = user.Profile?.profile_picture ? user.Profile.profile_picture : ''
     setCurrentUserSelect((prevList: string[]) =>
       prevList.includes(checkImg) ? prevList.filter((id) => id !== checkImg) : [...prevList, checkImg]
     )
@@ -53,29 +50,33 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch }) => {
 
       <p className='mt-2 text-sm'>Bạn bè</p>
       <div className='mt-3 flex max-h-[200px] flex-col overflow-y-scroll'>
-        {resultSearch?.data?.data?.friends.length ? (
-          resultSearch?.data?.data?.friends?.map((item: any) => (
-            <div key={item.user_id} className='mb-4 flex items-center p-2 shadow-sm'>
-              <input id={item.user_id} type='checkbox' value={item.user_id} className='h-4 w-4 rounded-full' />
-              <label
-                htmlFor={item.user_id}
-                className='ms-2 flex w-full select-none items-center gap-2 p-2 text-sm font-medium text-gray-900 dark:text-gray-300'
-                onClick={() => handleCheckboxChange(item)}
-              >
-                <img
-                  src={item.Profile?.profile_picture || ImgaeTemplate}
-                  className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
-                />
-                <p className='text-sm'>{item.first_name + ' ' + item.last_name}</p>
-              </label>
-            </div>
-          ))
+        {resultSearch?.data?.data?.friends ? (
+          resultSearch?.data?.data?.friends.length ? (
+            resultSearch?.data?.data?.friends?.map((item: any) => (
+              <div key={item.user_id} className='mb-4 flex items-center p-2 shadow-sm'>
+                <input id={item.user_id} type='checkbox' value={item.user_id} className='h-4 w-4 rounded-full' />
+                <label
+                  htmlFor={item.user_id}
+                  className='ms-2 flex w-full select-none items-center gap-2 p-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+                  onClick={() => handleCheckboxChange(item)}
+                >
+                  <img
+                    src={item.Profile?.profile_picture || ImgaeTemplate}
+                    className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
+                  />
+                  <p className='text-sm'>{item.first_name + ' ' + item.last_name}</p>
+                </label>
+              </div>
+            ))
+          ) : (
+            <p className='text-sm'>Không tìm thấy bạn bè</p>
+          )
         ) : (
-          <p className='text-sm'>Không tìm thấy bạn bè</p>
+          <p>Tìm bạn bè đi</p>
         )}
       </div>
     </div>
   )
 }
 
-export default Friend
+export default memo(Friend)

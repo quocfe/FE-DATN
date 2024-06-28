@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import axios from 'axios'
+import axios, { AxiosProgressEvent } from 'axios'
 import useFileUploadStore from '~/store/fileUpload.store'
 
 const useFileUpload = () => {
@@ -9,23 +8,25 @@ const useFileUpload = () => {
 
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('upload_preset', 'ml_default') // replace with your Cloudinary upload preset
+    formData.append('upload_preset', 'ml_default')
     formData.append('folder', 'uploads')
 
     try {
       const response = await axios.post('https://api.cloudinary.com/v1_1/dilajt5zl/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress({ total, loaded }) {
-          if (total) {
-            fileStore.progress = Math.floor(loaded / total) * 100
-            if (loaded == total) {
-              fileStore.fileSize = total < 1024 ? total : loaded / (1024 * 1024)
+        onUploadProgress(progressEvent: AxiosProgressEvent) {
+          if (progressEvent.total !== undefined) {
+            fileStore.progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100)
+            if (progressEvent.loaded == progressEvent.total) {
+              fileStore.fileSize =
+                progressEvent.total < 1024 ? `${progressEvent.total}KB` : `${progressEvent.loaded / (1024 * 1024)}MB`
             }
+            setFile(fileStore)
           }
           setFile(fileStore)
         }
       })
-      console.log('response.data', response.data)
+
       fileStore.originalName = response.data.original_filename
       fileStore.resourceType = response.data.resource_type
       fileStore.url = response.data.url
@@ -45,7 +46,27 @@ const useFileUpload = () => {
     }
   }
 
-  return { upload }
+  const uploadNoPreview = async (file: File) => {
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', 'ml_default')
+    formData.append('folder', 'uploads')
+
+    try {
+      const response = await axios.post('https://api.cloudinary.com/v1_1/dilajt5zl/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error uploading file:', error)
+    } finally {
+      console.log('finally')
+    }
+  }
+
+  return { upload, uploadNoPreview }
 }
 
 export default useFileUpload

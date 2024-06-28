@@ -50,7 +50,7 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
   }
 
   return (
-    <Modal isVisible={isOpen} onClose={onClose} overFlow={false} height='3/6'>
+    <Modal isVisible={isOpen} onClose={onClose} height='3/6'>
       <div className='border border-b-gray-400 p-6'>
         <h2 className='text-xl font-semibold'>Bạn muốn gỡ tin nhắn này ở phía ai?</h2>
       </div>

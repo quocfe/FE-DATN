@@ -1,7 +1,7 @@
 export function checkBodyMessage(url: string) {
   // Tạo một mảng chứa các đuôi file hình ảnh được cho phép
   let result
-  let ImgExtensions = ['jpg', 'jpeg', 'png']
+  let ImgExtensions = ['jpg', 'jpeg', 'png', 'webp']
   let videoExtensions = ['mp4', 'mpeg', 'webm']
 
   // Tách phần mở rộng từ URL bằng cách sử dụng phương thức split('.')

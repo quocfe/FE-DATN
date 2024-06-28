@@ -7,6 +7,7 @@ import { downloadFileFormLink } from '../utils/downloadFileFormLink'
 import ModalUnSendOption from './ModalUnSendOption'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
 import { useQueryMessage } from '../hooks/useQueryMessage'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
 const ContentMessage = (params: any) => {
@@ -18,10 +19,9 @@ const ContentMessage = (params: any) => {
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply, setPinMessage } = useConversationStore()
+  const { user_id } = getProfileFromLocalStorage()
   const houreSend = calculateHoureAgo(params.item.createdAt)
-  const emojiUserSelected = params.item.reactions?.filter(
-    (reaction: any) => reaction.createdBy === params.item.createdBy
-  )
+  const emojiUserSelected = params.item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
 
   const handleChoiceReact = (emoji: string) => {
     const data = {

@@ -3,6 +3,7 @@ import { IonIcon } from '@ionic/react'
 type ProfileRightOptionProps = {
   title: string
   listImage: TypeMessage[] | undefined
+  listVideo: TypeMessage[] | undefined
   listFile: TypeMessage[] | undefined
 }
 
@@ -13,7 +14,7 @@ const data = [
   { title: 'File' },
   { title: 'Thành viên' }
 ]
-function ProfileRightOption({ title, listImage, listFile }: ProfileRightOptionProps) {
+function ProfileRightOption({ title, listImage, listVideo, listFile }: ProfileRightOptionProps) {
   return (
     <div className='relative z-20 h-full'>
       <div className='box !shadow-none'>
@@ -42,6 +43,16 @@ function ProfileRightOption({ title, listImage, listFile }: ProfileRightOptionPr
                     height={1200}
                     className='mx-auto h-[100px] w-[100%] rounded-sm object-cover'
                   />
+                </a>
+              ))}
+              {listVideo?.map((video, index) => (
+                <a key={index} className='uk-inline' href={video.sub_body}>
+                  <video
+                    src={video.sub_body}
+                    width={1800}
+                    height={1200}
+                    className='mx-auto h-[100px] w-[100%] rounded-sm object-cover'
+                  ></video>
                 </a>
               ))}
             </div>

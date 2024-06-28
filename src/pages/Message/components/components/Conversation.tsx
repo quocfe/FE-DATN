@@ -1,44 +1,59 @@
-import { useSocketContext } from '~/context/socket'
-import useConversationStore from '~/store/conversation.store'
-import { checkBodyMessage } from '../../utils/checkBodyMessage'
-import { calculateTimeAgo } from '~/utils/helpers'
 import { IonIcon } from '@ionic/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Dialog from '~/components/Dialog'
+import { useSocketContext } from '~/context/socket'
+import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
+import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import useConversationStore from '~/store/conversation.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationDeleteMessage from '../../hooks/useMutationDeleteGroup'
 import { useQueryConversation } from '../../hooks/useQueryConversation'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
-import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
+import { useQueryMessage } from '../../hooks/useQueryMessage'
+import { checkBodyMessage } from '../../utils/checkBodyMessage'
+import TimeAgo from './TimeAgo'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { fetchConversation } from '../../utils/fetchInfiniteConversation'
 
-type ConversationType = {
+interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
   isOnline: boolean
-  notifyData?: []
+  innerRef?: React.Ref<HTMLParagraphElement>
 }
 
-function Conversation({ item, isOnline, notifyData }: ConversationType) {
+function Conversation({ item, isOnline, innerRef }: ConversationType) {
+  const [triggerOpenOption, setTriggerOpenOption] = useState<boolean>(false)
   const { setSelectedConversation, selectedConversation } = useConversationStore()
   const deleteNotify = useMutationDeleteNotify()
+  const { refetch: refetchMessage } = useQueryMessage()
+  const { data: conversation } = useQueryConversation()
+  const { data, refetch } = useInfiniteQuery({
+    queryKey: ['conversations'],
+    queryFn: fetchConversation,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length ? allPages.length + 1 : undefined
+    }
+  })
   const deleteConversatonMuation = useMutationDeleteMessage()
-  const { refetch } = useQueryConversation()
   const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
   const { socket } = useSocketContext()
-  const notify = notifyData && notifyData?.length > 0 ? true : false
+  const { data: notify, refetch: refetchNotifyMessage } = useQueryNotifyMessage()
+  const { user_id } = getProfileFromLocalStorage()
+  const notifyData = notify?.data?.data.filter((data: any) => {
+    return data.group_message_id === item.group_message_id && data.receiver_id === user_id ? data : null
+  })
+
+  const showNotify = notifyData && notifyData?.length > 0 ? true : false
   const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
   const body =
-    item?.messages?.type === 1 || 3
+    item?.messages?.type === 1 && 3
       ? item?.messages?.body
       : item?.messages?.sub_body && checkBodyMessage(item?.messages?.sub_body)
-  const checkBody =
-    notifyData &&
-    notifyData.map((item: any) => {
-      if (item.type === 1) {
-        return body
-      } else {
-        return item.content
-      }
-    })
+
+  const lastestNotify: any = notifyData && notifyData.at(0)
+  const checkBody = lastestNotify?.type === 1 ? body : lastestNotify?.content
+
   const handleSelectedConversation = (item: GroupMessage) => {
     if (item.type === 1) {
       setSelectedConversation({
@@ -56,7 +71,7 @@ function Conversation({ item, isOnline, notifyData }: ConversationType) {
       return body
     }
 
-    notify && deleteNotify.mutate(item.group_message_id)
+    showNotify && deleteNotify.mutate(item.group_message_id)
     socket?.emit('seenMessage', item.group_message_id)
   }
 
@@ -64,16 +79,32 @@ function Conversation({ item, isOnline, notifyData }: ConversationType) {
     deleteConversatonMuation.mutate(id, {
       onSuccess: () => {
         setShowDiaLogDeleteConversation(false)
+        setTriggerOpenOption(false)
+        // refetchConversation()
         refetch()
+        refetchMessage()
       },
       onError: () => {
         console.log('xóa thất bại')
       }
     })
   }
+  let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
 
+  useEffect(() => {
+    if (Object.keys(selectedConversation).length === 0 && showMessage) {
+      const item = data?.pages?.flat()[0]
+      if (item) {
+        handleSelectedConversation(item)
+      }
+    } else {
+    }
+  }, [data?.pages.flat()[0]])
+
+  // console.log('flat', data?.pages.flat())
   return (
     <div
+      ref={innerRef}
       className={`
     group relative flex cursor-pointer items-center rounded-xl p-2 duration-200 
     ${selectedConversation?.group_id === item?.group_message_id ? 'bg-primary-soft hover:bg-none' : 'hover:bg-secondery'}
@@ -97,19 +128,24 @@ function Conversation({ item, isOnline, notifyData }: ConversationType) {
           <div className='flex items-center justify-between gap-2'>
             <p
               className={`w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]  text-gray-600
-                ${notify ? 'font-semibold' : 'font-thin'}
+                ${showNotify ? 'font-semibold' : 'font-thin'}
                 `}
             >
-              {notify ? checkBody : body}
+              {checkBody === undefined ? body : checkBody}
             </p>
           </div>
         </div>
       </div>
-      <div className='absolute right-2 top-[15px] text-xs font-light text-gray-500 group-hover:hidden dark:text-white/70'>
-        {item?.messages?.createdAt && calculateTimeAgo(item?.messages?.createdAt)}
-      </div>
-      <div className='uk-inline absolute right-2 top-1 hidden rounded-full shadow-sm group-hover:block '>
+      {item?.messages?.createdAt ? (
+        <TimeAgo time={item?.messages?.createdAt || 0} trigger={triggerOpenOption} />
+      ) : (
+        <TimeAgo time={item?.createdAt || 0} trigger={triggerOpenOption} />
+      )}
+      <div
+        className={`uk-inline absolute right-2 top-1  rounded-full shadow-sm group-hover:block ${triggerOpenOption ? 'block' : 'hidden'} `}
+      >
         <button
+          onClick={() => setTriggerOpenOption(!triggerOpenOption)}
           className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
           type='button'
         >
@@ -170,7 +206,7 @@ function Conversation({ item, isOnline, notifyData }: ConversationType) {
           </div>
         </div>
       </div>
-      {notify && (
+      {showNotify && (
         <div className='absolute bottom-4 right-2 flex h-[20px] w-[20px] items-center justify-center rounded-full  bg-red-500'>
           <p className='text-[10px] text-white'>{numberNotify}</p>
         </div>

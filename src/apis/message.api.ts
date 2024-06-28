@@ -2,20 +2,38 @@ import { MESSAGE } from '~/constants/message.constant'
 import http from '~/utils/http'
 
 class MessageApi {
-  getConversation() {
-    return http.get<ConversationResponse>(`${MESSAGE.GET_CONVERSATION}`, { withCredentials: true })
+  getConversation(page?: string | number, limit?: string | number) {
+    if (page && limit) {
+      return http.get<ConversationResponse>(`${MESSAGE.GET_CONVERSATION}?page=${page}&limit=${limit}`, {
+        withCredentials: true
+      })
+    } else {
+      return http.get<ConversationResponse>(`${MESSAGE.GET_CONVERSATION}`, {
+        withCredentials: true
+      })
+    }
   }
 
   getMembersGroup(id: string) {
     return http.get<MembersGroupResponse>(`${MESSAGE.GET_MEMBERS}/${id}`, { withCredentials: true })
   }
 
-  getGroupMessage(id: string) {
-    return http.get<MessageResponse>(`${MESSAGE.GET_GROUP_MESSAGE}/${id}`, { withCredentials: true })
+  getGroupMessage(id: string, page?: number, limit?: number) {
+    return http.get<MessageApiResponse>(`${MESSAGE.GET_GROUP_MESSAGE}/${id}?page=${page}&limit=${limit}`, {
+      withCredentials: true
+    })
   }
 
-  getOneToOneMessage(id: string) {
-    return http.get<MessageResponse>(`${MESSAGE.GET_ONE_TO_ONE}/${id}`, { withCredentials: true })
+  getOneToOneMessage(id: string, page?: number, limit?: number) {
+    if (page && limit) {
+      return http.get<MessageApiResponse>(`${MESSAGE.GET_ONE_TO_ONE}/${id}?page=${page}&limit=${limit}`, {
+        withCredentials: true
+      })
+    } else {
+      return http.get<MessageApiResponse>(`${MESSAGE.GET_ONE_TO_ONE}/${id}`, {
+        withCredentials: true
+      })
+    }
   }
 
   getRecall() {
@@ -23,11 +41,11 @@ class MessageApi {
   }
 
   sendMessage(messageData: MessageInput) {
-    return http.post<MessageResponse>(MESSAGE.SEND_MESSAGE, messageData, { withCredentials: true })
+    return http.post<MessageApiResponse>(MESSAGE.SEND_MESSAGE, messageData, { withCredentials: true })
   }
 
   sendMessageAttach(messageMediaData: MessageMediaInput) {
-    return http.post<MessageResponse>(MESSAGE.SEND_MESSAGE_ATTACH, messageMediaData, {
+    return http.post<MessageApiResponse>(MESSAGE.SEND_MESSAGE_ATTACH, messageMediaData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -36,7 +54,7 @@ class MessageApi {
   }
 
   replyMessage(replyMessageInput: ReplyMessageInput) {
-    return http.post<MessageResponse>(MESSAGE.REPLY_MESSAGE, replyMessageInput, { withCredentials: true })
+    return http.post<MessageApiResponse>(MESSAGE.REPLY_MESSAGE, replyMessageInput, { withCredentials: true })
   }
 
   sendReactMessage(reactMessageData: ReactMessageInput) {

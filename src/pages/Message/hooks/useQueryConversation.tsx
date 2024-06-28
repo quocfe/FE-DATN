@@ -1,14 +1,23 @@
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import messageApi from '~/apis/message.api'
 import useAuthStore from '~/store/auth.store'
-import useConversationStore from '~/store/conversation.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
 
-export const useQueryConversation = () => {
+interface QueryConversationParams {
+  page?: number | string
+  limit?: number | string
+}
+
+export const useQueryConversation = ({ page, limit }: QueryConversationParams = {}) => {
   const { profile } = useAuthStore()
-  return useQuery({
-    queryKey: ['conversation', profile?.user_id],
-    queryFn: () => messageApi.getConversation()
-  })
+  if (page || limit) {
+    return useQuery({
+      queryKey: ['conversation', profile?.user_id, page, limit],
+      queryFn: () => messageApi.getConversation(page)
+    })
+  } else {
+    return useQuery({
+      queryKey: ['conversation', profile?.user_id],
+      queryFn: () => messageApi.getConversation()
+    })
+  }
 }

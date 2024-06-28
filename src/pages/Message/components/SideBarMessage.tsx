@@ -1,27 +1,30 @@
 import { IonIcon } from '@ionic/react'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
+import messageApi from '~/apis/message.api'
 import { useSocketContext } from '~/context/socket'
+import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
 import useConversationStore from '~/store/conversation.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import { useQueryMessage } from '../hooks/useQueryMessage'
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
-import { getProfileFromLocalStorage } from '~/utils/auth'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
-import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
+import { useQueryConversation } from '../hooks/useQueryConversation'
+import { fetchConversation } from '../utils/fetchInfiniteConversation'
 
 const SideBarMessage = () => {
   useNotifyMessageSocket()
-  const { data: conversation, isLoading, refetch } = useQueryConversation()
-  const { setSelectedConversation, toggleBoxSearchMessage } = useConversationStore()
+  const { setSelectedConversation } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
   const searchMutaion = useMutaionSearchFriend()
   const { onlineUsers } = useSocketContext()
-  const { data, refetch: refetchNotifyMessage } = useQueryNotifyMessage()
-  const { user_id } = getProfileFromLocalStorage()
+
+  // const { data: conversation, isLoading } = useQueryConversation()
+  const { ref, inView } = useInView()
 
   const handleSearch = (query: string) => {
     searchMutaion.mutate(query, {
@@ -34,10 +37,24 @@ const SideBarMessage = () => {
     })
   }
 
-  if (isLoading) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
+    queryKey: ['conversations'],
+    queryFn: fetchConversation,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length ? allPages.length + 1 : undefined
+    }
+  })
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, isFetchingNextPage])
+
+  if (status === 'pending') {
     return <SideBarMessageSkelaton />
   }
-
   return (
     <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
       <div
@@ -94,7 +111,7 @@ const SideBarMessage = () => {
           <div className='relative mt-4'>
             {/* search */}
             <div
-              className='left-0 z-20 w-screen overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-96 xl:w-[327px] dark:!bg-white/5'
+              className='left-0 z-20 overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-full xl:w-[327px] dark:!bg-white/5'
               tabIndex={0}
               aria-haspopup='true'
               aria-expanded='false'
@@ -111,10 +128,10 @@ const SideBarMessage = () => {
             </div>
             {/* search downdown */}
             <div
-              className='uk- open uk-drop z-10 hidden'
+              className='uk- open uk-drop z-10 hidden w-full'
               uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
             >
-              <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-96 xl:w-[330px]'>
+              <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-full xl:w-[330px]'>
                 <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
                   <div className='text-black dark:text-white'>Bạn bè</div>
                 </div>
@@ -143,24 +160,14 @@ const SideBarMessage = () => {
         </div>
         {/* users list */}
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
-          {conversation?.data?.data
-            ?.sort((a: ConvesationSideBar, b: ConvesationSideBar) => {
-              if (a?.messages?.updatedAt && b?.messages?.updatedAt && a.messages?.updatedAt > b.messages?.updatedAt) {
-                return -1
-              }
-              if (a?.messages?.updatedAt && b?.messages?.updatedAt && a.messages?.updatedAt < b.messages?.updatedAt) {
-                return 1
-              }
-              return 0
-            })
-            .map((item: ConvesationSideBar, index: number) => {
-              const isOnline = onlineUsers.includes(item.user_id)
-              const notifyData = data?.data?.data.filter((data: any) => {
-                return data.group_message_id === item.group_message_id && data.receiver_id === user_id ? data : null
-              })
-
-              return <Conversation notifyData={notifyData} key={index} item={item} isOnline={isOnline} />
-            })}
+          {data?.pages.flat().map((conversation: ConvesationSideBar, index: number) => {
+            const isOnline = onlineUsers.includes(conversation.user_id)
+            if (index === data.pages.flat().length - 1) {
+              return <Conversation innerRef={ref} key={index} item={conversation} isOnline={isOnline} />
+            } else {
+              return <Conversation key={index} item={conversation} isOnline={isOnline} />
+            }
+          })}
         </div>
       </div>
       {/* overly */}

@@ -5,7 +5,7 @@ import { devtools, persist } from 'zustand/middleware'
 interface FileUploadState {
   file: {
     progress: number
-    fileSize: number
+    fileSize: string
     originalName: string
     url: string
     resourceType: string

@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, memo } from 'react'
 import EmojiBox from './EmojiBox'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import { toast } from 'react-toastify'
@@ -13,37 +13,41 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 import { useSocketContext } from '~/context/socket'
 import useFileUpload from '../utils/uploadApi'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import isTypingLogo from '../../../assets/images/isTyping.gif'
+import useFileUploadStore from '~/store/fileUpload.store'
+import { useQueryConversation } from '../hooks/useQueryConversation'
+import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
+import IsTyping from './components/IsTyping'
+import useTypingMessageSocket from '~/hooks/socket/useTypingMessageSocket'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
+  previewUploadRef: React.LegacyRef<HTMLDivElement>
 }
 
-function SendMessage({ boxReplyRef }: SendMessageType) {
+function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   const { refetch, data } = useQueryMessage()
   const receiverID = data?.data?.data?.info?.group_id
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
+  const deleteNotify = useMutationDeleteNotify()
   const sendMedia = useMutationSendMessageAttach()
   const { upload } = useFileUpload()
   const { socket } = useSocketContext()
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<any>(null)
   const [values, setValues] = useState('')
-
   const {
     selectedConversation,
     toggleBoxReply,
+    setTogglePreviewBox,
+    togglePreviewBox,
     setToggleBoxReply,
-    isTyping,
-    isNotTyping,
-    setTogglePreviewImg,
-    togglePreviewImg
+    setPreviewImg,
+    previewImg
   } = useConversationStore()
+  let groupID = selectedConversation?.group_id
 
-  const groupID = selectedConversation?.group_id
   const profile = getProfileFromLocalStorage()
-  const fullname = `${profile?.first_name} ${profile?.last_name}`
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
   const handleSendMessage = useCallback(async () => {
@@ -61,14 +65,18 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
         await replyMessageMutation.mutateAsync(baseData)
         setToggleBoxReply(null)
       } else {
-        if (togglePreviewImg && values == '') {
+        if (previewImg && values == '') {
+          setTogglePreviewBox(false)
           await handleFileUpload()
+          setPreviewImg(null)
         } else {
           await sendMessageMutation.mutateAsync(baseData)
+          setTogglePreviewBox(false)
           await handleFileUpload()
+          setPreviewImg(null)
         }
         setFile(null)
-        setPreview(null)
+        // setPreview(null)
       }
 
       setValues('')
@@ -76,7 +84,7 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
     } catch (error) {
       toast.error('Error sending message', { position: 'top-right', autoClose: 5000 })
     }
-  }, [values, groupID, receiverID, toggleBoxReply, togglePreviewImg])
+  }, [values, groupID, receiverID, toggleBoxReply, previewImg])
 
   const handleSendLike = useCallback(async () => {
     try {
@@ -104,6 +112,7 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
   const handleFileUpload = useCallback(async () => {
     if (file) {
       try {
+        // setPreview(null)
         const url = await upload(file)
 
         const mediaData = {
@@ -130,7 +139,7 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
           </div>
         )
       case 2:
-        return <img src={toggleBoxReply?.sub_body} className='object-contain w-10 h-10' />
+        return <img src={toggleBoxReply?.sub_body} className='h-10 w-10 object-contain' />
       case 3:
         return <p className='text-sm'>{toggleBoxReply?.body}</p>
       default:
@@ -139,15 +148,16 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
   }, [toggleBoxReply])
 
   useEffect(() => {
-    setTogglePreviewImg(preview)
+    setPreviewImg(preview)
+    preview && setTogglePreviewBox(true)
   }, [preview])
 
   return (
     <div className='relative'>
       {toggleBoxReply && (
         <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
-          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
-            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+          <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
+            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               <span className='mb-2 block text-[14px] font-light'>
                 Trả lời tin nhắn <strong className='font-semibold'>{user_name}</strong>
               </span>
@@ -156,36 +166,37 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
             <IonIcon
               onClick={() => setToggleBoxReply(null)}
               icon='close'
-              className='p-2 text-white rounded-full cursor-pointer bg-primary'
+              className='cursor-pointer rounded-full bg-primary p-2 text-white'
             />
           </div>
         </div>
       )}
-      {preview && (
-        <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
-          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
-            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
-              {preview.type.includes('video') ? (
+      {togglePreviewBox && (
+        <div ref={previewUploadRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
+          <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
+            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+              {preview?.type?.includes('video') ? (
                 <video
-                  src={URL.createObjectURL(preview)}
-                  className='object-cover w-16 overflow-hidden rounded-sm h-14 shrink-0'
+                  src={URL?.createObjectURL(preview)}
+                  className='h-14 w-16 shrink-0 overflow-hidden rounded-sm object-cover'
                 ></video>
               ) : (
-                <img src={URL.createObjectURL(preview)} className='h-[50px] w-[100px] object-cover' />
+                <img src={URL?.createObjectURL(preview)} className='h-[50px] w-[100px] object-cover' />
               )}
             </div>
             <IonIcon
               onClick={() => {
-                setTogglePreviewImg(false)
+                setPreviewImg(null)
                 setPreview(null)
+                setTogglePreviewBox(false)
               }}
               icon='close'
-              className='p-2 text-white rounded-full cursor-pointer bg-primary'
+              className='cursor-pointer rounded-full bg-primary p-2 text-white'
             />
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 p-2 overflow-hidden md:gap-4 md:p-3'>
+      <div className='flex items-center gap-2 overflow-hidden p-2 md:gap-4 md:p-3'>
         <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
           <CustomFileInput
             type={2}
@@ -220,29 +231,32 @@ function SendMessage({ boxReplyRef }: SendMessageType) {
               }
             }}
             placeholder='Write your message'
+            onFocus={() => {
+              const data = { user_id: profile.user_id, groupID }
+              socket?.emit('isTyping', JSON.stringify(data))
+            }}
+            onBlur={() => {
+              const data = { user_id: profile.user_id, groupID }
+              socket?.emit('isNotTyping', JSON.stringify(data))
+            }}
             value={values}
             rows={1}
-            className='w-full p-2 pl-4 pr-8 rounded-full resize-none no-scrollbar bg-secondery focus:ring-transparent'
+            className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
           ></textarea>
-          {!values && !togglePreviewImg ? (
+          {!values && !previewImg ? (
             <span onClick={handleSendLike} className='absolute right-0 top-0 mr-1 shrink-0 cursor-pointer text-[25px]'>
               👍
             </span>
           ) : (
-            <button onClick={handleSendMessage} className='absolute top-0 right-0 p-2 text-dark shrink-0'>
+            <button onClick={handleSendMessage} className='text-dark absolute right-0 top-0 shrink-0 p-2'>
               <IonIcon className='flex text-xl font-bold text-primary' icon='send' />
             </button>
           )}
         </div>
       </div>
-      {isTyping !== fullname && !isNotTyping && (
-        <div className='absolute -top-[25px] left-0 flex items-center justify-center bg-white p-1 text-[12px] shadow-sm'>
-          <p>{isTyping} đang nhập</p>
-          <img src={isTypingLogo} className='object-cover w-10 h-4' alt='Typing...' />
-        </div>
-      )}
+      <IsTyping />
     </div>
   )
 }
 
-export default SendMessage
+export default memo(SendMessage)

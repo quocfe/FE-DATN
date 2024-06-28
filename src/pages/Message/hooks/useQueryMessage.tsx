@@ -1,10 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import messageApi from '~/apis/message.api'
 import useConversationStore from '~/store/conversation.store'
 
 export const useQueryMessage = () => {
   const { selectedConversation } = useConversationStore()
-
   if (selectedConversation.type === 1) {
     return useQuery({
       queryKey: ['message', selectedConversation.id],
