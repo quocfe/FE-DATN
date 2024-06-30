@@ -1,18 +1,24 @@
-type User = {
+interface BaseUser {
   user_id: string
   first_name: string
   last_name: string
+}
+
+interface BaseProfile {
+  profile_picture: string
+  cover_photo: string
+}
+
+type User = BaseUser & {
   email: string
   gender: number
 }
 
-type Profile = {
+type Profile = BaseProfile & {
   profile_id: string
   phone_number: string
   date_of_birth: string
   biography: string
-  profile_picture: string
-  cover_photo: string
   home_town: string
   education: string
   relationship_status?: number
@@ -60,15 +66,9 @@ type UserListReponse = SuccessResponse<{
   total: number | string
 }>
 
-// user đơn giản
-type UserCompact = {
-  user_id: string
-  first_name: string
-  last_name: string
-  Profile: null | {
-    profile_picture: string
-    cover_photo: string
-  }
+type UserCompact = BaseUser & {
+  Profile: null | BaseProfile
+  CommonFriends: UserCompact[]
 }
 
 type UserCompactWithStatus = UserCompact & {

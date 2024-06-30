@@ -75,8 +75,16 @@ class UserApi {
   }
 
   // Danh sách bạn bè của bạn bè
-  fetchAllFriendsOfFriends(friend_id: string) {
-    return http.get<UserListReponse>(`${USER.FRIENDS_OF_FRIENDS}/${friend_id}`)
+  fetchAllFriendsOfFriends(friend_id: string, userConfigParams: UserConfigParams) {
+    const _page = userConfigParams._page
+    const _limit = userConfigParams._limit
+
+    return http.get<UserListReponse>(`${USER.FRIENDS_OF_FRIENDS}/${friend_id}`, {
+      params: {
+        _page,
+        _limit
+      }
+    })
   }
 
   // Danh sách chặn người dùng

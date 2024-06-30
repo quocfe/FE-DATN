@@ -1,7 +1,8 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import useQueryFriendsOfFriends from '~/hooks/queries/user/useQueryFriendsOfFriends'
 import FriendItem from './FriendItem'
 import { useEffect } from 'react'
+import { ENDPOINT } from '~/constants/endpoint.constant'
 
 function MyFriends() {
   // Hooks
@@ -24,9 +25,9 @@ function MyFriends() {
           <h3 className='text-lg font-bold'>Bạn bè</h3>
           <span className='mt-0. block text-sm font-normal text-gray-500 dark:text-white'>{friends.length} Bạn bè</span>
         </div>
-        <a href='#' className='text-sm text-blue-500'>
+        <Link to={`${ENDPOINT.PROFILE}/${user_id}/friends`} className='text-sm text-blue-500'>
           Xem tất cả
-        </a>
+        </Link>
       </div>
       <div className='mb-2 mt-4 grid grid-cols-3 gap-2 gap-y-5 text-center text-sm'>
         {friends && friends.length !== 0 ? (

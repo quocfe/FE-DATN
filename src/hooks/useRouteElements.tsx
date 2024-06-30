@@ -16,12 +16,14 @@ import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
-import PersonalPage from '~/pages/Profile/PersonalPage'
 import MyFriends from '~/pages/Profile/MyFriends'
 import FriendRequest from '~/pages/Friend/FriendRequest'
 import FriendSuggest from '~/pages/Friend/FriendSuggest'
 import FriendLayout from '~/pages/Friend/FriendLayout'
 import SentFriendRequests from '~/pages/Friend/SentFriendRequests'
+import PersonalPublic from '~/pages/PublicProfile/PersonalPublic'
+import PersonalPrivate from '~/pages/Profile/PersonalPrivate'
+import FriendInfoDisplay from '~/pages/PublicProfile/FriendInfoDisplay/FriendInfoDisplay'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -45,7 +47,7 @@ function useRouteElements() {
               element: (
                 <MainLayout>
                   <Profile>
-                    <PersonalPage />
+                    <PersonalPrivate />
                   </Profile>
                 </MainLayout>
               )
@@ -59,16 +61,33 @@ function useRouteElements() {
                   </Profile>
                 </MainLayout>
               )
+            },
+            {
+              path: ':user_id',
+              children: [
+                {
+                  path: '',
+                  element: (
+                    <MainLayout>
+                      <PublicProfile>
+                        <PersonalPublic />
+                      </PublicProfile>
+                    </MainLayout>
+                  )
+                },
+                {
+                  path: 'friends',
+                  element: (
+                    <MainLayout>
+                      <PublicProfile>
+                        <FriendInfoDisplay />
+                      </PublicProfile>
+                    </MainLayout>
+                  )
+                }
+              ]
             }
           ]
-        },
-        {
-          path: '/profile/:user_id',
-          element: (
-            <MainLayout>
-              <PublicProfile />
-            </MainLayout>
-          )
         },
         {
           path: '/friend',

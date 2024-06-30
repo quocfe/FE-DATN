@@ -1,29 +1,31 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import MyFriendItem from './components/MyFriendItem'
 import useQuerySearchFriends from '~/hooks/queries/user/useQuerySearchFriends'
 import _ from 'lodash'
 import { useQueryClient } from '@tanstack/react-query'
 import useQueryListMyFriends from '~/hooks/queries/user/useQueryListMyFriends'
 import useUserConfigParams from '~/hooks/user/useUserConfigParams'
 import Pagination from '~/components/Pagination'
-import { ENDPOINT } from '~/constants/endpoint.constant'
+import MyFriendItem from './components/MyFriendItem'
+import useQueryFriendsOfFriends from '~/hooks/queries/user/useQueryFriendsOfFriends'
+import { useParams } from 'react-router-dom'
 
-function MyFriends() {
+function FriendInfoDisplay() {
   // Hooks
+  const { user_id } = useParams()
   const [searchValue, setSearchValue] = useState<string>('')
   const [hasSearched, setHasSearched] = useState<boolean>(false)
   const userConfigParams = useUserConfigParams()
 
   // React Query
   const queryClient = useQueryClient()
-  const { data: resListMyFriends } = useQueryListMyFriends(userConfigParams)
+  const { data: resListMyFriends } = useQueryFriendsOfFriends(user_id ?? '', userConfigParams)
   const { data: resSearchFriends } = useQuerySearchFriends(searchValue)
 
   useEffect(() => {
     if (resSearchFriends) {
-      queryClient.setQueryData(['my_friends', userConfigParams], resSearchFriends)
+      queryClient.setQueryData(['friends_of_friends', userConfigParams], resSearchFriends)
     } else if (searchValue === '' && hasSearched) {
-      queryClient.invalidateQueries({ queryKey: ['my_friends', userConfigParams] })
+      queryClient.invalidateQueries({ queryKey: ['friends_of_friends', userConfigParams] })
     }
   }, [searchValue, resSearchFriends, queryClient])
 
@@ -97,10 +99,10 @@ function MyFriends() {
       </div>
       {/* Pagination */}
       {resSearchFriends?.data.data.friends.length !== 0 && total !== 0 && (
-        <Pagination basePath={ENDPOINT.PROFILE_MYFRIENDS} configParams={userConfigParams} pages={pages} />
+        <Pagination basePath={`/profile/${user_id}/friends`} configParams={userConfigParams} pages={pages} />
       )}
     </div>
   )
 }
 
-export default React.memo(MyFriends)
+export default React.memo(FriendInfoDisplay)

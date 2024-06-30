@@ -19,13 +19,15 @@ function SentFriendRequests() {
   return (
     <>
       <div className='uk-active grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4'>
-        {sentFriendRequest ? (
+        {sentFriendRequest && sentFriendRequest.length !== 0 ? (
           sentFriendRequest?.map((friend) => <FriendItem key={friend.user_id} friend={friend} />)
         ) : (
           <span>Hiện chưa có gửi mời kết bạn nào!</span>
         )}
       </div>
-      <Pagination pages={pages} basePath={ENDPOINT.FRIEND_SENT_REQUESTS} configParams={userConfigParams} />
+      {sentFriendRequest && sentFriendRequest.length !== 0 && (
+        <Pagination pages={pages} basePath={ENDPOINT.FRIEND_SENT_REQUESTS} configParams={userConfigParams} />
+      )}
     </>
   )
 }

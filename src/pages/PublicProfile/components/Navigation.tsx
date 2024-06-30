@@ -1,8 +1,11 @@
 import { IonIcon } from '@ionic/react'
 import { useQueryClient } from '@tanstack/react-query'
+import classNames from 'classnames'
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
+import { ENDPOINT } from '~/constants/endpoint.constant'
 import useMutationAcceptFriendRequest from '~/hooks/mutations/user/useMutationAcceptFriendRequest'
 import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
 import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
@@ -21,6 +24,7 @@ function Navigation({ profile, relationship }: Props) {
   // Hooks
   const [showDialogBlockUser, setShowDialogBlockUser] = useState<boolean>(false)
   const [showDialogCancelFriendRequest, setShowDialogCancelFriendRequest] = useState<boolean>(false)
+  const { pathname } = useLocation()
 
   // React Query
   const queryClient = useQueryClient()
@@ -187,12 +191,22 @@ function Navigation({ profile, relationship }: Props) {
           </div>
         </div>
         <nav className='-mb-px flex gap-0.5 rounded-xl text-[15px] font-medium text-gray-600  max-md:w-full max-md:overflow-x-auto dark:text-white'>
-          <a href='#' className='inline-block  border-b-2 border-blue-600 px-3.5 py-3 leading-8 text-blue-600'>
+          <Link
+            to={`${ENDPOINT.PROFILE}/${profile?.user_id}`}
+            className={classNames('inline-block px-3.5 py-3 leading-8 ', {
+              'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}`
+            })}
+          >
             Trang cá nhân
-          </a>
-          <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-            Bạn bè <span className='hidden pl-2 text-xs font-normal lg:inline-block'>2,680</span>
-          </a>
+          </Link>
+          <Link
+            to={`${ENDPOINT.PROFILE}/${profile?.user_id}/friends`}
+            className={classNames('inline-block px-3.5 py-3 leading-8 ', {
+              'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}/friends`
+            })}
+          >
+            Bạn bè
+          </Link>
           <a href='#' className='inline-block px-3.5 py-3 leading-8'>
             Hình ảnh
           </a>
