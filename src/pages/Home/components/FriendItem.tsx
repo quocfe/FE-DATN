@@ -1,10 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import useMutationAcceptFriendRequest from '~/hooks/mutations/user/useMutationAcceptFriendRequest'
-import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
-import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
+import useManageFriendRequests from '~/hooks/user/useManageFriendRequests'
 
 interface Props {
   user: UserCompact
@@ -15,51 +11,11 @@ function FriendItem({ user, type }: Props) {
   // Hooks
   const [isFriendRequested, setIsFriendRequested] = useState<boolean>(false)
 
-  // React Query
-  const queryClient = useQueryClient()
-  const senderFriendRequestMutation = useMutationSenderFriendRequest()
-  const cancelFriendRequestMutation = useMutationCancelFriendRequest()
-  const acceptFriendRequestMutation = useMutationAcceptFriendRequest()
-
-  // Gửi lời mời kết bạn
-  const handleSenderFriendRequest = (friend_id: string) => () => {
-    senderFriendRequestMutation.mutate(friend_id, {
-      onSuccess: () => {
-        toast.success('Gửi lời mời kết bạn thành công')
-        setIsFriendRequested(true)
-      },
-      onError: (error) => {
-        toast.error('Đã có lỗi xảy ra')
-        console.log(error)
-      }
-    })
-  }
-
-  // Hủy lời mời kết bạn
-  const handleCancelFriendRequest = (friend_id: string) => () => {
-    cancelFriendRequestMutation.mutate(friend_id, {
-      onSuccess: () => {
-        toast.success('Hủy lời mời kết bạn thành công')
-        setIsFriendRequested(false)
-      },
-      onError: () => {
-        toast.error('Đã có lỗi xảy ra!')
-      }
-    })
-  }
-
-  // Chấp nhận lời mời kết bạn
-  const handleAcceptFriendRequest = (friend_id: string) => () => {
-    acceptFriendRequestMutation.mutate(friend_id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['received_friend_requests'] })
-        toast.success('Đã chấp nhận lời mời kết bạn')
-      },
-      onError: (error) => {
-        toast.error(error.message)
-      }
-    })
-  }
+  // React Query Hooks
+  const { handleSenderFriendRequest, handleCancelFriendRequest, handleAcceptFriendRequest } = useManageFriendRequests(
+    user.user_id,
+    setIsFriendRequested
+  )
 
   return (
     <div className='side-list-item'>
@@ -79,7 +35,7 @@ function FriendItem({ user, type }: Props) {
           {isFriendRequested ? (
             <button
               className='button text-red-600'
-              onClick={handleCancelFriendRequest(user.user_id)}
+              onClick={handleCancelFriendRequest}
               style={{
                 backgroundColor: 'rgb(255 236 235)'
               }}
@@ -87,20 +43,14 @@ function FriendItem({ user, type }: Props) {
               Hủy lời mời
             </button>
           ) : (
-            <button
-              className='button bg-primary-soft text-primary dark:text-white'
-              onClick={handleSenderFriendRequest(user.user_id)}
-            >
+            <button className='button bg-primary-soft text-primary dark:text-white' onClick={handleSenderFriendRequest}>
               Thêm bạn bè
             </button>
           )}
         </div>
       ) : (
         <div className='flex gap-2'>
-          <button
-            className='button bg-primary-soft text-primary dark:text-white'
-            onClick={handleAcceptFriendRequest(user.user_id)}
-          >
+          <button className='button bg-primary-soft text-primary dark:text-white' onClick={handleAcceptFriendRequest}>
             Chấp nhận
           </button>
           <button

@@ -87,7 +87,7 @@ function Pagination<TypeConfigParams>({ pages, basePath, configParams }: Props<T
     <div className='mt-6 flex items-center justify-between'>
       <Link
         to={{
-          pathname: '/friend/suggests',
+          pathname: basePath,
           search: createSearchParams({
             ...configParams,
             _page: '1'
@@ -115,7 +115,7 @@ function Pagination<TypeConfigParams>({ pages, basePath, configParams }: Props<T
       <div className='hidden items-center gap-x-3 md:flex'>{renderPagination()}</div>
       <Link
         to={{
-          pathname: '/friend/suggests',
+          pathname: basePath,
           search: createSearchParams({
             ...configParams,
             _page: pages.toString()

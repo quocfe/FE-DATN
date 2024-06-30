@@ -6,7 +6,7 @@ import { useState } from 'react'
 import Modal from '~/components/Modal'
 import UpdateProfile from '../components/UpdateProfile'
 
-function PersonalPage() {
+function PersonalPrivate() {
   const [showModal, setShowModal] = useState<boolean>(false)
   const { profile } = useAuthStore()
 
@@ -26,4 +26,4 @@ function PersonalPage() {
   )
 }
 
-export default PersonalPage
+export default PersonalPrivate
