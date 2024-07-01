@@ -7,7 +7,6 @@ import { Video } from '~/components/design-systems'
 import { ROUTE_PATH } from '~/constants'
 import { cn } from '~/helpers'
 import SvgIcon from '~/helpers/SvgIcon'
-import useAuthStore from '~/store/auth.store'
 import { calculateTimeAgo } from '~/utils/helpers'
 
 interface HorizontalVideoCardProps {
@@ -15,8 +14,6 @@ interface HorizontalVideoCardProps {
 }
 
 const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
-  const { profile } = useAuthStore()
-
   const { data: likeVideo, refetch } = useQuery({
     queryKey: ['getLikeVideos', video.id],
     queryFn: async () => {
@@ -44,12 +41,12 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
               <div className='relative shrink-0 cursor-pointer rounded-full'>
                 <img
                   className='sm:w-h-11 h-10 w-11 shrink-0 rounded-full shadow sm:h-11'
-                  src={profile?.Profile.profile_picture}
+                  src={video?.user.Profile.cover_photo}
                   alt=''
                 />
               </div>
               <div className=''>
-                <p className='font-medium text-black'>{profile?.first_name}</p>
+                <p className='font-medium text-black'>{video?.user.first_name}</p>
                 <p className='text-sm'>{calculateTimeAgo(video.createdAt as unknown as string)}</p>
               </div>
             </div>

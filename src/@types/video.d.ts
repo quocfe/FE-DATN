@@ -21,8 +21,12 @@ interface DataVideoResponse {
   user_id: string
   view: number
   user: {
+    user_id: string
     first_name: string
     last_name: string
+    Profile: {
+      cover_photo: string
+    }
   }
 }
 

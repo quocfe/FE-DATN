@@ -39,6 +39,7 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
     resolver: yupResolver(commentVideoSchema)
   })
 
+  // Api xóa comment
   const { mutate: deleteCommentPartent } = useMutation({
     mutationFn: async () => {
       const res = await commentVideoApi.deleteCommentVideo(comment.id)
@@ -50,6 +51,7 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
     }
   })
 
+  // Hàm Confirm xác nhận xóa comment
   const handleClickDeleteComment = () => {
     coreConfirm({
       title: 'Xóa bình luận?',
@@ -62,12 +64,15 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
     })
   }
 
+  // Hàm like và bỏ like
   const { mutate: handlePatchLikeVideo } = useMutation({
     mutationFn: async ({ video_id, comment_id }: { video_id: string; comment_id: string }) => {
       const res = await likeVideoApi.pathLikeVideo(video_id, comment_id)
       return res.data
     },
-    onSuccess: () => {}
+    onSuccess: () => {
+      refetchComment()
+    }
   })
 
   // Chỉnh sửa comment

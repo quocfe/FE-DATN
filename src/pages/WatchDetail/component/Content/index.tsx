@@ -42,7 +42,7 @@ const Content = () => {
           {/* video player */}
 
           <div className='h-[445px] w-full'>
-            <Video link={videoData?.url ?? ''} />
+            <Video link={videoData?.url ?? ''} public_id={videoData?.public_id} />
           </div>
           {/* post heading */}
           <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
