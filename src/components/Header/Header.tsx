@@ -1,6 +1,19 @@
 import { IonIcon } from '@ionic/react'
+import useAuthStore from '~/store/auth.store'
+import useMutationLogout from './hooks/useMutationLogout'
+import { Link } from 'react-router-dom'
+import Search from './components/Search'
 
 function Header() {
+  const { profile } = useAuthStore()
+
+  // React Query
+  const logoutMutation = useMutationLogout()
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
+
   return (
     <header className='sky-50 dark:bg-dark2 fixed left-0 top-0 z-[100] flex h-[--m-top] w-full items-center border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-slate-800'>
       <div className='flex w-full items-center px-2 max-lg:gap-10 xl:px-6'>
@@ -27,165 +40,23 @@ function Header() {
               />
             </button>
             <div id='logo'>
-              <a href='feed.html'>
-                <img src='src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
-                <img src='src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
-                <img src='src/assets/images/logo-mobile.png' className='hidden w-20 max-md:block dark:!hidden' alt='' />
-                <img src='src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
-              </a>
+              <Link to={'/'}>
+                <img src='/src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
+                <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
+                <img
+                  src='/src/assets/images/logo-mobile.png'
+                  className='hidden w-20 max-md:block dark:!hidden'
+                  alt=''
+                />
+                <img src='/src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
+              </Link>
             </div>
           </div>
         </div>
         <div className='relative flex-1'>
           <div className='mx-auto flex max-w-[1220px] items-center'>
             {/* search */}
-            <div
-              id='search--box'
-              className='left-0 z-20 w-screen overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-96 xl:w-[680px] dark:!bg-white/5'
-              tabIndex={0}
-              aria-haspopup='true'
-              aria-expanded='false'
-            >
-              <IonIcon
-                icon='search'
-                className='md hydrated absolute left-4 top-1/2 -translate-y-1/2'
-                role='img'
-                aria-label='search'
-              />
-
-              <input
-                type='text'
-                placeholder='Search Friends, videos ..'
-                className='h-12 w-full !bg-transparent !pl-10 !text-sm !font-normal'
-              />
-            </div>
-            {/* search dropdown*/}
-            <div
-              className='uk- open uk-drop z-10 hidden'
-              uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
-            >
-              <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-96 xl:w-[694px]'>
-                <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
-                  <div className=' text-black dark:text-white'>Recent</div>
-                  <button type='button' className='text-blue-500'>
-                    Clear
-                  </button>
-                </div>
-                <nav className='text-sm font-medium text-black dark:text-white'>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/avatars/avatar-2.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Jesse Steeve </div>
-                      <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/avatars/avatar-2.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Martin Gray </div>
-                      <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/group/group-2.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Delicious Foods</div>
-                      <div className='mt-0.5 text-xs font-medium text-rose-500'> Group </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/group/group-1.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Delicious Foods</div>
-                      <div className='mt-0.5 text-xs font-medium text-yellow-500'> Page </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/avatars/avatar-6.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> John Welim </div>
-                      <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className='relative flex  hidden items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <IonIcon
-                      icon='search-outline'
-                      className='md hydrated text-2xl'
-                      role='img'
-                      aria-label='search outline'
-                    />
-                    Creative ideas about Business
-                  </a>
-                  <a
-                    href='#!'
-                    className='relative flex hidden   items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <IonIcon
-                      icon='search-outline'
-                      className='md hydrated text-2xl'
-                      role='img'
-                      aria-label='search outline'
-                    />
-                    8 Facts About Writting
-                  </a>
-                </nav>
-                <hr className='-mx-2 mt-2 hidden' />
-                <div className='flex hidden justify-end pr-2 text-sm font-medium text-red-500'>
-                  <a href='#!' className='flex rounded p-1.5 hover:bg-red-50 dark:hover:bg-slate-700'>
-                    <IonIcon icon='trash' className='md hydrated mr-2 text-lg' role='img' aria-label='trash' />
-                    Clear your history
-                  </a>
-                </div>
-              </div>
-            </div>
+            <Search profile={profile} />
             {/* header icons */}
             <div className='absolute right-5 top-1/2 flex -translate-y-1/2 items-center gap-2 text-black sm:gap-4'>
               {/* create */}
@@ -347,7 +218,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/group.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/group.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Groups </h4>
@@ -361,7 +232,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/page.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/page.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Pages </h4>
@@ -373,7 +244,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/event.png' className='w-7' />
+                    <img src='/src/assets/images/icons/event.png' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
@@ -385,7 +256,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/market.png' className='-ml-1 w-8' />
+                    <img src='/src/assets/images/icons/market.png' className='-ml-1 w-8' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
@@ -397,7 +268,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/game.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/game.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Games </h4>
@@ -504,7 +375,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -524,7 +395,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -543,7 +414,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-6.jpg'
+                          src='/src/assets/images/avatars/avatar-6.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -562,7 +433,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src={profile?.Profile.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -583,7 +454,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -603,7 +474,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -622,7 +493,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src={profile?.Profile.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -641,7 +512,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -721,7 +592,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-2.jpg'
+                          src={profile?.Profile.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -743,7 +614,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -764,7 +635,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-5.jpg'
+                          src='/src/assets/images/avatars/avatar-5.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -785,7 +656,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -807,7 +678,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -828,7 +699,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -861,9 +732,9 @@ function Header() {
                 aria-expanded='false'
               >
                 <img
-                  src='src/assets/images/avatars/avatar-2.jpg'
+                  src={profile?.Profile.profile_picture}
                   alt=''
-                  className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
+                  className='h-7 w-7 shrink-0 rounded-full object-cover shadow sm:h-9 sm:w-9'
                 />
               </div>
               {/* fix */}
@@ -871,19 +742,21 @@ function Header() {
                 className='border2 uk-drop hidden w-64 rounded-lg bg-white drop-shadow-xl dark:bg-slate-700'
                 uk-drop='offset:6;pos: bottom-right;animate-out: true; animation: uk-animation-scale-up uk-transform-origin-top-right '
               >
-                <a href='timeline.html'>
+                <Link to={'/profile'}>
                   <div className='flex items-center gap-4 p-4 py-5'>
                     <img
-                      src='src/assets/images/avatars/avatar-2.jpg'
+                      src={profile?.Profile.profile_picture}
                       alt=''
-                      className='h-10 w-10 rounded-full shadow'
+                      className='h-10 w-10 rounded-full object-cover shadow'
                     />
                     <div className='flex-1'>
-                      <h4 className='text-sm font-medium text-black'>Stell johnson</h4>
-                      <div className='mt-1 text-sm font-light text-blue-600 dark:text-white/70'>@mohnson</div>
+                      <h4 className='text-sm font-medium text-black'>
+                        {profile?.last_name} {profile?.first_name}
+                      </h4>
+                      <div className='mt-1 text-sm font-light text-blue-600 dark:text-white/70'>{profile?.email}</div>
                     </div>
                   </div>
-                </a>
+                </Link>
                 <hr className='dark:border-gray-600/60' />
                 <nav className='p-2 text-sm font-normal text-black dark:text-white'>
                   <a href='upgrade.html'>
@@ -902,7 +775,7 @@ function Header() {
                           d='M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z'
                         />
                       </svg>
-                      Upgrade To Premium
+                      Nâng cấp tài khoản
                     </div>
                   </a>
                   <a href='setting.html'>
@@ -921,7 +794,7 @@ function Header() {
                           d='M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z'
                         />
                       </svg>
-                      My Billing
+                      Ví của tôi
                     </div>
                   </a>
                   <a href='setting.html'>
@@ -940,10 +813,10 @@ function Header() {
                           d='M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46'
                         />
                       </svg>
-                      Advatacing
+                      Thông báo
                     </div>
                   </a>
-                  <a href='setting.html'>
+                  <Link to={'/setting'}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -960,9 +833,9 @@ function Header() {
                         />
                         <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
                       </svg>
-                      My Account
+                      Cài đặt
                     </div>
-                  </a>
+                  </Link>
                   <button type='button' className='w-full'>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
@@ -979,14 +852,14 @@ function Header() {
                           d='M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z'
                         />
                       </svg>
-                      Night mode
+                      Chế độ sáng
                       <span className='ml-auto w-9 rounded-full bg-slate-200/40 p-0.5 dark:hover:bg-white/20'>
                         <span className='relative block h-4 w-2 w-4 rounded-full bg-white shadow-md dark:bg-blue-600' />
                       </span>
                     </div>
                   </button>
                   <hr className='-mx-2 my-2 dark:border-gray-600/60' />
-                  <a href='form-login.html'>
+                  <a className='cursor-pointer' onClick={handleLogout}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         className='w-6'
@@ -1002,13 +875,17 @@ function Header() {
                           d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
                         />
                       </svg>
-                      Log Out
+                      Đăng xuất
                     </div>
                   </a>
                 </nav>
               </div>
               <div className='flex hidden items-center gap-2'>
-                <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='h-9 w-9 rounded-full shadow' />
+                <img
+                  src={profile?.Profile.profile_picture}
+                  alt=''
+                  className='h-9 w-9 rounded-full object-cover shadow'
+                />
                 <div className='w-20 font-semibold text-gray-600'> Hamse </div>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
