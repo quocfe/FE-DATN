@@ -14,9 +14,34 @@ import { useQueryMembers } from '../hooks/useQueryMembers'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
 import ProfileRightOption from './ProfileRightOption'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import ModalAddMember from './ModalAddMember'
+
+const IconOptionList = [
+  {
+    icon: 'person-circle-outline',
+    label: 'Profile'
+  },
+  {
+    icon: 'search-outline',
+    label: 'Search'
+  },
+  {
+    icon: 'notifications-off-outline',
+    label: 'Unmute'
+  },
+  {
+    icon: 'person-add-outline',
+    label: 'Add-user'
+  }
+]
 
 function ProfileRight() {
-  const { data: dataMessage } = useQueryMessage()
+  const { refetch: refetchMsgInfi } = useQueryInfinifyMessage()
+  const { data: dataMessage, refetch: refetchMsg } = useQueryMessage()
+  const { refetch: refetchConver } = useQueryConversation()
+
   const avatar = dataMessage?.data?.data?.info?.avatar
   const group_name = dataMessage?.data?.data?.info?.group_name
   const group_id = dataMessage?.data?.data?.info?.group_id
@@ -26,9 +51,9 @@ function ProfileRight() {
   const [groupName, setGroupName] = useState<string>('')
   const [titleBox, setTitleBox] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+  const [openModalAddMember, setOpenModalAddMember] = useState<boolean>(false)
   const { user_id } = getProfileFromLocalStorage()
   const { data } = useQueryMembers()
-  const { refetch } = useQueryConversation()
   const changeImage = useMutationChangeImageGroup()
   const { setEmoji, emoji } = useEmojiStore()
   const { uploadNoPreview } = useFileUpload()
@@ -74,7 +99,9 @@ function ProfileRight() {
       body.image = fileUpload.url
       changeImage.mutate(body, {
         onSuccess: () => {
-          refetch()
+          refetchMsgInfi()
+          refetchMsg()
+          refetchConver()
           setLoading(false)
         },
         onError: () => {
@@ -91,7 +118,9 @@ function ProfileRight() {
     }
     changeGroupNameMutation.mutate(dataGroup, {
       onSuccess: () => {
-        refetch()
+        refetchConver()
+        refetchMsgInfi()
+        refetchMsg()
         setIsOpen(false)
       },
       onError: () => {
@@ -102,6 +131,16 @@ function ProfileRight() {
 
   const handleEmojiSelect = (emoji: EmojiType) => {
     setEmoji(emoji.native)
+  }
+
+  const handleClickOption = (label: string) => {
+    switch (label) {
+      case 'Add-user':
+        setOpenModalAddMember(true)
+        break
+      default:
+        break
+    }
   }
 
   if (loading) {
@@ -151,7 +190,7 @@ function ProfileRight() {
                         onClick={handChageGroupName}
                         className='flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary'
                       >
-                        <IonIcon className='text-white' icon='save' />
+                        <IonIcon className='text-white' icon='checkmark-outline' />
                       </div>
                       <div
                         onClick={() => setIsOpen(false)}
@@ -169,15 +208,15 @@ function ProfileRight() {
               </div>
               <div className='mt-3'>
                 <div className='flex items-center justify-center gap-4'>
-                  <div className='flex cursor-pointer items-center justify-center rounded-full bg-slate-300 p-2 hover:bg-primary-soft'>
-                    <IonIcon icon='person-circle-outline' className='text-[20px] ' />
-                  </div>
-                  <div className='flex cursor-pointer items-center justify-center rounded-full bg-slate-300 p-2 hover:bg-primary-soft'>
-                    <IonIcon icon='search-outline' className='text-[20px] ' />
-                  </div>
-                  <div className='flex cursor-pointer items-center justify-center rounded-full bg-slate-300 p-2 hover:bg-primary-soft'>
-                    <IonIcon icon='notifications-off-outline' className='text-[20px] ' />
-                  </div>
+                  {IconOptionList.map((option, index) => (
+                    <div
+                      key={index}
+                      className='flex cursor-pointer items-center justify-center rounded-full bg-slate-300 p-2 hover:bg-primary-soft'
+                      onClick={() => handleClickOption(option.label)}
+                    >
+                      <IonIcon icon={option.icon} className='text-[20px] ' />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -298,7 +337,7 @@ function ProfileRight() {
                             </div>
                             <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
                               <p className='text-sm text-slate-800'>{member.fullname}</p>
-                              {member.role && <p className='text-[12px] font-thin'>Người tạo nhóm</p>}
+                              {member.role && <p className='text-[12px] font-thin'>Nhóm trưởng</p>}
                             </div>
                             <div className='uk-inline'>
                               <button
@@ -451,6 +490,7 @@ function ProfileRight() {
         )}
         {/* close button */}
       </div>
+      <ModalAddMember isOpen={openModalAddMember} onClose={() => setOpenModalAddMember(false)} />
       {/* overly */}
       <div
         className='absolute h-full w-full bg-slate-100/40 backdrop-blur dark:bg-slate-800/40'
@@ -461,19 +501,3 @@ function ProfileRight() {
 }
 
 export default ProfileRight
-//  <div className='absolute rounded-full shadow-sm uk-inline right-8 '>
-//         <button
-//           className='flex items-center justify-center w-6 h-6 rounded-full shadow-sm uk-button uk-button-default hover:bg-slate-100'
-//           type='button'
-//         >
-//           <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
-//         </button>
-//         <div uk-dropdown='mode: click' className='w-[250px]'>
-//           <div className='p-2'>
-//             <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-
-//             </div>
-
-//           </div>
-//         </div>
-//       </div>

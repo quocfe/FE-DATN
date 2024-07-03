@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
@@ -13,6 +13,7 @@ import { checkBodyMessage } from '../../utils/checkBodyMessage'
 import TimeAgo from './TimeAgo'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchConversation } from '../../utils/fetchInfiniteConversation'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
@@ -21,11 +22,10 @@ interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
 }
 
 function Conversation({ item, isOnline, innerRef }: ConversationType) {
-  const [triggerOpenOption, setTriggerOpenOption] = useState<boolean>(false)
+  const [triggerHover, setTriggerHover] = useState<boolean>(false)
   const { setSelectedConversation, selectedConversation } = useConversationStore()
   const deleteNotify = useMutationDeleteNotify()
-  const { refetch: refetchMessage } = useQueryMessage()
-  const { data: conversation } = useQueryConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const { data, refetch } = useInfiniteQuery({
     queryKey: ['conversations'],
     queryFn: fetchConversation,
@@ -42,7 +42,11 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const notifyData = notify?.data?.data.filter((data: any) => {
     return data.group_message_id === item.group_message_id && data.receiver_id === user_id ? data : null
   })
-
+  const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
+    return !notify?.data?.data.some((data: any) => {
+      return page.group_message_id === data.group_message_id
+    })
+  })
   const showNotify = notifyData && notifyData?.length > 0 ? true : false
   const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
@@ -79,36 +83,43 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     deleteConversatonMuation.mutate(id, {
       onSuccess: () => {
         setShowDiaLogDeleteConversation(false)
-        setTriggerOpenOption(false)
-        // refetchConversation()
+        setTriggerHover(false)
         refetch()
-        refetchMessage()
+        const item = conversationNoNotification && conversationNoNotification[0]
+        if (item && Object.keys(selectedConversation).length) {
+          handleSelectedConversation(item)
+        }
       },
       onError: () => {
         console.log('xóa thất bại')
       }
     })
   }
-  let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
+  let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
 
-  useEffect(() => {
-    if (Object.keys(selectedConversation).length === 0 && showMessage) {
+  useLayoutEffect(() => {
+    if (showMessageSelect) {
       const item = data?.pages?.flat()[0]
       if (item) {
         handleSelectedConversation(item)
       }
     } else {
     }
-  }, [data?.pages.flat()[0]])
+  }, [data?.pages.flat()[0].group_message_id])
 
-  // console.log('flat', data?.pages.flat())
   return (
     <div
       ref={innerRef}
       className={`
-    group relative flex cursor-pointer items-center rounded-xl p-2 duration-200 
+    relative flex cursor-pointer items-center rounded-xl p-2 duration-200 
     ${selectedConversation?.group_id === item?.group_message_id ? 'bg-primary-soft hover:bg-none' : 'hover:bg-secondery'}
     `}
+      onMouseEnter={() => {
+        setTriggerHover(true)
+      }}
+      onMouseLeave={() => {
+        setTriggerHover(false)
+      }}
     >
       <div
         onClick={() => handleSelectedConversation(item)}
@@ -136,76 +147,76 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
           </div>
         </div>
       </div>
-      {item?.messages?.createdAt ? (
-        <TimeAgo time={item?.messages?.createdAt || 0} trigger={triggerOpenOption} />
+      {!triggerHover ? (
+        item?.messages?.createdAt ? (
+          <TimeAgo time={item?.messages?.createdAt || 0} />
+        ) : (
+          <TimeAgo time={item?.createdAt || 0} />
+        )
       ) : (
-        <TimeAgo time={item?.createdAt || 0} trigger={triggerOpenOption} />
-      )}
-      <div
-        className={`uk-inline absolute right-2 top-1  rounded-full shadow-sm group-hover:block ${triggerOpenOption ? 'block' : 'hidden'} `}
-      >
-        <button
-          onClick={() => setTriggerOpenOption(!triggerOpenOption)}
-          className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
-          type='button'
-        >
-          <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
-        </button>
-        <div uk-dropdown='mode: click' className='w-[250px]'>
-          <div className='p-2'>
-            <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-              <IonIcon icon='checkmark' className='text-[22px]' />
-              <p className='text-[14px] font-semibold'>Đánh dấu là chưa đọc</p>
-            </div>
-            <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-              <IonIcon icon='notifications-outline' className='text-[22px]' />
-              <p className='text-[14px] font-semibold'>Tắt thông báo</p>
-            </div>
-            {/* message type = 1 */}
-            {item.type === 1 && (
+        <div className={`uk-inline absolute right-2 top-1 rounded-full shadow-sm  `}>
+          <button
+            className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
+            type='button'
+          >
+            <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
+          </button>
+          <div uk-dropdown='mode: click' className={` w-[250px]`}>
+            <div className='p-2'>
               <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='person-circle-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
+                <IonIcon icon='checkmark' className='text-[22px]' />
+                <p className='text-[14px] font-semibold'>Đánh dấu là chưa đọc</p>
               </div>
-            )}
-            <hr className='my-2' />
-            <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-              <IonIcon icon='call-outline' className='text-[22px]' />
-              <p className='text-[14px] font-semibold'>Gọi thoại</p>
-            </div>
-            <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-              <IonIcon icon='videocam-outline' className='text-[22px]' />
-              <p className='text-[14px] font-semibold'>Chat video</p>
-            </div>
-            <hr className='my-2' />
-            <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-              <IonIcon icon='ban-outline' className='text-[22px]' />
-              <p className='text-[14px] font-semibold'>Chặn</p>
-            </div>
-            <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-              <IonIcon icon='alert-circle-outline' className='text-[22px]' />
-              <p className='text-[14px] font-semibold'>Báo cáo</p>
-            </div>
-            <hr className='my-2' />
-            <div
-              onClick={() => setShowDiaLogDeleteConversation(true)}
-              className='flex items-center justify-start gap-2 rounded-[10px] p-2 text-red-500 hover:bg-slate-100'
-            >
-              <IonIcon icon='trash-outline' className='text-[22px] text-red-500' />
-              <p className='text-[14px] font-semibold'>Xóa đoạn hội thoại</p>
-              <Dialog
-                isVisible={showDiaLogDeleteConversation}
-                onClose={() => setShowDiaLogDeleteConversation(false)}
-                type='warning'
-                title='Xóa cuộc trò chuyện'
-                description='Bạn không thể hoàn tác sau khi xóa bản sao của cuộc trò chuyện này.'
-                textBtn='Xóa'
-                callback={() => handleDeleteConversation(item?.group_message_id)}
-              />
+              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                <IonIcon icon='notifications-outline' className='text-[22px]' />
+                <p className='text-[14px] font-semibold'>Tắt thông báo</p>
+              </div>
+              {/* message type = 1 */}
+              {item.type === 1 && (
+                <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                  <IonIcon icon='person-circle-outline' className='text-[22px]' />
+                  <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
+                </div>
+              )}
+              <hr className='my-2' />
+              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                <IonIcon icon='call-outline' className='text-[22px]' />
+                <p className='text-[14px] font-semibold'>Gọi thoại</p>
+              </div>
+              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                <IonIcon icon='videocam-outline' className='text-[22px]' />
+                <p className='text-[14px] font-semibold'>Chat video</p>
+              </div>
+              <hr className='my-2' />
+              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                <IonIcon icon='ban-outline' className='text-[22px]' />
+                <p className='text-[14px] font-semibold'>Chặn</p>
+              </div>
+              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                <IonIcon icon='alert-circle-outline' className='text-[22px]' />
+                <p className='text-[14px] font-semibold'>Báo cáo</p>
+              </div>
+              <hr className='my-2' />
+              <div
+                onClick={() => setShowDiaLogDeleteConversation(true)}
+                className='flex items-center justify-start gap-2 rounded-[10px] p-2 text-red-500 hover:bg-slate-100'
+              >
+                <IonIcon icon='trash-outline' className='text-[22px] text-red-500' />
+                <p className='text-[14px] font-semibold'>Xóa đoạn hội thoại</p>
+                <Dialog
+                  isVisible={showDiaLogDeleteConversation}
+                  onClose={() => setShowDiaLogDeleteConversation(false)}
+                  type='warning'
+                  title='Xóa cuộc trò chuyện'
+                  description='Bạn không thể hoàn tác sau khi xóa bản sao của cuộc trò chuyện này.'
+                  textBtn='Xóa'
+                  callback={() => handleDeleteConversation(item?.group_message_id)}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       {showNotify && (
         <div className='absolute bottom-4 right-2 flex h-[20px] w-[20px] items-center justify-center rounded-full  bg-red-500'>
           <p className='text-[10px] text-white'>{numberNotify}</p>

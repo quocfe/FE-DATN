@@ -30,6 +30,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const deleteNotify = useMutationDeleteNotify()
+
   const sendMedia = useMutationSendMessageAttach()
   const { upload } = useFileUpload()
   const { socket } = useSocketContext()
@@ -62,7 +63,8 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
 
       if (toggleBoxReply) {
         baseData.parent_id = toggleBoxReply.message_id
-        await replyMessageMutation.mutateAsync(baseData)
+        // await replyMessageMutation.mutateAsync(baseData)
+        console.log('baseData', baseData)
         setToggleBoxReply(null)
       } else {
         if (previewImg && values == '') {
@@ -234,6 +236,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
             onFocus={() => {
               const data = { user_id: profile.user_id, groupID }
               socket?.emit('isTyping', JSON.stringify(data))
+              deleteNotify.mutate(groupID)
             }}
             onBlur={() => {
               const data = { user_id: profile.user_id, groupID }

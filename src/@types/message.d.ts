@@ -131,6 +131,11 @@ type ChangeImageInput = {
   image: string
 }
 
+type AddMemberGroupInput = {
+  list_user: string
+  group_message_id: string
+}
+
 type ChangeNameGroupInput = {
   group_id: string | undefined
   group_name: string
@@ -155,7 +160,7 @@ type ReplyMessage = Pick<Message, 'body' | 'message_id' | 'type' | 'createdBy'> 
 }
 
 type CreateMemberGroupInput = Pick<MemberGroup, 'group_message_id'> & {
-  listUser: string
+  list_user: string
 }
 
 type ReCallMessageInput = {

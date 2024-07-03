@@ -88,6 +88,10 @@ class MessageApi {
   changeGroupName(body: { group_id: string | undefined; group_name: string }) {
     return http.post(`${MESSAGE.UPDATE_GROUP_NAME}`, body, { withCredentials: true })
   }
+
+  getFriendSuggestInGroupMsg(group_id: string) {
+    return http.get(`${MESSAGE.GET_FRIEND_SUGGEST}/${group_id}`, { withCredentials: true })
+  }
 }
 
 export default new MessageApi()

@@ -42,7 +42,7 @@ const SideBarMessage = () => {
     queryFn: fetchConversation,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length ? allPages.length + 1 : undefined
+      return lastPage && lastPage.length === 10 ? allPages.length + 1 : undefined
     }
   })
 
@@ -111,7 +111,7 @@ const SideBarMessage = () => {
           <div className='relative mt-4'>
             {/* search */}
             <div
-              className='left-0 z-20 overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-full xl:w-[327px] dark:!bg-white/5'
+              className='left-0  overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-full xl:w-[327px] dark:!bg-white/5'
               tabIndex={0}
               aria-haspopup='true'
               aria-expanded='false'

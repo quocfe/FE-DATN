@@ -4,6 +4,7 @@ export const MESSAGE = {
   GET_CONVERSATION: 'message/conversation',
   GET_MEMBERS: 'message/getmembersgroup',
   GET_RECALL: 'message/getrecallmessage',
+  GET_FRIEND_SUGGEST: 'message/getlistfriendssuggest',
   SEND_MESSAGE: 'message/sendmessage',
   SEND_MESSAGE_ATTACH: 'message/sendmessageattach',
   REPLY_MESSAGE: 'message/replymessage',

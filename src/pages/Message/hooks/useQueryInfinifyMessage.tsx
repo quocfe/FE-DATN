@@ -21,9 +21,12 @@ export const useQueryInfinifyMessage = () => {
     queryKey: ['messageInfinity', selectedConversation.id],
     queryFn: fetchMessage,
     initialPageParam: 1,
-    enabled: selectedConversation.id != null,
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage && lastPage.length ? allPages.length + 1 : undefined
+      if (lastPage && lastPage.length === 30) {
+        return allPages.length + 1
+      } else {
+        return undefined
+      }
     }
   })
 }

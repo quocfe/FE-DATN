@@ -5,12 +5,14 @@ import ResultSearchMessageSkelaton from './Skelaton/ResultSearchMessageSkelaton'
 import { highlightMatchedText } from '../utils/highlightMatchedText'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
 import BoxSearchMessage from './BoxSearchMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 
 function ResultSearchMessage() {
   const boxSearchRef = useRef<HTMLDivElement>(null)
   const [searchMessages, setSearchMessages] = useState<TypeMessage[]>([])
   const { searchParam: query, selectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const searchMutation = useMutationSearchMessage()
+  const { fetchNextPage } = useQueryInfinifyMessage()
 
   useEffect(() => {
     searchMutation.mutate(
@@ -30,6 +32,17 @@ function ResultSearchMessage() {
     )
   }, [query])
 
+  const handleClickToOldMessage = (message_id: string) => {
+    const messageOldId = message_id
+    const element = document.getElementById(messageOldId)
+    if (element) {
+      handleToOldMessage(messageOldId)
+    } else {
+      fetchNextPage()
+      handleToOldMessage(messageOldId)
+    }
+  }
+
   return (
     <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
       <div
@@ -48,7 +61,7 @@ function ResultSearchMessage() {
               {searchMessages.length > 0 ? (
                 searchMessages.map((message) => (
                   <div
-                    onClick={() => handleToOldMessage(message.message_id)}
+                    onClick={() => handleClickToOldMessage(message.message_id)}
                     key={message.message_id}
                     className='relative flex cursor-pointer items-center gap-4 rounded-xl p-2 duration-200 hover:bg-secondery'
                   >

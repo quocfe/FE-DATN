@@ -11,10 +11,10 @@ type TypeMsg = {
 
 export const TextMsg = ({ item, userid, showImg }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-  const recallInReply = item.replyMessage.recallInReply.filter(
+  const recallInReply = item.replyMessage.recallInReply?.filter(
     (re: any) => re.message_id === item.replyMessage.message_id
   )
-  const checkRecallInReply = recallInReply.some((re: any) => re.user_id === userid)
+  const checkRecallInReply = recallInReply?.some((re: any) => re.user_id === userid)
 
   return (
     !deleteFromOthers && (
@@ -64,8 +64,8 @@ export const TextMsg = ({ item, userid, showImg }: TypeMsg) => {
 
 export const ImageMsg = ({ item, userid, showImg }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
-  const checkRecallInReply = check.some((re: any) => re.user_id === userid)
+  const check = item.replyMessage.recallInReply?.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const checkRecallInReply = check?.some((re: any) => re.user_id === userid)
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>
@@ -114,8 +114,8 @@ export const ImageMsg = ({ item, userid, showImg }: TypeMsg) => {
 
 export const FileMsg = ({ item, userid, showImg }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
-  const checkRecallInReply = check.some((re: any) => re.user_id === userid)
+  const check = item.replyMessage.recallInReply?.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const checkRecallInReply = check?.some((re: any) => re.user_id === userid)
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>
@@ -164,8 +164,8 @@ export const FileMsg = ({ item, userid, showImg }: TypeMsg) => {
 
 export const VideoMsg = ({ item, userid, showImg }: TypeMsg) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
-  const check = item.replyMessage.recallInReply.filter((re: any) => re.message_id === item.replyMessage.message_id)
-  const checkRecallInReply = check.some((re: any) => re.user_id === userid)
+  const check = item.replyMessage.recallInReply?.filter((re: any) => re.message_id === item.replyMessage.message_id)
+  const checkRecallInReply = check?.some((re: any) => re.user_id === userid)
   return (
     !deleteFromOthers && (
       <div className={`flex ${me ? 'flex-row-reverse items-end gap-2' : 'gap-3'} `}>

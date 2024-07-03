@@ -1,13 +1,15 @@
 import { IonIcon } from '@ionic/react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 import { calculateHoureAgo } from '~/utils/helpers'
 import useMutationSendReactMessage from '../hooks/useMutationSendReactMessage'
+import { useQueryMessage } from '../hooks/useQueryMessage'
 import { downloadFileFormLink } from '../utils/downloadFileFormLink'
 import ModalUnSendOption from './ModalUnSendOption'
+import useMessageStore from '~/store/message.store'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
-import { getProfileFromLocalStorage } from '~/utils/auth'
 
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
 const ContentMessage = (params: any) => {
@@ -16,9 +18,12 @@ const ContentMessage = (params: any) => {
   const widthRef = useRef<HTMLDivElement>(null)
   const [openEmoji, setOpenEmoji] = useState(false)
   const [openOption, setOpenOption] = useState(false)
+  const [startLoad, setStartLoad] = useState(false)
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply, setPinMessage } = useConversationStore()
+  const { setGoToOldMessage } = useMessageStore()
+  const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
   const { user_id } = getProfileFromLocalStorage()
   const houreSend = calculateHoureAgo(params.item.createdAt)
   const emojiUserSelected = params.item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
@@ -136,6 +141,14 @@ const ContentMessage = (params: any) => {
     }
   }
 
+  const handleGoToOld = () => {
+    console.log('start')
+    //  const element = document.getElementById(IdMsg)
+    // fetchNextPage()
+
+    console.log('end')
+  }
+
   if (params.recall) {
     return (
       <div
@@ -157,10 +170,8 @@ const ContentMessage = (params: any) => {
   return (
     <div
       ref={widthRef}
-      id={params.item.message_id}
-      onClick={() =>
-        params.type === 'reply' && params.item.status === true ? handleToOldMessage(params.item.message_id) : ''
-      }
+      id={params.type === 'reply' ? '' : params.item.message_id}
+      onClick={() => (params.type === 'reply' && params.item.status === true ? handleGoToOld() : '')}
       onMouseLeave={() => {
         setOpenEmoji(false)
         setOpenOption(false)

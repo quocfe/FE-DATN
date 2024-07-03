@@ -28,10 +28,7 @@ function MessageCenter() {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
       setShowScrollBtn(scrollHeight - scrollTop > clientHeight * 3.5)
-      // setIsAtBottom(scrollHeight === scrollTop + clientHeight)
       setIsAtBottom(scrollHeight - (scrollTop + clientHeight) < 20 ? true : false)
-      // console.log('scrollHeight', scrollHeight)
-      // console.log('scrollTop + clientHeight', scrollTop + clientHeight)
     }
   }, [])
 

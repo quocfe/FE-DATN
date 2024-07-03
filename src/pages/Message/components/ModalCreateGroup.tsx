@@ -54,6 +54,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
     []
   )
 
+  console.log('listUser in createGroup', listUser)
   return (
     <Modal isVisible={isOpen} onClose={onClose} height='3/4'>
       <div className='flex h-full flex-col justify-evenly '>
