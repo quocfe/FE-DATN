@@ -81,11 +81,9 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
             </div>
           </div>
         </div>
-        <div className=''>
-          {/* <img src='src/assets/images/video/img-2.png' alt='' />
+        {/* <img src='src/assets/images/video/img-2.png' alt='' />
             <img src='' className='absolute !left-1/2 !top-1/2 !h-12 !w-12 -translate-x-1/2 -translate-y-1/2' alt='' /> */}
-          <Video link={video.url} public_id={video.public_id} />
-        </div>
+        <Video link={video.url} public_id={video.public_id} />
         <div className='card-list-body relative mt-2 flex items-center justify-between px-2'>
           <div className='flex items-center gap-x-4'>
             <button
