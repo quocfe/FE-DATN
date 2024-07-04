@@ -7,6 +7,7 @@ import { Video } from '~/components/design-systems'
 import { ROUTE_PATH } from '~/constants'
 import { cn } from '~/helpers'
 import SvgIcon from '~/helpers/SvgIcon'
+import useAuthStore from '~/store/auth.store'
 import { calculateTimeAgo } from '~/utils/helpers'
 
 interface HorizontalVideoCardProps {
@@ -14,6 +15,8 @@ interface HorizontalVideoCardProps {
 }
 
 const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
+  const { profile } = useAuthStore()
+
   const { data: likeVideo, refetch } = useQuery({
     queryKey: ['getLikeVideos', video.id],
     queryFn: async () => {
@@ -62,21 +65,33 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
             >
               <nav>
                 <a href='#'>
-                  <IonIcon className='text-xl' name='bookmark-outline' /> Add to favorites
+                  <IonIcon className='size-5' name='bookmark-outline' />
+                  <div className='flex flex-col '>
+                    <span className='text-sm font-medium text-black'>Lưu video</span>
+                    <span className='text-[12px] font-normal text-[#65676B]'>Thêm vào phần Video đã lưu.</span>
+                  </div>
                 </a>
                 <a href='#'>
                   <IonIcon className='text-xl' name='albums-outline' /> add to collections
                 </a>
-                <a href='#'>
-                  <IonIcon className='text-xl' name='flag-outline' /> Report
-                </a>
-                <a href='#'>
-                  <IonIcon className='text-xl' name='share-outline' /> Share
-                </a>
-                <hr />
-                <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                  <IonIcon className='text-xl' name='trash-outline' /> Delete
-                </a>
+                {video.user_id !== profile?.user_id && (
+                  <a href='#'>
+                    <IonIcon className='text-xl' name='flag-outline' />
+                    <div className='flex flex-col '>
+                      <span className='text-sm font-medium text-black'>Báo cáo video</span>
+                      <span className='text-[12px] font-normal text-[#65676B]'>Tôi lo ngại về video này.</span>
+                    </div>
+                  </a>
+                )}
+
+                {video.user_id === profile?.user_id && (
+                  <React.Fragment>
+                    <hr />
+                    <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
+                      <IonIcon className='text-xl' name='trash-outline' /> Delete
+                    </a>
+                  </React.Fragment>
+                )}
               </nav>
             </div>
           </div>

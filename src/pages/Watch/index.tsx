@@ -29,7 +29,7 @@ function Watch() {
       const { scrollTop, clientHeight, scrollHeight } = document.documentElement
 
       if (scrollTop + clientHeight >= scrollHeight - threshold && !isFetchingMore) {
-        setLoadMoreNumber((prev) => prev + 1) // Tăng số trang để gọi API load thêm
+        setIsFetchingMore(true) // Bắt đầu tải thêm
       }
     }
 
@@ -37,6 +37,12 @@ function Watch() {
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
+    }
+  }, [isFetchingMore])
+
+  useEffect(() => {
+    if (isFetchingMore) {
+      setLoadMoreNumber((prev) => prev + 1) // Tăng số trang để gọi API load thêm
     }
   }, [isFetchingMore])
 

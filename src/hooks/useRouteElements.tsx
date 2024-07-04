@@ -1,11 +1,10 @@
+/* eslint-disable react-refresh/only-export-components */
 import { ROUTE_PATH } from '~/constants'
 import { Navigate, useRoutes } from 'react-router-dom'
 import MainLayout from '~/layouts/MainLayout'
 import Home from '~/pages/Home'
 import Login from '~/pages/Login'
 import Register from '~/pages/Register'
-import Watch from '~/pages/Watch'
-import WatchDetail from '~/pages/WatchDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 import RejectedRoute from './components/RejectedRoute'
 import Profile from '~/pages/Profile/Profile'
@@ -21,7 +20,13 @@ import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
 import Game from '~/pages/Game'
 import GamePlay from '~/pages/GamePlay'
+
 import VideoLayout from '~/layouts/video-layout'
+
+import Loadable from './components/loadable'
+
+const Watch = Loadable('Watch')
+const WatchDetail = Loadable('WatchDetail')
 
 function useRouteElements() {
   const routeElements = useRoutes([
