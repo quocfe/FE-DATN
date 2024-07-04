@@ -6,6 +6,10 @@ const LIKE_VIDEO_PATH = {
 }
 
 class favoriteVideoApi {
+  getFavoriteVideos() {
+    return http.get<FavoriteVideoResponse>(LIKE_VIDEO_PATH.PATCH_FAVORITE_VIDEO)
+  }
+
   getFavoriteVideo(video_id: string) {
     return http.get<any>(LIKE_VIDEO_PATH.PATCH_FAVORITE_VIDEO + `/${video_id}`)
   }

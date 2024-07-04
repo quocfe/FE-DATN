@@ -1,6 +1,9 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 import Header from '~/components/Header'
-
+import { ROUTE_PATH } from '~/constants'
+import { cn } from '~/helpers'
+import video from '../../assets/images/icons/video.png'
 interface VideoLayoutProps {
   children: React.ReactNode
 }
@@ -65,17 +68,32 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
                     </div>
                     <nav id='side'>
                       <ul>
-                        <li className='active '>
-                          <a href='' className='!py-1.5'>
+                        <li className='mb-0.5'>
+                          <NavLink
+                            to={ROUTE_PATH.WATCH}
+                            className={({ isActive }) =>
+                              cn({
+                                'bg-slate-100 text-sky-300': isActive
+                              })
+                            }
+                            end
+                          >
                             <button className='rounded-full bg-slate-200 p-2'>
-                              <img src='src/assets/images/icons/video.png' alt='messages' className='w-6' />
+                              <img src={video} alt='messages' className='w-6' />
                             </button>
                             <span>Trang chủ</span>
-                          </a>
+                          </NavLink>
                         </li>
-
                         <li>
-                          <a href='event.html'>
+                          <NavLink
+                            to={ROUTE_PATH.WATCH_SAVE}
+                            className={({ isActive }) =>
+                              cn({
+                                'bg-slate-100 text-yellow-300': isActive
+                              })
+                            }
+                            end
+                          >
                             <button className='rounded-full bg-slate-200 p-2'>
                               <svg
                                 xmlns='http://www.w3.org/2000/svg'
@@ -91,8 +109,8 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
                               </svg>
                             </button>
 
-                            <span> Video đã lưu </span>
-                          </a>
+                            <span className='text-black'> Video đã lưu </span>
+                          </NavLink>
                         </li>
                       </ul>
                     </nav>
