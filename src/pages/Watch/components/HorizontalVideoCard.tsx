@@ -2,6 +2,7 @@ import { IonIcon } from '@ionic/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import favoriteVideoApi from '~/apis/favoriteVideo.api'
 import likeVideoApi from '~/apis/like-video.api'
 import { Video } from '~/components/design-systems'
 import { ROUTE_PATH } from '~/constants'
@@ -35,6 +36,31 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
     }
   })
 
+  const { mutate: handleFavoriteVideo } = useMutation({
+    mutationFn: async () => {
+      const res = await favoriteVideoApi.patchFavoriteVideo(video.id)
+      return res
+    },
+    onSuccess: () => {
+      getFavoriteVideo()
+    }
+  })
+
+  const { data: favoriteVideo, mutate: getFavoriteVideo } = useMutation({
+    mutationFn: async () => {
+      const res = await favoriteVideoApi.getFavoriteVideo(video.id)
+      return res.data.data
+    }
+    // onSuccess: (data) => {
+    // }
+  })
+
+  const handleClickActionVideo = () => {
+    if (!favoriteVideo) {
+      getFavoriteVideo()
+    }
+  }
+
   return (
     <React.Fragment>
       <div className='flex flex-col gap-y-2'>
@@ -56,7 +82,11 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
             <div className='mt-2 text-sm'>{video.content}</div>
           </div>
           <div className=''>
-            <button type='button' className='grid h-10 w-10 place-items-center rounded-full hover:bg-secondery'>
+            <button
+              type='button'
+              className='grid h-10 w-10 place-items-center rounded-full hover:bg-secondery'
+              onClick={handleClickActionVideo}
+            >
               <IonIcon className='text-2xl' name='ellipsis-horizontal' />
             </button>
             <div
@@ -64,16 +94,40 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
               uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click'
             >
               <nav>
-                <a href='#'>
-                  <IonIcon className='size-5' name='bookmark-outline' />
-                  <div className='flex flex-col '>
-                    <span className='text-sm font-medium text-black'>Lưu video</span>
-                    <span className='text-[12px] font-normal text-[#65676B]'>Thêm vào phần Video đã lưu.</span>
+                <button
+                  className='flex w-full items-center gap-x-2 rounded-lg px-2.5 py-2 hover:bg-slate-100'
+                  onClick={() => handleFavoriteVideo()}
+                >
+                  {favoriteVideo?.isFavorite ? (
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='size-5'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='m3 3 1.664 1.664M21 21l-1.5-1.5m-5.485-1.242L12 17.25 4.5 21V8.742m.164-4.078a2.15 2.15 0 0 1 1.743-1.342 48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185V19.5M4.664 4.664 19.5 19.5'
+                      />
+                    </svg>
+                  ) : (
+                    <IonIcon className='size-5' name='bookmark-outline' />
+                  )}
+                  <div className='flex flex-col items-start'>
+                    <span className='text-sm font-medium text-black'>
+                      {favoriteVideo?.isFavorite ? 'Bỏ lưu video' : 'Lưu video'}
+                    </span>
+                    <span className='text-[12px] font-normal text-[#65676B]'>
+                      {favoriteVideo?.isFavorite ? 'Gõ bỏ phần video đã lưu' : 'Thêm vào phần Video đã lưu.'}
+                    </span>
                   </div>
-                </a>
-                <a href='#'>
+                </button>
+                {/* <a href='#'>
                   <IonIcon className='text-xl' name='albums-outline' /> add to collections
-                </a>
+                </a> */}
                 {video.user_id !== profile?.user_id && (
                   <a href='#'>
                     <IonIcon className='text-xl' name='flag-outline' />
