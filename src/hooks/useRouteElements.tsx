@@ -21,6 +21,7 @@ import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
 import Game from '~/pages/Game'
 import GamePlay from '~/pages/GamePlay'
+import VideoLayout from '~/layouts/video-layout'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -44,14 +45,7 @@ function useRouteElements() {
             </MainLayout>
           )
         },
-        {
-          path: ROUTE_PATH.WATCH,
-          element: (
-            <MainLayout>
-              <Watch />
-            </MainLayout>
-          )
-        },
+
         {
           path: '/profile/:user_id',
           element: (
@@ -61,11 +55,19 @@ function useRouteElements() {
           )
         },
         {
+          path: ROUTE_PATH.WATCH,
+          element: (
+            <VideoLayout>
+              <Watch />
+            </VideoLayout>
+          )
+        },
+        {
           path: ROUTE_PATH.WATCH_DETAIL,
           element: (
-            <MainLayout>
+            <VideoLayout>
               <WatchDetail />
-            </MainLayout>
+            </VideoLayout>
           )
         },
         {
