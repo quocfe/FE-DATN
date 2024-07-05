@@ -91,24 +91,27 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
 
   return (
     <div
-      className={cn('player-wrapper  group bg-black', {
+      className={cn('player-wrapper  group cursor-pointer bg-black', {
         '!fixed !left-0 !top-0 bottom-0 right-0  z-[999999] !pt-0': isFullScreen
       })}
       ref={wapperVideoRef}
       onMouseMove={handleMouseMove}
+      // onClick={refProgress.current?.handlePlay}
     >
-      <ReactPlayer
-        ref={playerRef}
-        className={cn('react-player ', className)}
-        url={data?.url}
-        playing={isPlay}
-        controls={false}
-        onEnded={handleVideoEnded}
-        volume={volume}
-      />
+      <div className='' onClick={refProgress.current?.handlePlay}>
+        <ReactPlayer
+          ref={playerRef}
+          className={cn('react-player ', className)}
+          url={data?.url}
+          playing={isPlay}
+          controls={false}
+          onEnded={handleVideoEnded}
+          volume={volume}
+        />
+      </div>
       <div
         className={cn(
-          'absolute bottom-0 left-0 hidden w-full bg-[linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.6))] text-white',
+          'absolute bottom-0 left-0 z-[999999] hidden w-full bg-[linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.6))] text-white',
           {
             'py-4': isFullScreen,
             block: showControls

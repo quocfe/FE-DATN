@@ -100,9 +100,9 @@ const CommnetReplyItem = ({ comment_reply, handClickReply, comment, getCommentPa
     })
   }
   return (
-    <div className='flex items-start gap-x-1 px-[23px]'>
+    <div className='flex items-start gap-x-1 px-[23px] lg:pr-0'>
       <div
-        className='mt-2 h-3 w-[32px] border-b-[2px]'
+        className='mt-2 h-3 w-[32px] border-b-[2px] lg:w-[20px]'
         style={{
           borderBottomLeftRadius: '10px',
           borderLeftStyle: 'solid',
@@ -115,10 +115,10 @@ const CommnetReplyItem = ({ comment_reply, handClickReply, comment, getCommentPa
           <div className='w-8'>
             <img src={comment_reply?.user?.Profile.cover_photo} alt='profile' className='h-8 w-8 rounded-full' />
           </div>
-          <div className='group flex w-full flex-1 items-center gap-x-2'>
-            <div className={editComment ? 'mb-2 w-full' : ''}>
+          <div className='group relative flex w-full flex-1 items-center gap-x-2'>
+            <div className={editComment ? 'mb-2 w-full' : 'w-full'}>
               <div
-                className={cn('w-[350px] rounded-lg bg-gray-100 px-3 py-2', {
+                className={cn('w-[350px] rounded-lg bg-gray-100 px-3 py-2 lg:w-full', {
                   'w-full max-w-full bg-transparent px-0 py-0': editComment
                 })}
               >
@@ -136,7 +136,7 @@ const CommnetReplyItem = ({ comment_reply, handClickReply, comment, getCommentPa
                   </>
                 )}
               </div>
-              <div className='flex items-center justify-between'>
+              <div className='flex w-[350px] items-center justify-between lg:w-full'>
                 <div
                   className={cn('flex items-center gap-1 px-4 pt-1 text-[12px]', {
                     'gap-3': editComment
@@ -192,55 +192,57 @@ const CommnetReplyItem = ({ comment_reply, handClickReply, comment, getCommentPa
               </div>
             </div>
             {!editComment && (
-              <div
-                className={cn('relative hidden items-center pb-4 group-hover:flex', {
-                  flex: openActionComment
-                })}
-              >
-                <button
-                  type='button'
-                  className='grid h-8 w-8 place-items-center rounded-full hover:bg-secondery'
-                  onClick={() => setOpenActionComment((prev) => !prev)}
+              <div className='absolute right-2 top-1 hidden group-hover:block lg:right-3'>
+                <div
+                  className={cn('relative flex items-center pb-4', {
+                    flex: openActionComment
+                  })}
                 >
-                  <IonIcon className='text-xl' name='ellipsis-horizontal' />
-                </button>
-                {openActionComment && (
-                  <div
-                    ref={refActionComment}
-                    className='absolute left-1/2 top-[80%] z-50 flex w-[200px] -translate-x-[50%] flex-col gap-y-2 rounded-md bg-white py-2 shadow-md'
+                  <button
+                    type='button'
+                    className='grid h-8 w-8 place-items-center rounded-full hover:bg-secondery lg:h-7 lg:w-7'
+                    onClick={() => setOpenActionComment((prev) => !prev)}
                   >
-                    {comment_reply.user_id === profile?.user_id && !editComment && (
-                      <>
-                        <div
-                          className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'
-                          onClick={() => {
-                            setOpenActionComment(false)
-                            setEditComment(true)
-                            setValue('content', comment_reply?.content)
-                          }}
-                        >
-                          Chinh sửa
-                        </div>
-                        <div
-                          className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'
-                          onClick={() => handleClickDeleteComment(comment_reply.id)}
-                        >
-                          Xóa
-                        </div>
-                      </>
-                    )}
-                    {comment_reply.user_id !== profile?.user_id && (
-                      <>
-                        <div className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'>
-                          Ẩn bình luận
-                        </div>
-                        <div className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'>
-                          Báo cáo bình luận
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
+                    <IonIcon className='size-4' name='ellipsis-horizontal' />
+                  </button>
+                  {openActionComment && (
+                    <div
+                      ref={refActionComment}
+                      className='absolute left-1/2 top-[80%] z-50 flex w-[200px] -translate-x-[50%] flex-col gap-y-2 rounded-md bg-white py-2 shadow-md'
+                    >
+                      {comment_reply.user_id === profile?.user_id && !editComment && (
+                        <>
+                          <div
+                            className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'
+                            onClick={() => {
+                              setOpenActionComment(false)
+                              setEditComment(true)
+                              setValue('content', comment_reply?.content)
+                            }}
+                          >
+                            Chinh sửa
+                          </div>
+                          <div
+                            className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'
+                            onClick={() => handleClickDeleteComment(comment_reply.id)}
+                          >
+                            Xóa
+                          </div>
+                        </>
+                      )}
+                      {comment_reply.user_id !== profile?.user_id && (
+                        <>
+                          <div className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'>
+                            Ẩn bình luận
+                          </div>
+                          <div className='w-full cursor-pointer px-3 py-1 font-medium text-black hover:bg-slate-200'>
+                            Báo cáo bình luận
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

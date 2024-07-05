@@ -57,7 +57,7 @@ const AddCommentVideo = ({ reply, video_id, setRefetchComment }: AddCommentVideo
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className='mt-3 flex items-center gap-2 p-2.5 sm:px-4 sm:py-3 dark:border-slate-700/40'>
+      <div className='mt-3 flex items-center gap-2 p-2.5 sm:px-4 sm:py-3 lg:mt-0 lg:pr-0 dark:border-slate-700/40'>
         <img src={profile?.Profile.cover_photo} alt='' className='h-8 w-8 rounded-full' />
         <div className='relative min-h-10 flex-1 overflow-hidden rounded-2xl bg-gray-100 px-2'>
           <input
@@ -98,12 +98,12 @@ const AddCommentVideo = ({ reply, video_id, setRefetchComment }: AddCommentVideo
         </div>
         <button
           type='submit'
-          className={cn('flex items-center justify-center rounded-full bg-secondery px-5 py-2 text-sm', {
-            'text-blue-500': watch('content')
+          className={cn('flex items-center justify-center rounded-full px-3 py-2 text-sm', {
+            'text-blue-500 hover:bg-slate-100': watch('content')
           })}
           disabled={!watch('content')}
         >
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='w-6'>
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='w-5'>
             <path d='M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z' />
           </svg>
         </button>

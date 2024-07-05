@@ -24,7 +24,7 @@ const CommentVideo = ({ refetchCommentVideo }: CommentVideoProps) => {
 
   return (
     <div className='relative '>
-      {!isLoading &&
+      {!isLoading && commentVideo && commentVideo?.length > 0 ? (
         commentVideo?.map((item) => {
           return (
             <div key={item.id}>
@@ -33,7 +33,10 @@ const CommentVideo = ({ refetchCommentVideo }: CommentVideoProps) => {
               </div>
             </div>
           )
-        })}
+        })
+      ) : (
+        <p className='px-2 py-4 text-[#65676B] text-md font-normal'>Hãy là người đầu tiên bình luận.</p>
+      )}
     </div>
   )
 }

@@ -17,7 +17,7 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
         className='fixed left-0 top-0 z-[99] overflow-hidden pt-[--m-top] transition-transform max-xl:w-full max-xl:-translate-x-full xl:duration-500'
       >
         {/* sidebar inner */}
-        <div className='z-30 h-[calc(100vh-64px)] w-[360px] bg-white p-2 shadow-lg max-lg:border-r dark:border-slate-700 dark:max-xl:!bg-slate-700'>
+        <div className='z-30 h-[calc(100vh-64px)] w-[300px] bg-white p-2 shadow-lg max-lg:border-r dark:border-slate-700 dark:max-xl:!bg-slate-700'>
           <div className='pr-4' data-simplebar='init'>
             <div className='simplebar-wrapper' style={{ margin: '0px -16px 0px 0px' }}>
               <div className='simplebar-height-auto-observer-wrapper'>
@@ -123,7 +123,7 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
         </div>
       </div>
       {/* Content */}
-      <main id='site__main' className='mt-[--m-top] h-[calc(100vh-var(--m-top))] p-2.5 xl:ml-[360px]'>
+      <main id='site__main' className='mt-[--m-top] h-[calc(100vh-var(--m-top))] p-2.5 xl:ml-[300px]'>
         {children}
       </main>
     </React.Fragment>
