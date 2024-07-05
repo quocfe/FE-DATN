@@ -89,7 +89,7 @@ const Comment = ({ comment, refetchComment }: CommnetVideoItemProps) => {
                 borderBottomColor: '#F0F2F5'
               }}
             ></div>
-            <div className='  '>
+            <div className=''>
               <button
                 className='text-sm font-semibold'
                 onClick={() => {
