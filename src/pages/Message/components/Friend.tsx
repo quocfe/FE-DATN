@@ -4,6 +4,7 @@ import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
 import { useQueryFriends } from '../hooks/useQueryFriends'
 import { useQueryFriendSuggestGm } from '../hooks/useQueryFriendSuggestGm'
 import useConversationStore from '~/store/conversation.store'
+import { useQueryMembers } from '../hooks/useQueryMembers'
 
 interface FriendProps {
   listUser: string[]
@@ -17,11 +18,25 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
   const { selectedConversation } = useConversationStore()
   const searchMutaion = useMutaionSearchFriend()
   const { data: memberSuggest } = useQueryFriends()
+  const { data: memberGroup } = useQueryMembers()
   const { data: memberSuggestGMsg } = useQueryFriendSuggestGm(selectedConversation.group_id)
   const profile = getProfileFromLocalStorage() || {}
   const [currentUserSelect, setCurrentUserSelect] = useState<string[]>([profile.Profile.profile_picture])
-  const arrMembers = type === 'addMember' ? memberSuggestGMsg?.data?.data : memberSuggest?.data?.data?.friends
 
+  let arrMembers
+  switch (type) {
+    case 'addMember':
+      arrMembers = memberSuggestGMsg?.data?.data
+      break
+    case 'createGroup':
+      arrMembers = memberSuggest?.data?.data?.friends
+      break
+    case 'changeRole':
+      arrMembers = memberGroup?.data?.data.filter((member) => member.role === false)
+      break
+    default:
+      break
+  }
   useEffect(() => {
     searchMutaion.mutate(querySearch, {
       onSuccess: (data: any) => {
@@ -42,10 +57,12 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
       setListUser((prevList: string[]) =>
         prevList.includes(user) ? prevList.filter((userPrev) => userPrev !== user) : [...prevList, user]
       )
-    } else {
+    } else if (type === 'createGroup') {
       setListUser((prevList: string[]) =>
         prevList.includes(user.user_id) ? prevList.filter((id) => id !== user.user_id) : [...prevList, user.user_id]
       )
+    } else {
+      setListUser(user.user_id)
     }
 
     let checkImg = user.Profile?.profile_picture ? user.Profile.profile_picture : ''
@@ -56,7 +73,7 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
 
   return (
     <div className={`${type === 'addMember' ? 'mt-0' : 'mt-2'} border-t `}>
-      {type != 'addMember' && (
+      {type === 'createGroup' && (
         <div className='flex items-center gap-2 border-b py-2'>
           {currentUserSelect.map((img) => (
             <img
@@ -93,19 +110,27 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
         ) : (
           <>
             <p className='mt-2 text-sm'>Gợi ý</p>
-            {arrMembers?.map((item: any) => (
+            {arrMembers?.map((item: any, index: number) => (
               <div key={item.user_id} className='mb-4 flex items-center p-2 shadow-sm'>
-                <input id={item.user_id} type='checkbox' value={item.user_id} className='h-4 w-4 rounded-full' />
+                <input
+                  id={type === 'changeRole' ? `radio_${item.user_id}` : item.user_id}
+                  type={type === 'changeRole' ? 'radio' : 'checkbox'}
+                  value={item.user_id}
+                  className='h-4 w-4 rounded-full'
+                  name={type === 'changeRole' ? 'default-radio' : ''}
+                />
                 <label
-                  htmlFor={item.user_id}
+                  htmlFor={type === 'changeRole' ? `radio_${item.user_id}` : item.user_id}
                   className='ms-2 flex w-full select-none items-center gap-2 p-2 text-sm font-medium text-gray-900 dark:text-gray-300'
                   onClick={() => handleCheckboxChange(item)}
                 >
                   <img
-                    src={item.Profile?.profile_picture}
+                    src={item.Profile?.profile_picture || item?.avatar}
                     className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
                   />
-                  <p className='text-sm'>{item.first_name + ' ' + item.last_name}</p>
+                  <p className='text-sm'>
+                    {type != 'changeRole' ? item.first_name + ' ' + item.last_name : item.fullname}
+                  </p>
                 </label>
               </div>
             ))}

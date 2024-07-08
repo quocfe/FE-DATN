@@ -87,6 +87,11 @@ type MessageApiResponse = {
   data: {
     info: InfoMessage
     messages: TypeMessage[]
+    pagination: {
+      totalPage: number
+      page: number
+      limit: number
+    }
   }
   message: string
 }
@@ -141,6 +146,11 @@ type ChangeNameGroupInput = {
   group_name: string
 }
 
+type ChangeRoleGroupInput = {
+  group_id: string
+  user_id: string
+}
+
 type CreateGroupMessageInput = {
   list_user: string
   group_name: string
@@ -192,4 +202,9 @@ type TypeMessage = Pick<
   reactions: ReactMessageAttributes[]
   replyMessage: ReplyMessage
   thumbnail: string
+}
+
+type typingMessage = {
+  group_message_id: string
+  fullname: string
 }

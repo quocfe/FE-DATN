@@ -1,15 +1,14 @@
 import { IonIcon } from '@ionic/react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { calculateHoureAgo } from '~/utils/helpers'
 import useMutationSendReactMessage from '../hooks/useMutationSendReactMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import { downloadFileFormLink } from '../utils/downloadFileFormLink'
-import ModalUnSendOption from './ModalUnSendOption'
-import useMessageStore from '~/store/message.store'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
+import ModalUnSendOption from './ModalUnSendOption'
 
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
 const ContentMessage = (params: any) => {
@@ -18,12 +17,12 @@ const ContentMessage = (params: any) => {
   const widthRef = useRef<HTMLDivElement>(null)
   const [openEmoji, setOpenEmoji] = useState(false)
   const [openOption, setOpenOption] = useState(false)
-  const [startLoad, setStartLoad] = useState(false)
+  const [startLoad, setStartLoad] = useState(true)
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply, setPinMessage } = useConversationStore()
-  const { setGoToOldMessage } = useMessageStore()
-  const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
+  const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
+  const { data: temp } = useQueryMessage(1, 30)
   const { user_id } = getProfileFromLocalStorage()
   const houreSend = calculateHoureAgo(params.item.createdAt)
   const emojiUserSelected = params.item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
@@ -141,12 +140,15 @@ const ContentMessage = (params: any) => {
     }
   }
 
-  const handleGoToOld = () => {
-    console.log('start')
-    //  const element = document.getElementById(IdMsg)
-    // fetchNextPage()
-
-    console.log('end')
+  const handleGoToOldMessage = async () => {
+    let totalPage = temp?.data.data.pagination.totalPage || 0
+    const checkEl = document.getElementById(params.item.message_id)
+    if (!checkEl) {
+      for (let i = 0; i < totalPage; i++) {
+        if (hasNextPage) await fetchNextPage()
+      }
+    }
+    handleToOldMessage(params.item.message_id)
   }
 
   if (params.recall) {
@@ -171,7 +173,7 @@ const ContentMessage = (params: any) => {
     <div
       ref={widthRef}
       id={params.type === 'reply' ? '' : params.item.message_id}
-      onClick={() => (params.type === 'reply' && params.item.status === true ? handleGoToOld() : '')}
+      onClick={() => (params.type === 'reply' && params.item.status === true ? handleGoToOldMessage() : '')}
       onMouseLeave={() => {
         setOpenEmoji(false)
         setOpenOption(false)

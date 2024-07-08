@@ -6,8 +6,8 @@ import { fetchConversation } from '~/pages/Message/utils/fetchInfiniteConversati
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import soundNewMessage from '../../assets/sound/NotificationMessageSound.mp3'
-import { fetchMessages } from '~/pages/Message/utils/fetchInfiniteMessage'
 import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
+import { useQueryMembers } from '~/pages/Message/hooks/useQueryMembers'
 
 type NewMessagetype = {
   body: string
@@ -21,10 +21,7 @@ type NewMessagetype = {
 
 const useMessageSocket = () => {
   const { socket } = useSocketContext()
-  // const { refetch: refetchMessage, data } = useQueryMessage()
-  // const { refetch: refetchConversation } = useQueryConversation()
   const { selectedConversation, previewImg } = useConversationStore()
-
   const { refetch: refetchConversation } = useInfiniteQuery({
     queryKey: ['conversations'],
     queryFn: fetchConversation,
@@ -33,17 +30,19 @@ const useMessageSocket = () => {
       return lastPage.length ? allPages.length + 1 : undefined
     }
   })
-
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
-
-  const { setIsTyping, setIsNotTyping } = useConversationStore()
-  const { user_id } = getProfileFromLocalStorage()
+  const { refetch: refetchMember } = useQueryMembers()
   let audio = new Audio(soundNewMessage)
 
   useEffect(() => {
     ;(socket as Socket | null)?.on('newMessage', () => {
       refetchConversation()
       refetchMessage()
+      document.title = 'có tin nhắn mới'
+    })
+    ;(socket as Socket | null)?.on('deleteOrLeaveGroup', () => {
+      // refetchConversation()
+      // refetchMember()
     })
     ;(socket as Socket | null)?.on('reactMessage', () => {
       refetchConversation()
@@ -60,8 +59,7 @@ const useMessageSocket = () => {
       refetchConversation()
       refetchMessage()
     })
-    ;(socket as Socket | null)?.on('newNotifyMessage', (data) => {
-      console.log('notify message socket', data)
+    ;(socket as Socket | null)?.on('newNotifyMessage', () => {
       audio.play()
     })
 

@@ -1,16 +1,12 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
-import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
-import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import useFileUpload from '../utils/uploadApi'
-import Friend from './Friend'
-import Spinner from './Skelaton/Spinner'
 import useConversationStore from '~/store/conversation.store'
 import useMutaionAddMemberGroup from '../hooks/useMutaionAddMemberGroup'
+import Friend from './Friend'
+import Spinner from './Skelaton/Spinner'
 
 const ModalAddMember = ({ isOpen, onClose }: any) => {
   const [listMember, setListMember] = useState<any[]>([])
@@ -35,9 +31,6 @@ const ModalAddMember = ({ isOpen, onClose }: any) => {
         console.log('error', error)
       }
     })
-
-    console.log('data add', data)
-    console.log(selectedConversation)
   }
 
   return (

@@ -8,8 +8,8 @@ const useTypingMessageSocket = () => {
   const { setIsTyping, setIsNotTyping } = useConversationStore()
 
   useEffect(() => {
-    ;(socket as Socket | null)?.on('isTyping', (user_id) => {
-      setIsTyping(user_id)
+    ;(socket as Socket | null)?.on('isTyping', (data) => {
+      setIsTyping(data)
       setIsNotTyping(false)
     })
     ;(socket as Socket | null)?.on('isNotTyping', () => {

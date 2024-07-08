@@ -13,7 +13,7 @@ interface State {
   toggleBoxSearchMessage: boolean
   searchMessages: TypeMessage[]
   searchParam: string
-  isTyping: string
+  isTyping: typingMessage | null
   isNotTyping: boolean
   pinMessage: TypeMessage[] | null
 }
@@ -28,7 +28,7 @@ interface Action {
   setToggleBoxSearchMessage: (toggleBoxSearchMessage: boolean) => void
   setSearchParam: (searchParam: string) => void
   setPinMessage: (pinMessage: TypeMessage | null) => void
-  setIsTyping: (isTyping: string) => void
+  setIsTyping: (isTyping: typingMessage) => void
   setIsNotTyping: (isNotTyping: boolean) => void
 }
 
@@ -43,7 +43,7 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   toggleBoxSearchMessage: false,
   searchParam: '',
   pinMessage: null,
-  isTyping: '',
+  isTyping: null,
   isNotTyping: true,
   setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
   setMessages: (messages) => set({ messages }),

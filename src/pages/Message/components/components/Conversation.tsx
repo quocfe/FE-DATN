@@ -51,7 +51,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
   const body =
-    item?.messages?.type === 1 && 3
+    item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0
       ? item?.messages?.body
       : item?.messages?.sub_body && checkBodyMessage(item?.messages?.sub_body)
 

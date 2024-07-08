@@ -14,8 +14,11 @@ export const MESSAGE = {
   RECALL_MESSAGE: 'message/recallmessage',
   SEND_REACT_MESSAGE: 'message/sendReactmessage',
   UPDATE_REACT_MESSAGE: 'message/updateReactmessage',
-  DELETE_REACT_MESSAGE: 'message/deleteReactmessage',
   SEARCH_MESSAGE: '/message/search',
   UPDATE_IMAGE_GROUP: 'message/changeimagegroup',
-  UPDATE_GROUP_NAME: 'message/changegroupname'
+  UPDATE_GROUP_NAME: 'message/changegroupname',
+  DELETE_REACT_MESSAGE: 'message/deleteReactmessage',
+  LEAVE_OR_DELETE_MEMBER_GROUP: 'message/leaveanddeleteusergroup',
+  CHANGE_ROLE_GROUP: 'message/changerolegroup',
+  SEARCH_FR_AND_GR: 'message/searchfrandgr'
 } as const

@@ -6,13 +6,15 @@ import { highlightMatchedText } from '../utils/highlightMatchedText'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
 import BoxSearchMessage from './BoxSearchMessage'
 import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQueryMessage'
 
 function ResultSearchMessage() {
   const boxSearchRef = useRef<HTMLDivElement>(null)
   const [searchMessages, setSearchMessages] = useState<TypeMessage[]>([])
   const { searchParam: query, selectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const searchMutation = useMutationSearchMessage()
-  const { fetchNextPage } = useQueryInfinifyMessage()
+  const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
+  const { data: temp } = useQueryMessage(1, 30)
 
   useEffect(() => {
     searchMutation.mutate(
@@ -32,13 +34,16 @@ function ResultSearchMessage() {
     )
   }, [query])
 
-  const handleClickToOldMessage = (message_id: string) => {
+  const handleClickToOldMessage = async (message_id: string) => {
     const messageOldId = message_id
     const element = document.getElementById(messageOldId)
     if (element) {
       handleToOldMessage(messageOldId)
     } else {
-      fetchNextPage()
+      let totalPage = temp?.data.data.pagination.totalPage || 0
+      for (let i = 0; i < totalPage; i++) {
+        if (hasNextPage) await fetchNextPage()
+      }
       handleToOldMessage(messageOldId)
     }
   }

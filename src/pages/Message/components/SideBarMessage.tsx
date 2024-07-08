@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import messageApi from '~/apis/message.api'
 import { useSocketContext } from '~/context/socket'
@@ -14,27 +14,58 @@ import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 import { fetchConversation } from '../utils/fetchInfiniteConversation'
+import useMutaionSearchFriendAndGrMsg from '../hooks/useMutationSearchFriendAndGrMsg'
+import _ from 'lodash'
 
 const SideBarMessage = () => {
   useNotifyMessageSocket()
   const { setSelectedConversation } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
-  const searchMutaion = useMutaionSearchFriend()
+  const searchMutation = useMutaionSearchFriendAndGrMsg()
   const { onlineUsers } = useSocketContext()
-
+  const inputSearchRef = useRef<HTMLInputElement>(null)
   // const { data: conversation, isLoading } = useQueryConversation()
   const { ref, inView } = useInView()
 
-  const handleSearch = (query: string) => {
-    searchMutaion.mutate(query, {
-      onSuccess: (data: any) => {
-        setResultSearch(data)
-      },
-      onError: () => {
-        setResultSearch([])
+  const handleSearch = useCallback(
+    _.debounce((query: string) => {
+      searchMutation.mutate(query, {
+        onSuccess: (data: any) => {
+          setResultSearch(data)
+        },
+        onError: () => {
+          setResultSearch([])
+        }
+      })
+    }, 500),
+    [searchMutation]
+  )
+
+  const handleSelectConversation = (result: any) => {
+    if (result.type === 1) {
+      if (result.group_message_id) {
+        setSelectedConversation({
+          group_id: result.group_message_id,
+          id: result.user_id,
+          type: 1
+        })
+      } else {
+        setSelectedConversation({
+          id: result.user_id,
+          type: 1
+        })
       }
-    })
+    } else if (result.type === 2) {
+      setSelectedConversation({
+        group_id: result.group_message_id,
+        id: result.group_message_id,
+        type: 2
+      })
+    }
+    if (inputSearchRef.current) {
+      inputSearchRef.current.value = ''
+    }
   }
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
@@ -111,7 +142,7 @@ const SideBarMessage = () => {
           <div className='relative mt-4'>
             {/* search */}
             <div
-              className='left-0  overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-full xl:w-[327px] dark:!bg-white/5'
+              className='left-0 z-[11]  overflow-hidden rounded-xl bg-secondery  max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-full xl:w-[327px] dark:!bg-white/5'
               tabIndex={0}
               aria-haspopup='true'
               aria-expanded='false'
@@ -121,8 +152,9 @@ const SideBarMessage = () => {
               </div>
               <input
                 type='text'
-                placeholder='Search'
-                className='w-full !rounded-lg !py-2 !pl-10'
+                placeholder='Tìm kiếm'
+                ref={inputSearchRef}
+                className=' w-full !py-2 !pl-10 !outline-0 '
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
@@ -131,28 +163,22 @@ const SideBarMessage = () => {
               className='uk- open uk-drop z-10 hidden w-full'
               uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
             >
-              <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-full xl:w-[330px]'>
+              <div className='dark:bg-dark3 w-screen rounded-ee-md rounded-es-md bg-white p-2 pt-3 shadow-lg sm:w-full xl:w-[330px]'>
                 <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
                   <div className='text-black dark:text-white'>Bạn bè</div>
                 </div>
                 <nav className='text-sm font-medium text-black dark:text-white'>
-                  {resultSearch?.data?.data?.friends?.map((user: any, index: number) => (
+                  {resultSearch?.data?.data?.map((result: any, index: number) => (
                     <a
                       key={index}
                       className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                      onClick={() =>
-                        setSelectedConversation({
-                          id: user.user_id,
-                          type: 1
-                        })
-                      }
+                      onClick={() => handleSelectConversation(result)}
                     >
-                      <img src={user?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
-                      <div>
-                        {user.first_name} {user.last_name}
-                      </div>
+                      <img src={result?.group_thumbnail} className='h-9 w-9 rounded-full object-cover' alt='' />
+                      <div>{result.group_name}</div>
                     </a>
                   ))}
+                  {resultSearch?.data?.data.length === 0 && <p className='px-2 py-2.5'>Kết quả không khớp</p>}
                 </nav>
               </div>
             </div>

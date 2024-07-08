@@ -54,7 +54,6 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
     []
   )
 
-  console.log('listUser in createGroup', listUser)
   return (
     <Modal isVisible={isOpen} onClose={onClose} height='3/4'>
       <div className='flex h-full flex-col justify-evenly '>
@@ -91,7 +90,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
                 className='w-full !rounded-lg !py-2 !pl-10'
               />
             </div>
-            <Friend listUser={listUser} setListUser={setListUser} querySearch={querySearch} />
+            <Friend listUser={listUser} setListUser={setListUser} querySearch={querySearch} type='createGroup' />
           </div>
         </div>
         <div className='flex justify-end p-6 text-sm font-medium'>

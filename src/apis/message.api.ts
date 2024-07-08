@@ -92,6 +92,18 @@ class MessageApi {
   getFriendSuggestInGroupMsg(group_id: string) {
     return http.get(`${MESSAGE.GET_FRIEND_SUGGEST}/${group_id}`, { withCredentials: true })
   }
+
+  leaveAndDeleteMemberGroup(group_id: string, user_id: string) {
+    return http.delete(`${MESSAGE.LEAVE_OR_DELETE_MEMBER_GROUP}/${user_id}/${group_id}`, { withCredentials: true })
+  }
+
+  changerolegroup(body: { group_id: string; user_id: string }) {
+    return http.post(`${MESSAGE.CHANGE_ROLE_GROUP}`, body, { withCredentials: true })
+  }
+
+  searchfrandgr(query: string) {
+    return http.get(`${MESSAGE.SEARCH_FR_AND_GR}/${query}`)
+  }
 }
 
 export default new MessageApi()
