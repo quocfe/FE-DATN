@@ -128,7 +128,7 @@ export const FileMsg = ({ item, userid, showImg }: TypeMsg) => {
           ) : (
             <div className='h-9 w-9 ' />
           ))}
-        <div className='max-w-[300px]'>
+        <div className='max-w-[70%]'>
           {haveReplyMessage ? (
             <div
               className={` 

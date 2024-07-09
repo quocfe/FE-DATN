@@ -15,7 +15,7 @@ type CustomFileInputProps = {
   type: number
 }
 
-const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, type, setPreview, preview }) => {
+const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, type, setPreview }) => {
   const [previewInner, setPreviewInner] = useState<string | null>(null)
 
   if (type === 1) {
@@ -67,11 +67,13 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, ty
         'video/mp4': ['.mp4', '.mpeg', '.webm'],
         'audio/mp3': ['.mp3'],
         'text/plain': ['.txt'],
-        'application/pdf': ['.pdf']
-        // 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx, .doc'],
-        // 'application/vnd.ms-powerpoint': ['.ppt'],
-        // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx, .xls'],
-        // 'application/vnd.ms-excel': ['.xlsx, .xls']
+        'application/pdf': ['.pdf'],
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx', '.doc'],
+        'application/msword': ['.doc'],
+        'application/vnd.ms-powerpoint': ['.ppt', '.pot', '.pps', '.ppa'],
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx', '.potx', '.ppsx'],
+        'application/vnd.ms-excel': ['.xls', '.xlt', '.xla'],
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx', '.xltx']
       }
     })
     return (

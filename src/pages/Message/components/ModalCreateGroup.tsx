@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
-import { useCallback, useState } from 'react'
+import { InputHTMLAttributes, useCallback, useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
@@ -32,39 +32,39 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
       dataGroup.group_thumbnail = url.url
     }
 
-    createMessageMutation.mutate(dataGroup, {
-      onSuccess: () => {
-        refetch()
-        onClose()
-        setIsLoading(false)
-        dataGroup = {
-          list_user: '',
-          group_name: '',
-          group_thumbnail: ''
+    groupName.length < 50 &&
+      createMessageMutation.mutate(dataGroup, {
+        onSuccess: () => {
+          refetch()
+          onClose()
+          setIsLoading(false)
+          dataGroup = {
+            list_user: '',
+            group_name: '',
+            group_thumbnail: ''
+          }
+        },
+        onError: () => {
+          toast.error('Cần tối thiểu 3 thành viên để tạo nhóm')
         }
-      },
-      onError: () => {
-        toast.error('Cần tối thiểu 3 thành viên để tạo nhóm')
-      }
-    })
+      })
   }
 
-  const handleSetNameGroup = useCallback(
-    _.debounce((e) => setGroupName(e.target.value), 500),
-    []
-  )
+  const handleSetNameGroup = (e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)
 
   return (
     <Modal isVisible={isOpen} onClose={onClose} height='3/4'>
       <div className='flex h-full flex-col justify-evenly '>
         <div className='flex-1'>
           <div className='p-6'>
-            <h2 className='text-xl font-semibold'>Tạo </h2>
+            <h2 className='text-xl font-semibold'>Tạo</h2>
           </div>
           <div className='p-6 py-0'>
             <div className='mb-4 flex w-full gap-2'>
               <CustomFileInput type={1} iconName={'image-outline'} setFile={setFile} file={file} />
-              <div className=' relative z-0 w-full border-0 border-b-2 !border-gray-600'>
+              <div
+                className={` relative z-0 w-full transform border-0 border-b-2 duration-300 ${groupName.length < 50 ? '!border-gray-600 ' : '! !border-red-500'}`}
+              >
                 <input
                   type='text'
                   id='floating_standard'
@@ -73,9 +73,11 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
                 />
                 <label
                   htmlFor='floating_standard'
-                  className='absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium peer-focus:text-gray-600 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4 dark:text-gray-400 peer-focus:dark:text-gray-500'
+                  className={`absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm duration-300  ${
+                    groupName.length >= 50 ? 'text-red-500' : 'text-gray-500'
+                  }`}
                 >
-                  Nhập tên nhóm
+                  {groupName.length > 50 ? 'Tên nhóm không được quá 50 kí tự' : 'Nhập tên nhóm'}
                 </label>
               </div>
             </div>
@@ -97,7 +99,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
           <button onClick={onClose} className='uk-modal-close rounded-md px-4 py-1.5' type='button'>
             Hủy
           </button>
-          {listUser.length < 2 ? (
+          {listUser.length < 2 || groupName.length > 50 ? (
             <button className='cursor-not-allowed rounded-md bg-gray-400 px-5 py-1.5 text-white' type='button'>
               Tạo
             </button>

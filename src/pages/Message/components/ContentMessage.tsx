@@ -58,6 +58,9 @@ const ContentMessage = (params: any) => {
   }
 
   const renderContent = (params: any) => {
+    const isUnsent = params.item.status === false
+    const isReply = params.type === 'reply'
+
     switch (params.item.type) {
       case 1:
         return params.item.body.includes('youtube') ? (
@@ -65,24 +68,24 @@ const ContentMessage = (params: any) => {
             href={params.item.body}
             target='_blank'
             rel='noopener noreferrer'
-            className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}
+            className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}
           >
-            {params.item.status === false ? 'Tin nhắn đã thu hồi' : params.item.body}
+            {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </a>
         ) : (
-          <p className={`${params.type === 'reply' ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
-            {params.item.status === false ? 'Tin nhắn đã thu hồi' : params.item.body}
+          <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
+            {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
         )
       case 2:
-        return params.type != 'reply' ? (
+        return !isReply ? (
           <div uk-lightbox='animation: fade'>
             <div className='group relative'>
               <a className='uk-button uk-button-default' href={params.item.sub_body}>
                 <img
                   alt={params.item.body}
                   src={params.item.sub_body}
-                  className={`${params.type != 'reply' ? 'h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-40 w-40 '} max-w-full object-contain`}
+                  className={`${!isReply ? 'h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-40 w-40 '} max-w-full object-contain`}
                 />
               </a>
               <div
@@ -98,7 +101,7 @@ const ContentMessage = (params: any) => {
               </div>
             </div>
           </div>
-        ) : params.item.status === false ? (
+        ) : isUnsent ? (
           'Tin nhắn đã thu hồi'
         ) : (
           <img
@@ -117,10 +120,10 @@ const ContentMessage = (params: any) => {
                 ? ''
                 : downloadFileFormLink({ pdfUrl: params.item.sub_body, fileName: params.item.body })
             }
-            className={`flex items-center gap-2 `}
+            className={` flex items-center gap-2 `}
           >
             <IonIcon icon='document' className='h-5 w-5 flex-shrink-0' />
-            <p> {params.item.status === false ? 'Tin nhắn đã thu hồi' : params.item.body}</p>
+            <p> {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}</p>
           </div>
         )
       case 4:
@@ -128,7 +131,7 @@ const ContentMessage = (params: any) => {
           <video width={300} controls className='rounded-[16px] p-2'>
             <source src={params.item.sub_body} type='video/mp4' />
           </video>
-        ) : params.item.status === false ? (
+        ) : isUnsent ? (
           'Tin nhắn đã thu hồi'
         ) : (
           <video width={100} className='rounded-[8px]'>
@@ -178,14 +181,14 @@ const ContentMessage = (params: any) => {
         setOpenEmoji(false)
         setOpenOption(false)
       }}
-      className={` relative min-w-[80px]  cursor-pointer border-[2px] border-transparent
+      className={` relative  cursor-pointer border-[2px] border-transparent
       ${params.item.type === 4 ? 'h-[100%]' : ''}
       ${params.me ? 'text-left' : 'text-right'}
       ${params.item.reactions?.length > 0 ? 'mb-3' : ''}
       ${params.me ? (params.item.type === 2 || params.item.type === 4 ? 'bg-transparent ' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
       ${
         params.type != 'reply'
-          ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'max-w-[60%] px-4 py-2'} group  rounded-[14px] text-white shadow`
+          ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
           : `-mb-4 !bg-secondery px-4 py-5 text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }`}
     >
@@ -196,7 +199,7 @@ const ContentMessage = (params: any) => {
           <div
             className={`
             ${params.me ? 'left-0' : 'right-0'}
-            absolute -bottom-[10px] flex items-center justify-center rounded-full bg-primary-soft px-[5px]`}
+            absolute -bottom-[10px] flex items-center justify-center rounded-full bg-primary-soft  px-[5px]`}
           >
             {params.item.reactions?.map((item: any, index: number) => (
               <p key={index} className='text-[12px]'>

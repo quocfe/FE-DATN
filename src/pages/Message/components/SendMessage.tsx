@@ -109,18 +109,17 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
       try {
         // setPreview(null)
         const url = await upload(file)
-
         const mediaData = {
-          body: url.original_filename,
+          body: `${url.original_filename}.${url.url.split('.').pop()}`,
           sub_body: url.url,
           receiver: receiverID,
           group_message_id: groupID,
-          type: url.resource_type === 'application' ? 3 : url.resource_type === 'video' ? 4 : 2
+          type: url.resource_type === 'raw' ? 3 : url.resource_type === 'video' ? 4 : 2
         }
 
         await sendMedia.mutateAsync(mediaData)
       } catch (error) {
-        toast.error('File upload failed', { position: 'top-right', autoClose: 5000 })
+        console.log(error)
       }
     }
   }, [file, groupID, receiverID])
@@ -134,7 +133,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           </div>
         )
       case 2:
-        return <img src={toggleBoxReply?.sub_body} className='object-contain w-10 h-10' />
+        return <img src={toggleBoxReply?.sub_body} className='h-10 w-10 object-contain' />
       case 3:
         return <p className='text-sm'>{toggleBoxReply?.body}</p>
       default:
@@ -147,12 +146,13 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     preview && setTogglePreviewBox(true)
   }, [preview])
 
+  console.log('preview', preview)
   return (
     <div className='relative'>
       {toggleBoxReply && (
         <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
-          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
-            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+          <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
+            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               <span className='mb-2 block text-[14px] font-light'>
                 Trả lời tin nhắn <strong className='font-semibold'>{user_name}</strong>
               </span>
@@ -161,23 +161,25 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
             <IonIcon
               onClick={() => setToggleBoxReply(null)}
               icon='close'
-              className='p-2 text-white rounded-full cursor-pointer bg-primary'
+              className='cursor-pointer rounded-full bg-primary p-2 text-white'
             />
           </div>
         </div>
       )}
       {togglePreviewBox && (
         <div ref={previewUploadRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
-          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
-            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
-              {preview?.type?.includes('video') ? (
+          <div className='item-center flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
+            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+              {preview?.type?.includes('video') && (
                 <video
                   src={URL?.createObjectURL(preview)}
-                  className='object-cover w-16 overflow-hidden rounded-sm h-14 shrink-0'
+                  className='h-14 w-16 shrink-0 overflow-hidden rounded-sm object-cover'
                 ></video>
-              ) : (
+              )}
+              {preview?.type?.includes('image') && (
                 <img src={URL?.createObjectURL(preview)} className='h-[50px] w-[100px] object-cover' />
               )}
+              {preview?.type?.includes('application') && <p className='text-sm'>{preview.path}</p>}
             </div>
             <IonIcon
               onClick={() => {
@@ -186,12 +188,12 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
                 setTogglePreviewBox(false)
               }}
               icon='close'
-              className='p-2 text-white rounded-full cursor-pointer bg-primary'
+              className='cursor-pointer rounded-full bg-primary p-2 text-white'
             />
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 p-2 overflow-hidden md:gap-4 md:p-3'>
+      <div className='flex items-center gap-2 overflow-hidden p-2 md:gap-4 md:p-3'>
         <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
           <CustomFileInput
             type={2}
@@ -237,14 +239,14 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
             }}
             value={values}
             rows={1}
-            className='w-full p-2 pl-4 pr-8 rounded-full resize-none no-scrollbar bg-secondery focus:ring-transparent'
+            className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
           ></textarea>
           {!values && !previewImg ? (
             <span onClick={handleSendLike} className='absolute right-0 top-0 mr-1 shrink-0 cursor-pointer text-[25px]'>
               👍
             </span>
           ) : (
-            <button onClick={handleSendMessage} className='absolute top-0 right-0 p-2 text-dark shrink-0'>
+            <button onClick={handleSendMessage} className='text-dark absolute right-0 top-0 shrink-0 p-2'>
               <IonIcon className='flex text-xl font-bold text-primary' icon='send' />
             </button>
           )}

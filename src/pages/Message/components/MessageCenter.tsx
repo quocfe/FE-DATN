@@ -69,8 +69,11 @@ function MessageCenter() {
             <img src={infoMessage?.avatar} className='h-8 w-8 rounded-full object-cover shadow' />
             {isOnline && <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />}
           </div>
-          <div className='cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
-            <div className='text-base font-bold'> {infoMessage?.group_name}</div>
+          <div
+            className='w-[80%] cursor-pointer overflow-hidden text-ellipsis'
+            uk-toggle='target: .rightt ; cls: hidden'
+          >
+            <p className='text-base font-bold '> {infoMessage?.group_name}</p>
             {isOnline && <div className='text-xs font-semibold text-green-500'>Đang hoạt động</div>}
           </div>
         </div>

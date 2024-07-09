@@ -130,7 +130,7 @@ function ProfileRight() {
         setIsOpen(false)
       },
       onError: () => {
-        toast.error('Có lỗi rồi')
+        toast.error('Tên nhóm quá dài!')
       }
     })
   }
@@ -441,42 +441,45 @@ function ProfileRight() {
                   </li>
                 )}
                 {/* Option */}
-                <li className='uk-close '>
-                  <a
-                    className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white'
-                    href='#'
-                  >
-                    Tùy chỉnh đoạn chat
-                    <svg
-                      className='h-5 w-5 duration-200 group-aria-expanded:rotate-180'
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 24 24'
-                      stroke='currentColor'
-                      fill='none'
-                      strokeWidth={2}
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
+                {selectedConversation.type === 2 && (
+                  <li className='uk-close '>
+                    <a
+                      className='uk-accordion-title group flex items-center justify-between rounded-md bg-white py-2 text-base text-black dark:bg-gray-800 dark:text-white'
+                      href='#'
                     >
-                      <polyline points='6 9 12 15 18 9' />
-                    </svg>
-                  </a>
-                  <div className='uk-accordion-content dark:text-white/80'>
-                    <div className='flex w-full flex-col gap-2'>
-                      <div
-                        onClick={() => setIsOpen(true)}
-                        className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                      Tùy chỉnh đoạn chat
+                      <svg
+                        className='h-5 w-5 duration-200 group-aria-expanded:rotate-180'
+                        xmlns='http://www.w3.org/2000/svg'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                        fill='none'
+                        strokeWidth={2}
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                       >
-                        <IonIcon icon='pencil-outline' className='text-[22px]' />
-                        <p className='text-[14px] font-semibold'>Đổi tên đoạn chat</p>
+                        <polyline points='6 9 12 15 18 9' />
+                      </svg>
+                    </a>
+                    <div className='uk-accordion-content dark:text-white/80'>
+                      <div className='flex w-full flex-col gap-2'>
+                        <div
+                          onClick={() => setIsOpen(true)}
+                          className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                        >
+                          <IonIcon icon='pencil-outline' className='text-[22px]' />
+                          <p className='text-[14px] font-semibold'>Đổi tên đoạn chat</p>
+                        </div>
+                        <label className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                          <input type='file' accept='image/*' hidden onChange={(e) => handleChangeImage(e.target)} />
+                          <IonIcon icon='image' className='text-[22px]' />
+                          <p className='text-[14px] font-semibold'>Thay đổi ảnh</p>
+                        </label>
                       </div>
-                      <label className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                        <input type='file' accept='image/*' hidden onChange={(e) => handleChangeImage(e.target)} />
-                        <IonIcon icon='image' className='text-[22px]' />
-                        <p className='text-[14px] font-semibold'>Thay đổi ảnh</p>
-                      </label>
                     </div>
-                  </div>
-                </li>
+                  </li>
+                )}
+
                 {/* Setting */}
                 <li className='uk-close '>
                   <a

@@ -1,10 +1,37 @@
 import axios, { AxiosProgressEvent } from 'axios'
+import { toast } from 'react-toastify'
 import useFileUploadStore from '~/store/fileUpload.store'
 
 const useFileUpload = () => {
   const { file: fileStore, setFile } = useFileUploadStore()
   const upload = async (file: File) => {
     if (!file) return
+
+    const maxSize = 20 * 1024 * 1024 // 20MB
+
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'video/mp4',
+      'video/mpeg',
+      'video/webm',
+      'audio/mp3',
+      'audio/wav',
+      'audio/ogg',
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ]
+
+    if (file.size > maxSize) {
+      toast.error('Kích thước file không được vượt quá 5MB')
+      return
+    }
 
     const formData = new FormData()
     formData.append('file', file)

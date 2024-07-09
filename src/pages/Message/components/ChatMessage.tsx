@@ -106,16 +106,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
           <div className='py-10 text-center text-sm lg:pt-8'>
             <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
             <div className='mt-4'>
-              <div className='text-base font-medium text-black md:text-xl dark:text-white'>
+              <p className='overflow-hidden text-ellipsis text-base font-medium  text-black md:text-xl dark:text-white'>
                 {infoMessage?.group_name}
-              </div>
+              </p>
             </div>
           </div>
         ) : (
           <div className='py-10 text-center text-sm lg:pt-8'>
             <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
             <div className='mt-8'>
-              <div className='text-base font-medium text-black md:text-xl dark:text-white'>
+              <div className='text-base font-medium text-black md:text-xl dark:text-white '>
                 {infoMessage?.group_name}
               </div>
               <div className='text-sm text-gray-500 dark:text-white/80'>@{infoMessage?.group_id}</div>
@@ -138,8 +138,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
           <div className='space-y-2' key={date}>
             <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
             {dayMessages.map((item, index) => {
-              const previousMessage = item.type != 0 && index > 0 ? dayMessages[index - 1] : undefined
-              const nextMessage = item.type != 0 && index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
+              const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
+              const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
               const showTime = shouldShowTime(item, previousMessage)
               const showImg =
                 !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)

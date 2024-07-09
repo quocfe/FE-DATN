@@ -135,7 +135,9 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
           />
         </div>
         <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
-          <div className='mr-auto truncate text-sm font-medium text-black dark:text-white '>{item?.group_name}</div>
+          <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
+            {item?.group_name}
+          </div>
           <div className='flex items-center justify-between gap-2'>
             <p
               className={`w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]  text-gray-600
