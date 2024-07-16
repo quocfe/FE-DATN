@@ -4,11 +4,11 @@ import React from 'react'
 import favoriteVideoApi from '~/apis/favoriteVideo.api'
 import useAuthStore from '~/store/auth.store'
 
-interface ReportVideoProps {
+interface VideoActionProps {
   dataVideo: DataVideoResponse
 }
 
-const ReportVideo = ({ dataVideo }: ReportVideoProps) => {
+const VideoAction = ({ dataVideo }: VideoActionProps) => {
   const { profile } = useAuthStore()
 
   // Lưu video
@@ -109,7 +109,7 @@ const ReportVideo = ({ dataVideo }: ReportVideoProps) => {
               </button>
 
               {/* Report video with video.user_id !== profile?.user_id */}
-              {dataVideo.user_id !== profile?.user_id && (
+              {dataVideo?.user_id !== profile?.user_id && (
                 <a href='#'>
                   <IonIcon className='text-xl' name='flag-outline' />
                   <div className='flex flex-col '>
@@ -136,4 +136,4 @@ const ReportVideo = ({ dataVideo }: ReportVideoProps) => {
   )
 }
 
-export default ReportVideo
+export default VideoAction

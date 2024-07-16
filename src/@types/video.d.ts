@@ -30,18 +30,8 @@ interface DataVideoResponse {
       cover_photo: string
     }
   }
-  likes: Array<{ total_likes: number }> | []
-  isLikes:
-    | Array<{
-        id: string
-        user_id: string
-        video_id: string
-        comment_id: string
-        like_type: string
-        createdAt: Date
-        updatedAt: Date
-      }>
-    | []
+  total_likes: number
+  isLike: boolean
 }
 
 interface VideoDetailResponse extends SuccessResponse {

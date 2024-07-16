@@ -1,5 +1,4 @@
-import { IonIcon } from '@ionic/react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Video } from '~/components/design-systems'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import videoApi from '~/apis/video.api'
@@ -9,10 +8,13 @@ import AddCommentVideo from '../add-comment-video'
 import CommentVideo from '../comment-video'
 import likeVideoApi from '~/apis/like-video.api'
 import { cn } from '~/helpers'
-import ShowLikeOfComment from '../show-like-of-comment'
+import ShowLikeOfComment from '~/components/design-systems/show-like-of-comment'
+import VideoAction from '~/components/design-systems/video-action'
 
 const Content = () => {
   const { id } = useParams()
+
+  const [userLike, setUserLike] = useState<boolean>(false)
 
   const [refetchComment, setRefetchComment] = useState<boolean>(false)
 
@@ -20,6 +22,9 @@ const Content = () => {
     queryKey: ['getOne', id],
     queryFn: async () => {
       const res = await videoApi.getOneVideo(id)
+      if (res) {
+        setUserLike(res?.data?.isLike as unknown as boolean)
+      }
       return res?.data
     }
   })
@@ -110,7 +115,7 @@ const Content = () => {
                     </button>
                   </div>
                   <div className='flex items-center gap-x-5'>
-                    <ShowLikeOfComment dataVideo={videoData as never} />
+                    <ShowLikeOfComment dataVideo={videoData as never} setUserLike={setUserLike} userLike={userLike} />
                   </div>
                 </div>
               </div>
@@ -119,16 +124,16 @@ const Content = () => {
               {/* post heading */}
               <div className='border-b border-b-secondery pb-2'>
                 <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
-                  <a href='timeline.html'>
+                  <a href='#'>
                     <img src={videoData?.user.Profile.cover_photo} alt='' className='h-9 w-9 rounded-full' />
                   </a>
                   <div className='flex-1'>
-                    <a href='timeline.html'>
+                    <a href='#'>
                       <h4 className='text-black dark:text-white'> {videoData?.user.first_name} </h4>
                     </a>
                     <div className='text-xs text-gray-500 dark:text-white/80'> 2 hours ago</div>
                   </div>
-                  <div className='-mr-1'>
+                  {/* <div className='-mr-1'>
                     <button type='button' className='button-icon h-8 w-8'>
                       <IonIcon className='text-xl' name='ellipsis-horizontal' />
                     </button>
@@ -155,10 +160,12 @@ const Content = () => {
                         </a>
                       </nav>
                     </div>
-                  </div>
+                  </div> */}
+                  {videoData && <VideoAction dataVideo={videoData as never} />}
                 </div>
                 <p className='px-6 text-sm font-normal leading-6'>{videoData?.content}</p>
               </div>
+
               <div id='scroll-base' className='px-4 lg:h-[240px]'>
                 <CommentVideo refetchCommentVideo={refetchComment} />
               </div>
