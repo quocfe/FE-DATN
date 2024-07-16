@@ -20,6 +20,8 @@ interface DataVideoResponse {
   url: string
   user_id: string
   view: number
+  duration: number
+  total_comments: number
   user: {
     user_id: string
     first_name: string
@@ -28,6 +30,18 @@ interface DataVideoResponse {
       cover_photo: string
     }
   }
+  likes: Array<{ total_likes: number }> | []
+  isLikes:
+    | Array<{
+        id: string
+        user_id: string
+        video_id: string
+        comment_id: string
+        like_type: string
+        createdAt: Date
+        updatedAt: Date
+      }>
+    | []
 }
 
 interface VideoDetailResponse extends SuccessResponse {

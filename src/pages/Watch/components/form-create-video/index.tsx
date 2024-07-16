@@ -12,6 +12,7 @@ import { cn } from '~/helpers'
 import { toast } from 'react-toastify'
 import { useMutation } from '@tanstack/react-query'
 import videoApi from '~/apis/video.api'
+// import DraftEditor from './draft-editor'
 
 // Loads the UIkit icons
 
@@ -84,20 +85,23 @@ const FormCreateVideo = () => {
               <div className='relative mb-0 border-b py-4 dark:border-slate-700'>
                 <div className='text-center text-sm font-medium text-black'>Create Video</div>
                 <button
+                  type='button'
                   onClick={() => setOpenModal(false)}
                   className='button-icon uk-modal-close absolute right-0 top-0 m-2.5 bg-[#E4E6EB]'
                 >
                   <SvgIcon name='close' className='h-5 w-5' />
                 </button>
               </div>
-              <div className='mt-3 max-h-[450px] space-y-5 overflow-y-auto p-2'>
+              {/* h-[400px] max-h-[450px] */}
+              <div className='mt-3 space-y-5  p-2'>
                 <textarea
                   className='w-full !border-transparent !bg-white p-0 !text-sm !font-normal !text-black placeholder:!text-[#65676B] focus:!border-transparent focus:!ring-transparent dark:!bg-slate-800 dark:!text-white dark:placeholder:!text-white'
-                  rows={3}
+                  rows={8}
                   placeholder={`${profile?.last_name} ơi, Bạn đang nghĩ gì thế?`}
                   style={{ overscrollBehavior: 'contain' }}
                   {...register('content')}
                 ></textarea>
+                {/* <DraftEditor /> */}
 
                 {openUpload && <InputVideo setOpenUpload={setOpenUpload} control={control as never} />}
               </div>

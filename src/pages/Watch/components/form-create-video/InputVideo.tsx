@@ -4,7 +4,7 @@ import React, { ChangeEvent } from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { FormCreateVideoType } from '../../utils/yup.validate'
 import SvgIcon from '~/helpers/SvgIcon'
-import { Video } from '~/components/design-systems'
+// import { Video } from '~/components/design-systems'
 
 interface InputVideoProps {
   // setValue: UseFormSetValue<FormCreateVideoType>
@@ -45,7 +45,7 @@ const InputVideo = ({ setOpenUpload, control }: InputVideoProps) => {
             {value ? (
               // <div className=''>{/* <video poster='' src={value ?? URL.createObjectURL(value)} /> */}</div>
               <div className='h-full max-h-[500px] w-full rounded-md border border-[#CED0D4] p-2'>
-                <Video link={value && URL.createObjectURL(value as File)} className='rounded-md' />
+                {/* <Video link={value && URL.createObjectURL(value as File)} className='rounded-md' /> */}
                 <button
                   type='button'
                   onClick={() => {

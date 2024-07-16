@@ -5,18 +5,15 @@ import React, { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import { timeLineVideo } from '~/utils/helpers'
 import './video-style.css'
-import { useQuery } from '@tanstack/react-query'
-import videoApi from '~/apis/video.api'
 import Volume from './volume'
 import ProgressValue, { ProgressValuePropsRef } from './progress-value'
 
 interface VideoProps {
-  link: string
   className?: string
-  public_id: string
+  dataVideo?: DataVideoResponse
 }
 
-export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
+export const Video: React.FC<VideoProps> = ({ className, dataVideo }) => {
   const [currentTime, setCurrentTime] = useState(0)
   const [isPlay, setIsPlay] = useState(false)
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
@@ -29,14 +26,6 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
   const wapperVideoRef = useRef<HTMLDivElement>(null)
   const intervalId = useRef<NodeJS.Timeout | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-
-  const { data } = useQuery({
-    queryKey: ['getResourceVideo', public_id],
-    queryFn: async () => {
-      const res = await videoApi.getResourceVideo(public_id)
-      return res.data
-    }
-  })
 
   useEffect(() => {
     return () => {
@@ -102,7 +91,7 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
         <ReactPlayer
           ref={playerRef}
           className={cn('react-player ', className)}
-          url={data?.url}
+          url={dataVideo?.url}
           playing={isPlay}
           controls={false}
           onEnded={handleVideoEnded}
@@ -119,7 +108,7 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
         )}
       >
         <div className='flex h-8 items-center justify-between gap-x-3 px-4'>
-          <button className='text-white' onClick={refProgress.current?.handlePlay}>
+          <button type='button' className='text-white' onClick={refProgress.current?.handlePlay}>
             {isPlay ? (
               <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='size-6'>
                 <path
@@ -142,13 +131,13 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
             <div className='flex gap-x-1 text-[13px]'>
               <span className='font-semibold'>{timeLineVideo(currentTime)}</span>
               <span>/</span>
-              <span>{timeLineVideo(data?.duration || 0)}</span>
+              <span>{timeLineVideo(dataVideo?.duration || 0)}</span>
             </div>
             <div className='relative flex h-full w-full cursor-pointer items-center justify-center'>
               <ProgressValue
                 ref={refProgress}
                 playerRef={playerRef}
-                data={data}
+                duration={dataVideo?.duration ?? 0}
                 setCurrentTime={setCurrentTime}
                 intervalId={intervalId}
                 isPlay={isPlay}
@@ -157,7 +146,7 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
             </div>
           </div>
           <div className='flex items-center gap-2'>
-            <button>
+            <button type='button'>
               <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='size-6'>
                 <path
                   fillRule='evenodd'
@@ -166,7 +155,7 @@ export const Video: React.FC<VideoProps> = ({ className, public_id }) => {
                 />
               </svg>
             </button>
-            <button onClick={() => setIsFullScreen((prev) => !prev)}>
+            <button type='button' onClick={() => setIsFullScreen((prev) => !prev)}>
               {isFullScreen ? (
                 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='size-6'>
                   <path

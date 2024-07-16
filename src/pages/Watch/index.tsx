@@ -40,16 +40,16 @@ function Watch() {
     }
   }, [isFetchingMore])
 
-  useEffect(() => {
-    if (isFetchingMore) {
-      setLoadMoreNumber((prev) => prev + 1) // Tăng số trang để gọi API load thêm
-    }
-  }, [isFetchingMore])
+  // useEffect(() => {
+  //   if (isFetchingMore) {
+  //     setLoadMoreNumber((prev) => prev + 1) // Tăng số trang để gọi API load thêm
+  //   }
+  // }, [isFetchingMore])
 
   useEffect(() => {
     if (data) {
       setVideos((prev) => [...prev, ...data])
-      setIsFetchingMore(false) // Kết thúc khi đã tải xong
+      // setIsFetchingMore(false) // Kết thúc khi đã tải xong
     }
   }, [data])
 
