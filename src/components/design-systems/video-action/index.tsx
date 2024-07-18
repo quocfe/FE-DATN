@@ -1,8 +1,11 @@
 import { IonIcon } from '@ionic/react'
 import { useMutation } from '@tanstack/react-query'
 import React from 'react'
+import { toast } from 'react-toastify'
 import favoriteVideoApi from '~/apis/favoriteVideo.api'
+import reportVideoApi from '~/apis/reportVideo.api'
 import useAuthStore from '~/store/auth.store'
+import ModalReport from './modal-report'
 
 interface VideoActionProps {
   dataVideo: DataVideoResponse
@@ -28,15 +31,39 @@ const VideoAction = ({ dataVideo }: VideoActionProps) => {
     mutate: getFavoriteVideo,
     isPending: loadingGetFavorite
   } = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (): Promise<DataFavoriteVideoResponse> => {
       const res = await favoriteVideoApi.getFavoriteVideo(dataVideo.id)
       return res.data.data
+    }
+  })
+
+  // kiểm tra video đã bị report hay chưa
+  const { data: reportVideo, mutate: getReportVideo } = useMutation({
+    mutationFn: async (): Promise<ResponseCheckReportVideo> => {
+      const res = await reportVideoApi.checkReport(dataVideo.id)
+      return res.data
+    }
+  })
+
+  // hàm tố cáo video & hủy tố cáo
+  const { mutate: patchReportVideo } = useMutation({
+    mutationFn: async (reason?: Array<string>): Promise<SuccessResponse<PatchReportVideo>> => {
+      const res = await reportVideoApi.pathReport(dataVideo.id, reason)
+      return res.data
+    },
+    onSuccess: (data: SuccessResponse<PatchReportVideo>) => {
+      getReportVideo()
+      toast.success(data.message)
     }
   })
 
   const handleClickActionVideo = () => {
     if (!favoriteVideo) {
       getFavoriteVideo()
+    }
+
+    if (!reportVideo) {
+      getReportVideo()
     }
   }
 
@@ -110,13 +137,7 @@ const VideoAction = ({ dataVideo }: VideoActionProps) => {
 
               {/* Report video with video.user_id !== profile?.user_id */}
               {dataVideo?.user_id !== profile?.user_id && (
-                <a href='#'>
-                  <IonIcon className='text-xl' name='flag-outline' />
-                  <div className='flex flex-col '>
-                    <span className='text-sm font-medium text-black'>Báo cáo video</span>
-                    <span className='text-[12px] font-normal text-[#65676B]'>Tôi lo ngại về video này.</span>
-                  </div>
-                </a>
+                <ModalReport patchReportVideo={patchReportVideo} reportVideo={reportVideo} />
               )}
 
               {/* Delete video with video.user_id === profile?.user_id */}

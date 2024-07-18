@@ -100,7 +100,7 @@ export const Video: React.FC<VideoProps> = ({ className, dataVideo }) => {
       </div>
       <div
         className={cn(
-          'absolute bottom-0 left-0 z-[999999] hidden w-full bg-[linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.6))] text-white',
+          'absolute bottom-0 left-0 z-[9999] hidden w-full bg-[linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.6))] text-white',
           {
             'py-4': isFullScreen,
             block: showControls

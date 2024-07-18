@@ -3,7 +3,5 @@ interface FavoriteVideoResponse extends SuccessResponse {
 }
 
 interface DataFavoriteVideoResponse {
-  id: string
-  createdAt: Date
-  video: DataVideoResponse
+  isFavorite: boolean
 }
