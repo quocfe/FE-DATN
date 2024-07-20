@@ -9,6 +9,7 @@ import SvgIcon from '~/helpers/SvgIcon'
 import { calculateTimeAgo } from '~/utils/helpers'
 import ShowLikeOfComment from '~/components/design-systems/show-like-of-comment'
 import VideoAction from '~/components/design-systems/video-action'
+import SlateEditor from '~/components/design-systems/slate-editor'
 
 interface HorizontalVideoCardProps {
   video: DataVideoResponse
@@ -29,22 +30,23 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
   return (
     <React.Fragment>
       <div className='flex flex-col gap-y-2'>
-        <div className='flex items-start justify-between px-2'>
+        <div className='flex items-start justify-between px-2 pt-2'>
           <div className=''>
-            <div className='flex gap-x-2'>
+            <div className='flex gap-x-2 px-2'>
               <div className='relative shrink-0 cursor-pointer rounded-full'>
-                <img
-                  className='sm:w-h-11 h-10 w-11 shrink-0 rounded-full shadow sm:h-11'
-                  src={video?.user.Profile.cover_photo}
-                  alt=''
-                />
+                <img className='size-10 rounded-full shadow' src={video?.user.Profile.cover_photo} alt='' />
               </div>
               <div className=''>
                 <p className='font-medium text-black'>{video?.user.first_name}</p>
-                <p className='text-sm'>{calculateTimeAgo(video.createdAt as unknown as string)}</p>
+                <p className='text-[12px]'>{calculateTimeAgo(video.createdAt as unknown as string)}</p>
               </div>
             </div>
-            <div className='mt-2 text-sm'>{video.content}</div>
+            {/* <div className='mt-2 text-sm'>{video.content}</div> */}
+            <SlateEditor
+              className='!my-5 overflow-y-auto overflow-x-hidden px-2'
+              valueSaleRender={JSON.parse(video.content)}
+              readOnly
+            />
           </div>
           <VideoAction dataVideo={video} />
         </div>

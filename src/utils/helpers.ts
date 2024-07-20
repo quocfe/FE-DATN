@@ -1,3 +1,5 @@
+import { Descendant, Text } from 'slate'
+
 export function calculateTimeAgo(sentAt: string | Date): string {
   const sentTime = new Date(sentAt)
   const currentTime = new Date()
@@ -30,4 +32,27 @@ export const timeLineVideo = (timeInSeconds: number) => {
     return `${minutes}:${seconds}`
   }
   return `${hours}:${minutes}:${seconds}`
+}
+
+// Hàm để lấy danh sách các chuỗi bắt đầu bằng `@` và `#`
+export const extractAtAndHashTags = (nodes: Descendant[]): { atMentions: string[]; hashTags: string[] } => {
+  let atMentions: string[] = []
+  let hashTags: string[] = []
+
+  // Hàm đệ quy để duyệt qua các node
+  const extract = (node: Descendant) => {
+    if (Text.isText(node)) {
+      // Sử dụng biểu thức chính quy để tìm các chuỗi bắt đầu bằng `@` và `#`
+      const atMatches = [...node.text.matchAll(/@\S+?(?=\s|$)/g)].map((match) => match[0])
+      const hashMatches = [...node.text.matchAll(/#\S+?(?=\s|$)/g)].map((match) => match[0])
+      atMentions.push(...atMatches)
+      hashTags.push(...hashMatches)
+    } else if ('children' in node) {
+      // Nếu node có các children, tiếp tục duyệt qua các children
+      node.children.forEach((child: Descendant) => extract(child))
+    }
+  }
+
+  nodes.forEach((node: Descendant) => extract(node))
+  return { atMentions, hashTags }
 }

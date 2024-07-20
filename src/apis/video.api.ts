@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FormCreateVideoType } from '~/pages/Watch/utils/yup.validate'
 import http from '~/utils/http'
 
 const VIDEO_PATH = {
@@ -10,7 +9,7 @@ const VIDEO_PATH = {
 }
 
 class VideoApi {
-  create(data: FormCreateVideoType) {
+  create(data: FormData) {
     return http.post<VideoCreateResponse>(VIDEO_PATH.CREATE, data, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -41,6 +40,10 @@ class VideoApi {
   async patchViewVideo(video_id: string) {
     const res = await http.get<VideoResponse>(VIDEO_PATH.PATCH_VIEW + video_id)
     return res.data
+  }
+
+  destroyVideo(video_id: string) {
+    return http.delete<any>(VIDEO_PATH.GET + '/' + video_id)
   }
 }
 

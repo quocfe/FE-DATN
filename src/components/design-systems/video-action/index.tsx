@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IonIcon } from '@ionic/react'
 import { useMutation } from '@tanstack/react-query'
 import React from 'react'
@@ -6,6 +7,8 @@ import favoriteVideoApi from '~/apis/favoriteVideo.api'
 import reportVideoApi from '~/apis/reportVideo.api'
 import useAuthStore from '~/store/auth.store'
 import ModalReport from './modal-report'
+import { useConfirm } from '../comfirm/confirm-provider'
+import videoApi from '~/apis/video.api'
 
 interface VideoActionProps {
   dataVideo: DataVideoResponse
@@ -57,6 +60,17 @@ const VideoAction = ({ dataVideo }: VideoActionProps) => {
     }
   })
 
+  // hàm xóa video
+  const { mutate: deleteVideo } = useMutation({
+    mutationFn: async () => {
+      const res = await videoApi.destroyVideo(dataVideo.id)
+      return res.data
+    },
+    onSuccess: (data: SuccessResponse<any>) => {
+      toast.success(data.message)
+    }
+  })
+
   const handleClickActionVideo = () => {
     if (!favoriteVideo) {
       getFavoriteVideo()
@@ -65,6 +79,21 @@ const VideoAction = ({ dataVideo }: VideoActionProps) => {
     if (!reportVideo) {
       getReportVideo()
     }
+  }
+
+  const coreConfirm = useConfirm()
+
+  // Hàm comfirm xóa video
+  const handleClickDeleteVideo = () => {
+    coreConfirm({
+      title: 'Xóa video?',
+      confirmOk: 'Xóa',
+      confirmCancel: 'Không',
+      content: 'Bạn có chắc chắn muốn xóa video này?',
+      callbackOK: () => {
+        deleteVideo()
+      }
+    })
   }
 
   return (
@@ -144,9 +173,12 @@ const VideoAction = ({ dataVideo }: VideoActionProps) => {
               {dataVideo.user_id === profile?.user_id && (
                 <React.Fragment>
                   <hr />
-                  <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                    <IonIcon className='text-xl' name='trash-outline' /> Delete
-                  </a>
+                  <button
+                    onClick={handleClickDeleteVideo}
+                    className='flex w-full items-center justify-start gap-x-2 px-2.5 py-2 text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+                  >
+                    <IonIcon className='text-xl' name='trash-outline' /> Xóa video
+                  </button>
                 </React.Fragment>
               )}
             </React.Fragment>

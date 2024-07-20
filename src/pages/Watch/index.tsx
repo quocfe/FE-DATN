@@ -55,7 +55,7 @@ function Watch() {
 
   return (
     <div>
-      <FormCreateVideo />
+      <FormCreateVideo getVideos={refetch} />
 
       {/* Danh sách video */}
       <div className='mx-auto sm:max-w-[95%] md:max-w-[80%] lg:max-w-[70%]'>
