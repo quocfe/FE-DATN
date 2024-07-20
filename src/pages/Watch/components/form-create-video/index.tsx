@@ -21,7 +21,7 @@ interface FormCreateVideoProps {
 }
 
 const FormCreateVideo = ({ getVideos }: FormCreateVideoProps) => {
-  const [openModal, setOpenModal] = useState<boolean>(true)
+  const [openModal, setOpenModal] = useState<boolean>(false)
   const [openUpload, setOpenUpload] = useState<boolean>(false)
 
   const { profile } = useAuthStore()

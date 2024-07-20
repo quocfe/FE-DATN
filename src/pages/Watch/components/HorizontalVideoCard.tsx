@@ -13,9 +13,10 @@ import SlateEditor from '~/components/design-systems/slate-editor'
 
 interface HorizontalVideoCardProps {
   video: DataVideoResponse
+  setVideoData: React.Dispatch<React.SetStateAction<DataVideoResponse[]>>
 }
 
-const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
+const HorizontalVideoCard = ({ video, setVideoData }: HorizontalVideoCardProps) => {
   const [userLike, setUserLike] = useState<boolean>(video.isLike)
 
   const { mutate: handlePatchLikeVideo } = useMutation({
@@ -48,7 +49,7 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
               readOnly
             />
           </div>
-          <VideoAction dataVideo={video} />
+          <VideoAction dataVideo={video} setVideoData={setVideoData} />
         </div>
         {/* <img src='src/assets/images/video/img-2.png' alt='' />
             <img src='' className='absolute !left-1/2 !top-1/2 !h-12 !w-12 -translate-x-1/2 -translate-y-1/2' alt='' /> */}
@@ -94,4 +95,4 @@ const HorizontalVideoCard = ({ video }: HorizontalVideoCardProps) => {
   )
 }
 
-export default HorizontalVideoCard
+export default React.memo(HorizontalVideoCard)

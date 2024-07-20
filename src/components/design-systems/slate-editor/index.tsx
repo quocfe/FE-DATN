@@ -55,9 +55,17 @@ const SlateEditor = ({
   valueSaleRender
 }: SlateEditorProps) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
-  const [valueSale, setValueSale] = useState<Descendant[]>(
-    watch && name ? watch(name) : valueSaleRender ?? initialValue
-  )
+  const getInitialValue = () => {
+    if (watch && name) {
+      // Nếu cả watch và name đều có giá trị, ưu tiên giá trị từ watch(name)
+      return valueSaleRender ?? watch(name)
+    }
+    // Nếu không, sử dụng valueSaleRender hoặc initialValue
+    return valueSaleRender ?? initialValue
+  }
+
+  // Khởi tạo state với giá trị đã xác định
+  const [valueSale, setValueSale] = useState<Descendant[]>(getInitialValue())
 
   const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, [])
   const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, [])
@@ -114,4 +122,4 @@ const SlateEditor = ({
   )
 }
 
-export default SlateEditor
+export default React.memo(SlateEditor)

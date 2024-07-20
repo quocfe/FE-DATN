@@ -61,7 +61,7 @@ function Watch() {
       <div className='mx-auto sm:max-w-[95%] md:max-w-[80%] lg:max-w-[70%]'>
         {videos.map((item: DataVideoResponse) => (
           <div className='mt-6 flex flex-col gap-y-10 rounded-lg bg-white py-2 shadow-sm' key={item.id}>
-            <HorizontalVideoCard video={item} />
+            <HorizontalVideoCard video={item} setVideoData={setVideos} />
           </div>
         ))}
         {isFetchingMore && <LazyLoadingVideo />} {/* Hiển thị loading khi đang tải thêm */}
