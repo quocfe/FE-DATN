@@ -1,4 +1,4 @@
-import { Descendant, Text } from 'slate'
+import { Descendant, Node, Text } from 'slate'
 
 export function calculateTimeAgo(sentAt: string | Date): string {
   const sentTime = new Date(sentAt)
@@ -55,4 +55,17 @@ export const extractAtAndHashTags = (nodes: Descendant[]): { atMentions: string[
 
   nodes.forEach((node: Descendant) => extract(node))
   return { atMentions, hashTags }
+}
+
+// GET Text data slate react editor
+export const getTextContent = (nodes: Descendant[]): string => {
+  return nodes
+    .map((node) => {
+      if (Text.isText(node)) {
+        return node.text
+      }
+      // Nếu node không phải là text, hãy xử lý children của nó
+      return Node.string(node)
+    })
+    .join('\n')
 }

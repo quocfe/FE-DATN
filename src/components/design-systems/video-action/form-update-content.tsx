@@ -12,7 +12,7 @@ import SlateEditor from '../slate-editor'
 import { cn } from '~/helpers'
 import { useMutation } from '@tanstack/react-query'
 import videoApi from '~/apis/video.api'
-import { extractAtAndHashTags } from '~/utils/helpers'
+import { extractAtAndHashTags, getTextContent } from '~/utils/helpers'
 import { toast } from 'react-toastify'
 
 interface FormUpdateContentProps {
@@ -36,7 +36,8 @@ const FormUpdateContent = ({ setIsOpenUpdate, dataVideo, setVideoData }: FormUpd
       return videoApi.updateVideo('__UPDATE__', dataVideo.id, {
         ...data,
         content: JSON.stringify(data.content),
-        hashTags: JSON.stringify(hashTags)
+        hashTags: JSON.stringify(hashTags),
+        contentText: getTextContent(data.content as never)
       })
     },
     onSuccess: (response: any) => {

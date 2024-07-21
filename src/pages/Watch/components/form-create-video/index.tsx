@@ -14,7 +14,7 @@ import { QueryObserverResult, RefetchOptions, useMutation } from '@tanstack/reac
 import videoApi from '~/apis/video.api'
 import SlateEditor from '~/components/design-systems/slate-editor'
 import PRIVACY from '../../utils'
-import { extractAtAndHashTags } from '~/utils/helpers'
+import { extractAtAndHashTags, getTextContent } from '~/utils/helpers'
 
 interface FormCreateVideoProps {
   getVideos: (options?: RefetchOptions) => Promise<QueryObserverResult<DataVideoResponse[], Error>>
@@ -41,6 +41,7 @@ const FormCreateVideo = ({ getVideos }: FormCreateVideoProps) => {
       formData.append('content', JSON.stringify(content) as never)
       formData.append('hashTags', JSON.stringify(hashTags))
       formData.append('privacy', privacy)
+      formData.append('contentText', getTextContent(content as never))
 
       const res = await videoApi.create(formData)
       return res.data
