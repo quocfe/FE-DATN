@@ -1,5 +1,4 @@
-import { IonIcon } from '@ionic/react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Video } from '~/components/design-systems'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import videoApi from '~/apis/video.api'
@@ -9,9 +8,13 @@ import AddCommentVideo from '../add-comment-video'
 import CommentVideo from '../comment-video'
 import likeVideoApi from '~/apis/like-video.api'
 import { cn } from '~/helpers'
+import ShowLikeOfComment from '~/components/design-systems/show-like-of-comment'
+import VideoAction from '~/components/design-systems/video-action'
 
 const Content = () => {
   const { id } = useParams()
+
+  const [userLike, setUserLike] = useState<boolean>(false)
 
   const [refetchComment, setRefetchComment] = useState<boolean>(false)
 
@@ -19,6 +22,9 @@ const Content = () => {
     queryKey: ['getOne', id],
     queryFn: async () => {
       const res = await videoApi.getOneVideo(id)
+      if (res) {
+        setUserLike(res?.data?.isLike as unknown as boolean)
+      }
       return res?.data
     }
   })
@@ -41,8 +47,8 @@ const Content = () => {
           {/* video player */}
 
           <div className='grid grid-cols-8'>
-            <div className='col-span-8 lg:col-span-5 border-b border-secondery lg:border-none'>
-              <Video link={videoData?.url ?? ''} public_id={videoData?.public_id ?? ''} />
+            <div className='col-span-8 border-b border-secondery lg:col-span-5 lg:border-none'>
+              <Video dataVideo={videoData as never} />
               {/* post icons */}
 
               <div className='flex items-center gap-4  text-xs font-semibold sm:p-2'>
@@ -108,28 +114,8 @@ const Content = () => {
                       <p className='text-xs font-medium'>Chia sẻ</p>
                     </button>
                   </div>
-                  <div className='flex items-center gap-x-4'>
-                    {videoData && (
-                      <div className='flex gap-2 px-6'>
-                        {videoData.like_count > 0 && (
-                          <img
-                            src="data:image/svg+xml,%3Csvg fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint0_linear_15251_63610)'/%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint1_radial_15251_63610)'/%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint2_radial_15251_63610)' fill-opacity='.5'/%3E%3Cpath d='M7.3014 3.8662a.6974.6974 0 0 1 .6974-.6977c.6742 0 1.2207.5465 1.2207 1.2206v1.7464a.101.101 0 0 0 .101.101h1.7953c.992 0 1.7232.9273 1.4917 1.892l-.4572 1.9047a2.301 2.301 0 0 1-2.2374 1.764H6.9185a.5752.5752 0 0 1-.5752-.5752V7.7384c0-.4168.097-.8278.2834-1.2005l.2856-.5712a3.6878 3.6878 0 0 0 .3893-1.6509l-.0002-.4496ZM4.367 7a.767.767 0 0 0-.7669.767v3.2598a.767.767 0 0 0 .767.767h.767a.3835.3835 0 0 0 .3835-.3835V7.3835A.3835.3835 0 0 0 5.134 7h-.767Z' fill='%23fff'/%3E%3Cdefs%3E%3CradialGradient id='paint1_radial_15251_63610' cx='0' cy='0' r='1' gradientUnits='userSpaceOnUse' gradientTransform='rotate(90 .0005 8) scale(7.99958)'%3E%3Cstop offset='.5618' stop-color='%230866FF' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%230866FF' stop-opacity='.1'/%3E%3C/radialGradient%3E%3CradialGradient id='paint2_radial_15251_63610' cx='0' cy='0' r='1' gradientUnits='userSpaceOnUse' gradientTransform='rotate(45 -4.5257 10.9237) scale(10.1818)'%3E%3Cstop offset='.3143' stop-color='%2302ADFC'/%3E%3Cstop offset='1' stop-color='%2302ADFC' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='paint0_linear_15251_63610' x1='2.3989' y1='2.3999' x2='13.5983' y2='13.5993' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%2302ADFC'/%3E%3Cstop offset='.5' stop-color='%230866FF'/%3E%3Cstop offset='1' stop-color='%232B7EFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
-                            alt=''
-                            className='w-5'
-                          />
-                        )}
-                        <div className='text-sm'>
-                          {Boolean(videoData.isLike) && 'Bạn'}
-                          {Boolean(videoData.isLike) && videoData.like_count - 1 > 0 && ' và '}
-                          {videoData.like_count > 0 && Boolean(videoData.isLike)
-                            ? videoData.like_count - 1
-                            : videoData.like_count === 0
-                              ? ''
-                              : videoData.like_count}
-                          {Boolean(videoData.like_count) && ' người khác'}
-                        </div>
-                      </div>
-                    )}
+                  <div className='flex items-center gap-x-5'>
+                    <ShowLikeOfComment dataVideo={videoData as never} setUserLike={setUserLike} userLike={userLike} />
                   </div>
                 </div>
               </div>
@@ -138,16 +124,16 @@ const Content = () => {
               {/* post heading */}
               <div className='border-b border-b-secondery pb-2'>
                 <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
-                  <a href='timeline.html'>
+                  <a href='#'>
                     <img src={videoData?.user.Profile.cover_photo} alt='' className='h-9 w-9 rounded-full' />
                   </a>
                   <div className='flex-1'>
-                    <a href='timeline.html'>
+                    <a href='#'>
                       <h4 className='text-black dark:text-white'> {videoData?.user.first_name} </h4>
                     </a>
                     <div className='text-xs text-gray-500 dark:text-white/80'> 2 hours ago</div>
                   </div>
-                  <div className='-mr-1'>
+                  {/* <div className='-mr-1'>
                     <button type='button' className='button-icon h-8 w-8'>
                       <IonIcon className='text-xl' name='ellipsis-horizontal' />
                     </button>
@@ -174,10 +160,12 @@ const Content = () => {
                         </a>
                       </nav>
                     </div>
-                  </div>
+                  </div> */}
+                  {videoData && <VideoAction dataVideo={videoData as never} />}
                 </div>
                 <p className='px-6 text-sm font-normal leading-6'>{videoData?.content}</p>
               </div>
+
               <div id='scroll-base' className='px-4 lg:h-[240px]'>
                 <CommentVideo refetchCommentVideo={refetchComment} />
               </div>
@@ -185,57 +173,6 @@ const Content = () => {
               <AddCommentVideo video_id={videoData?.id as string} setRefetchComment={setRefetchComment} />
             </div>
           </div>
-          {/* comments */}
-          {/* <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-6 dark:border-slate-700/40'>
-            <div className='relative flex items-start gap-3'>
-              <a href='timeline.html'>
-                <img src='assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                  Monroe Parker
-                </a>
-                <p className='mt-0.5'>What a beautiful photo! I love it. 😍 </p>
-              </div>
-            </div>
-            <div className='relative flex items-start gap-3'>
-              <a href='timeline.html'>
-                <img src='assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                  John Michael
-                </a>
-                <p className='mt-0.5'> You captured the moment.😎 </p>
-              </div>
-            </div>
-            <div className='relative flex items-start gap-3'>
-              <a href='timeline.html'>
-                <img src='assets/images/avatars/avatar-5.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                  James Lewis
-                </a>
-                <p className='mt-0.5'>What a beautiful photo! I love it. 😍 </p>
-              </div>
-            </div>
-            <div className='relative flex items-start gap-3'>
-              <a href='timeline.html'>
-                <img src='assets/images/avatars/avatar-4.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                  Martin Gray
-                </a>
-                <p className='mt-0.5'> You captured the moment.😎 </p>
-              </div>
-            </div>
-            <button type='button' className='mt-2 flex items-center   gap-1.5 text-blue-500'>
-              <IonIcon name='chevron-down-outline' className='ml-auto duration-200 group-aria-expanded:rotate-180' />
-              More Comment
-            </button>
-          </div> */}
         </div>
         <br />
         <br />

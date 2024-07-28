@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import PRIVACY from '.'
+import { PRIVACY } from '~/constants'
 
 const descendantSchema = yup.object().shape({
   type: yup.string().required(),
@@ -13,7 +13,7 @@ const descendantSchema = yup.object().shape({
     .required()
 })
 
-export const validationFormCreateVideo = yup.object({
+export const FormUpdateVideo = yup.object({
   content: yup
     .array()
     .of(descendantSchema)
@@ -23,8 +23,8 @@ export const validationFormCreateVideo = yup.object({
         children: [{ text: '' }]
       }
     ]),
-  privacy: yup.string().default(PRIVACY[0].key),
+  privacy: yup.string().default(PRIVACY.ALL),
   video: yup.mixed().default('')
 })
 
-export type FormCreateVideoType = yup.InferType<typeof validationFormCreateVideo>
+export type FormUpdateVideoType = yup.InferType<typeof FormUpdateVideo>

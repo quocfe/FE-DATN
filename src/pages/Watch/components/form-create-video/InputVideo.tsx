@@ -4,7 +4,7 @@ import React, { ChangeEvent } from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { FormCreateVideoType } from '../../utils/yup.validate'
 import SvgIcon from '~/helpers/SvgIcon'
-import { Video } from '~/components/design-systems'
+// import { Video } from '~/components/design-systems'
 
 interface InputVideoProps {
   // setValue: UseFormSetValue<FormCreateVideoType>
@@ -17,9 +17,6 @@ const InputVideo = ({ setOpenUpload, control }: InputVideoProps) => {
     if (e.target.files && e.target.files.length) {
       const file = e.target.files[0]
       // onChange(file)
-
-      console.log(file)
-      console.log(URL.createObjectURL(file))
 
       //   if (!ACCEPTED_IMAGE_TYPES.includes(file?.type as string)) {
       //     onChange('')
@@ -43,9 +40,11 @@ const InputVideo = ({ setOpenUpload, control }: InputVideoProps) => {
         return (
           <div className='relative'>
             {value ? (
-              // <div className=''>{/* <video poster='' src={value ?? URL.createObjectURL(value)} /> */}</div>
               <div className='h-full max-h-[500px] w-full rounded-md border border-[#CED0D4] p-2'>
-                <Video link={value && URL.createObjectURL(value as File)} className='rounded-md' />
+                <video className='h-[240px] w-full' controls>
+                  <source src={value && URL.createObjectURL(value as File)} type='video/mp4' />
+                  <source src={value && URL.createObjectURL(value as File)} type='video/ogg' />
+                </video>
                 <button
                   type='button'
                   onClick={() => {

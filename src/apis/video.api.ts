@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FormCreateVideoType } from '~/pages/Watch/utils/yup.validate'
 import http from '~/utils/http'
 
 const VIDEO_PATH = {
   GET: '/videos',
-  PATCH_VIEW: '/videos/view',
+  PATCH_VIEW: '/videos',
   CREATE: '/videos/create',
   RESOURCE_VIDEO_PUBLIC_ID: '/videos/resource/'
 }
 
 class VideoApi {
-  create(data: FormCreateVideoType) {
+  create(data: FormData) {
     return http.post<VideoCreateResponse>(VIDEO_PATH.CREATE, data, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -20,7 +19,7 @@ class VideoApi {
   }
 
   async get(page: number) {
-    const res = await http.get<VideoResponse>(VIDEO_PATH.GET + '?page=' + page)
+    const res = await http.get<VideoResponse>(VIDEO_PATH.GET + `?page=${page}`)
     return res.data
   }
 
@@ -38,9 +37,13 @@ class VideoApi {
     return
   }
 
-  async patchViewVideo(video_id: string) {
-    const res = await http.get<VideoResponse>(VIDEO_PATH.PATCH_VIEW + video_id)
+  async updateVideo(type: '__VIEW__' | '__UPDATE__' = '__VIEW__', video_id: string, data?: any) {
+    const res = await http.patch<VideoResponse>(`${VIDEO_PATH.PATCH_VIEW}/${video_id}?status=${type}`, data)
     return res.data
+  }
+
+  destroyVideo(video_id: string) {
+    return http.delete<any>(VIDEO_PATH.GET + '/' + video_id)
   }
 }
 

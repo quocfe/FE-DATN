@@ -5,7 +5,7 @@ import ReactPlayer from 'react-player'
 
 interface ProgressValueProps {
   playerRef: React.RefObject<ReactPlayer>
-  data: { duration: number }
+  duration: number
   setCurrentTime: React.Dispatch<React.SetStateAction<number>>
   intervalId: React.MutableRefObject<NodeJS.Timeout | null>
   isPlay: boolean
@@ -17,7 +17,7 @@ export interface ProgressValuePropsRef {
 }
 
 const ProgressValue = React.forwardRef<ProgressValuePropsRef, ProgressValueProps>(
-  ({ playerRef, data, setCurrentTime, intervalId, isPlay, setIsPlay }, ref) => {
+  ({ playerRef, duration, setCurrentTime, intervalId, isPlay, setIsPlay }, ref) => {
     const [isMouseDown, setIsMouseDown] = useState(false)
 
     const progress = useRef<HTMLDivElement>(null)
@@ -30,18 +30,18 @@ const ProgressValue = React.forwardRef<ProgressValuePropsRef, ProgressValueProps
 
     const handleMouseMove = useCallback(
       (event: MouseEvent) => {
-        if (isMouseDown && progressValue.current && progress.current && playerRef.current && data) {
+        if (isMouseDown && progressValue.current && progress.current && playerRef.current && duration) {
           const rect = progress.current.getBoundingClientRect()
           const widthClick = event.clientX - rect.left
           const width = widthClick <= 0 ? 0 : widthClick >= rect.width ? 100 : (widthClick / rect.width) * 100
 
           progressValue.current.style.width = width + '%'
-          const newTime = (data.duration * width) / 100
+          const newTime = (duration * width) / 100
           playerRef.current.seekTo(newTime)
           setCurrentTime(newTime)
         }
       },
-      [isMouseDown, data, playerRef, setCurrentTime]
+      [isMouseDown, duration, playerRef, setCurrentTime]
     )
 
     const handleMouseUp = useCallback(() => {
@@ -59,7 +59,7 @@ const ProgressValue = React.forwardRef<ProgressValuePropsRef, ProgressValueProps
     }, [handleMouseMove, handleMouseUp])
 
     const handlePlay = useCallback(() => {
-      if (intervalId.current && data) {
+      if (intervalId.current && duration) {
         clearInterval(intervalId.current)
         intervalId.current = null
         setIsPlay((prev) => !prev)
@@ -68,14 +68,14 @@ const ProgressValue = React.forwardRef<ProgressValuePropsRef, ProgressValueProps
           if (playerRef.current && progressValue.current) {
             const currentTime = playerRef.current.getCurrentTime()
             setCurrentTime(currentTime)
-            const width = (currentTime / data.duration) * 100
+            const width = (currentTime / duration) * 100
             progressValue.current.style.width = `${width}%`
           }
         }, 40)
         setIsPlay((prev) => !prev)
         intervalId.current = newIntervalId as NodeJS.Timeout
       }
-    }, [data, playerRef, setCurrentTime, intervalId])
+    }, [duration, playerRef, setCurrentTime, intervalId])
 
     useImperativeHandle(ref, () => ({
       handlePlay,

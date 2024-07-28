@@ -73,7 +73,7 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
                             to={ROUTE_PATH.WATCH}
                             className={({ isActive }) =>
                               cn({
-                                'bg-slate-100 text-sky-300': isActive
+                                'bg-slate-100': isActive
                               })
                             }
                             end

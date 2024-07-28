@@ -5,7 +5,12 @@ interface VideoCreateResponse extends SuccessResponse {
 }
 
 interface VideoResponse extends SuccessResponse {
-  data: Array<DataVideoResponse>
+
+  content: Array<DataVideoResponse>
+  limit: number
+  page: number
+  total: number
+  totalRecords: number
 }
 
 interface DataVideoResponse {
@@ -20,6 +25,8 @@ interface DataVideoResponse {
   url: string
   user_id: string
   view: number
+  duration: number
+  total_comments: number
   user: {
     user_id: string
     first_name: string
@@ -28,6 +35,8 @@ interface DataVideoResponse {
       cover_photo: string
     }
   }
+  total_likes: number
+  isLike: boolean
 }
 
 interface VideoDetailResponse extends SuccessResponse {
