@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import favoriteVideoApi from '~/apis/favoriteVideo.api'
-import Video from './component/video'
 import Content from './component/content'
+import { Video } from '~/components/design-systems'
 
 const WatchSave = () => {
   const { data: favorites, refetch: refetchFavoriteVideos } = useQuery({
@@ -13,14 +13,16 @@ const WatchSave = () => {
     }
   })
 
+  console.log(favorites)
+
   return (
     <div className='mx-auto sm:max-w-[95%] md:max-w-[80%] lg:max-w-[70%]'>
       {favorites &&
-        favorites.map((item) => (
-          <div className='mt-6 flex gap-y-10 rounded-xl bg-white shadow-sm' key={item.id}>
+        favorites.map((item, index) => (
+          <div className='mt-6 flex gap-y-10 rounded-xl bg-white shadow-sm' key={index}>
             <div className='grid w-full grid-cols-5 gap-x-2'>
               <div className='col-span-2 '>
-                <Video video_id={item.video.id} public_id={item.video.public_id} />
+                <Video dataVideo={item.video} />
               </div>
               <div className='col-span-3'>
                 <Content video={item} refetchFavoriteVideos={refetchFavoriteVideos} />

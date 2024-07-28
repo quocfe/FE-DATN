@@ -95,4 +95,5 @@ const HorizontalVideoCard = ({ video, setVideoData }: HorizontalVideoCardProps) 
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export default React.memo(HorizontalVideoCard)

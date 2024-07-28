@@ -2,6 +2,7 @@ import { IonIcon } from '@ionic/react'
 import { QueryObserverResult, RefetchOptions, useMutation } from '@tanstack/react-query'
 import React from 'react'
 import favoriteVideoApi from '~/apis/favoriteVideo.api'
+import SlateEditor from '~/components/design-systems/slate-editor'
 import useAuthStore from '~/store/auth.store'
 import { calculateTimeAgo } from '~/utils/helpers'
 
@@ -50,7 +51,13 @@ const Content = ({ video, refetchFavoriteVideos }: ContentProps) => {
             <p className='text-[12px]'>{calculateTimeAgo(video.createdAt as unknown as string)}</p>
           </div>
         </div>
-        <div className='mt-2 text-sm'>{video.video.content}</div>
+        <div className='mt-2 text-sm'>
+          <SlateEditor
+            className='!my-5 overflow-y-auto overflow-x-hidden px-2'
+            valueSaleRender={JSON.parse(video.video.content)}
+            readOnly
+          />
+        </div>
       </div>
       <div className='absolute right-2 top-3'>
         <button
@@ -109,14 +116,14 @@ const Content = ({ video, refetchFavoriteVideos }: ContentProps) => {
               </a>
             )}
 
-            {video.video.user_id === profile?.user_id && (
+            {/* {video.video.user_id === profile?.user_id && (
               <React.Fragment>
                 <hr />
                 <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
                   <IonIcon className='text-xl' name='trash-outline' /> Delete
                 </a>
               </React.Fragment>
-            )}
+            )} */}
           </nav>
         </div>
       </div>

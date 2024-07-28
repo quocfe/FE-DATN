@@ -141,7 +141,7 @@ const ModalReport = ({ reportVideo, patchReportVideo }: ModalReportProps) => {
                 </div>
 
                 <div className='text-xl font-bold text-black'>Tố cáo</div>
-                <div className='cursor-pointer rounded-full bg-gray-100 px-2 py-2'>
+                <div className='cursor-pointer rounded-full bg-gray-100 px-2 py-2' onClick={closeModal}>
                   <SvgIcon name='close' />
                 </div>
               </div>

@@ -37,7 +37,7 @@ const VideoAction = ({ dataVideo, setVideoData }: VideoActionProps) => {
     mutate: getFavoriteVideo,
     isPending: loadingGetFavorite
   } = useMutation({
-    mutationFn: async (): Promise<DataFavoriteVideoResponse> => {
+    mutationFn: async (): Promise<any> => {
       const res = await favoriteVideoApi.getFavoriteVideo(dataVideo.id)
       return res.data.data
     }
