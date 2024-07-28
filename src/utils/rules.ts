@@ -33,9 +33,14 @@ export const changePasswordSchema = yup.object({
     .max(162, 'Độ dài tối đa 162 kí tự')
 })
 
+export const commentSchema = yup.object({
+  content: yup.string().required('Nội dung bình luận không được trống!')
+})
+
 export const registerSchema = authSchema
 export const loginSchema = authSchema.pick(['email', 'password'])
 
 export type RegisterForm = yup.InferType<typeof registerSchema>
 export type LoginForm = yup.InferType<typeof loginSchema>
 export type ChangePasswordForm = yup.InferType<typeof changePasswordSchema>
+export type CommentType = yup.InferType<typeof commentSchema>
