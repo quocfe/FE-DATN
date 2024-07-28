@@ -14,7 +14,7 @@ function ResultSearchMessage() {
   const { searchParam: query, selectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const searchMutation = useMutationSearchMessage()
   const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
-  const { data: temp } = useQueryMessage(1, 30)
+  const { data: temp, refetch } = useQueryMessage(1, 30)
 
   useEffect(() => {
     searchMutation.mutate(
@@ -34,6 +34,10 @@ function ResultSearchMessage() {
     )
   }, [query])
 
+  useEffect(() => {
+    refetch()
+  }, [])
+
   const handleClickToOldMessage = async (message_id: string) => {
     const messageOldId = message_id
     const element = document.getElementById(messageOldId)
@@ -41,6 +45,7 @@ function ResultSearchMessage() {
       handleToOldMessage(messageOldId)
     } else {
       let totalPage = temp?.data.data.pagination.totalPage || 0
+
       for (let i = 0; i < totalPage; i++) {
         if (hasNextPage) await fetchNextPage()
       }

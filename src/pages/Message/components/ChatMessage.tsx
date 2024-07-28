@@ -1,30 +1,29 @@
 import { IonIcon } from '@ionic/react'
-import { memo, useEffect, useLayoutEffect, useRef, useState, useMemo, useCallback } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useAuthStore from '~/store/auth.store'
 import useConversationStore from '~/store/conversation.store'
 import { formatDate } from '~/utils/helpers'
-import { useQueryMessage } from '../hooks/useQueryMessage'
 import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQueryMessage'
 import Spinner from './Skelaton/Spinner'
-import { FileMsg, ImageMsg, TextMsg, VideoMsg } from './TypeMessage'
+import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessage'
 import PreviewFileUpload from './components/PreviewFileUpload'
-import useMessageStore from '~/store/message.store'
-import { handleToOldMessage } from '../utils/handleToOldMessage'
-import _ from 'lodash'
-
-// Define TypeScript interfaces
+import { useSocketContext } from '~/context/socket'
+import StatusMessage from './components/StatusMessage'
+import { getProfileFromLocalStorage } from '~/utils/auth'
+import { Link } from 'react-router-dom'
 
 interface ChatMessageProps {
   showScrollBtn: boolean
   isAtBottom: boolean
 }
 
-// Group messages by date
+// Tin nhan theo ngay
 const groupMessagesByDate = (messages: TypeMessage[]): Record<string, TypeMessage[]> => {
   return messages.reduce(
     (acc, message) => {
-      const date = new Date(message.createdAt).toDateString()
+      const date = new Date(message?.createdAt).toDateString()
       if (!acc[date]) {
         acc[date] = []
       }
@@ -35,7 +34,6 @@ const groupMessagesByDate = (messages: TypeMessage[]): Record<string, TypeMessag
   )
 }
 
-// Check if the time should be shown between messages
 const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessage): boolean => {
   if (!previousMessage) return true
   const currentTime = new Date(currentMessage.createdAt).getTime()
@@ -50,8 +48,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   const { data: messageData } = useQueryMessage()
   const infoMessage = messageData?.data?.data?.info
   const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
-  const { ref, inView } = useInView({ threshold: 1 })
+  const { ref, inView } = useInView({ threshold: 0.25 })
   const [showNewMsg, setShowNewMsg] = useState(false)
+  const { user_id } = getProfileFromLocalStorage()
+
   const newArr = useMemo(() => {
     if (dataMsg?.pages?.length) {
       return dataMsg.pages.slice().reverse()
@@ -70,7 +70,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
 
   useLayoutEffect(() => {
     scrollIntoViewFn()
-  }, [selectedConversation.id])
+  }, [selectedConversation.group_id])
 
   useEffect(() => {
     if (!isAtBottom && isFetchingNextPage) {
@@ -98,45 +98,44 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   }, [isAtBottom])
 
   const groupedMessagesByDate = useMemo(() => groupMessagesByDate(newArr.flat() as TypeMessage[]), [newArr])
+  const showStatus =
+    newArr.flat()[newArr.flat().length - 1]?.createdBy === user_id && newArr.flat()[newArr.flat().length - 1]?.type != 0
 
   return (
     <div className='relative'>
-      {!hasNextPage &&
-        (selectedConversation.type === 2 ? (
-          <div className='py-10 text-center text-sm lg:pt-8'>
-            <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
-            <div className='mt-4'>
-              <p className='overflow-hidden text-ellipsis text-base font-medium  text-black md:text-xl dark:text-white'>
-                {infoMessage?.group_name}
-              </p>
+      {!hasNextPage && (
+        <div className='py-10 text-sm text-center lg:pt-8'>
+          <img src={infoMessage?.avatar} className='object-cover w-24 h-24 mx-auto mb-3 rounded-full' />
+          <div className='mt-8'>
+            <div className='text-base font-medium text-black md:text-xl dark:text-white '>
+              {infoMessage?.group_name}
             </div>
-          </div>
-        ) : (
-          <div className='py-10 text-center text-sm lg:pt-8'>
-            <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
-            <div className='mt-8'>
-              <div className='text-base font-medium text-black md:text-xl dark:text-white '>
-                {infoMessage?.group_name}
-              </div>
+            {selectedConversation.type != 2 && (
               <div className='text-sm text-gray-500 dark:text-white/80'>@{infoMessage?.group_id}</div>
-            </div>
-            <div className='mt-3.5'>
-              <a
-                href='timeline.html'
-                className='inline-block rounded-lg bg-secondery px-4 py-1.5 text-sm font-semibold'
-              >
-                View profile
-              </a>
-            </div>
+            )}
           </div>
-        ))}
+
+          {selectedConversation.type != 2 && (
+            <div className='mt-3.5'>
+              {infoMessage?.group_id && (
+                <Link
+                  to={`/profile/${infoMessage.group_id}`}
+                  className='inline-block rounded-lg bg-secondery px-4 py-1.5 text-sm font-semibold'
+                >
+                  View profile
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
+      )}
       {isFetchingNextPage && (
         <Spinner classNames='flex items-center justify-center' w='6' h='6' title='Đang tải tin nhắn' />
       )}
       <div className='space-y-2 text-sm font-medium'>
         {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
           <div className='space-y-2' key={date}>
-            <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
+            <div className='text-xs text-center text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
             {dayMessages.map((item, index) => {
               const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
               const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
@@ -147,7 +146,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
                 <div key={item.message_id}>
                   {showTime && (
                     <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>
-                      {new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(item?.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   )}
                   {item.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
@@ -156,6 +155,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
                   {item.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                   {item.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                   {item.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                 </div>
               )
             })}
@@ -175,7 +176,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
           <IonIcon icon='arrow-down' />
         </div>
       </div>
-      <div ref={bottomRef} className='h-[20px]' />
+      {showStatus && <StatusMessage />}
+      <div ref={bottomRef} className='h-[10px]' />
     </div>
   )
 }

@@ -1,20 +1,22 @@
 import { IonIcon } from '@ionic/react'
+import { renderTypeFile } from '../utils/renderTypeFile'
 
 type ProfileRightOptionProps = {
   title: string
   listImage: TypeMessage[] | undefined
   listVideo: TypeMessage[] | undefined
   listFile: TypeMessage[] | undefined
+  typeConversation: string | number
 }
 
-const data = [
-  {
-    title: 'Ảnh - Video'
-  },
-  { title: 'File' },
-  { title: 'Thành viên' }
-]
-function ProfileRightOption({ title, listImage, listVideo, listFile }: ProfileRightOptionProps) {
+function ProfileRightOption({ title, listImage, listVideo, listFile, typeConversation }: ProfileRightOptionProps) {
+  const data = [
+    {
+      title: 'Ảnh - Video'
+    },
+    { title: 'File' },
+    { title: typeConversation === 2 && 'Thành viên' }
+  ]
   return (
     <div className='relative z-20 h-full'>
       <div className='box !shadow-none'>
@@ -23,8 +25,8 @@ function ProfileRightOption({ title, listImage, listVideo, listFile }: ProfileRi
             className='group'
             uk-switcher='connect: #group-tabs ; animation: uk-animation-slide-right-medium, uk-animation-slide-left-medium'
           >
-            {data.map((item) => (
-              <li key={item.title} className={title === item.title ? 'uk-active' : ''}>
+            {data.map((item, index) => (
+              <li key={index} className={title === item.title ? 'uk-active' : ''}>
                 <a className='' href='#' aria-expanded={title === item.title && 'true'}>
                   {item.title}
                 </a>
@@ -63,7 +65,7 @@ function ProfileRightOption({ title, listImage, listVideo, listFile }: ProfileRi
               {listFile?.map((file, index) => (
                 <div key={index} className='flex cursor-pointer gap-3 p-2 shadow-sm'>
                   <div className='flex  items-center rounded-[10px] bg-secondery p-2 '>
-                    <IonIcon icon='document' className='h-6 w-6' />
+                    {file.body && renderTypeFile(file.body)}
                   </div>
                   <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
                     <p className='text-sm'>{file.sub_body}</p>

@@ -3,21 +3,36 @@
 import { IonIcon } from '@ionic/react'
 import axios from 'axios'
 import { head } from 'lodash'
-import React, { useCallback, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import useConversationStore from '~/store/conversation.store'
 
 type CustomFileInputProps = {
-  iconName: string
+  iconName?: string
   setFile: (file: any) => void
   file: File | null
   setPreview?: (preview: any | null) => void
   preview?: string | null
   type: number
+  children?: React.ReactNode
+  messageFixes?: boolean
 }
 
-const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, type, setPreview }) => {
-  const [previewInner, setPreviewInner] = useState<string | null>(null)
+// type = 1 (có xem trước)
+// type = 2 (ko xem trước)
+// type = 3 (drop zone)
 
+const CustomFileInput: React.FC<CustomFileInputProps> = ({
+  iconName,
+  setFile,
+  type,
+  setPreview,
+  children,
+  messageFixes
+}) => {
+  const [previewInner, setPreviewInner] = useState<string | null>(null)
+  const [isDragAccept, setIsDragAccept] = useState<boolean>(false)
+  const { setTogglePreviewBox, setPreviewImg } = useConversationStore()
   if (type === 1) {
     const { getRootProps, getInputProps } = useDropzone({
       onDrop: (acceptedFiles) => {
@@ -58,6 +73,7 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, ty
       onDrop: (acceptedFiles) => {
         const file = acceptedFiles[0]
         setFile(file)
+
         if (typeof setPreview === 'function') {
           setPreview(file)
         }
@@ -80,11 +96,45 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({ iconName, setFile, ty
       <button
         type='button'
         {...getRootProps()}
-        className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-sky-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'
+        className={`dark:bg-dark3 shrink-0 rounded-full  ${messageFixes ? '' : 'border border-sky-100 bg-sky-50 p-1.5 shadow-sm '}  text-sky-600 duration-100 hover:scale-[1.15] dark:border-0`}
       >
-        <IonIcon className='flex text-2xl' icon='image' />
+        <IonIcon className={`flex  ${messageFixes ? 'text-xl' : 'text-2xl'}`} icon={iconName} />
         <input {...getInputProps()} className='hidden' />
       </button>
+    )
+  }
+  if (type === 3) {
+    const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
+      onDrop: (acceptedFiles) => {
+        const file = acceptedFiles[0]
+        setTogglePreviewBox(true)
+        setPreviewImg(file)
+      },
+      onDragEnter: () => {
+        if (typeof setIsDragAccept === 'function') {
+          setIsDragAccept(true)
+        }
+      },
+      onDragLeave: () => {
+        if (typeof setIsDragAccept === 'function') {
+          setIsDragAccept(false)
+        }
+      },
+      noClick: true
+    })
+
+    return (
+      <div {...getRootProps()}>
+        <input {...getInputProps()} className='hidden' />
+        <div className='relative'>
+          {isDragAccept && (
+            <div className='absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75'>
+              <p className='text-lg text-white'>Thả tệp tại đây</p>
+            </div>
+          )}
+          {children}
+        </div>
+      </div>
     )
   }
 }

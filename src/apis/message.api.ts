@@ -44,6 +44,10 @@ class MessageApi {
     return http.post<MessageApiResponse>(MESSAGE.SEND_MESSAGE, messageData, { withCredentials: true })
   }
 
+  sendCallMessage(messageData: MessageInput) {
+    return http.post<MessageApiResponse>(MESSAGE.SEND_CALL_MESSAGE, messageData, { withCredentials: true })
+  }
+
   sendMessageAttach(messageMediaData: MessageMediaInput) {
     return http.post<MessageApiResponse>(MESSAGE.SEND_MESSAGE_ATTACH, messageMediaData, {
       headers: {
@@ -103,6 +107,14 @@ class MessageApi {
 
   searchfrandgr(query: string) {
     return http.get(`${MESSAGE.SEARCH_FR_AND_GR}/${query}`)
+  }
+
+  statusMessage(id: string) {
+    return http.get<StatusMessageResponse>(`${MESSAGE.STATUS_MESSAGE}/${id}`)
+  }
+
+  generateTokenZego(userId: string) {
+    return http.get<ZegoToken>(`${MESSAGE.GENERATE_TOKEN_ZEGO}/${userId}`)
   }
 }
 

@@ -2,7 +2,7 @@ import React from 'react'
 
 function EmptyMessage() {
   return (
-    <div className='mx-auto flex flex-col items-center justify-around max-md:hidden'>
+    <div className='mx-auto hidden flex-col items-center justify-around md:flex'>
       <p className='text-xl font-bold text-primary'>Chào mừng đến mới devbook, nơi bạn có thể trò chuyện với bạn bè</p>
       <img
         className='h-[288px] w-[380px] object-cover'

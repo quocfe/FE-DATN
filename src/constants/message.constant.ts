@@ -6,6 +6,7 @@ export const MESSAGE = {
   GET_RECALL: 'message/getrecallmessage',
   GET_FRIEND_SUGGEST: 'message/getlistfriendssuggest',
   SEND_MESSAGE: 'message/sendmessage',
+  SEND_CALL_MESSAGE: 'message/sendcallmessage',
   SEND_MESSAGE_ATTACH: 'message/sendmessageattach',
   REPLY_MESSAGE: 'message/replymessage',
   CREATE_GROUP: 'message/creategroup',
@@ -20,5 +21,7 @@ export const MESSAGE = {
   DELETE_REACT_MESSAGE: 'message/deleteReactmessage',
   LEAVE_OR_DELETE_MEMBER_GROUP: 'message/leaveanddeleteusergroup',
   CHANGE_ROLE_GROUP: 'message/changerolegroup',
-  SEARCH_FR_AND_GR: 'message/searchfrandgr'
+  SEARCH_FR_AND_GR: 'message/searchfrandgr',
+  STATUS_MESSAGE: 'message/getallseen',
+  GENERATE_TOKEN_ZEGO: 'message/generateTokenZego'
 } as const

@@ -103,10 +103,31 @@ type RecallResponse = {
   message: string
 }
 
+type StatusMessage = {
+  seen_message_id: string
+  user_id: string
+  message_id: string
+  group_message_id: string
+  status: string
+  createdBy: string
+  avatar: string
+  fullName: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+type StatusMessageResponse = {
+  data: StatusMessage[]
+  message: string
+}
+
+type ZegoToken = string
+
 type MessageInput = {
   body: string
   group_message_id: string | undefined
   receiver?: string
+  sender?: string
   type: number
 }
 

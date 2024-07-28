@@ -21,7 +21,10 @@ const useSocket = (): { socket: Socket | null } => {
 
     if (user_id) {
       newSocket = io(SERVER_URL, {
-        query: { user_id }
+        query: { user_id },
+        reconnection: true, // Bật tính năng tự động reconnect
+        reconnectionDelay: 1000, // Thời gian delay giữa các lần reconnect (ms)
+        reconnectionAttempts: 5 // Số lần thử reconnect tối đa
       })
     } else {
       newSocket = io(SERVER_URL)
@@ -35,7 +38,10 @@ const useSocket = (): { socket: Socket | null } => {
       newSocket.disconnect()
       setSocket(null)
     })
-
+    // Kết nối lại
+    newSocket.on('reconnect', (attemptNumber) => {
+      console.log('Đã kết nối lại sau', attemptNumber, 'lần thử')
+    })
     // Mất kết nối
     newSocket.on('disconnect', () => {
       setSocket(null)
@@ -49,7 +55,7 @@ const useSocket = (): { socket: Socket | null } => {
         newSocket.disconnect()
       }
     }
-  }, [profile])
+  }, [profile?.user_id])
 
   return { socket }
 }

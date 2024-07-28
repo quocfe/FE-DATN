@@ -4,6 +4,7 @@ import useConversationStore from '~/store/conversation.store'
 
 export const useQueryMessage = (page?: number, limit?: number) => {
   const { selectedConversation } = useConversationStore()
+
   if (selectedConversation.type === 1) {
     return useQuery({
       queryKey: ['message', selectedConversation.id],

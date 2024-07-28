@@ -20,6 +20,7 @@ import ModalAddMember from './ModalAddMember'
 import Dialog from '~/components/Dialog'
 import ModalChageRole from './ModalChageRole'
 import useMutationDeleteOrLeaveMember from '../hooks/useMutationDeleteOrLeaveMember'
+import { renderTypeFile } from '../utils/renderTypeFile'
 
 const IconOptionList = [
   {
@@ -193,6 +194,7 @@ function ProfileRight() {
               listImage={renderList(2)}
               listVideo={renderList(4)}
               listFile={renderList(3)}
+              typeConversation={selectedConversation.type}
             />
           ) : (
             <>
@@ -307,16 +309,18 @@ function ProfileRight() {
                   <div className='uk-accordion-content dark:text-white/80'>
                     <div className='flex w-full flex-col gap-2'>
                       {/* ---- */}
-                      {renderList(3)?.map(({ body }: { body: string }) => (
-                        <div key={body} className='flex cursor-pointer gap-3 p-2 shadow-sm'>
-                          <div className='flex  items-center rounded-[10px] bg-secondery p-2 '>
-                            <IonIcon icon='document' className='h-6 w-6' />
+                      {renderList(3)
+                        ?.slice(0, 2)
+                        .map(({ body }: { body: string }) => (
+                          <div key={body} className='flex cursor-pointer gap-3 p-2 shadow-sm'>
+                            <div className='flex  items-center rounded-[10px] bg-secondery p-2 '>
+                              {body && renderTypeFile(body)}
+                            </div>
+                            <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
+                              <p className='text-sm'>{body}</p>
+                            </div>
                           </div>
-                          <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
-                            <p className='text-sm'>{body}</p>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                     <button
                       onClick={() => {
@@ -354,7 +358,7 @@ function ProfileRight() {
                       <div className='flex w-full flex-col gap-2'>
                         {members?.map((member) => {
                           const checkRuleUserLogin = members.filter((member) => member.user_id === user_id)
-                          const admin = checkRuleUserLogin[0].role
+                          const admin = checkRuleUserLogin[0]?.role
                           const userLogin = member.user_id === user_id
                           return (
                             <div key={member.user_id}>

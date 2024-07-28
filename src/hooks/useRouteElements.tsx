@@ -17,6 +17,7 @@ import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
+import RoomCall from '~/pages/RoomCall'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -123,6 +124,10 @@ function useRouteElements() {
               )
             }
           ]
+        },
+        {
+          path: '/videocall/:roomId/:userId/:groupId/:senderId',
+          element: <RoomCall />
         }
       ]
     },

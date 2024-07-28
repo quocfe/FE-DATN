@@ -12,12 +12,14 @@ export const useQueryConversation = ({ page, limit }: QueryConversationParams = 
   if (page || limit) {
     return useQuery({
       queryKey: ['conversation', profile?.user_id, page, limit],
-      queryFn: () => messageApi.getConversation(page)
+      queryFn: () => messageApi.getConversation(page),
+      enabled: profile?.user_id != null
     })
   } else {
     return useQuery({
       queryKey: ['conversation', profile?.user_id],
-      queryFn: () => messageApi.getConversation()
+      queryFn: () => messageApi.getConversation(),
+      enabled: profile?.user_id != null
     })
   }
 }

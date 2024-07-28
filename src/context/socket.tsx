@@ -33,10 +33,14 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
         const newSocket = io('http://localhost:3000', {
           query: {
             user_id: profile?.user_id
-          }
+          },
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 1000
         })
         setSocket(newSocket)
         newSocket.on('getOnlineUsers', (users: any) => {
+          console.log('getOnlineUsers', users)
           setOnlineUsers(users)
         })
       }

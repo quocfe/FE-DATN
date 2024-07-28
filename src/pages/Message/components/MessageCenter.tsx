@@ -1,27 +1,34 @@
 import { IonIcon } from '@ionic/react'
-import { useCallback, useRef, useState } from 'react'
-import { useSocketContext } from '~/context/socket'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { SocketContextProvider, useSocketContext } from '~/context/socket'
 import useConversationStore from '~/store/conversation.store'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import ChatMessage from './ChatMessage'
 import PinMessage from './PinMessage'
 import SendMessage from './SendMessage'
 import ChatMessageSkelaton from './Skelaton/ChatMessageSkelaton'
+import CustomFileInput from '~/components/InputFile/CustomFileInput'
+import CallVideo from './CallVideo'
+import useMessageStore from '~/store/message.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
+import InComingCallVideo from './InComingCallVideo'
 
 function MessageCenter() {
   const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
     useConversationStore()
+  const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
   const { isLoading, data } = useQueryMessage()
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
+  const [callVideo, setCallVideo] = useState<boolean>(false)
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
+  const [file, setFile] = useState<File | null>(null)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
-
-  const [calculateHeight, setCalculateHeight] = useState<string>()
-  const [calculateNaturalHeight, setCalculateNaturalHeight] = useState<string>()
-  const { onlineUsers } = useSocketContext()
+  const { onlineUsers, socket } = useSocketContext()
+  const { setVideoCall, videoCall, setAcceptCall } = useMessageStore()
+  const [calculateHeight, setCalculateHeight] = useState<number>(204)
   const isOnline = onlineUsers.includes(infoMessage?.group_id)
 
   const handleScroll = useCallback(() => {
@@ -32,25 +39,49 @@ function MessageCenter() {
     }
   }, [])
 
-  // useEffect(() => {
-  //   if (toggleBoxReply || togglePreviewBox) {
-  //     let height = 0
+  const handleClickVideoCall = () => {
+    const dataToSocket = {
+      group_message_id: selectedConversation?.group_id,
+      user_id: user_id,
+      room_id: `123${Date.now()}`,
+      group_name: selectedConversation.type === 1 ? first_name + ' ' + last_name : infoMessage?.group_name,
+      avatar: selectedConversation.type === 1 ? Profile.profile_picture : infoMessage?.avatar
+    }
+    const dataVideoCall = {
+      group_message_id: selectedConversation?.group_id,
+      group_name: infoMessage?.group_name,
+      avatar: infoMessage?.avatar,
+      user_id: selectedConversation?.id
+    }
 
-  //     if (boxReplyRef.current) {
-  //       height = boxReplyRef.current.getBoundingClientRect().height
-  //     }
+    setAcceptCall(false)
+    setCallVideo(true)
+    setVideoCall(dataVideoCall as {})
 
-  //     if (previewUploadRef.current) {
-  //       height += previewUploadRef.current.getBoundingClientRect().height
-  //     }
+    socket?.emit('callVideo', dataToSocket)
+  }
 
-  //     setCalculateHeight(height.toString())
-  //     setCalculateNaturalHeight('204')
-  //   } else {
-  //     setCalculateHeight('204')
-  //     setCalculateNaturalHeight('195')
-  //   }
-  // }, [toggleBoxReply, togglePreviewBox])
+  useLayoutEffect(() => {
+    if (toggleBoxReply || togglePreviewBox) {
+      let height = 204
+
+      if (boxReplyRef.current) {
+        height = boxReplyRef.current.getBoundingClientRect().height + 195
+      }
+
+      if (previewUploadRef.current) {
+        height = previewUploadRef.current.getBoundingClientRect().height + 200
+      }
+
+      setCalculateHeight(height)
+    } else {
+      setCalculateHeight(204)
+    }
+  }, [toggleBoxReply, togglePreviewBox])
+
+  if (videoCall && Object.keys(videoCall).length > 0) {
+    return <CallVideo />
+  }
 
   if (isLoading) {
     return <ChatMessageSkelaton />
@@ -65,7 +96,10 @@ function MessageCenter() {
           <button type='button' className='md:hidden' uk-toggle='target: #side-chat ; cls: max-md:-translate-x-full'>
             <IonIcon icon='chevron-back-outline' className='-ml-4 text-2xl' />
           </button>
-          <div className='relative cursor-pointer max-md:hidden' uk-toggle='target: .rightt ; cls: hidden'>
+          <div
+            className='relative flex-shrink-0 cursor-pointer max-md:hidden'
+            uk-toggle='target: .rightt ; cls: hidden'
+          >
             <img src={infoMessage?.avatar} className='h-8 w-8 rounded-full object-cover shadow' />
             {isOnline && <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />}
           </div>
@@ -78,6 +112,7 @@ function MessageCenter() {
           </div>
         </div>
         <div className='flex items-center gap-2'>
+          {/* Voice call */}
           <button type='button' className='button__ico'>
             <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' className='h-6 w-6'>
               <path
@@ -87,7 +122,8 @@ function MessageCenter() {
               />
             </svg>
           </button>
-          <button type='button' className='rounded-full p-1.5 hover:bg-slate-100'>
+          {/* Video call */}
+          <button onClick={handleClickVideoCall} type='button' className='rounded-full p-1.5 hover:bg-slate-100'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -102,6 +138,7 @@ function MessageCenter() {
               />
             </svg>
           </button>
+          {/* search msg */}
           <button
             onClick={() => setToggleBoxSearchMessage(true)}
             type='button'
@@ -109,6 +146,7 @@ function MessageCenter() {
           >
             <IonIcon icon='search-outline' className='h-6 w-6' />
           </button>
+          {/* option msg */}
           <button
             type='button'
             className='rounded-full p-1.5 hover:bg-slate-100'
@@ -135,14 +173,20 @@ function MessageCenter() {
       </div>
 
       {/* chats bubble */}
-      <div
-        ref={chatMessageRef}
-        onScroll={handleScroll}
-        className={`h-[calc(100vh-195px)] w-full overflow-y-auto p-5 pb-4 pt-10 md:h-[calc(100vh-204px)] 
+      <CustomFileInput setPreview={() => {}} type={3} setFile={setFile} file={file}>
+        <div
+          style={{
+            height: `calc(100vh - ${calculateHeight}px)`
+          }}
+          ref={chatMessageRef}
+          onScroll={handleScroll}
+          className={`w-full overflow-y-auto p-5  pb-4 pt-10 
         `}
-      >
-        <ChatMessage showScrollBtn={showScrollBtn} isAtBottom={isAtBottom} />
-      </div>
+          //  md:h-[calc(100vh-204px)]
+        >
+          <ChatMessage showScrollBtn={showScrollBtn} isAtBottom={isAtBottom} />
+        </div>
+      </CustomFileInput>
       {/* sending message area */}
       <SendMessage boxReplyRef={boxReplyRef} previewUploadRef={previewUploadRef} />
     </div>

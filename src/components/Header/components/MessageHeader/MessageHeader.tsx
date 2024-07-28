@@ -1,13 +1,41 @@
 import { IonIcon } from '@ionic/react'
-import { useQueryConversation } from '~/pages/Message/hooks/useQueryConversation'
-import { checkBodyMessage } from '~/pages/Message/utils/checkBodyMessage'
-import useConversationStore from '~/store/conversation.store'
-import { calculateTimeAgo } from '~/utils/helpers'
+import _ from 'lodash'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
+import { useSocketContext } from '~/context/socket'
+import useMutaionSearchFriendAndGrMsg from '~/pages/Message/hooks/useMutationSearchFriendAndGrMsg'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
+import Conversation from './ConversationHeader'
 
 function MessageHeader() {
-  const { data, isLoading } = useQueryConversation()
+  // const { data, isLoading } = useQueryConversation()
+  const { data, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useQueryInfinifyConversation()
+  const { onlineUsers } = useSocketContext()
+  const { ref, inView } = useInView()
+  const inputSearchRef = useRef<HTMLInputElement>(null)
+  const searchMutation = useMutaionSearchFriendAndGrMsg()
+  const [resultSearch, setResultSearch] = useState<any>([])
 
-  const { setSelectedConversation } = useConversationStore()
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, isFetchingNextPage])
+
+  const handleSearch = useCallback(
+    _.debounce((query: string) => {
+      searchMutation.mutate(query, {
+        onSuccess: (data: any) => {
+          setResultSearch(data)
+        },
+        onError: () => {
+          setResultSearch([])
+        }
+      })
+    }, 500),
+    [searchMutation]
+  )
+
   return (
     <>
       <button
@@ -51,7 +79,13 @@ function MessageHeader() {
           </div>
         </div>
         <div className='relative w-full p-2 px-3 '>
-          <input type='text' className='w-full !rounded-lg !pl-10 dark:!bg-white/10' placeholder='Search' />
+          <input
+            type='text'
+            placeholder='Bạn bè, nhóm...'
+            ref={inputSearchRef}
+            className=' w-full !py-2 !pl-10 !outline-0 '
+            onChange={(e) => handleSearch(e.target.value)}
+          />{' '}
           <IonIcon
             icon='search-outline'
             className='md hydrated absolute left-7 top-1/2 -translate-y-1/2 dark:text-white'
@@ -61,36 +95,14 @@ function MessageHeader() {
         </div>
         <div className='h-80 overflow-y-auto pr-2'>
           <div className='p-2 pr-1 pt-0 dark:text-white/80'>
-            {/* {data?.pages.map((conversations: ConvesationSideBar[]) =>
-              conversations.map((item: ConvesationSideBar, index: number) => (
-                <a
-                  key={index}
-                  onClick={() => setSelectedConversation(item)}
-                  href='#!'
-                  className='relative flex items-center gap-4 p-2 py-3 duration-200 rounded-lg hover:bg-secondery dark:hover:bg-white/10'
-                >
-                  <div className='relative w-10 h-10 shrink-0'>
-                    <img
-                      src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
-                      alt=''
-                      className='object-cover w-full h-full rounded-full'
-                    />
-                  </div>
-                  <div className='flex-1 min-w-0'>
-                    <div className='flex items-center gap-2 mb-1'>
-                      <div className='mr-auto text-sm font-medium text-black dark:text-white'>{item.group_name}</div>
-                      <div className='text-xs text-gray-500 dark:text-white/80'>
-                        {item?.messages?.createdAt && calculateTimeAgo(item.messages.createdAt)}
-                      </div>
-                      <div className='h-2.5 w-2.5 rounded-full bg-blue-600 dark:bg-slate-700' />
-                    </div>
-                    <div className='overflow-hidden text-xs font-normal text-ellipsis whitespace-nowrap'>
-                      {item?.messages?.body && checkBodyMessage(item?.messages?.body)}
-                    </div>
-                  </div>
-                </a>
-              ))
-            )} */}
+            {data?.pages.flat().map((conversation: ConvesationSideBar, index: number) => {
+              const isOnline = onlineUsers.includes(conversation.user_id)
+              if (index === data.pages.flat().length - 1) {
+                return <Conversation innerRef={ref} key={index} item={conversation} isOnline={isOnline} />
+              } else {
+                return <Conversation key={index} item={conversation} isOnline={isOnline} />
+              }
+            })}
           </div>
         </div>
         {/* footer */}

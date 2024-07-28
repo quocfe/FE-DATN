@@ -4,7 +4,7 @@ import useConversationStore from '~/store/conversation.store'
 
 export const useQueryMembers = () => {
   const { selectedConversation } = useConversationStore()
-  const id = selectedConversation.type === 2 ? selectedConversation.id : ''
+  const id = selectedConversation.type === 2 ? selectedConversation.id : null
 
   return useQuery({
     queryKey: ['memmbers', id],

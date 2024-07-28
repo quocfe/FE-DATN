@@ -16,6 +16,7 @@ import { useQueryConversation } from '../hooks/useQueryConversation'
 import { fetchConversation } from '../utils/fetchInfiniteConversation'
 import useMutaionSearchFriendAndGrMsg from '../hooks/useMutationSearchFriendAndGrMsg'
 import _ from 'lodash'
+import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
 
 const SideBarMessage = () => {
   useNotifyMessageSocket()
@@ -68,14 +69,7 @@ const SideBarMessage = () => {
     }
   }
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['conversations'],
-    queryFn: fetchConversation,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage && lastPage.length === 10 ? allPages.length + 1 : undefined
-    }
-  })
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useQueryInfinifyConversation()
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -107,15 +101,12 @@ const SideBarMessage = () => {
               >
                 <nav>
                   <a href='#'>
-                    {' '}
                     <IonIcon className='-ml-1 shrink-0 text-2xl' icon='checkmark-outline' /> Mark all as read{' '}
                   </a>
                   <a href='#'>
-                    {' '}
                     <IonIcon className='-ml-1 shrink-0 text-2xl' icon='notifications-outline' /> notifications setting{' '}
                   </a>
                   <a href='#'>
-                    {' '}
                     <IonIcon className='-ml-1 shrink-0 text-xl' icon='volume-mute-outline' /> Mute notifications{' '}
                   </a>
                 </nav>
@@ -152,7 +143,7 @@ const SideBarMessage = () => {
               </div>
               <input
                 type='text'
-                placeholder='Tìm kiếm'
+                placeholder='Bạn bè, nhóm...'
                 ref={inputSearchRef}
                 className=' w-full !py-2 !pl-10 !outline-0 '
                 onChange={(e) => handleSearch(e.target.value)}

@@ -5,7 +5,8 @@ import userApi from '~/apis/user.api'
 function useQueryNotifyMessage() {
   return useQuery({
     queryKey: ['notify_message'],
-    queryFn: () => notifyMessageApi.getAllNotify()
+    queryFn: () => notifyMessageApi.getAllNotify(),
+    staleTime: Infinity
   })
 }
 

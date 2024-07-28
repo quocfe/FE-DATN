@@ -16,10 +16,9 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const [querySearch, setQuerySearch] = useState<string>('')
   const [file, setFile] = useState<File | null>(null)
   const createMessageMutation = useMutationCreateMessage()
-  const { refetch } = useQueryConversation()
+  const { data, refetch } = useQueryConversation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { upload } = useFileUpload()
-
   const handleCreate = async () => {
     let dataGroup = {
       list_user: JSON.stringify(listUser),
@@ -61,7 +60,13 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
           </div>
           <div className='p-6 py-0'>
             <div className='mb-4 flex w-full gap-2'>
-              <CustomFileInput type={1} iconName={'image-outline'} setFile={setFile} file={file} />
+              <CustomFileInput
+                setPreview={() => {}}
+                type={1}
+                iconName={'image-outline'}
+                setFile={setFile}
+                file={file}
+              />
               <div
                 className={` relative z-0 w-full transform border-0 border-b-2 duration-300 ${groupName.length < 50 ? '!border-gray-600 ' : '! !border-red-500'}`}
               >

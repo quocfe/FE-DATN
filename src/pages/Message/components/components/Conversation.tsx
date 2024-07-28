@@ -1,19 +1,19 @@
 import { IonIcon } from '@ionic/react'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useLayoutEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationDeleteMessage from '../../hooks/useMutationDeleteGroup'
-import { useQueryConversation } from '../../hooks/useQueryConversation'
-import { useQueryMessage } from '../../hooks/useQueryMessage'
 import { checkBodyMessage } from '../../utils/checkBodyMessage'
-import TimeAgo from './TimeAgo'
-import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchConversation } from '../../utils/fetchInfiniteConversation'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
+import TimeAgo from './TimeAgo'
+import { useQueryInfinifyConversation } from '../../hooks/useQueryInfinifyConversation'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
@@ -26,14 +26,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const { setSelectedConversation, selectedConversation } = useConversationStore()
   const deleteNotify = useMutationDeleteNotify()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
-  const { data, refetch } = useInfiniteQuery({
-    queryKey: ['conversations'],
-    queryFn: fetchConversation,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length ? allPages.length + 1 : undefined
-    }
-  })
+  const { data, refetch } = useQueryInfinifyConversation()
   const deleteConversatonMuation = useMutationDeleteMessage()
   const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
   const { socket } = useSocketContext()
@@ -51,13 +44,13 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
   const body =
-    item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0
+    item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0 || item?.messages?.type === 6
       ? item?.messages?.body
-      : item?.messages?.sub_body && checkBodyMessage(item?.messages?.sub_body)
+      : item?.messages?.sub_body && checkBodyMessage(item?.messages?.type)
 
   const lastestNotify: any = notifyData && notifyData.at(0)
   const checkBody = lastestNotify?.type === 1 ? body : lastestNotify?.content
-
+  const message_id = item?.messages?.message_id
   const handleSelectedConversation = (item: GroupMessage) => {
     if (item.type === 1) {
       setSelectedConversation({
@@ -74,9 +67,13 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     } else {
       return body
     }
-
-    showNotify && deleteNotify.mutate(item.group_message_id)
-    socket?.emit('seenMessage', item.group_message_id)
+    const dataSeen = {
+      group_id: item.group_message_id,
+      user_id: user_id,
+      message_id: message_id
+    }
+    socket?.emit('seenMessage', JSON.stringify(dataSeen))
+    if (item.group_message_id) showNotify && deleteNotify.mutate(item.group_message_id)
   }
 
   const handleDeleteConversation = (id: string) => {
@@ -84,6 +81,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       onSuccess: () => {
         setShowDiaLogDeleteConversation(false)
         setTriggerHover(false)
+        refetchMessage()
         refetch()
         const item = conversationNoNotification && conversationNoNotification[0]
         if (item && Object.keys(selectedConversation).length) {
@@ -91,7 +89,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
         }
       },
       onError: () => {
-        console.log('xóa thất bại')
+        toast.warning('Đã xảy ra lỗi')
       }
     })
   }
@@ -210,7 +208,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
                   onClose={() => setShowDiaLogDeleteConversation(false)}
                   type='warning'
                   title='Xóa cuộc trò chuyện'
-                  description='Bạn không thể hoàn tác sau khi xóa bản sao của cuộc trò chuyện này.'
+                  description='Bạn không thể xem lại tin nhắn sau khi xóa cuộc hội thoại này!.'
                   textBtn='Xóa'
                   callback={() => handleDeleteConversation(item?.group_message_id)}
                 />

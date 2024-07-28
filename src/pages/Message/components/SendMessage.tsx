@@ -12,6 +12,9 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
 import IsTyping from './components/IsTyping'
 import EmojiBox from './EmojiBox'
+import ModalRecordMessage from './RecordMessage'
+import RecordMessage from './RecordMessage'
+import useMessageStore from '~/store/message.store'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -19,12 +22,12 @@ type SendMessageType = {
 }
 
 function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
-  const { refetch, data } = useQueryMessage()
+  const { data } = useQueryMessage()
+  const [openRecordMessage, setOpenRecordMessage] = useState<boolean>(false)
   const receiverID = data?.data?.data?.info?.group_id
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const deleteNotify = useMutationDeleteNotify()
-
   const sendMedia = useMutationSendMessageAttach()
   const { upload } = useFileUpload()
   const { socket } = useSocketContext()
@@ -40,6 +43,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     setPreviewImg,
     previewImg
   } = useConversationStore()
+  const { setLoadingMessage } = useMessageStore()
   let groupID = selectedConversation?.group_id
 
   const profile = getProfileFromLocalStorage()
@@ -75,7 +79,6 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
       }
 
       setValues('')
-      refetch()
     } catch (error) {
       toast.error('Error sending message', { position: 'top-right', autoClose: 5000 })
     }
@@ -93,7 +96,6 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
 
       await (toggleBoxReply ? replyMessageMutation.mutateAsync(likeData) : sendMessageMutation.mutateAsync(likeData))
       setValues('')
-      refetch()
       setToggleBoxReply(null)
     } catch (error) {
       toast.error('Error sending like', { position: 'top-right', autoClose: 5000 })
@@ -105,16 +107,27 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   }, [])
 
   const handleFileUpload = useCallback(async () => {
-    if (file) {
+    let fileTepm = file != null ? file : previewImg
+
+    if (fileTepm) {
+      console.log('running fl')
       try {
-        // setPreview(null)
-        const url = await upload(file)
+        const url = await upload(fileTepm)
+
         const mediaData = {
           body: `${url.original_filename}.${url.url.split('.').pop()}`,
           sub_body: url.url,
           receiver: receiverID,
           group_message_id: groupID,
-          type: url.resource_type === 'raw' ? 3 : url.resource_type === 'video' ? 4 : 2
+          type: 0
+        }
+
+        if (url.resource_type === 'raw' || url.format === 'pdf') {
+          mediaData.type = 3
+        } else if (url.resource_type === 'video') {
+          mediaData.type = 4
+        } else {
+          mediaData.type = 2
         }
 
         await sendMedia.mutateAsync(mediaData)
@@ -122,7 +135,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         console.log(error)
       }
     }
-  }, [file, groupID, receiverID])
+  }, [file, groupID, receiverID, previewImg])
 
   const typeBodyReply = useCallback(() => {
     switch (toggleBoxReply?.type) {
@@ -146,7 +159,40 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     preview && setTogglePreviewBox(true)
   }, [preview])
 
-  console.log('preview', preview)
+  useEffect(() => {
+    setPreview(previewImg)
+  }, [previewImg])
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValues(e.target.value)
+
+    if (groupID) {
+      const data = { user_id: profile.user_id, groupID }
+      e.target.value === ''
+        ? socket?.emit('isNotTyping', JSON.stringify(data))
+        : socket?.emit('isTyping', JSON.stringify(data))
+    }
+    // const dataSeen = {
+    //   group_id:groupID,
+    //   user_id: profile.user_id,
+    //   message_id: message_id
+    // }
+    // socket?.emit('seenMessage', JSON.stringify(dataSeen))
+  }
+
+  const handleOnFocus = () => {
+    const data = { user_id: profile.user_id, groupID }
+    const dataSeen = {
+      group_id: groupID,
+      user_id: profile.user_id
+    }
+    if (groupID) {
+      socket?.emit('seenMessage', JSON.stringify(dataSeen))
+      socket?.emit('isTyping', JSON.stringify(data))
+      deleteNotify.mutate(groupID)
+    }
+  }
+
   return (
     <div className='relative'>
       {toggleBoxReply && (
@@ -177,7 +223,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
                 ></video>
               )}
               {preview?.type?.includes('image') && (
-                <img src={URL?.createObjectURL(preview)} className='h-[50px] w-[100px] object-cover' />
+                <img src={URL?.createObjectURL(preview)} className='h-[50px] w-[100px] object-contain' />
               )}
               {preview?.type?.includes('application') && <p className='text-sm'>{preview.path}</p>}
             </div>
@@ -197,61 +243,63 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
           <CustomFileInput
             type={2}
-            iconName={'image'}
+            iconName={'attach-outline'}
             setPreview={setPreview}
             preview={preview}
             setFile={setFile}
             file={file}
           />
           <button
-            type='button'
+            onClick={() => setOpenRecordMessage(true)}
             className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-green-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'
           >
+            <IonIcon className='flex text-2xl' icon='mic-outline' />
+          </button>
+          <button className='dark:bg-dark3 shrink-0 rounded-full border border-sky-100 bg-sky-50 p-1.5 text-green-600 shadow-sm duration-100 hover:scale-[1.15] dark:border-0'>
             <IonIcon className='flex text-2xl' icon='happy-outline' />
           </button>
           <EmojiBox onEmojiSelect={handleEmojiSelect} />
         </div>
-        <div className='relative flex-1'>
-          <textarea
-            id='body'
-            onChange={(e) => {
-              setValues(e.target.value)
-              const data = { user_id: profile.user_id, groupID }
-              e.target.value === ''
-                ? socket?.emit('isNotTyping', JSON.stringify(data))
-                : socket?.emit('isTyping', JSON.stringify(data))
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                handleSendMessage()
-              }
-            }}
-            placeholder='Write your message'
-            onFocus={() => {
-              const data = { user_id: profile.user_id, groupID }
-              socket?.emit('isTyping', JSON.stringify(data))
-              deleteNotify.mutate(groupID)
-            }}
-            onBlur={() => {
-              const data = { user_id: profile.user_id, groupID }
-              socket?.emit('isNotTyping', JSON.stringify(data))
-            }}
-            value={values}
-            rows={1}
-            className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
-          ></textarea>
-          {!values && !previewImg ? (
-            <span onClick={handleSendLike} className='absolute right-0 top-0 mr-1 shrink-0 cursor-pointer text-[25px]'>
-              👍
-            </span>
-          ) : (
-            <button onClick={handleSendMessage} className='text-dark absolute right-0 top-0 shrink-0 p-2'>
-              <IonIcon className='flex text-xl font-bold text-primary' icon='send' />
-            </button>
-          )}
-        </div>
+
+        {openRecordMessage ? (
+          <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
+        ) : (
+          <div className='relative flex-1'>
+            <textarea
+              id='body'
+              onChange={(e) => handleOnChange(e)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleSendMessage()
+                }
+              }}
+              placeholder='Write your message'
+              onFocus={handleOnFocus}
+              onBlur={() => {
+                const data = { user_id: profile.user_id, groupID }
+                socket?.emit('isNotTyping', JSON.stringify(data))
+              }}
+              value={values}
+              rows={1}
+              className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
+            ></textarea>
+            {!values && !previewImg ? (
+              <span
+                onClick={handleSendLike}
+                className='absolute right-0 top-0 mr-1 shrink-0 cursor-pointer text-[25px]'
+              >
+                👍
+              </span>
+            ) : (
+              <button onClick={handleSendMessage} className='text-dark absolute right-0 top-0 shrink-0 p-2'>
+                <IonIcon className='flex text-xl font-bold text-primary' icon='send' />
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
       <IsTyping />
     </div>
   )

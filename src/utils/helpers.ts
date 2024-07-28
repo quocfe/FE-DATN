@@ -1,3 +1,5 @@
+import { number } from 'yup'
+
 export function formatDate(dateString: string): string {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
   return new Date(dateString).toLocaleDateString('vi-VN', options)
@@ -35,4 +37,11 @@ export function calculateHoureAgo(sentAt: string): string {
   const hours = sentTime.getHours().toString().padStart(2, '0')
   const minutes = sentTime.getMinutes().toString().padStart(2, '0')
   return `${hours}:${minutes}`
+}
+
+export const formatTimeDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60) < 0 ? 0 : Math.floor(seconds / 60)
+  const secondsRemainder = Math.round(seconds) % 60 < 0 ? 0 : Math.round(seconds) % 60
+  const paddedSeconds = `0${secondsRemainder}`.slice(-2)
+  return `${minutes}:${paddedSeconds}`
 }
