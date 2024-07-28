@@ -12,17 +12,15 @@
   -Simplebar
 
 */
- 
 
 [hidden] {
   display: none !important;
 }
 
-
- /* ========================================================================
+/* ========================================================================
   On/Off Switch
  ========================================================================== */
- 
+
 .switch-button {
   position: relative;
   display: inline-block;
@@ -38,7 +36,7 @@
   top: 2px;
   left: 0;
 }
-   
+
 .switch input {
   display: none;
 }
@@ -99,15 +97,24 @@
 
 .switch-button:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 16px;
   width: 16px;
   bottom: 2px;
   left: 2px;
-  -webkit-transition: 0.4s, -webkit-box-shadow 0.3s;
-  transition: 0.4s, -webkit-box-shadow 0.3s;
-  transition: 0.4s, box-shadow 0.3s;
-  transition: 0.4s, box-shadow 0.3s, -webkit-box-shadow 0.3s;
+  -webkit-transition:
+    0.4s,
+    -webkit-box-shadow 0.3s;
+  transition:
+    0.4s,
+    -webkit-box-shadow 0.3s;
+  transition:
+    0.4s,
+    box-shadow 0.3s;
+  transition:
+    0.4s,
+    box-shadow 0.3s,
+    -webkit-box-shadow 0.3s;
   border-radius: 50px;
 }
 
@@ -116,12 +123,10 @@ input:checked + .switch-button:before {
   transform: translateX(14px);
 }
 
-
-
 /* ========================================================================
    Ripple Effect
  ========================================================================== */
- 
+
 .ripple-effect-dark {
   overflow: hidden;
   position: relative;
@@ -184,45 +189,46 @@ input:checked + .switch-button:before {
     -webkit-transform: scale(40);
     transform: scale(40);
   }
-} 
-
+}
 
 /* ========================================================================
     Component: modal
 ========================================================================== */
 .uk-modal {
   -webkit-overflow-scrolling: touch;
-  transition: opacity 0.15s linear; 
-} 
+  transition: opacity 0.15s linear;
+}
 .uk-modal-dialog {
   transition: 0.3s linear;
   transition-property: opacity, transform;
-  box-sizing: border-box; 
-} 
+  box-sizing: border-box;
+}
 
 /* ========================================================================
     Component: Slider and Slideshow
  ========================================================================== */
 /*  Prevent tab highlighting on iOS. */
-.uk-slider , .uk-slideshow { 
+.uk-slider,
+.uk-slideshow {
   -webkit-tap-highlight-color: transparent;
-} 
-.uk-slider-items , .uk-slideshow-items{ 
+}
+.uk-slider-items,
+.uk-slideshow-items {
   touch-action: pan-y;
 }
 /*  Prevent displaying the callout information on iOS.*/
-.uk-slider-items , .uk-slideshow-items { 
+.uk-slider-items,
+.uk-slideshow-items {
   -webkit-touch-callout: none;
-} 
+}
 
 /* ========================================================================
     Component: Slideshow
 ========================================================================== */
 /* Optimize animation */
-.uk-slideshow-items > * { 
+.uk-slideshow-items > * {
   will-change: transform, opacity;
-} 
-
+}
 
 /* Transform Origin
 ========================================================================== */
@@ -250,7 +256,6 @@ input:checked + .switch-button:before {
 .uk-transform-origin-bottom-right {
   transform-origin: 100% 100%;
 }
-
 
 /* ========================================================================
      Component: lightbox
@@ -375,7 +380,7 @@ input:checked + .switch-button:before {
 /* ========================================================================
      Component: Animation
    ========================================================================== */
-[class*="uk-animation-"] {
+[class*='uk-animation-'] {
   animation: 0.5s ease-out both;
 }
 /*
@@ -478,7 +483,7 @@ input:checked + .switch-button:before {
 }
 /* Toggle animation based on the State of the Parent Element
    ========================================================================== */
-.uk-animation-toggle:not(:hover):not(:focus) [class*="uk-animation-"] {
+.uk-animation-toggle:not(:hover):not(:focus) [class*='uk-animation-'] {
   animation-name: none;
 }
 /* Keyframes used by animation classes
@@ -689,24 +694,20 @@ input:checked + .switch-button:before {
    *    (Doesn't work on Surface touch devices)
    */
 :where(.uk-transition-fade),
-:where([class*="uk-transition-scale"]),
-:where([class*="uk-transition-slide"]) {
+:where([class*='uk-transition-scale']),
+:where([class*='uk-transition-slide']) {
   --uk-position-translate-x: 0;
   --uk-position-translate-y: 0;
 }
 .uk-transition-fade,
-[class*="uk-transition-scale"],
-[class*="uk-transition-slide"] {
+[class*='uk-transition-scale'],
+[class*='uk-transition-slide'] {
   --uk-translate-x: 0;
   --uk-translate-y: 0;
   --uk-scale-x: 1;
   --uk-scale-y: 1;
-  transform: translate(
-      var(--uk-position-translate-x),
-      var(--uk-position-translate-y)
-    )
-    translate(var(--uk-translate-x), var(--uk-translate-y))
-    scale(var(--uk-scale-x), var(--uk-scale-y));
+  transform: translate(var(--uk-position-translate-x), var(--uk-position-translate-y))
+    translate(var(--uk-translate-x), var(--uk-translate-y)) scale(var(--uk-scale-x), var(--uk-scale-y));
   transition: 0.3s ease-out;
   transition-property: opacity, transform, filter;
   opacity: 0;
@@ -725,7 +726,7 @@ input:checked + .switch-button:before {
     * 1. Make image rendering the same during the transition as before and after. Prefixed because of Safari.
     */
 /* 1 */
-[class*="uk-transition-scale"] {
+[class*='uk-transition-scale'] {
   -webkit-backface-visibility: hidden;
 }
 .uk-transition-scale-up {
@@ -793,10 +794,10 @@ input:checked + .switch-button:before {
   --uk-translate-x: 50px;
 }
 /* Show */
-.uk-transition-toggle:hover [class*="uk-transition-slide"],
-.uk-transition-toggle:focus [class*="uk-transition-slide"],
-.uk-transition-toggle [class*="uk-transition-slide"]:focus-within,
-.uk-transition-active.uk-active [class*="uk-transition-slide"] {
+.uk-transition-toggle:hover [class*='uk-transition-slide'],
+.uk-transition-toggle:focus [class*='uk-transition-slide'],
+.uk-transition-toggle [class*='uk-transition-slide']:focus-within,
+.uk-transition-active.uk-active [class*='uk-transition-slide'] {
   --uk-translate-x: 0;
   --uk-translate-y: 0;
   opacity: 1;
@@ -811,7 +812,6 @@ input:checked + .switch-button:before {
 .uk-transition-slow {
   transition-duration: 0.7s;
 }
-
 
 /* Simplebar */
 
@@ -950,15 +950,19 @@ input:checked + .switch-button:before {
 
 .simplebar-scrollbar:before {
   position: absolute;
-  content: "";
+  content: '';
   border-radius: 7px;
   left: 0;
   right: 0;
   opacity: 0;
   -webkit-transition: opacity 0.2s linear;
   transition: opacity 0.2s linear;
-  -webkit-transition: opacity 0.2s, background-color 0.3s;
-  transition: opacity 0.2s, background-color 0.3s;
+  -webkit-transition:
+    opacity 0.2s,
+    background-color 0.3s;
+  transition:
+    opacity 0.2s,
+    background-color 0.3s;
   background-color: #545252;
 }
 
@@ -999,7 +1003,7 @@ input:checked + .switch-button:before {
   width: auto;
 }
 
-[data-simplebar-direction="rtl"] .simplebar-track.simplebar-vertical {
+[data-simplebar-direction='rtl'] .simplebar-track.simplebar-vertical {
   right: auto;
   left: 0;
 }
@@ -1013,4 +1017,8 @@ input:checked + .switch-button:before {
   width: 500px;
   overflow-y: hidden;
   overflow-x: scroll;
+}
+
+.modal-open {
+  overflow-y: hidden !important;
 }

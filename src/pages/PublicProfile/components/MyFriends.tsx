@@ -3,11 +3,13 @@ import useQueryFriendsOfFriends from '~/hooks/queries/user/useQueryFriendsOfFrie
 import FriendItem from './FriendItem'
 import { useEffect } from 'react'
 import { ENDPOINT } from '~/constants/endpoint.constant'
+import useUserConfigParams from '~/hooks/user/useUserConfigParams'
 
 function MyFriends() {
+  const userConfigParams = useUserConfigParams()
   // Hooks
   const { user_id } = useParams()
-  const { data, refetch } = useQueryFriendsOfFriends(user_id ?? '')
+  const { data, refetch } = useQueryFriendsOfFriends(user_id ?? '', userConfigParams)
 
   useEffect(() => {
     if (user_id) {
