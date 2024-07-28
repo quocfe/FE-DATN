@@ -1,4 +1,3 @@
-import useAuthStore from '~/store/auth.store'
 import { useEffect } from 'react'
 import Navigation from './components/Navigation'
 import UserInfo from './components/UserInfo'
@@ -8,8 +7,28 @@ interface Props {
 }
 
 function Profile({ children }: Props) {
+  // const queryClient = useQueryClient()
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = async () => {
+      const scrollPosition = window.innerHeight + window.scrollY
+      const threshold = document.documentElement.scrollHeight * 0.9
+
+      if (scrollPosition >= threshold) {
+        // > 90%
+        // const data = await http.get<PostResponse>('post/my_post?_limit=1&_page=2')
+        // queryClient.setQueryData(['my_posts'], data)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   return (
