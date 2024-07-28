@@ -1,6 +1,7 @@
 import { IonIcon } from '@ionic/react'
 import PostCommentItem from './PostCommentItem'
 import { useState } from 'react'
+import classNames from 'classnames'
 
 interface Props {
   comments: PostComment[]
@@ -19,7 +20,14 @@ function PostComment({ comments, isCommentDetail = false, editComment, setEditCo
   }
 
   return (
-    <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40'>
+    <div
+      className={classNames(
+        'relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40',
+        {
+          'mb-16': isCommentDetail
+        }
+      )}
+    >
       {isCommentDetail === false ? (
         <>
           {comments.slice(0, visibleCount).map((comment) => (

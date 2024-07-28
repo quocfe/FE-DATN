@@ -40,6 +40,7 @@ function PostItem({ post, isCommentDetail = false }: Props) {
     deletePostMutation.mutate(post.post_id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['my_posts'] })
+        queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
         toast.success('Xóa bài đăng thành công')
       }
     })

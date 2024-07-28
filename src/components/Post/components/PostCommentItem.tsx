@@ -72,12 +72,7 @@ function PostCommentItem({ comment, setEditComment, isCommentDetail = false, set
         textBtn='Xóa bình luận'
         callback={handleDeletePostComment}
       />
-      <div
-        className={classNames('relative flex items-start gap-3', {
-          'pb-16': isCommentDetail
-        })}
-        id={comment.comment_id}
-      >
+      <div className={classNames('relative flex items-start gap-3')} id={comment.comment_id}>
         <a href='timeline.html'>
           <img
             src={user_comment.Profile.profile_picture}
