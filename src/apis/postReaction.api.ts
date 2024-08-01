@@ -2,6 +2,11 @@ import { POST_RECTION } from '~/constants/postReaction.constant'
 import http from '~/utils/http'
 
 class postReaction {
+  // Lấy danh sách tương tác bài đăng
+  getAllPostReactions(post_id: string) {
+    return http.get<PostReactionResponse>(`${POST_RECTION.LIST}/${post_id}`)
+  }
+
   // Tạo mới tương tác
   createInteraction(data: { post_id: string; type: string }) {
     const { post_id, type } = data

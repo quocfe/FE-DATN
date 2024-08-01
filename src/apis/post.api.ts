@@ -26,7 +26,7 @@ class PostApi {
   }
 
   // Lấy danh sách bài đăng của bạn bè và người đang gửi kết bạn
-  getAllPostFriendAndPending(_limit: number) {
+  getAllPostFriendAndPending(_limit: number = 4) {
     return http.get<PostResponse>(POST.POST_FRIEND_AND_PENDING, {
       params: {
         _limit

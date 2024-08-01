@@ -17,5 +17,6 @@ export const USER = {
   CREATE_SEARCH_HISTORY: 'user/search/history/add',
   LIST_SEARCH_HISTORIES: 'user/search/histories',
   DELETE_SEARCH_HISTORY: 'user/search/history/delete',
-  CLEAR_SEARCH_HISTORIES: 'user/search/history/clear'
+  CLEAR_SEARCH_HISTORIES: 'user/search/history/clear',
+  LIST_MEDIA_RESOURCES: 'user/list/media_resource'
 } as const

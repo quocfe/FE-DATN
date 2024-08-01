@@ -10,6 +10,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import useMutationDeletePost from '~/hooks/mutations/post/useMutationDeletePost'
 import Dialog from '~/components/Dialog'
 import { toast } from 'react-toastify'
+import useQueryPostComments from '~/hooks/queries/postComment/useQueryPostComments'
+import useQueryPostReactions from '~/hooks/queries/postReaction/useQueryPostReactions'
 
 interface Props {
   post: Post
@@ -20,13 +22,21 @@ function PostItem({ post, isCommentDetail = false }: Props) {
   const [isDeletePost, setIsDeletePost] = useState<boolean>(false)
   const [editComment, setEditComment] = useState<PostComment | null>(null)
   const [replyPostComment, setReplyPostComment] = useState<PostComment | null>(null)
+  const [replyPostCommentReply, setReplyPostCommentReply] = useState<PostCommentReply | null>(null)
   const { profile } = useAuthStore()
-  const { author, reactions, comments, media_resources, privary } = post
+  const { author, media_resources, privary } = post
 
   // React Query
   const queryClient = useQueryClient()
   const deletePostMutation = useMutationDeletePost()
+  const { data: resPostComments } = useQueryPostComments(post.post_id)
+  const { data: resPostReactions } = useQueryPostReactions(post.post_id)
 
+  // get data react query
+  const comments = resPostComments?.data.data.comments ?? []
+  const reactions = resPostReactions?.data.data.reactions ?? []
+
+  // Hiển thị chế độ bài viết
   const renderPrivary = () => {
     return privary === 'public' ? 'Công khai' : privary === 'friends' ? 'Bạn bè' : 'Chỉ mình tôi'
   }
@@ -36,6 +46,7 @@ function PostItem({ post, isCommentDetail = false }: Props) {
   const hasReacted = Boolean(userReaction)
   const userReactionType = userReaction ? userReaction.type : null
 
+  // Xóa bài viết
   const handleDeletePost = () => {
     deletePostMutation.mutate(post.post_id, {
       onSuccess: () => {
@@ -91,17 +102,19 @@ function PostItem({ post, isCommentDetail = false }: Props) {
               uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: hover'
             >
               <nav>
-                <a href='#'>
-                  <IonIcon className='shrink-0 text-xl' icon='bookmark-outline' /> Add to favorites
+                <a className='cursor-pointer'>
+                  <IonIcon className='shrink-0 text-xl' icon='document-text-outline'></IonIcon>
+                  Chỉnh sửa bài viết
                 </a>
-                <a href='#'>
-                  <IonIcon className='shrink-0 text-xl' icon='notifications-off-outline' /> Mute Notification
+                <a className='cursor-pointer'>
+                  <IonIcon className='shrink-0 text-xl' icon='code-slash-outline' /> Ghim bài viết
                 </a>
-                <a href='#'>
-                  <IonIcon className='shrink-0 text-xl' icon='flag-outline' /> Report this post
+                <a className='cursor-pointer'>
+                  <IonIcon className='shrink-0 text-xl' icon='settings-outline'></IonIcon>
+                  Chỉnh sửa đối tượng
                 </a>
-                <a href='#'>
-                  <IonIcon className='shrink-0 text-xl' icon='share-outline' /> Share your profile
+                <a className='cursor-pointer'>
+                  <IonIcon className='shrink-0 text-xl' icon='share-outline' /> Chia sẻ bài viết
                 </a>
                 <hr />
                 {profile && profile.user_id === post.user_id && (
@@ -132,6 +145,7 @@ function PostItem({ post, isCommentDetail = false }: Props) {
           comments={comments}
           isCommentDetail={isCommentDetail}
           setReplyPostComment={setReplyPostComment}
+          setReplyPostCommentReply={setReplyPostCommentReply}
         />
         <PostAddComment
           post_id={post.post_id}
@@ -140,6 +154,8 @@ function PostItem({ post, isCommentDetail = false }: Props) {
           setEditComment={setEditComment}
           replyPostComment={replyPostComment}
           setReplyPostComment={setReplyPostComment}
+          replyPostCommentReply={replyPostCommentReply}
+          setReplyPostCommentReply={setReplyPostCommentReply}
         />
       </div>
     </>

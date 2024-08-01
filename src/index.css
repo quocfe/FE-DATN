@@ -410,3 +410,23 @@
     @apply text-black dark:text-white;
   }
 }
+
+input[type='text']:focus,
+input[type='password']:focus,
+input[type='email']:focus,
+input[type='number']:focus,
+input[type='url']:focus,
+input[type='date']:focus,
+input[type='datetime-local']:focus,
+input[type='month']:focus,
+input[type='week']:focus,
+input[type='time']:focus,
+input[type='search']:focus,
+input[type='tel']:focus,
+input[type='checkbox']:focus,
+input[type='radio']:focus,
+select:focus,
+select[multiple]:focus,
+textarea:focus {
+  --tw-ring-opacity: 0;
+}

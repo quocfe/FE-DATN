@@ -3,19 +3,15 @@ import { getAccessTokenFromLocalStorage, getProfileFromLocalStorage } from '~/ut
 
 interface State {
   isCreatePost: boolean
-  limit: number
 }
 
 interface Action {
   setIsCreatePost: (value: boolean) => void
-  setLimit: (num: number) => void
 }
 
 const usePostStore = create<State & Action>((set) => ({
   isCreatePost: false,
-  limit: 2,
-  setIsCreatePost: (value: boolean) => set({ isCreatePost: value }),
-  setLimit: (num: number) => set({ limit: num })
+  setIsCreatePost: (value: boolean) => set({ isCreatePost: value })
 }))
 
 export default usePostStore
