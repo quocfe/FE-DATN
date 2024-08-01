@@ -3,8 +3,8 @@ import PostItem from './PostItem'
 import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import useQueryListUserPosts from '~/hooks/queries/post/useQueryListUserPosts'
-import usePostStore from '~/store/post.store'
 import useQueryPostsFromFriendsAndPendingRequests from '~/hooks/queries/post/useQueryListPostFriendAndPending'
+import useQueryPostComments from '~/hooks/queries/postComment/useQueryPostComments'
 
 interface Props {
   post_id: string
@@ -12,26 +12,30 @@ interface Props {
 
 function PostCommentDetail({ post_id }: Props) {
   const { pathname } = useLocation()
-  const { limit } = usePostStore()
   const { user_id } = useParams()
   // React Query
-  const { data: myPosts } = useQueryListMyPosts(limit)
-  const { data: userPosts } = useQueryListUserPosts(user_id ?? '')
-  const { data: friendAndPendingPosts } = useQueryPostsFromFriendsAndPendingRequests(limit + 2)
+  const { data: resMyPosts } = useQueryListMyPosts()
+  const { data: resUserPosts } = useQueryListUserPosts(user_id ?? '')
+  const { data: resFriendAndPendingPosts } = useQueryPostsFromFriendsAndPendingRequests()
 
   // Danh sách bài đăng
   const posts =
     user_id && pathname.includes('profile')
-      ? userPosts?.data.data.posts ?? []
+      ? resUserPosts?.data?.data?.posts ?? []
       : pathname.includes('profile')
-        ? myPosts?.data.data.posts ?? []
-        : friendAndPendingPosts?.data.data.posts ?? []
-  console.log(posts)
+        ? resMyPosts?.data?.data?.posts ?? []
+        : resFriendAndPendingPosts?.data?.data?.posts ?? []
 
-  const post = posts.find((post) => post.post_id === post_id) as Post
-  const { comments } = post
+  const post = posts.find((post) => post.post_id === post_id)
 
-  const [lastCommentId, setLastCommentId] = useState<string>(comments[0].comment_id)
+  if (!post) {
+    return <div>Post not found</div>
+  }
+
+  const { data: resPostComments } = useQueryPostComments(post_id)
+  const comments = resPostComments?.data.data.comments ?? []
+
+  const [lastCommentId, setLastCommentId] = useState<string>(comments[0]?.comment_id || '')
 
   // Xử lý scroll khi có bình luận mới
   useEffect(() => {

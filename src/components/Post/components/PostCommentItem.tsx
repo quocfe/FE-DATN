@@ -7,40 +7,50 @@ import Dialog from '~/components/Dialog'
 import useMutationDeletePostComment from '~/hooks/mutations/postComment/useMutationDeletePostComment'
 import { toast } from 'react-toastify'
 import { useQueryClient } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
 import usePostCommentStore from '~/store/postComment.store'
 import classNames from 'classnames'
+import useQueryPostCommentRepliesByCommentId from '~/hooks/queries/postCommentReply/useQueryPostCommentRepliesByCommentId'
 
 interface Props {
   comment: PostComment
   editComment: PostComment | null
   setEditComment: React.Dispatch<React.SetStateAction<PostComment | null>>
   setReplyPostComment: React.Dispatch<React.SetStateAction<PostComment | null>>
+  setReplyPostCommentReply: React.Dispatch<React.SetStateAction<PostCommentReply | null>>
   isCommentDetail?: boolean
 }
 
-function PostCommentItem({ comment, setEditComment, isCommentDetail = false, setReplyPostComment }: Props) {
-  const { user_id } = useParams()
+function PostCommentItem({
+  comment,
+  setEditComment,
+  isCommentDetail = false,
+  setReplyPostComment,
+  setReplyPostCommentReply
+}: Props) {
+  const [visibleCount, setVisibleCount] = useState<number>(2)
   const { setSelectedFile } = usePostCommentStore()
   const { profile } = useAuthStore()
   const [isOptions, setIsOption] = useState<boolean>(false)
   const [showDialogDeleteComment, setShowDialogDeleteComment] = useState<boolean>(false)
-  const { user_comment, comment_replies } = comment
+  const { user_comment } = comment
 
   // React Query
   const queryClient = useQueryClient()
+  const { data: resPostCommentReply } = useQueryPostCommentRepliesByCommentId(comment.comment_id)
   const deletePostCommentMutation = useMutationDeletePostComment()
+
+  const comment_replies = resPostCommentReply?.data.data.comment_replies ?? []
+
+  // Xử lý xem thêm trả bình luận
+  const handleShowMoreCommentReplies = () => {
+    setVisibleCount((prevCount) => prevCount + 2)
+  }
 
   // Xóa bình luận bài đăng
   const handleDeletePostComment = () => {
     deletePostCommentMutation.mutate(comment.comment_id, {
       onSuccess: () => {
-        if (user_id) {
-          queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-        } else {
-          queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-        }
-        queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+        queryClient.invalidateQueries({ queryKey: ['post_comments', { post_id: comment.post_id }] })
         toast.success('Xóa bình luận thành công')
         setIsOption(false)
       }
@@ -50,14 +60,16 @@ function PostCommentItem({ comment, setEditComment, isCommentDetail = false, set
   // Chỉnh sửa bình luận bài đăng
   const handleEditPostComment = () => {
     setSelectedFile(null)
+    setReplyPostComment(null)
+    setReplyPostCommentReply(null)
     setEditComment(comment)
-    setReplyPostComment(comment)
   }
 
   // Phản hồi bình luận bài đăng
   const handleReylyPostComment = () => {
     setSelectedFile(null)
     setEditComment(null)
+    setReplyPostCommentReply(null)
     setReplyPostComment(comment)
   }
 
@@ -128,10 +140,10 @@ function PostCommentItem({ comment, setEditComment, isCommentDetail = false, set
               </div>
             )}
           </div>
-          <div className='mt-2 flex gap-3'>
+          <div className='mb-2 mt-2 flex gap-3'>
             <div className='cursor-pointer'>{calculateTimeAgo(comment.createdAt)}</div>
             <div className='cursor-pointer'>Thích</div>
-            <div className='cursor-pointer' onClick={handleReylyPostComment}>
+            <div className='cursor-pointer hover:text-primary' onClick={handleReylyPostComment}>
               Phản hồi
             </div>
           </div>
@@ -139,11 +151,18 @@ function PostCommentItem({ comment, setEditComment, isCommentDetail = false, set
           <div className='ml-1.5 mt-2'>
             {isCommentDetail === false ? (
               <>
-                {comment_replies.slice(0, 1).map((comment_reply) => (
-                  <PostCommentReplyItem key={comment_reply.comment_reply_id} comment_reply={comment_reply} />
+                {comment_replies.slice(0, visibleCount).map((comment_reply) => (
+                  <PostCommentReplyItem
+                    key={comment_reply.comment_reply_id}
+                    comment_reply={comment_reply}
+                    setReplyPostCommentReply={setReplyPostCommentReply}
+                    setEditComment={setEditComment}
+                    setReplyPostComment={setReplyPostComment}
+                  />
                 ))}
-                {comment_replies.length - 1 > 0 && (
+                {comment_replies.length - visibleCount > 0 && (
                   <button
+                    onClick={handleShowMoreCommentReplies}
                     type='button'
                     className='ml-8 mt-2 flex items-center gap-1.5 text-gray-500 hover:text-blue-500'
                   >
@@ -151,14 +170,20 @@ function PostCommentItem({ comment, setEditComment, isCommentDetail = false, set
                       icon='chevron-down-outline'
                       className='ml-auto duration-200 group-aria-expanded:rotate-180'
                     />
-                    Xem thêm {comment_replies.length - 1} bình luận khác
+                    Xem thêm {comment_replies.length - visibleCount} bình luận khác
                   </button>
                 )}
               </>
             ) : (
               <>
                 {comment_replies.map((comment_reply) => (
-                  <PostCommentReplyItem key={comment_reply.comment_reply_id} comment_reply={comment_reply} />
+                  <PostCommentReplyItem
+                    key={comment_reply.comment_reply_id}
+                    comment_reply={comment_reply}
+                    setReplyPostCommentReply={setReplyPostCommentReply}
+                    setEditComment={setEditComment}
+                    setReplyPostComment={setReplyPostComment}
+                  />
                 ))}
               </>
             )}

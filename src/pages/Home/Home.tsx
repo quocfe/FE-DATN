@@ -5,20 +5,54 @@ import useQueryPostsFromFriendsAndPendingRequests from '~/hooks/queries/post/use
 import { useCallback, useEffect, useState } from 'react'
 import { debounce } from 'lodash'
 import http from '~/utils/http'
-import usePostStore from '~/store/post.store'
+import { useQueryClient } from '@tanstack/react-query'
+import { AxiosResponse } from 'axios'
 
 function Home() {
-  const { limit, setLimit } = usePostStore()
-  const { data } = useQueryPostsFromFriendsAndPendingRequests(limit + 2)
-
+  const [page, setPage] = useState<number>(1)
+  const queryClient = useQueryClient()
+  const { data } = useQueryPostsFromFriendsAndPendingRequests()
   const pages = data?.data.data.pages ?? 0
   const total = data?.data.data.total ?? 0
 
-  useEffect(() => {}, [limit])
+  useEffect(() => {
+    if (page > pages) {
+      return
+    } else if (page === 1 && data) {
+      queryClient.setQueryData(['posts_from_friends_and_pending_requests'], data)
+    } else if (page > 1) {
+      async function getPost() {
+        const response = await http.get('post/post_friend_and_pending', {
+          params: {
+            _limit: 4,
+            _page: page
+          }
+        })
+
+        const newPosts = response.data.data.posts
+        queryClient.setQueryData(
+          ['posts_from_friends_and_pending_requests'],
+          (oldData: AxiosResponse<PostResponse, any> | undefined) => {
+            return {
+              ...oldData,
+              data: {
+                ...oldData?.data,
+                data: {
+                  ...oldData?.data.data,
+                  posts: [...(oldData?.data.data.posts ?? []), ...newPosts]
+                }
+              }
+            }
+          }
+        )
+      }
+      getPost()
+    }
+  }, [page, pages])
 
   const handlePanigationPage = () => {
-    if (limit < total) {
-      setLimit(limit + 4)
+    if (page < pages) {
+      setPage(page + 1)
     }
   }
 
@@ -29,7 +63,7 @@ function Home() {
         handlePanigationPage()
       }
     }, 850),
-    [limit, total]
+    [page, pages]
   )
 
   useEffect(() => {
@@ -196,7 +230,7 @@ function Home() {
         </div>
         {/* Bài đăng */}
         <Post posts={posts} />
-        {limit < total && (
+        {pages > 1 && page < pages && posts.length < total && (
           <div className='pagination mt-5 flex justify-center pb-5'>
             <a
               className='inline-block cursor-pointer text-center text-sm hover:text-primary'

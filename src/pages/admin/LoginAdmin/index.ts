@@ -1,3 +1,3 @@
-import LoginAdmin from './Login'
+import LoginAdmin from './LoginAdmin'
 
 export default LoginAdmin

@@ -9,10 +9,18 @@ interface Props {
   editComment: PostComment | null
   setEditComment: React.Dispatch<React.SetStateAction<PostComment | null>>
   setReplyPostComment: React.Dispatch<React.SetStateAction<PostComment | null>>
+  setReplyPostCommentReply: React.Dispatch<React.SetStateAction<PostCommentReply | null>>
 }
 
-function PostComment({ comments, isCommentDetail = false, editComment, setEditComment, setReplyPostComment }: Props) {
-  const [visibleCount, setVisibleCount] = useState(2)
+function PostComment({
+  comments,
+  isCommentDetail = false,
+  editComment,
+  setEditComment,
+  setReplyPostComment,
+  setReplyPostCommentReply
+}: Props) {
+  const [visibleCount, setVisibleCount] = useState<number>(2)
 
   // Xử lý xem thêm bình luận
   const handleShowMoreComments = () => {
@@ -37,6 +45,7 @@ function PostComment({ comments, isCommentDetail = false, editComment, setEditCo
               editComment={editComment}
               setEditComment={setEditComment}
               setReplyPostComment={setReplyPostComment}
+              setReplyPostCommentReply={setReplyPostCommentReply}
             />
           ))}
           {comments.length === 0 ? (
@@ -64,6 +73,7 @@ function PostComment({ comments, isCommentDetail = false, editComment, setEditCo
               isCommentDetail={isCommentDetail}
               setEditComment={setEditComment}
               setReplyPostComment={setReplyPostComment}
+              setReplyPostCommentReply={setReplyPostCommentReply}
             />
           ))}
           {comments.length === 0 && <div className='text-center'>Chưa có bình luận nào cho bài đăng này</div>}

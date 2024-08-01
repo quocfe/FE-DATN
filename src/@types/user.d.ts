@@ -2,6 +2,8 @@ interface BaseUser {
   user_id: string
   first_name: string
   last_name: string
+  profile_picture?: string
+  username?: string
 }
 
 interface BaseProfile {
@@ -12,6 +14,12 @@ interface BaseProfile {
 type User = BaseUser & {
   email: string
   gender: number
+  role?: {
+    role_id: string
+    name: string
+    description: string
+  }
+  modules: ?ModulePermission[]
 }
 
 type Profile = BaseProfile & {

@@ -4,3 +4,7 @@ type PostMediaResource = {
   media_url: string
   media_type: string
 }
+
+type MediaResourceResponse = SuccessResponse<{
+  media_resources: PostMediaResource[]
+}>

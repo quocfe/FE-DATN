@@ -39,12 +39,7 @@ function PostIcon({ post_id, reactions, commentCount, hasReacted, userReactionTy
   const handleCancelReaction = () => {
     cancelPostReactionMutation.mutate(post_id, {
       onSuccess: () => {
-        if (user_id) {
-          queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-        } else {
-          queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-        }
-        queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+        queryClient.invalidateQueries({ queryKey: ['post_reactions', { post_id }] })
       }
     })
   }
@@ -112,12 +107,7 @@ function PostIcon({ post_id, reactions, commentCount, hasReacted, userReactionTy
         { post_id, type },
         {
           onSuccess: () => {
-            if (user_id) {
-              queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-            } else {
-              queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-            }
-            queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+            queryClient.invalidateQueries({ queryKey: ['post_reactions', { post_id }] })
           }
         }
       )
@@ -126,12 +116,7 @@ function PostIcon({ post_id, reactions, commentCount, hasReacted, userReactionTy
         { post_id, type },
         {
           onSuccess: () => {
-            if (user_id) {
-              queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-            } else {
-              queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-            }
-            queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+            queryClient.invalidateQueries({ queryKey: ['post_reactions', { post_id }] })
           }
         }
       )

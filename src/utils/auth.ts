@@ -1,3 +1,7 @@
+export const setTypeLoginToLocalStorage = (type: 'client' | 'admin') => {
+  localStorage.setItem('type', type)
+}
+
 export const setAccessTokenLocalToStorage = (access_token: string) => {
   localStorage.setItem('access_token', access_token)
 }
@@ -21,6 +25,10 @@ export const setProfileLocalStorage = (profile: UserProfile) => {
 export const getProfileFromLocalStorage = () => {
   const profile = localStorage.getItem('profile')
   return profile ? JSON.parse(profile) : null
+}
+
+export const getTypeLoginFromLocalStorage = () => {
+  return localStorage.getItem('type') || ''
 }
 
 export const clearLocalStorage = () => {

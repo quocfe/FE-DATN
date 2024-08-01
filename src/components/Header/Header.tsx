@@ -433,7 +433,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src={profile?.Profile.profile_picture}
+                          src={profile?.Profile?.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -493,7 +493,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src={profile?.Profile.profile_picture}
+                          src={profile?.Profile?.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -592,7 +592,7 @@ function Header() {
                     >
                       <div className='relative h-10 w-10 shrink-0'>
                         <img
-                          src={profile?.Profile.profile_picture}
+                          src={profile?.Profile?.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -732,7 +732,7 @@ function Header() {
                 aria-expanded='false'
               >
                 <img
-                  src={profile?.Profile.profile_picture}
+                  src={profile?.Profile?.profile_picture}
                   alt=''
                   className='h-7 w-7 shrink-0 rounded-full object-cover shadow sm:h-9 sm:w-9'
                 />
@@ -745,7 +745,7 @@ function Header() {
                 <Link to={'/profile'}>
                   <div className='flex items-center gap-4 p-4 py-5'>
                     <img
-                      src={profile?.Profile.profile_picture}
+                      src={profile?.Profile?.profile_picture}
                       alt=''
                       className='h-10 w-10 rounded-full object-cover shadow'
                     />
@@ -882,7 +882,7 @@ function Header() {
               </div>
               <div className='flex hidden items-center gap-2'>
                 <img
-                  src={profile?.Profile.profile_picture}
+                  src={profile?.Profile?.profile_picture}
                   alt=''
                   className='h-9 w-9 rounded-full object-cover shadow'
                 />

@@ -4,17 +4,56 @@ import Post from '~/components/Post'
 import Modal from '~/components/Modal'
 import CreatePost from '~/components/CreatePost'
 import usePostStore from '~/store/post.store'
+import http from '~/utils/http'
 import { debounce } from 'lodash'
+import { useQueryClient } from '@tanstack/react-query'
+import { AxiosResponse } from 'axios'
 
 function FeedStory() {
-  const { isCreatePost, limit, setIsCreatePost, setLimit } = usePostStore()
+  const { isCreatePost, setIsCreatePost } = usePostStore()
+  const [page, setPage] = useState<number>(1)
+
   // React Query
-  const { data } = useQueryListMyPosts(limit)
+  const queryClient = useQueryClient()
+  const { data } = useQueryListMyPosts()
+  const pages = data?.data.data.pages ?? 0
   const total = data?.data.data.total ?? 0
 
+  useEffect(() => {
+    if (page > pages) {
+      return
+    } else if (page === 1 && data) {
+      queryClient.setQueryData(['my_posts'], data)
+    } else if (page > 1) {
+      async function getPost() {
+        const response = await http.get('post/my_post', {
+          params: {
+            _limit: 2,
+            _page: page
+          }
+        })
+
+        const newPosts = response.data.data.posts
+        queryClient.setQueryData(['my_posts'], (oldData: AxiosResponse<PostResponse, any> | undefined) => {
+          return {
+            ...oldData,
+            data: {
+              ...oldData?.data,
+              data: {
+                ...oldData?.data.data,
+                posts: [...(oldData?.data.data.posts ?? []), ...newPosts]
+              }
+            }
+          }
+        })
+      }
+      getPost()
+    }
+  }, [page, pages])
+
   const handlePanigationPage = () => {
-    if (limit < total) {
-      setLimit(limit + 2)
+    if (page < pages) {
+      setPage(page + 1)
     }
   }
 
@@ -25,7 +64,7 @@ function FeedStory() {
         handlePanigationPage()
       }
     }, 850),
-    [limit, total]
+    [page, pages]
   )
 
   useEffect(() => {
@@ -90,7 +129,7 @@ function FeedStory() {
 
       {/* Danh sách bài viết  */}
       <Post posts={posts} />
-      {limit < total && (
+      {pages > 1 && page < pages && posts.length < total && (
         <div className='pagination flex justify-center pb-5'>
           <a
             className='inline-block cursor-pointer text-center text-sm hover:text-primary'

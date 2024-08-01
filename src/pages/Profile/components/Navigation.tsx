@@ -59,9 +59,14 @@ function Navigation() {
         >
           Bạn bè
         </Link>
-        <a href='#' className='inline-block px-3.5 py-3 leading-8'>
+        <Link
+          to={'/profile/media_resource'}
+          className={classNames('inline-block px-3.5 py-3 leading-8', {
+            'border-b-2 border-blue-600 text-blue-600': pathname === '/profile/media_resource'
+          })}
+        >
           Hình ảnh
-        </a>
+        </Link>
         <a href='#' className='inline-block px-3.5 py-3 leading-8'>
           Video
         </a>
