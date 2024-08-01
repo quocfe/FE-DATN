@@ -2,20 +2,20 @@ import { IonIcon } from '@ionic/react'
 import { useQueryClient } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import useMutationAddPostComment from '~/hooks/mutations/postComment/useMutationAddPostComment'
 import useMutationUpdatePostComment from '~/hooks/mutations/postComment/useMutationUpdatePostComment'
 import useMutationAddPostCommentReply from '~/hooks/mutations/postCommentReply/useMutationAddPostCommentReply'
 import useAuthStore from '~/store/auth.store'
-import usePostCommentStore from '~/store/postComment.store'
 
 interface Props {
   post_id: string
   isCommentDetail?: boolean
   editComment: PostComment | null
   replyPostComment: PostComment | null
+  replyPostCommentReply: PostCommentReply | null
   setEditComment: React.Dispatch<React.SetStateAction<PostComment | null>>
   setReplyPostComment: React.Dispatch<React.SetStateAction<PostComment | null>>
+  setReplyPostCommentReply: React.Dispatch<React.SetStateAction<PostCommentReply | null>>
 }
 
 function PostAddComment({
@@ -24,29 +24,34 @@ function PostAddComment({
   editComment,
   setEditComment,
   replyPostComment,
-  setReplyPostComment
+  setReplyPostComment,
+  replyPostCommentReply,
+  setReplyPostCommentReply
 }: Props) {
   const [content, setContent] = useState<string>('')
-  const { user_id } = useParams()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { profile } = useAuthStore()
   const inputMediaRef = useRef<HTMLInputElement | null>(null)
 
   // React Query
   const addPostCommentMutation = useMutationAddPostComment()
-  const updatePostCommentMutation = useMutationUpdatePostComment()
   const addPostCommentReplyMutation = useMutationAddPostCommentReply()
+  const updatePostCommentMutation = useMutationUpdatePostComment()
   const queryClient = useQueryClient()
 
   useEffect(() => {
     if (replyPostComment) {
       setContent(`@ ${replyPostComment.user_comment.last_name} ${replyPostComment.user_comment.first_name} `)
     }
+    if (replyPostCommentReply) {
+      setContent(`@ ${replyPostCommentReply.user_reply.last_name} ${replyPostCommentReply.user_reply.first_name} `)
+    }
     if (editComment) {
       setContent(editComment.content)
     }
-  }, [editComment, replyPostComment])
+  }, [editComment, replyPostComment, replyPostCommentReply])
 
+  // Xử lý bình luận
   const handleSubmitComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData()
@@ -58,6 +63,7 @@ function PostAddComment({
       formData.append('content', content)
     } else {
       alert('Comment trống!')
+      return
     }
 
     if (editComment) {
@@ -67,12 +73,7 @@ function PostAddComment({
       }
       updatePostCommentMutation.mutate(data, {
         onSuccess: () => {
-          if (user_id) {
-            queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-          } else {
-            queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-          }
-          queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+          queryClient.invalidateQueries({ queryKey: ['post_comments', { post_id }] })
           setContent('')
           setEditComment(null)
           setSelectedFile(null)
@@ -96,12 +97,35 @@ function PostAddComment({
 
       addPostCommentReplyMutation.mutate(data, {
         onSuccess: () => {
-          if (user_id) {
-            queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-          } else {
-            queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-          }
-          queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+          queryClient.invalidateQueries({
+            queryKey: ['post_comment_replies', { comment_id: replyPostComment.comment_id }]
+          })
+          setContent('')
+          setSelectedFile(null)
+          setReplyPostComment(null)
+        }
+      })
+    } else if (replyPostCommentReply) {
+      const replied_to_user_id = replyPostCommentReply.user_id
+      formData.append('replied_to_user_id', replied_to_user_id)
+
+      const fullname = `@ ${replyPostCommentReply.user_reply.last_name} ${replyPostCommentReply.user_reply.first_name}`
+
+      const newContent = content.replace(fullname, '')
+
+      formData.delete('content')
+      formData.append('content', newContent)
+
+      const data = {
+        comment_id: replyPostCommentReply.comment_id,
+        formData
+      }
+
+      addPostCommentReplyMutation.mutate(data, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['post_comment_replies', { comment_id: replyPostCommentReply.comment_id }]
+          })
           setContent('')
           setSelectedFile(null)
           setReplyPostComment(null)
@@ -115,12 +139,7 @@ function PostAddComment({
 
       addPostCommentMutation.mutate(data, {
         onSuccess: () => {
-          if (user_id) {
-            queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
-          } else {
-            queryClient.invalidateQueries({ queryKey: ['my_posts'] })
-          }
-          queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
+          queryClient.invalidateQueries({ queryKey: ['post_comments', { post_id }] })
           setContent('')
           setSelectedFile(null)
         }
@@ -252,6 +271,27 @@ function PostAddComment({
                   }
                   if (replyPostComment) {
                     setReplyPostComment(null)
+                  }
+                }}
+                type='button'
+                className='rounded-full bg-secondery px-3.5 py-1.5 text-sm'
+              >
+                Thoát
+              </button>
+              <button type='submit' className='rounded-full bg-secondery px-3.5 py-1.5 text-sm'>
+                Trả lời
+              </button>
+            </>
+          ) : replyPostCommentReply ? (
+            <>
+              <button
+                onClick={() => {
+                  setContent('')
+                  if (editComment) {
+                    setEditComment(null)
+                  }
+                  if (replyPostCommentReply) {
+                    setReplyPostCommentReply(null)
                   }
                 }}
                 type='button'

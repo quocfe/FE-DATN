@@ -19,3 +19,7 @@ type PostCommentReply = {
     Profile: BaseProfile
   }
 }
+
+type PostCommentReplyResponse = SuccessResponse<{
+  comment_replies: PostCommentReply[]
+}>

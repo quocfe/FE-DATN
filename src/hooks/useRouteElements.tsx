@@ -3,13 +3,12 @@ import MainLayout from '~/layouts/MainLayout'
 import Home from '~/pages/Home'
 import Login from '~/pages/Login'
 import Register from '~/pages/Register'
-import ProtectedRoute from './components/ProtectedRoute'
+import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute'
 import RejectedRoute from './components/RejectedRoute'
 import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
 import Dashboard from '~/pages/admin/Dashboard'
-import LoginAdmin from '~/pages/admin/LoginAdmin'
 import PublicProfile from '~/pages/PublicProfile'
 import { Game, GamePlay } from '~/pages/Game'
 import Setting from '~/pages/Setting'
@@ -24,9 +23,39 @@ import SentFriendRequests from '~/pages/Friend/SentFriendRequests'
 import PersonalPublic from '~/pages/PublicProfile/PersonalPublic'
 import PersonalPrivate from '~/pages/Profile/PersonalPrivate'
 import FriendInfoDisplay from '~/pages/PublicProfile/FriendInfoDisplay/FriendInfoDisplay'
+import MediaResources from '~/pages/Profile/MediaResources'
+import LoginAdmin from '~/pages/admin/LoginAdmin'
+import AdminLayout from '~/layouts/AdminLayout'
+import UserList from '~/pages/admin/User/UserList'
 
 function useRouteElements() {
   const routeElements = useRoutes([
+    {
+      path: '/admin',
+      element: <AdminProtectedRoute />,
+      children: [
+        {
+          path: 'login',
+          element: <LoginAdmin />
+        },
+        {
+          path: 'dashboard',
+          element: (
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          )
+        },
+        {
+          path: 'user/list',
+          element: (
+            <AdminLayout>
+              <UserList />
+            </AdminLayout>
+          )
+        }
+      ]
+    },
     {
       path: '/',
       element: <ProtectedRoute />,
@@ -40,7 +69,7 @@ function useRouteElements() {
           )
         },
         {
-          path: '/profile',
+          path: 'profile',
           children: [
             {
               path: '',
@@ -58,6 +87,16 @@ function useRouteElements() {
                 <MainLayout>
                   <Profile>
                     <MyFriends />
+                  </Profile>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'media_resource',
+              element: (
+                <MainLayout>
+                  <Profile>
+                    <MediaResources />
                   </Profile>
                 </MainLayout>
               )
@@ -90,11 +129,11 @@ function useRouteElements() {
           ]
         },
         {
-          path: '/friend',
+          path: 'friend',
           children: [
             {
               path: '',
-              element: <Navigate to={'/profile/my_friends'} replace />
+              element: <Navigate to='/profile/my_friends' replace />
             },
             {
               path: 'requests',
@@ -129,7 +168,7 @@ function useRouteElements() {
           ]
         },
         {
-          path: '/game',
+          path: 'game',
           children: [
             {
               path: '',
@@ -150,7 +189,7 @@ function useRouteElements() {
           ]
         },
         {
-          path: '/setting',
+          path: 'setting',
           children: [
             {
               path: '',
@@ -191,38 +230,21 @@ function useRouteElements() {
       element: <RejectedRoute />,
       children: [
         {
-          path: '/login',
+          path: 'login',
           element: <Login />
         },
         {
-          path: '/register',
+          path: 'register',
           element: <Register />
         }
       ]
     },
     {
-      path: '/confirm_otp/:email',
+      path: 'confirm_otp/:email',
       element: <ConfirmOTP />
     },
     {
-      path: '/admin',
-      children: [
-        {
-          path: '',
-          element: <Navigate to={'/admin/dashboard'} replace />
-        },
-        {
-          path: 'login',
-          element: <LoginAdmin />
-        },
-        {
-          path: 'dashboard',
-          element: <Dashboard />
-        }
-      ]
-    },
-    {
-      path: '/not_found',
+      path: 'not_found',
       element: <NotFound />
     },
     {

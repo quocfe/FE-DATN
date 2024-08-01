@@ -138,6 +138,11 @@ class UserApi {
   clearSearchHistories() {
     return http.delete(USER.CLEAR_SEARCH_HISTORIES)
   }
+
+  // Danh sách hình ảnh và video
+  getAllMediaResource() {
+    return http.get<MediaResourceResponse>(USER.LIST_MEDIA_RESOURCES)
+  }
 }
 
 export default new UserApi()

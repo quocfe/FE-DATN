@@ -12,3 +12,7 @@ type PostReaction = {
 }
 
 type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry'
+
+type PostReactionResponse = SuccessResponse<{
+  reactions: PostReaction[]
+}>

@@ -1,3 +1,5 @@
 export const POST_COMMENT_REPLY = {
-  CREATE: 'post_comment_reply/add'
+  LIST: 'post_comment_reply/list',
+  CREATE: 'post_comment_reply/add',
+  DELETE: 'post_comment_reply/delete'
 } as const

@@ -1022,3 +1022,10 @@ input:checked + .switch-button:before {
 .modal-open {
   overflow-y: hidden !important;
 }
+
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 12px;
+  color: #666;
+}
