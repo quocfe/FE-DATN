@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react'
-import Story from './Component/ListStory'
+// import Story from './Component/ListStory'
 import CreateStory from './Component/CreateStory'
 import ListStory from './Component/ListStory'
 import { useState } from 'react'
@@ -17,7 +17,7 @@ function Home() {
           <h3 className='hidden text-2xl  font-extrabold text-black dark:text-white'> Stories</h3>
           <div className='relative' tabIndex={-1} uk-slider='auto play: true;finite: true' uk-lightbox=''>
             <div className='uk-slider-container py-5'>
-              <ListStory handelCheckToggle={handelCheckToggle} />
+              <ListStory />
             </div>
             <div className='max-md:hidden'>
               <button

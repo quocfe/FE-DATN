@@ -1,33 +1,34 @@
 export interface Story {
-  story_id: string;
-  user_id: string;
-  text: string;
-  content: string;
-  privacy: string;
-  tag: string;
-  story_time: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  story_id: string
+  user_id: string
+  user: any
+  text: string
+  content: string
+  privacy: string
+  tag: string
+  story_view :string
+  story_time: Date
+  is_archived: boolean
+  createdAt: Date
+  updatedAt: Date
+  
 }
 
 type StoryResponse = {
-  first: number;
-  prev: null | number;
-  next: number | null;
-  last: number;
-  pages: number;
-  items: number;
-  data: Story[];
+  data: {
+    story: Story[]
+  }
+  message: string
 }
 
-type StoryNoId = Omit<Story, 'story_id'>;
+type StoryNoId = Omit<Story, 'story_id'>
 
 type StoryConfigParams = {
-  _page: string;
-  _per_page: string;
+  _page: string
+  _per_page: string
 }
 
 type StoryUpdate = {
-  id: string;
-  story: StoryNoId;
+  id: string
+  story: StoryNoId
 }

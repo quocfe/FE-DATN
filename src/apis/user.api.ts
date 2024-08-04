@@ -9,6 +9,9 @@ class UserApi {
   updateProfile(profile: UpdateProfile) {
     return http.post<ProfileResponse>(USER.UPDATE, profile)
   }
+  fetchUserProfile(userId: string) {
+    return http.get<ProfileResponse>(`${USER.PROFILE}/${userId}`, { withCredentials: true });
+  }
 }
 
 export default new UserApi()

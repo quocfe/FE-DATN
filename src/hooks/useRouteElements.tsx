@@ -9,6 +9,9 @@ import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
 import Fanpage from '~/pages/Fanpage'
+import DStory from '~/pages/Story'
+import ArchiveStory from '~/pages/Story/Component/Archive'
+
 
 
 
@@ -40,6 +43,18 @@ function useRouteElements() {
             <MainLayout>
               <Fanpage />
             </MainLayout>
+          )
+        },
+        {
+          path: '/story',
+          element: (
+              <DStory />
+          )
+        },
+        {
+          path: '/story/archive',
+          element: (
+              <ArchiveStory />
           )
         },
         
