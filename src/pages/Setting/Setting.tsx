@@ -1,9 +1,9 @@
 import { IonIcon } from '@ionic/react'
 import { useRef } from 'react'
-import useUpdateImage from '~/hooks/queries/user/useUpdateImage'
 import useAuthStore from '~/store/auth.store'
 import { Link, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
+import useUpdateImage from '~/hooks/user/useUpdateImage'
 
 interface Props {
   children: React.ReactNode
@@ -70,7 +70,7 @@ function Setting({ children }: Props) {
             </label>
           </div>
           <div className='flex-1'>
-            <h3 className='text-base font-semibold text-black md:text-xl dark:text-white'>
+<h3 className='text-base font-semibold text-black md:text-xl dark:text-white'>
               {' '}
               {profile?.last_name} {profile?.first_name}{' '}
             </h3>
@@ -139,7 +139,7 @@ function Setting({ children }: Props) {
             <IonIcon icon='chevron-back' className='ml-1 text-2xl' />
           </a>
           <a
-            className='absolute right-0 top-1/2 flex h-full w-20 -translate-y-1/2 items-center justify-end bg-gradient-to-l from-white via-white p-2 py-1 dark:from-slate-800 dark:via-slate-800'
+className='absolute right-0 top-1/2 flex h-full w-20 -translate-y-1/2 items-center justify-end bg-gradient-to-l from-white via-white p-2 py-1 dark:from-slate-800 dark:via-slate-800'
             href='#'
             uk-slider-item='next'
           >

@@ -1,7 +1,80 @@
 import { IonIcon } from '@ionic/react'
 import Sidebar from './components/Sidebar'
+import Post from '~/components/Post'
+import useQueryPostsFromFriendsAndPendingRequests from '~/hooks/queries/post/useQueryListPostFriendAndPending'
+import { useCallback, useEffect, useState } from 'react'
+import { debounce } from 'lodash'
+import http from '~/utils/http'
+import { useQueryClient } from '@tanstack/react-query'
+import { AxiosResponse } from 'axios'
 
 function Home() {
+  const [page, setPage] = useState<number>(1)
+  const queryClient = useQueryClient()
+  const { data } = useQueryPostsFromFriendsAndPendingRequests()
+  const pages = data?.data.data.pages ?? 0
+  const total = data?.data.data.total ?? 0
+
+  useEffect(() => {
+    if (page > pages) {
+      return
+    } else if (page === 1 && data) {
+      queryClient.setQueryData(['posts_from_friends_and_pending_requests'], data)
+    } else if (page > 1) {
+      async function getPost() {
+        const response = await http.get('post/post_friend_and_pending', {
+          params: {
+            _limit: 4,
+            _page: page
+          }
+        })
+
+        const newPosts = response.data.data.posts
+        queryClient.setQueryData(
+          ['posts_from_friends_and_pending_requests'],
+          (oldData: AxiosResponse<PostResponse, any> | undefined) => {
+            return {
+              ...oldData,
+              data: {
+                ...oldData?.data,
+                data: {
+                  ...oldData?.data.data,
+                  posts: [...(oldData?.data.data.posts ?? []), ...newPosts]
+                }
+              }
+            }
+          }
+        )
+      }
+      getPost()
+    }
+  }, [page, pages])
+
+  const handlePanigationPage = () => {
+    if (page < pages) {
+      setPage(page + 1)
+    }
+  }
+
+  const handleScroll = useCallback(
+    debounce(() => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement
+      if (scrollTop + clientHeight >= scrollHeight * 0.9) {
+        handlePanigationPage()
+      }
+    }, 850),
+    [page, pages]
+  )
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
+
+  const posts = data?.data.data.posts ?? []
+
   return (
     <div className='mx-auto max-w-[1075px] gap-12 lg:flex 2xl:gap-16' id='js-oversized'>
       <div className='mx-auto max-w-[680px]'>
@@ -429,6 +502,18 @@ function Home() {
             </div>
           </div>
         </div>
+        {/* Bài đăng */}
+        <Post posts={posts} />
+        {pages > 1 && page < pages && posts.length < total && (
+          <div className='pagination mt-5 flex justify-center pb-5'>
+            <a
+              className='inline-block cursor-pointer text-center text-sm hover:text-primary'
+              onClick={handlePanigationPage}
+            >
+              Đang tải dữ liệu ...
+            </a>
+          </div>
+        )}
       </div>
       {/* sidebar */}
       <Sidebar />

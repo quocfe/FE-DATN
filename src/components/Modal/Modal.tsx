@@ -6,14 +6,19 @@ interface Props {
   children: React.ReactNode
   width?: string
   height?: string
+  iconClose?: boolean
 }
 
-function Modal({ isVisible, onClose, children, height, width }: Props) {
+function Modal({ isVisible, onClose, children, height, width, iconClose = true }: Props) {
   useEffect(() => {
-    document.body.style.overflowY = isVisible ? 'hidden' : 'auto'
+    if (isVisible) {
+      document.body.classList.add('modal-open')
+    } else {
+      document.body.classList.remove('modal-open')
+    }
 
     return () => {
-      document.body.style.overflowY = 'auto'
+      document.body.classList.remove('modal-open')
     }
   }, [isVisible])
 
@@ -27,7 +32,7 @@ function Modal({ isVisible, onClose, children, height, width }: Props) {
 
   return (
     <div
-      className='fixed inset-0 z-[1010] flex items-center bg-black bg-opacity-10 backdrop-blur-sm'
+      className='fixed inset-0 z-[8888] flex items-center bg-black bg-opacity-10 backdrop-blur-sm'
       id='wrapper-modal'
       onClick={handleClose}
     >
@@ -36,18 +41,21 @@ function Modal({ isVisible, onClose, children, height, width }: Props) {
         style={{ width: width ? width : 'full', height: height ? height : 'full', scrollbarWidth: 'none' }}
       >
         {/* close button */}
-        <button onClick={onClose} type='button' className='button-icon absolute right-0 top-0 m-2.5'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth='1.5'
-            stroke='currentColor'
-            className='h-6 w-6'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-          </svg>
-        </button>
+        {iconClose && (
+          <button onClick={onClose} type='button' className='button-icon absolute right-0 top-0 m-2.5'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth='1.5'
+              stroke='currentColor'
+              className='h-6 w-6'
+            >
+              <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
+            </svg>
+          </button>
+        )}
+
         {children}
       </div>
     </div>
