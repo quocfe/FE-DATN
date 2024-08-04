@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ROUTE_PATH } from '~/constants'
 
 function Sidebar() {
   return (
@@ -44,10 +45,10 @@ function Sidebar() {
                         </a>
                       </li>
                       <li>
-                        <a href='video.html'>
+                        <Link to={ROUTE_PATH.WATCH}>
                           <img src='/src/assets/images/icons/video.png' alt='messages' className='w-6' />
                           <span> Video </span>
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a href='event.html'>
@@ -62,7 +63,7 @@ function Sidebar() {
                         </a>
                       </li>
                       <li>
-<a href='market.html'>
+                        <a href='market.html'>
                           <img src='/src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
                           <span> Cửa hàng </span>
                         </a>
@@ -119,7 +120,7 @@ function Sidebar() {
                         <path
                           fillRule='evenodd'
                           d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
-clipRule='evenodd'
+                          clipRule='evenodd'
                         />
                       </svg>
                       <span id='show__more'> Xem thêm </span>
@@ -163,7 +164,7 @@ clipRule='evenodd'
                             fill='none'
                             viewBox='0 0 24 24'
                             strokeWidth='1.5'
-stroke='currentColor'
+                            stroke='currentColor'
                             className='h-4 w-4'
                           >
                             <path

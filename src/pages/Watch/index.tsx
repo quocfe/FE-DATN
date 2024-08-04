@@ -4,7 +4,6 @@ import HorizontalVideoCard from './components/HorizontalVideoCard'
 import videoApi from '~/apis/video.api'
 import { useEffect, useState } from 'react'
 import FormCreateVideo from './components/form-create-video'
-import LazyLoadingVideo from './components/lazy-loading-video'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 function Watch() {
