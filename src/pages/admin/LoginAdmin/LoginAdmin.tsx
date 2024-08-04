@@ -9,7 +9,6 @@ import useAuthStore from '~/store/auth.store'
 import { LoginForm, loginSchema } from '~/utils/rules'
 
 function LoginAdmin() {
-  const navigate = useNavigate()
   const { setProfile, setIsAuthenticated } = useAuthStore()
   const {
     register,

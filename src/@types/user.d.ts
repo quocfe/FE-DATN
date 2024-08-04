@@ -19,6 +19,7 @@ type User = BaseUser & {
     name: string
     description: string
   }
+  modules: ?ModulePermission[]
 }
 
 type Profile = BaseProfile & {

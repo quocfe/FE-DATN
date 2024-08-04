@@ -1029,3 +1029,14 @@ input:checked + .switch-button:before {
   font-size: 12px;
   color: #666;
 }
+
+.input-container select:focus + label,
+.input-container select:not([value='']) + label {
+  top: -8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.input-container label {
+  transition: all 0.2s;
+}
