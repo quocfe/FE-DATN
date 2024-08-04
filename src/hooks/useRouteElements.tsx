@@ -28,6 +28,7 @@ import Loadable from './components/loadable'
 const Watch = Loadable('Watch')
 const WatchDetail = Loadable('WatchDetail')
 const WatchSave = Loadable('WatchSave')
+const WatchSearch = Loadable('WatchSearch')
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -73,6 +74,14 @@ function useRouteElements() {
           element: (
             <VideoLayout>
               <WatchSave />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_SEARCH,
+          element: (
+            <VideoLayout>
+              <WatchSearch />
             </VideoLayout>
           )
         },
