@@ -26,7 +26,11 @@ import FriendInfoDisplay from '~/pages/PublicProfile/FriendInfoDisplay/FriendInf
 import MediaResources from '~/pages/Profile/MediaResources'
 import LoginAdmin from '~/pages/admin/LoginAdmin'
 import AdminLayout from '~/layouts/AdminLayout'
-import UserList from '~/pages/admin/User/UserList'
+import ListRole from '~/pages/admin/Role/ListRole'
+import PermissionList from '~/pages/admin/Permission/PermissionList'
+import AccountList from '~/pages/admin/User/AccountList'
+import AccessControl from './components/AccessControl'
+import Unauthorized from '~/pages/Unauthorized'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -47,11 +51,43 @@ function useRouteElements() {
           )
         },
         {
-          path: 'user/list',
+          path: 'role',
+          children: [
+            {
+              path: 'list',
+              element: (
+                <AccessControl requiredModules={['Role Management']} requiredPermissions={['view']}>
+                  <AdminLayout>
+                    <ListRole />
+                  </AdminLayout>
+                </AccessControl>
+              )
+            }
+          ]
+        },
+        {
+          path: 'permission',
+          children: [
+            {
+              path: 'list',
+              element: (
+                <AccessControl requiredModules={['Super Admin']}>
+                  <AdminLayout>
+                    <PermissionList />
+                  </AdminLayout>
+                </AccessControl>
+              )
+            }
+          ]
+        },
+        {
+          path: 'account/list',
           element: (
-            <AdminLayout>
-              <UserList />
-            </AdminLayout>
+            <AccessControl requiredModules={['Super Admin']}>
+              <AdminLayout>
+                <AccountList />
+              </AdminLayout>
+            </AccessControl>
           )
         }
       ]
@@ -246,6 +282,10 @@ function useRouteElements() {
     {
       path: 'not_found',
       element: <NotFound />
+    },
+    {
+      path: 'unauthorized',
+      element: <Unauthorized />
     },
     {
       path: '*',
