@@ -28,7 +28,7 @@ const useMessageSocket = () => {
   const { socket } = useSocketContext()
   const queryClient = useQueryClient()
   const { selectedConversation, previewImg } = useConversationStore()
-  const { data, refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const { refetch: refetchMember } = useQueryMembers()
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
@@ -36,9 +36,9 @@ const useMessageSocket = () => {
 
   useEffect(() => {
     ;(socket as Socket | null)?.on('newMessage', () => {
-      audioNewMsg.play()
+      // audioNewMsg.play()
       refetchConversation()
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      refetchMessage()
       refetchStatusMessage()
       document.title = 'có tin nhắn mới'
     })

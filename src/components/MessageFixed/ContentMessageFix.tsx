@@ -20,7 +20,7 @@ import ModalUnSendOption from '~/pages/Message/components/ModalUnSendOption'
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
 const ContentMessage = (params: any) => {
   const { refetch, data } = useQueryMessage()
-  const groupId = data?.data?.data.info.group_id
+  const groupId = data?.data?.data?.info?.group_id
   const widthRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef(null)
   const [openEmoji, setOpenEmoji] = useState(false)
@@ -112,12 +112,12 @@ const ContentMessage = (params: any) => {
             href={params.item.body}
             target='_blank'
             rel='noopener noreferrer'
-            className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px] underline`}
+            className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[14px] underline`}
           >
             {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </a>
         ) : (
-          <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
+          <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[14px]`}>
             {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
         )
@@ -151,7 +151,7 @@ const ContentMessage = (params: any) => {
           <img
             alt={params.item?.body}
             src={params.item?.sub_body}
-            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-40 w-40 rounded-[8px]'}
+            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-20 w-20 rounded-[8px]'}
               max-w-full object-cover 
               opacity-90 contrast-50`}
           />
@@ -213,22 +213,22 @@ const ContentMessage = (params: any) => {
       case 6:
         return !isUnsent ? (
           params.item.sub_body ? (
-            <div className='flex items-start justify-start gap-4 p-1'>
-              <IonIcon icon='videocam' className='text-[26px]' />
-              <div className='flex flex-col items-start justify-start gap-2'>
-                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[14px]`}>
+            <div className='flex items-start justify-start gap-2 p-1'>
+              <IonIcon icon='videocam' className='text-[20px]' />
+              <div className='flex flex-col items-start justify-start'>
+                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[12px]`}>
                   {params.item.body}
                 </p>
-                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[11px] font-extralight`}>
+                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[10px] font-extralight`}>
                   {params.item.sub_body}
                 </p>
               </div>
             </div>
           ) : (
-            <div className='flex items-center justify-start gap-4'>
-              <IonIcon icon='videocam-off' className='text-[26px]' />
+            <div className='flex items-center justify-start gap-2'>
+              <IonIcon icon='videocam-off' className='text-[20px]' />
               <div className='flex flex-col justify-evenly gap-2'>
-                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[14px]`}>
+                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[12px]`}>
                   {params.item.body}
                 </p>
               </div>
@@ -248,33 +248,25 @@ const ContentMessage = (params: any) => {
       params.item.reactions?.length > 0 && (
         <>
           <div
-            onClick={() => selectedConversation.type === 2 && setIsOpenModalReactMsg(true)}
+            onClick={() => params.item.reactions?.length > 2 && setIsOpenModalReactMsg(true)}
             className={`
             ${params.me ? 'left-0' : 'right-0'}
             absolute -bottom-[10px] flex items-center justify-center rounded-full bg-primary-soft  px-[5px]`}
           >
-            {selectedConversation.type === 2
-              ? params.item.reactions?.length > 2
-                ? params.item.reactions?.slice(0, 2).map((item: any, index: number) => (
-                    <>
-                      <p key={index} className='text-[12px]'>
-                        {item.emoji ?? ''}
-                      </p>
-                      <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
-                    </>
-                  ))
-                : params.item.reactions.map((item: any, index: number) => (
+            {params.item.reactions?.length > 2
+              ? params.item.reactions?.slice(0, 2).map((item: any, index: number) => (
+                  <>
                     <p key={index} className='text-[12px]'>
-                      {item.emoji}
+                      {item.emoji ?? ''}
                     </p>
-                  ))
-              : selectedConversation.type === 1 && params.item.reactions?.length > 0
-                ? params.item.reactions.map((item: any, index: number) => (
-                    <p key={index} className='text-[12px]'>
-                      {item.emoji}
-                    </p>
-                  ))
-                : null}
+                    <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
+                  </>
+                ))
+              : params.item.reactions.map((item: any, index: number) => (
+                  <p key={index} className='text-[12px]'>
+                    {item.emoji}
+                  </p>
+                ))}
           </div>
           <ModalMemberReact
             reactArr={params.item.reactions}
@@ -326,7 +318,7 @@ const ContentMessage = (params: any) => {
       }}
       className={` relative mt-1 cursor-pointer border-[2px] border-transparent
       ${params.item.type === 4 ? 'h-[100%]' : ''}
-      ${params.me ? 'text-left' : 'text-left'}
+      ${params.me ? 'max-w-[180px] text-left' : 'max-w-[140px] text-left'}
       ${params.item.reactions?.length > 0 ? 'mb-3' : ''}
       ${params.me ? (params.item.type === 2 || params.item.type === 4 ? 'bg-transparent ' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
       ${
@@ -334,7 +326,7 @@ const ContentMessage = (params: any) => {
           ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
           : `-mb-4  !bg-secondery ${params.item.type === 2 || params.item.type === 4 ? 'p-0 opacity-30' : 'px-4 py-5'}  text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }
-      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'w123-[40%]' : '') : ''}
+      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'min-w-[60%]' : '') : ''}
       `}
     >
       <div
@@ -344,7 +336,7 @@ const ContentMessage = (params: any) => {
         {/* content */}
         {renderContent()}
         <div
-          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner group-hover:flex`}
+          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 z-50 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner group-hover:flex`}
         >
           <div
             onClick={(e) => {
@@ -364,10 +356,10 @@ const ContentMessage = (params: any) => {
             className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
           >
             <IonIcon className='cursor-pointer text-black ' icon='ellipsis-horizontal-outline' />
-            <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
+            <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:z-50 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
               <div
                 style={{ bottom: `40px` }}
-                className={`absolute ${openOption ? '' : 'hidden'} h-fit w-[140px] rounded-[14px] bg-primary-soft py-3 shadow-2xl ${params.me ? 'right-0' : 'left-0'} flex select-none flex-col gap-3 px-3 text-left`}
+                className={`absolute ${openOption ? '' : 'hidden'}   h-fit w-[140px] rounded-[14px] bg-primary-soft py-3 shadow-2xl ${params.me ? '-right-16' : '-left-[80px]'} flex select-none flex-col gap-3 px-3 text-left`}
               >
                 <p
                   onClick={() => handleClickOption('unsend')}
@@ -401,7 +393,9 @@ const ContentMessage = (params: any) => {
             <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
               <div
                 style={{ bottom: '40px' }}
-                className={`absolute ${openEmoji ? '' : 'hidden'} right-0 h-[30px] w-fit rounded-xl bg-primary-soft p-2 shadow-inner`}
+                className={`absolute ${openEmoji ? '' : 'hidden'} right-0 h-[30px] w-fit rounded-xl bg-primary-soft p-2 shadow-inner
+                ${params.me ? '-right-16' : 'right-0'}
+                `}
               >
                 <div className='flex h-[100%] w-[100%] items-center gap-1 rounded-sm'>
                   {ListEmoji?.map((emoji) => {

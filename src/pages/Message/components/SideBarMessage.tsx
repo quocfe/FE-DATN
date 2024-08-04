@@ -1,25 +1,17 @@
 import { IonIcon } from '@ionic/react'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import _ from 'lodash'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import messageApi from '~/apis/message.api'
 import { useSocketContext } from '~/context/socket'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
 import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
 import useConversationStore from '~/store/conversation.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
-import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
+import useMutaionSearchFriendAndGrMsg from '../hooks/useMutationSearchFriendAndGrMsg'
+import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import { fetchConversation } from '../utils/fetchInfiniteConversation'
-import useMutaionSearchFriendAndGrMsg from '../hooks/useMutationSearchFriendAndGrMsg'
-import _ from 'lodash'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
 
 const SideBarMessage = () => {
-  useNotifyMessageSocket()
   const { setSelectedConversation } = useConversationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [resultSearch, setResultSearch] = useState<any>([])
@@ -159,16 +151,19 @@ const SideBarMessage = () => {
                   <div className='text-black dark:text-white'>Bạn bè</div>
                 </div>
                 <nav className='text-sm font-medium text-black dark:text-white'>
-                  {resultSearch?.data?.data?.map((result: any, index: number) => (
-                    <a
-                      key={index}
-                      className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                      onClick={() => handleSelectConversation(result)}
-                    >
-                      <img src={result?.group_thumbnail} className='h-9 w-9 rounded-full object-cover' alt='' />
-                      <div>{result.group_name}</div>
-                    </a>
-                  ))}
+                  {resultSearch?.data?.data?.map((result: any, index: number) => {
+                    console.log(result)
+                    return (
+                      <a
+                        key={index}
+                        className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
+                        onClick={() => handleSelectConversation(result)}
+                      >
+                        <img src={result?.group_thumbnail} className='h-9 w-9 rounded-full object-cover' alt='' />
+                        <div>{result.group_name}</div>
+                      </a>
+                    )
+                  })}
                   {resultSearch?.data?.data.length === 0 && <p className='px-2 py-2.5'>Kết quả không khớp</p>}
                 </nav>
               </div>

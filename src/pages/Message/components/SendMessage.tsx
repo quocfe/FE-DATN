@@ -15,6 +15,10 @@ import EmojiBox from './EmojiBox'
 import ModalRecordMessage from './RecordMessage'
 import RecordMessage from './RecordMessage'
 import useMessageStore from '~/store/message.store'
+import { useQueryClient } from '@tanstack/react-query'
+import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -27,8 +31,13 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   const receiverID = data?.data?.data?.info?.group_id
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
+  const { refetch: refetchStatusMessage } = useQueryStatusMessage()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
+
   const deleteNotify = useMutationDeleteNotify()
   const sendMedia = useMutationSendMessageAttach()
+  const queryClient = useQueryClient()
   const { upload } = useFileUpload()
   const { socket } = useSocketContext()
   const [file, setFile] = useState<File | null>(null)
@@ -53,11 +62,13 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     try {
       const baseData = {
         body: values,
-        group_message_id: groupID,
+        group_message_id: groupID ? groupID : '',
         receiver: receiverID,
         type: 1,
         parent_id: ''
       }
+
+      console.log(baseData)
 
       if (toggleBoxReply) {
         baseData.parent_id = toggleBoxReply.message_id
@@ -75,7 +86,9 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           setPreviewImg(null)
         }
         setFile(null)
-        // setPreview(null)
+        refetchConversation()
+        refetchStatusMessage()
+        refetchMessage()
       }
 
       setValues('')
@@ -95,8 +108,12 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
       }
 
       await (toggleBoxReply ? replyMessageMutation.mutateAsync(likeData) : sendMessageMutation.mutateAsync(likeData))
+      console.log('likeData', likeData)
       setValues('')
       setToggleBoxReply(null)
+      refetchConversation()
+      refetchStatusMessage()
+      refetchMessage()
     } catch (error) {
       toast.error('Error sending like', { position: 'top-right', autoClose: 5000 })
     }
@@ -110,7 +127,6 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     let fileTepm = file != null ? file : previewImg
 
     if (fileTepm) {
-      console.log('running fl')
       try {
         const url = await upload(fileTepm)
 
@@ -131,6 +147,9 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         }
 
         await sendMedia.mutateAsync(mediaData)
+        refetchConversation()
+        refetchStatusMessage()
+        refetchMessage()
       } catch (error) {
         console.log(error)
       }

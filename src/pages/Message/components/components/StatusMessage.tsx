@@ -3,12 +3,17 @@ import { useQueryStatusMessage } from '../../hooks/useQueryStatusMessage'
 import { IonIcon } from '@ionic/react'
 import { calculateTimeAgo } from '~/utils/helpers'
 import useMessageStore from '~/store/message.store'
+import useConversationStore from '~/store/conversation.store'
+import { useMutationSendMessage } from '../../hooks/useMutationSendMessage'
 
 const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 
-const StatusMessage = () => {
-  const { data: dataStatus } = useQueryStatusMessage()
-  const { loadingMessage } = useMessageStore()
+const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
+  const { selectedConversation } = useConversationStore()
+  let idQueryStatusMessage = selectedConversation.group_id ? selectedConversation.group_id : group_id_fixed
+  const { data: dataStatus } = useQueryStatusMessage(idQueryStatusMessage)
+  const { loadingMessage, errorMessage } = useMessageStore()
+  const { status } = useMutationSendMessage()
 
   const highestStatus = useMemo(() => {
     return STATUS_ORDER.find((status) => dataStatus?.data.data?.some((item) => item.status === status))
@@ -65,10 +70,10 @@ const StatusMessage = () => {
     [dataStatus?.data.data]
   )
 
-  return loadingMessage ? (
-    <p className='mt-2 flex cursor-pointer justify-end text-[12px] font-medium'>đang gửi</p>
-  ) : (
-    <div className='mt-2 flex cursor-pointer justify-end'>{highestStatus && renderContent(highestStatus)}</div>
+  return (
+    <div className='status123 mt-2 flex cursor-pointer justify-end'>
+      {highestStatus && renderContent(highestStatus)}
+    </div>
   )
 }
 

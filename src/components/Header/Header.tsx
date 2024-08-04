@@ -821,7 +821,7 @@ function Header() {
                       </svg>
                       Chế độ sáng
                       <span className='ml-auto w-9 rounded-full bg-slate-200/40 p-0.5 dark:hover:bg-white/20'>
-                        <span className='relative block h-4 w-2 w-4 rounded-full bg-white shadow-md dark:bg-blue-600' />
+                        <span className='relative block h-4 w-4 rounded-full bg-white shadow-md dark:bg-blue-600' />
                       </span>
                     </div>
                   </button>

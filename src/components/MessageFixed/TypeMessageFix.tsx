@@ -37,8 +37,8 @@ export const TextMsg = ({ item, userid, showImg }: TypeMsg) => {
           >
             {!recall && !checkRecallInReply ? (
               <div className='flex items-center gap-2'>
-                <IonIcon icon='arrow-undo' className='text-[17px]' />
-                <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                <IonIcon icon='arrow-undo' className='text-[14px]' />
+                <p className={`${me ? 'text-right' : ''} text-[12px]`}>{userRep}</p>
               </div>
             ) : (
               ''
@@ -88,8 +88,8 @@ export const ImageMsg = ({ item, userid, showImg }: TypeMsg) => {
             >
               {!recall && (
                 <div className='flex items-center gap-2'>
-                  <IonIcon icon='arrow-undo' className='text-[17px]' />
-                  <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                  <IonIcon icon='arrow-undo' className='text-[14px]' />
+                  <p className={`${me ? 'text-right' : ''} text-[12px]`}>{userRep}</p>
                 </div>
               )}
               <div
@@ -138,8 +138,8 @@ export const FileMsg = ({ item, userid, showImg }: TypeMsg) => {
             >
               {!recall && (
                 <div className='flex items-center gap-2'>
-                  <IonIcon icon='arrow-undo' className='text-[17px]' />
-                  <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                  <IonIcon icon='arrow-undo' className='text-[14px]' />
+                  <p className={`${me ? 'text-right' : ''} text-[12px]`}>{userRep}</p>
                 </div>
               )}
               <div
@@ -188,8 +188,8 @@ export const VideoMsg = ({ item, userid, showImg }: TypeMsg) => {
             >
               {!recall && !checkRecallInReply ? (
                 <div className='flex items-center gap-2'>
-                  <IonIcon icon='arrow-undo' className='text-[17px]' />
-                  <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                  <IonIcon icon='arrow-undo' className='text-[14px]' />
+                  <p className={`${me ? 'text-right' : ''} text-[12px]`}>{userRep}</p>
                 </div>
               ) : (
                 ''
@@ -240,8 +240,8 @@ export const AudioMsg = ({ item, userid, showImg }: TypeMsg) => {
             >
               {!recall && !checkRecallInReply ? (
                 <div className='flex items-center gap-2'>
-                  <IonIcon icon='arrow-undo' className='text-[17px]' />
-                  <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                  <IonIcon icon='arrow-undo' className='text-[14px]' />
+                  <p className={`${me ? 'text-right' : ''} text-[12px]`}>{userRep}</p>
                 </div>
               ) : (
                 ''
@@ -295,8 +295,8 @@ export const VideoCallMsg = ({ item, userid, showImg }: TypeMsg) => {
           >
             {!recall && !checkRecallInReply ? (
               <div className='flex items-center gap-2'>
-                <IonIcon icon='arrow-undo' className='text-[17px]' />
-                <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                <IonIcon icon='arrow-undo' className='text-[14px]' />
+                <p className={`${me ? 'text-right' : ''} text-[12px]`}>{userRep}</p>
               </div>
             ) : (
               ''

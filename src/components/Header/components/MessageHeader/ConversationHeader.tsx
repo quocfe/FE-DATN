@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { useLayoutEffect, useState } from 'react'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
@@ -8,6 +8,7 @@ import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDelete
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
 import TimeAgo from '~/pages/Message/components/components/TimeAgo'
 import useMutationDeleteMessage from '~/pages/Message/hooks/useMutationDeleteGroup'
+import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
 import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
 import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
 import { checkBodyMessage } from '~/pages/Message/utils/checkBodyMessage'
@@ -23,27 +24,23 @@ interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
 
 function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const [triggerHover, setTriggerHover] = useState<boolean>(false)
-  const { setSelectedConversation, selectedConversation } = useConversationStore()
+  const { selectedConversation } = useConversationStore()
+  const { user_id } = getProfileFromLocalStorage()
   const deleteNotify = useMutationDeleteNotify()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const { data, refetch } = useQueryInfinifyConversation()
   const deleteConversatonMuation = useMutationDeleteMessage()
   const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
   const { socket } = useSocketContext()
-  const { data: notify, refetch: refetchNotifyMessage } = useQueryNotifyMessage()
-  const { user_id } = getProfileFromLocalStorage()
-  const { setMessageFix } = useMessageFixStore()
+  const { setMessageFix, messagesFix, hiddenMessageFix } = useMessageFixStore()
+  const queryClient = useQueryClient()
 
-  const notifyData = notify?.data?.data.filter((data: any) => {
-    return data.group_message_id === item.group_message_id && data.receiver_id === user_id ? data : null
-  })
+  const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
   const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
     return !notify?.data?.data.some((data: any) => {
       return page.group_message_id === data.group_message_id
     })
   })
-  const showNotify = notifyData && notifyData?.length > 0 ? true : false
-  const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
   const body =
     item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0 || item?.messages?.type === 6
@@ -58,15 +55,13 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       setMessageFix({
         group_id: item.group_message_id,
         id: item.user_id,
-        type: 1,
-        avatar: item?.group_thumbnail
+        type: 1
       })
     } else if (item.type === 2) {
       setMessageFix({
         group_id: item.group_message_id,
         id: item.group_message_id,
-        type: 2,
-        avatar: item?.group_thumbnail
+        type: 2
       })
     } else {
       return body
@@ -99,17 +94,41 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       }
     })
   }
-  let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
+  const url = window.location.href
+  const checkUrlMesage = url.split('/').includes('message')
 
-  useLayoutEffect(() => {
-    if (showMessageSelect) {
-      const item = data?.pages?.flat()[0]
-      if (item) {
-        handleSelectedConversation(item)
+  useEffect(() => {
+    socket?.on('newMessage', (data) => {
+      if (!checkUrlMesage) {
+        const messageFixLocal = localStorage.getItem('messageFixStore')
+        if (messageFixLocal) {
+          const parsedMessageFixStore = JSON.parse(messageFixLocal)
+          const hiddenMessageFix = parsedMessageFixStore.state.hiddenMessageFix
+          const checkExistMessageHideenFix = hiddenMessageFix.some((hiddenMsg: any) => {
+            return hiddenMsg.group_id === data.group_id ? true : false
+          })
+          if (!checkExistMessageHideenFix) {
+            setMessageFix(data)
+          }
+        }
+
+        queryClient.invalidateQueries({ queryKey: ['messageInfinity', data.group_id && data.id] })
+        queryClient.invalidateQueries({ queryKey: ['conversations', user_id] })
       }
-    } else {
+    })
+    socket?.on('reactMessage', () => {
+      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations', user_id] })
+    })
+    socket?.on('seenedMessage', () => {
+      queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
+    })
+    return () => {
+      socket?.off('newMessage')
+      socket?.off('reactMessage')
+      socket?.off('seenedMessage')
     }
-  }, [data?.pages.flat()[0].group_message_id])
+  }, [socket, checkUrlMesage])
 
   return (
     <div
@@ -125,18 +144,18 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     >
       <div
         onClick={() => handleSelectedConversation(item)}
-        className='flex flex-row items-center justify-between flex-1 w-full gap-2'
+        className='flex w-full flex-1 flex-row items-center justify-between gap-2'
       >
         <div className='relative h-14 w-14 shrink-0'>
           <img
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
-            className='object-cover w-full h-full rounded-full'
+            className='h-full w-full rounded-full object-cover'
           />
           <div
             className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
           />
         </div>
-        <div className='flex flex-col flex-1 h-full min-w-0 gap-1 justify-evenly'>
+        <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
           <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
             {item?.group_name}
           </div>
@@ -160,7 +179,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       ) : (
         <div className={`uk-inline absolute right-2 top-1 rounded-full shadow-sm  `}>
           <button
-            className='flex items-center justify-center w-6 h-6 rounded-full shadow-sm uk-button uk-button-default hover:bg-slate-100'
+            className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
             type='button'
           >
             <IonIcon icon='ellipsis-horizontal' className='font-semibold' />

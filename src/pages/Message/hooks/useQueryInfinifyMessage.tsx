@@ -7,7 +7,6 @@ import { getProfileFromLocalStorage } from '~/utils/auth'
 
 export const useQueryInfinifyMessage = () => {
   const { selectedConversation } = useConversationStore()
-
   const fetchMessage = async ({ pageParam }: { pageParam: number }) => {
     if (selectedConversation.type === 1) {
       const data = await messageApi.getOneToOneMessage(selectedConversation.id, pageParam, 30)

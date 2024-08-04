@@ -3,6 +3,7 @@ import Modal from '~/components/Modal'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import useMutationReCallMessage from './../hooks/useMutationUnSend'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 
 type ModalTypes = {
   isOpen: boolean
@@ -12,7 +13,7 @@ type ModalTypes = {
 
 const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
   const [type, setType] = useState<string>('')
-  const { refetch } = useQueryMessage()
+  const { refetch } = useQueryInfinifyMessage()
   const mutationRecall = useMutationReCallMessage()
   const profile = getProfileFromLocalStorage() || {}
 
@@ -56,7 +57,7 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
       </div>
       {profile.user_id === message.createdBy ? (
         <div className='flex flex-col items-center'>
-          <div className='mb-4 flex items-center p-2 shadow-sm'>
+          <div className='mb-4 flex w-full items-center p-2 shadow-sm'>
             <input
               id='everyone'
               checked={type === 'everyone'}
@@ -79,7 +80,7 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
             </label>
           </div>
 
-          <div className='mb-4 flex items-center p-2 shadow-sm'>
+          <div className='mb-4 flex w-full items-center p-2 shadow-sm'>
             <input
               id='onlyone'
               checked={type === 'onlyone'}
@@ -102,8 +103,8 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
           </div>
         </div>
       ) : (
-        <div className='flex flex-col items-center'>
-          <div className='mb-4 flex items-center p-2 shadow-sm'>
+        <div className='flex w-full flex-col items-center'>
+          <div className='mb-4 flex w-full items-center p-2 shadow-sm'>
             <input
               id='onlyone'
               checked={type === 'onlyone'}

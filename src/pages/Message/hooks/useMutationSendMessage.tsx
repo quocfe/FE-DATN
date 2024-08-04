@@ -6,7 +6,7 @@ import { MessageForm } from '~/utils/rules'
 
 function useMutationSendMessage() {
   const { setLoadingMessage, setErrorMessage } = useMessageStore()
-  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: (data: MessageInput) => messageApi.sendMessage(data),
     onMutate: () => {
@@ -16,7 +16,6 @@ function useMutationSendMessage() {
     onSuccess: () => {
       setLoadingMessage(false)
       setErrorMessage(false)
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
     },
     onError: () => {
       setErrorMessage(true)

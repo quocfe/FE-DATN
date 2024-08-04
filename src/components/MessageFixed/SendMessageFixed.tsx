@@ -16,14 +16,19 @@ import { getProfileFromLocalStorage } from '~/utils/auth'
 import EmojiBox from './EmojiBoxFixed'
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { useQueryClient } from '@tanstack/react-query'
+import { MessageFix } from '~/store/messageFix.store'
+import isTypingLogo from '../../assets/images/isTyping.gif'
+import useTypingMessageSocket from '~/hooks/socket/useTypingMessageSocket'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
   previewUploadRef: React.LegacyRef<HTMLDivElement>
   infoMessage: InfoMessage
+  message_fix: MessageFix
 }
 
-function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMessageType) {
+function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_fix }: SendMessageType) {
+  useTypingMessageSocket()
   const [openRecordMessage, setOpenRecordMessage] = useState<boolean>(false)
   const receiverID = infoMessage?.group_id
   const sendMessageMutation = useMutationSendMessage()
@@ -36,14 +41,25 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
   const [preview, setPreview] = useState<any>(null)
   const [values, setValues] = useState('')
   const [openEmoji, setOpenEmoji] = useState<boolean>(false)
-  const { toggleBoxReply, setTogglePreviewBox, togglePreviewBox, setToggleBoxReply, setPreviewImg, previewImg } =
-    useConversationStore()
+  const {
+    toggleBoxReply,
+    setTogglePreviewBox,
+    togglePreviewBox,
+    setToggleBoxReply,
+    setPreviewImg,
+    previewImg,
+    isTyping,
+    isNotTyping
+  } = useConversationStore()
   const queryClient = useQueryClient()
   const { setLoadingMessage } = useMessageStore()
-  let groupID = infoMessage?.group_id
+  let groupID = message_fix?.group_id
 
   const profile = getProfileFromLocalStorage()
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
+
+  // typing
+  const { group_message_id, fullname } = isTyping ?? { group_message_id: '', fullname: '' }
 
   const handleSendMessage = useCallback(async () => {
     try {
@@ -66,6 +82,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
           setPreviewImg(null)
         } else if (!previewImg) {
           await sendMessageMutation.mutateAsync(baseData)
+          console.log('baseDate', baseData)
           setTogglePreviewBox(false)
         } else {
           setTogglePreviewBox(false)
@@ -75,6 +92,9 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
         setFile(null)
         // setPreview(null)
       }
+      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
+      queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
 
       setValues('')
     } catch (error) {
@@ -95,6 +115,9 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
       await (toggleBoxReply ? replyMessageMutation.mutateAsync(likeData) : sendMessageMutation.mutateAsync(likeData))
       setValues('')
       setToggleBoxReply(null)
+      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
+      queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
     } catch (error) {
       toast.error('Error sending like', { position: 'top-right', autoClose: 5000 })
     }
@@ -129,6 +152,9 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
         }
 
         await sendMedia.mutateAsync(mediaData)
+        queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+        queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
+        queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
       } catch (error) {
         console.log(error)
       }
@@ -164,15 +190,10 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValues(e.target.value)
     const data = { user_id: profile.user_id, groupID }
-    e.target.value === ''
-      ? socket?.emit('isNotTyping', JSON.stringify(data))
-      : socket?.emit('isTyping', JSON.stringify(data))
-    // const dataSeen = {
-    //   group_id:groupID,
-    //   user_id: profile.user_id,
-    //   message_id: message_id
-    // }
-    // socket?.emit('seenMessage', JSON.stringify(dataSeen))
+    if (groupID)
+      e.target.value === ''
+        ? socket?.emit('isNotTyping', JSON.stringify(data))
+        : socket?.emit('isTyping', JSON.stringify(data))
   }
 
   const handleOnFocus = () => {
@@ -181,18 +202,20 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
       group_id: groupID,
       user_id: profile.user_id
     }
-    socket?.emit('seenMessage', JSON.stringify(dataSeen))
-    socket?.emit('isTyping', JSON.stringify(data))
-    if (groupID) deleteNotify.mutate(groupID)
+    if (groupID) {
+      socket?.emit('seenMessage', JSON.stringify(dataSeen))
+      socket?.emit('isTyping', JSON.stringify(data))
+      if (groupID) deleteNotify.mutate(groupID)
+    }
   }
 
   return (
-    <div className=''>
+    <div className='relative'>
       {toggleBoxReply && (
-        <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
+        <div ref={boxReplyRef} className='border-t-[1px] bg-white p-2 shadow-sm'>
           <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
             <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
-              <span className='mb-2 block text-[14px] font-light'>
+              <span className='mb-2 block text-[12px] font-light'>
                 Trả lời tin nhắn <strong className='font-semibold'>{user_name}</strong>
               </span>
               {typeBodyReply()}
@@ -200,7 +223,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
             <IonIcon
               onClick={() => setToggleBoxReply(null)}
               icon='close'
-              className='cursor-pointer rounded-full bg-primary p-2 text-white'
+              className='cursor-pointer rounded-full bg-primary p-1 text-white'
             />
           </div>
         </div>
@@ -267,8 +290,10 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
                 placeholder='Write your message'
                 onFocus={handleOnFocus}
                 onBlur={() => {
-                  const data = { user_id: profile.user_id, groupID }
-                  socket?.emit('isNotTyping', JSON.stringify(data))
+                  if (groupID) {
+                    const data = { user_id: profile.user_id, groupID }
+                    socket?.emit('isNotTyping', JSON.stringify(data))
+                  }
                 }}
                 value={values}
                 rows={1}
@@ -296,8 +321,12 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage }: SendMe
           </div>
         )}
       </div>
-
-      <IsTyping />
+      {!isNotTyping && group_message_id === message_fix.group_id && (
+        <div className='absolute -top-[15px] left-0 flex items-center justify-center p-1 text-[10px]'>
+          <p>{`${fullname} đang nhập`}</p>
+          <img src={isTypingLogo} className='h-2 w-5 object-cover' alt='Typing...' />
+        </div>
+      )}
     </div>
   )
 }

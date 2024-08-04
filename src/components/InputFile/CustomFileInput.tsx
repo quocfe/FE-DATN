@@ -126,7 +126,7 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({
     return (
       <div {...getRootProps()}>
         <input {...getInputProps()} className='hidden' />
-        <div className='relative'>
+        <div className='relative h-full w-full'>
           {isDragAccept && (
             <div className='absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75'>
               <p className='text-lg text-white'>Thả tệp tại đây</p>

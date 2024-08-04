@@ -14,6 +14,7 @@ import { checkBodyMessage } from '../../utils/checkBodyMessage'
 import { fetchConversation } from '../../utils/fetchInfiniteConversation'
 import TimeAgo from './TimeAgo'
 import { useQueryInfinifyConversation } from '../../hooks/useQueryInfinifyConversation'
+import useNotifyMessage from '../../hooks/useNotifyMessage'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
@@ -30,18 +31,14 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const deleteConversatonMuation = useMutationDeleteMessage()
   const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
   const { socket } = useSocketContext()
-  const { data: notify, refetch: refetchNotifyMessage } = useQueryNotifyMessage()
   const { user_id } = getProfileFromLocalStorage()
-  const notifyData = notify?.data?.data.filter((data: any) => {
-    return data.group_message_id === item.group_message_id && data.receiver_id === user_id ? data : null
-  })
+  const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
+
   const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
     return !notify?.data?.data.some((data: any) => {
       return page.group_message_id === data.group_message_id
     })
   })
-  const showNotify = notifyData && notifyData?.length > 0 ? true : false
-  const numberNotify = notifyData && notifyData?.length < 10 ? notifyData?.length : '10+'
 
   const body =
     item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0 || item?.messages?.type === 6

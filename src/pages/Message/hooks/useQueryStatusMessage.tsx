@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import messageApi from '~/apis/message.api'
 import useConversationStore from '~/store/conversation.store'
 
-export const useQueryStatusMessage = () => {
+export const useQueryStatusMessage = (group_id?: string) => {
   const { selectedConversation } = useConversationStore()
-
+  const id = selectedConversation.group_id ? selectedConversation.group_id : group_id
   return useQuery({
-    queryKey: ['statusMessage', selectedConversation.group_id],
-    queryFn: () => messageApi.statusMessage(selectedConversation.group_id),
-    enabled: selectedConversation.group_id != undefined
+    queryKey: ['statusMessage'],
+    queryFn: () => messageApi.statusMessage(id),
+    enabled: id != undefined
   })
 }

@@ -7,10 +7,12 @@ import useMessageStore from '~/store/message.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useConversationStore from '~/store/conversation.store'
 import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
 
 const useVideoCallMessageSocket = () => {
   const { socket } = useSocketContext()
-  // const { data, refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
 
   const {
     setDataCall,

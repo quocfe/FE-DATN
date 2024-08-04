@@ -21,6 +21,8 @@ import Dialog from '~/components/Dialog'
 import ModalChageRole from './ModalChageRole'
 import useMutationDeleteOrLeaveMember from '../hooks/useMutationDeleteOrLeaveMember'
 import { renderTypeFile } from '../utils/renderTypeFile'
+import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
 
 const IconOptionList = [
   {
@@ -66,6 +68,9 @@ function ProfileRight() {
   const members = data?.data.data
   const changeGroupNameMutation = useMutationChangeGroupName()
   const deleteOrLeaveMember = useMutationDeleteOrLeaveMember()
+  const { refetch: refetchStatusMessage } = useQueryStatusMessage()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const [showDiaLogDeleteOrLeaveMember, setShowDiaLogDeleteOrLeaveMember] = useState<boolean>(false)
 
   const renderList = (type: number) => {
@@ -155,6 +160,9 @@ function ProfileRight() {
       onSuccess: () => {
         setShowDiaLogDeleteOrLeaveMember(false)
         refetchMembers()
+        refetchConversation()
+        refetchStatusMessage()
+        refetchMessage()
       },
       onError: () => {
         toast.error('Có lỗi rồi. liên hệ admin')
@@ -552,7 +560,7 @@ function ProfileRight() {
           description={
             dataDelete.user_id === user_id
               ? 'Bạn sẽ không thể xem lại tin nhắn sau khi rời nhóm!'
-              : 'Thành viên bị xóa không thể xem lại tin nhắn sau khi rời nhóm!'
+              : 'Thành viên bị xóa không thể xem lại tin nhắn!'
           }
           textBtn={dataDelete.user_id === user_id ? 'Rời nhóm' : 'Xóa'}
           callback={() => handleDeleteOrLeaveMember()}

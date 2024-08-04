@@ -42,7 +42,7 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) => {
-  const { selectedConversation } = useConversationStore()
+  const { selectedConversation, previewImg } = useConversationStore()
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLDivElement>(null)
   const { data: messageData } = useQueryMessage()
@@ -104,8 +104,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   return (
     <div className='relative'>
       {!hasNextPage && (
-        <div className='py-10 text-sm text-center lg:pt-8'>
-          <img src={infoMessage?.avatar} className='object-cover w-24 h-24 mx-auto mb-3 rounded-full' />
+        <div className='py-10 text-center text-sm lg:pt-8'>
+          <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
           <div className='mt-8'>
             <div className='text-base font-medium text-black md:text-xl dark:text-white '>
               {infoMessage?.group_name}
@@ -135,7 +135,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
       <div className='space-y-2 text-sm font-medium'>
         {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
           <div className='space-y-2' key={date}>
-            <div className='text-xs text-center text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
+            <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
             {dayMessages.map((item, index) => {
               const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
               const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined

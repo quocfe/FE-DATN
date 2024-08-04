@@ -29,7 +29,7 @@ function MessageCenter() {
   const { onlineUsers, socket } = useSocketContext()
   const { setVideoCall, videoCall, setAcceptCall } = useMessageStore()
   const [calculateHeight, setCalculateHeight] = useState<number>(204)
-  const isOnline = onlineUsers.includes(infoMessage?.group_id)
+  const isOnline = onlineUsers.some((user_socket) => user_socket != user_id)
 
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {

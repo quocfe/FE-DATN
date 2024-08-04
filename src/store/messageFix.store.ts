@@ -5,7 +5,7 @@ export interface MessageFix {
   group_id: string
   type: number
   id: string
-  avatar: string
+  avatar?: string
 }
 
 interface State {
