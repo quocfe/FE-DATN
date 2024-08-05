@@ -19,7 +19,7 @@ function SuggestMakeFriends() {
       </div>
       <div className='side-list'>
         {suggestMakeFriends &&
-          suggestMakeFriends.slice(0, 4).map((user) => <FriendItem type='sugget' user={user} key={user.user_id} />)}
+          suggestMakeFriends.map((user) => <FriendItem type='sugget' user={user} key={user.user_id} />)}
         <button className='button mt-2 hidden w-full bg-secondery'>Xem tất cả</button>
       </div>
     </div>

@@ -143,6 +143,9 @@ class UserApi {
   getAllMediaResource() {
     return http.get<MediaResourceResponse>(USER.LIST_MEDIA_RESOURCES)
   }
+  fetchUserProfile(userId: string) {
+    return http.get<ProfileResponse>(`${USER.PROFILE}/${userId}`, { withCredentials: true });
+  }
 }
 
 export default new UserApi()

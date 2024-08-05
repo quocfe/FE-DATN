@@ -61,7 +61,7 @@ export const accountSchema = yup.object({
   status: yup.string().required('Vui lòng chọn trường này'),
   phone_number: yup.string().required('Vui lòng nhập trường này').matches(phoneRegExp, 'Số điện thoại không hợp lệ'),
   address: yup.string().required('Vui lòng nhập trường này!'),
-  role_id: yup.string().required('Vui lòng nhập trường này!')
+role_id: yup.string().required('Vui lòng nhập trường này!')
 })
 
 export const accountUpdateSchema = yup.object({
@@ -74,9 +74,13 @@ export const accountUpdateSchema = yup.object({
 
 export const registerSchema = authSchema
 export const loginSchema = authSchema.pick(['email', 'password'])
+export const messageSchema = yup.object({
+  body: yup.string().required('Vui điền đầy đủ nội dung tin nhắn!')
+})
 
 export type RegisterForm = yup.InferType<typeof registerSchema>
 export type LoginForm = yup.InferType<typeof loginSchema>
+export type MessageForm = yup.InferType<typeof messageSchema>
 export type ChangePasswordForm = yup.InferType<typeof changePasswordSchema>
 export type CommentType = yup.InferType<typeof commentSchema>
 export type RoleType = yup.InferType<typeof roleSchema>

@@ -5,16 +5,18 @@ import Login from '~/pages/Login'
 import Register from '~/pages/Register'
 import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute'
 import RejectedRoute from './components/RejectedRoute'
-import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import DStory from '~/pages/Story'
+import ArchiveStory from '~/pages/Story/Component/Archive'
+import Message from '~/pages/Message'
 import Dashboard from '~/pages/admin/Dashboard'
 import PublicProfile from '~/pages/PublicProfile'
-import { Game, GamePlay } from '~/pages/Game'
 import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
+import RoomCall from '~/pages/RoomCall'
 import MyFriends from '~/pages/Profile/MyFriends'
 import FriendRequest from '~/pages/Friend/FriendRequest'
 import FriendSuggest from '~/pages/Friend/FriendSuggest'
@@ -35,6 +37,14 @@ import Fanpage from '~/pages/Fanpage'
 import FanpageDetail from '~/pages/Fanpage/FanpageDetail/FanpageDetail'
 import FanpageCreate from '~/pages/Fanpage/FanpageCreate/FanpageCreate'
 import FanpageEdit from '~/pages/Fanpage/FanpageEdit/FanpageEdit'
+import VideoLayout from '~/layouts/video-layout'
+import WatchSave from '~/pages/WatchSave'
+import { ROUTE_PATH } from '~/constants'
+import Watch from '~/pages/Watch'
+import WatchDetail from '~/pages/WatchDetail'
+import Profile from '~/pages/Profile'
+import Game from '~/pages/Game/Game'
+import GamePlay from '~/pages/Game/GamePlay'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -109,6 +119,36 @@ function useRouteElements() {
           )
         },
         {
+          path: '/message',
+          element: (
+            <MainLayout>
+              <Message />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/story',
+          element: (
+              <DStory />
+          )
+        },
+        {
+          path: '/story/archive',
+          element: (
+              <ArchiveStory />
+          )
+        },
+        
+        
+{
           path: 'profile',
           children: [
             {
@@ -287,9 +327,38 @@ function useRouteElements() {
               )
             }
           ]
+        },
+        {
+          path: '/videocall/:roomId/:userId/:groupId/:senderId',
+          element: <RoomCall />
+        },
+        {
+          path: ROUTE_PATH.WATCH,
+          element: (
+            <VideoLayout>
+              <Watch />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_SAVE,
+          element: (
+            <VideoLayout>
+              <WatchSave />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_DETAIL,
+          element: (
+            <VideoLayout>
+              <WatchDetail />
+            </VideoLayout>
+          )
         }
       ]
     },
+
     {
       path: '',
       element: <RejectedRoute />,

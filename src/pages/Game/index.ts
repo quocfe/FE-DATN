@@ -1,4 +1,4 @@
-import Game from './Game'
 import GamePlay from './GamePlay'
+import Game from './Game'
 
-export { Game, GamePlay }
+export default { Game, GamePlay }

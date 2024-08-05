@@ -73,7 +73,7 @@ function Introduce({ profile }: Props) {
                 />
               </svg>
               <div>
-                Có <span className='font-semibold text-black dark:text-white'> 3,240 </span> người theo dõi
+Có <span className='font-semibold text-black dark:text-white'> 3,240 </span> người theo dõi
               </div>
             </li>
           </ul>
