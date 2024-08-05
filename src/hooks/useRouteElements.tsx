@@ -31,6 +31,10 @@ import PermissionList from '~/pages/admin/Permission/PermissionList'
 import AccountList from '~/pages/admin/User/AccountList'
 import AccessControl from './components/AccessControl'
 import Unauthorized from '~/pages/Unauthorized'
+import Fanpage from '~/pages/Fanpage'
+import FanpageDetail from '~/pages/Fanpage/FanpageDetail/FanpageDetail'
+import FanpageCreate from '~/pages/Fanpage/FanpageCreate/FanpageCreate'
+import FanpageEdit from '~/pages/Fanpage/FanpageEdit/FanpageEdit'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -117,6 +121,7 @@ function useRouteElements() {
                 </MainLayout>
               )
             },
+
             {
               path: 'my_friends',
               element: (
@@ -163,6 +168,30 @@ function useRouteElements() {
               ]
             }
           ]
+        },
+        {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/fanpage-create',
+          element: <FanpageCreate />
+        },
+        {
+          path: '/fanpage-edit/:fanpageId',
+          element: <FanpageEdit />
+        },
+        {
+          path: '/fanpage/:fanpageId',
+          element: (
+            <MainLayout>
+              <FanpageDetail />
+            </MainLayout>
+          )
         },
         {
           path: 'friend',

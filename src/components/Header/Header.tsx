@@ -234,9 +234,9 @@ function Header() {
                   >
                     <img src='/src/assets/images/icons/page.png' alt='' className='w-7' />
                     <div className='flex-1'>
-                      <a href='timeline.html'>
+                      <Link to={'/fanpage-create'}>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Pages </h4>
-                      </a>
+                      </Link>
                       <div className='mt-1'> Find and connect with businesses.</div>
                     </div>
                   </li>
