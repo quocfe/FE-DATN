@@ -3,7 +3,8 @@ import {
   clearLocalStorage,
   getAccessTokenFromLocalStorage,
   setAccessTokenLocalToStorage,
-  setProfileLocalStorage
+  setProfileLocalStorage,
+  setTypeLoginToLocalStorage
 } from './auth'
 import { AUTH } from '~/constants/auth.constant'
 
@@ -13,11 +14,13 @@ class Http {
 
   constructor() {
     this.access_token = getAccessTokenFromLocalStorage()
+
     this.instance = axios.create({
       baseURL: 'http://localhost:3000/api/v1/',
-      timeout: 10000,
+      timeout: 100000,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: this.access_token ? this.access_token : ''
       }
     })
 
@@ -44,6 +47,7 @@ class Http {
           const profile = data.data.user
           this.access_token = data.data.access_token
 
+          setTypeLoginToLocalStorage(data.data.type)
           setAccessTokenLocalToStorage(this.access_token)
           setProfileLocalStorage(profile)
         } else if (url === AUTH.LOGOUT) {

@@ -2,9 +2,13 @@ import { IonIcon } from '@ionic/react'
 import useAuthStore from '~/store/auth.store'
 import useMutationLogout from './hooks/useMutationLogout'
 import { Link } from 'react-router-dom'
+import MessageHeader from './components/MessageHeader/MessageHeader'
+import Search from './components/Search'
 
 function Header() {
   const { profile } = useAuthStore()
+
+  // React Query
   const logoutMutation = useMutationLogout()
 
   const handleLogout = () => {
@@ -38,10 +42,14 @@ function Header() {
             </button>
             <div id='logo'>
               <Link to={'/'}>
-                <img src='../src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
-                <img src='src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
-                <img src='src/assets/images/logo-mobile.png' className='hidden w-20 max-md:block dark:!hidden' alt='' />
-                <img src='src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
+                <img src='/src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
+                <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
+                <img
+                  src='/src/assets/images/logo-mobile.png'
+                  className='hidden w-20 max-md:block dark:!hidden'
+                  alt=''
+                />
+                <img src='/src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
               </Link>
             </div>
           </div>
@@ -49,153 +57,7 @@ function Header() {
         <div className='relative flex-1'>
           <div className='mx-auto flex max-w-[1220px] items-center'>
             {/* search */}
-            <div
-              id='search--box'
-              className='left-0 z-20 w-screen overflow-hidden rounded-xl bg-secondery max-md:hidden max-sm:fixed max-sm:top-2 sm:relative sm:w-96 xl:w-[680px] dark:!bg-white/5'
-              tabIndex={0}
-              aria-haspopup='true'
-              aria-expanded='false'
-            >
-              <IonIcon
-                icon='search'
-                className='md hydrated absolute left-4 top-1/2 -translate-y-1/2'
-                role='img'
-                aria-label='search'
-              />
-
-              <input
-                type='text'
-                placeholder='Search Friends, videos ..'
-                className='h-12 w-full !bg-transparent !pl-10 !text-sm !font-normal'
-              />
-            </div>
-            {/* search dropdown*/}
-            <div
-              className='uk- open uk-drop z-10 hidden'
-              uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
-            >
-              <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-96 xl:w-[694px]'>
-                <div className='flex justify-between px-2 py-2.5 text-sm font-medium'>
-                  <div className=' text-black dark:text-white'>Recent</div>
-                  <button type='button' className='text-blue-500'>
-                    Clear
-                  </button>
-                </div>
-                <nav className='text-sm font-medium text-black dark:text-white'>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Jesse Steeve </div>
-                      <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src={profile?.Profile.profile_picture} className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Martin Gray </div>
-                      <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/group/group-2.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Delicious Foods</div>
-                      <div className='mt-0.5 text-xs font-medium text-rose-500'> Group </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/group/group-1.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> Delicious Foods</div>
-                      <div className='mt-0.5 text-xs font-medium text-yellow-500'> Page </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className=' relative flex items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <img src='src/assets/images/avatars/avatar-6.jpg' className='h-9 w-9 rounded-full' alt='' />
-                    <div>
-                      <div> John Welim </div>
-                      <div className='mt-0.5 text-xs font-medium text-blue-500'> Friend </div>
-                    </div>
-                    <IonIcon
-                      icon='close'
-                      className='md hydrated absolute right-3 top-1/2 -translate-y-1/2 text-base'
-                      role='img'
-                      aria-label='close'
-                    />
-                  </a>
-                  <a
-                    href='#!'
-                    className='relative flex  hidden items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <IonIcon
-                      icon='search-outline'
-                      className='md hydrated text-2xl'
-                      role='img'
-                      aria-label='search outline'
-                    />
-                    Creative ideas about Business
-                  </a>
-                  <a
-                    href='#!'
-                    className='relative flex hidden   items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                  >
-                    <IonIcon
-                      icon='search-outline'
-                      className='md hydrated text-2xl'
-                      role='img'
-                      aria-label='search outline'
-                    />
-                    8 Facts About Writting
-                  </a>
-                </nav>
-                <hr className='-mx-2 mt-2 hidden' />
-                <div className='flex hidden justify-end pr-2 text-sm font-medium text-red-500'>
-                  <a href='#!' className='flex rounded p-1.5 hover:bg-red-50 dark:hover:bg-slate-700'>
-                    <IonIcon icon='trash' className='md hydrated mr-2 text-lg' role='img' aria-label='trash' />
-                    Clear your history
-                  </a>
-                </div>
-              </div>
-            </div>
+            <Search profile={profile} />
             {/* header icons */}
             <div className='absolute right-5 top-1/2 flex -translate-y-1/2 items-center gap-2 text-black sm:gap-4'>
               {/* create */}
@@ -357,7 +219,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/group.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/group.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Groups </h4>
@@ -371,7 +233,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/page.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/page.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Pages </h4>
@@ -383,7 +245,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/event.png' className='w-7' />
+                    <img src='/src/assets/images/icons/event.png' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
@@ -395,7 +257,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/market.png' className='-ml-1 w-8' />
+                    <img src='/src/assets/images/icons/market.png' className='-ml-1 w-8' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
@@ -407,7 +269,7 @@ function Header() {
                     className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     style={{ opacity: 0 }}
                   >
-                    <img src='src/assets/images/icons/game.png' alt='' className='w-7' />
+                    <img src='/src/assets/images/icons/game.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Games </h4>
@@ -514,7 +376,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -534,7 +396,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -553,7 +415,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-6.jpg'
+                          src='/src/assets/images/avatars/avatar-6.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -572,7 +434,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src={profile?.Profile.profile_picture}
+                          src={profile?.Profile?.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -593,7 +455,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
+                          src='/src/assets/images/avatars/avatar-3.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -613,7 +475,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
+                          src='/src/assets/images/avatars/avatar-4.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -632,7 +494,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src={profile?.Profile.profile_picture}
+                          src={profile?.Profile?.profile_picture}
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -651,7 +513,7 @@ function Header() {
                     >
                       <div className='relative h-12 w-12 shrink-0'>
                         <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
+                          src='/src/assets/images/avatars/avatar-7.jpg'
                           alt=''
                           className='h-full w-full rounded-full object-cover'
                         />
@@ -673,196 +535,7 @@ function Header() {
                 </a>
                 <div className='dark:bg-dark3 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t bg-white max-md:hidden dark:border-transparent' />
               </div>
-              {/* messages */}
-              <button
-                type='button'
-                className='relative rounded-full p-1 sm:bg-secondery sm:p-2 dark:text-white'
-                uk-tooltip='title: Messages; pos: bottom; offset:6'
-                title=''
-                aria-describedby='uk-tooltip-13'
-                aria-haspopup='true'
-                aria-expanded='false'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='h-6 w-6 max-sm:hidden'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-                <IonIcon
-                  icon='chatbox-ellipses-outline'
-                  className='md hydrated text-2xl sm:hidden'
-                  role='img'
-                  aria-label='chatbox ellipses outline'
-                />
-              </button>
-              <div
-                className='border2 uk-drop hidden w-screen rounded-lg bg-white pr-1.5 drop-shadow-xl md:w-[360px] dark:bg-slate-700'
-                uk-drop='offset:6;pos: bottom-right; mode: click; animate-out: true; animation: uk-animation-scale-up uk-transform-origin-top-right '
-              >
-                {/* heading */}
-                <div className='flex items-center justify-between gap-2 p-4 pb-1'>
-                  <h3 className='text-xl font-bold'> Chats </h3>
-                  <div className='flex gap-2.5 text-lg text-slate-900 dark:text-white'>
-                    <IonIcon icon='expand-outline' className='md hydrated' role='img' aria-label='expand outline' />
-                    <IonIcon icon='create-outline' className='md hydrated' role='img' aria-label='create outline' />
-                  </div>
-                </div>
-                <div className='relative w-full p-2 px-3 '>
-                  <input type='text' className='w-full !rounded-lg !pl-10 dark:!bg-white/10' placeholder='Search' />
-                  <IonIcon
-                    icon='search-outline'
-                    className='md hydrated absolute left-7 top-1/2 -translate-y-1/2 dark:text-white'
-                    role='img'
-                    aria-label='search outline'
-                  />
-                </div>
-                <div className='h-80 overflow-y-auto pr-2'>
-                  <div className='p-2 pr-1 pt-0 dark:text-white/80'>
-                    <a
-                      href='#!'
-                      className='relative flex items-center gap-4 rounded-lg p-2 py-3 duration-200 hover:bg-secondery dark:hover:bg-white/10'
-                    >
-                      <div className='relative h-10 w-10 shrink-0'>
-                        <img
-                          src={profile?.Profile.profile_picture}
-                          alt=''
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <div className='mr-auto text-sm font-medium text-black dark:text-white'>Jesse Steeve</div>
-                          <div className='text-xs text-gray-500 dark:text-white/80'> 09:40AM </div>
-                          <div className='h-2.5 w-2.5 rounded-full bg-blue-600 dark:bg-slate-700' />
-                        </div>
-                        <div className='overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal'>
-                          Love your photos 😍
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      href='#!'
-                      className='relative flex items-center gap-4 rounded-lg p-2 py-3 duration-200 hover:bg-secondery dark:hover:bg-white/10'
-                    >
-                      <div className='relative h-10 w-10 shrink-0'>
-                        <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
-                          alt=''
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <div className='mr-auto text-sm font-medium text-black dark:text-white'>Martin Gray</div>
-                          <div className='text-xs text-gray-500 dark:text-white/80'> 02:40AM </div>
-                        </div>
-                        <div className='overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal'>
-                          Product photographer wanted? 📷
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      href='#!'
-                      className='relative flex items-center gap-4 rounded-lg p-2 py-3 duration-200 hover:bg-secondery dark:hover:bg-white/10'
-                    >
-                      <div className='relative h-10 w-10 shrink-0'>
-                        <img
-                          src='src/assets/images/avatars/avatar-5.jpg'
-                          alt=''
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <div className='mr-auto text-sm font-medium text-black dark:text-white'>Jesse Steeve</div>
-                          <div className='text-xs text-gray-500 dark:text-white/80'> 2 day </div>
-                        </div>
-                        <div className='overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal'>
-                          Want to buy landscape photo? 🌄
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      href='#!'
-                      className='relative flex items-center gap-4 rounded-lg p-2 py-3 duration-200 hover:bg-secondery dark:hover:bg-white/10'
-                    >
-                      <div className='relative h-10 w-10 shrink-0'>
-                        <img
-                          src='src/assets/images/avatars/avatar-3.jpg'
-                          alt=''
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <div className='mr-auto text-sm font-medium text-black dark:text-white'>Monroe Parker</div>
-                          <div className='text-xs text-gray-500 dark:text-white/80'> 4 week </div>
-                          <div className='h-2.5 w-2.5 rounded-full bg-blue-600 dark:bg-slate-700' />
-                        </div>
-                        <div className='overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal'>
-                          I’m glad you like it.😊
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      href='#!'
-                      className='relative flex items-center gap-4 rounded-lg p-2 py-3 duration-200 hover:bg-secondery dark:hover:bg-white/10'
-                    >
-                      <div className='relative h-10 w-10 shrink-0'>
-                        <img
-                          src='src/assets/images/avatars/avatar-7.jpg'
-                          alt=''
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <div className='mr-auto text-sm font-medium text-black dark:text-white'>Alex Dolve</div>
-                          <div className='text-xs text-gray-500 dark:text-white/80'> 2 month </div>
-                        </div>
-                        <div className='overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal'>
-                          Photo editor needed. Fix photos? 🛠️
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      href='#!'
-                      className='relative flex items-center gap-4 rounded-lg p-2 py-3 duration-200 hover:bg-secondery dark:hover:bg-white/10'
-                    >
-                      <div className='relative h-10 w-10 shrink-0'>
-                        <img
-                          src='src/assets/images/avatars/avatar-4.jpg'
-                          alt=''
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                      <div className='min-w-0 flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <div className='mr-auto text-sm font-medium text-black dark:text-white'>Jesse Steeve</div>
-                          <div className='text-xs text-gray-500 dark:text-white/80'> 09:40AM </div>
-                        </div>
-                        <div className='overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal'>
-                          Love your photos 😍
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                {/* footer */}
-                <a href='#!'>
-                  <div className='border-t border-slate-100 py-4 text-center text-sm font-medium text-blue-600 dark:border-gray-600 dark:text-white'>
-                    See all Messages
-                  </div>
-                </a>
-                <div className='dark:bg-dark3 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t bg-white max-md:hidden dark:border-transparent' />
-              </div>
+              <MessageHeader />
               {/* profile */}
               <div
                 className='relative shrink-0 cursor-pointer rounded-full bg-secondery'
@@ -871,9 +544,9 @@ function Header() {
                 aria-expanded='false'
               >
                 <img
-                  src={profile?.Profile.profile_picture}
+                  src={profile?.Profile?.profile_picture}
                   alt=''
-                  className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
+                  className='h-7 w-7 shrink-0 rounded-full object-cover shadow sm:h-9 sm:w-9'
                 />
               </div>
               {/* fix */}
@@ -883,7 +556,11 @@ function Header() {
               >
                 <Link to={'/profile'}>
                   <div className='flex items-center gap-4 p-4 py-5'>
-                    <img src={profile?.Profile.profile_picture} alt='' className='h-10 w-10 rounded-full shadow' />
+                    <img
+                      src={profile?.Profile.profile_picture}
+                      alt=''
+                      className='h-10 w-10 rounded-full object-cover shadow'
+                    />
                     <div className='flex-1'>
                       <h4 className='text-sm font-medium text-black'>
                         {profile?.last_name} {profile?.first_name}
@@ -951,7 +628,7 @@ function Header() {
                       Thông báo
                     </div>
                   </a>
-                  <a href='setting.html'>
+                  <Link to={'/setting'}>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -970,7 +647,7 @@ function Header() {
                       </svg>
                       Cài đặt
                     </div>
-                  </a>
+                  </Link>
                   <button type='button' className='w-full'>
                     <div className='flex items-center gap-2.5 rounded-md p-2 px-2.5 hover:bg-secondery dark:hover:bg-white/10'>
                       <svg
@@ -989,7 +666,7 @@ function Header() {
                       </svg>
                       Chế độ sáng
                       <span className='ml-auto w-9 rounded-full bg-slate-200/40 p-0.5 dark:hover:bg-white/20'>
-                        <span className='relative block h-4 w-2 w-4 rounded-full bg-white shadow-md dark:bg-blue-600' />
+                        <span className='relative block h-4 w-4 rounded-full bg-white shadow-md dark:bg-blue-600' />
                       </span>
                     </div>
                   </button>
@@ -1016,7 +693,11 @@ function Header() {
                 </nav>
               </div>
               <div className='flex hidden items-center gap-2'>
-                <img src={profile?.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full shadow' />
+                <img
+                  src={profile?.Profile.profile_picture}
+                  alt=''
+                  className='h-9 w-9 rounded-full object-cover shadow'
+                />
                 <div className='w-20 font-semibold text-gray-600'> Hamse </div>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'

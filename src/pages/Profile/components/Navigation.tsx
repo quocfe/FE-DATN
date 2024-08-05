@@ -1,7 +1,11 @@
 import { IonIcon } from '@ionic/react'
+import classNames from 'classnames'
 import React from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 function Navigation() {
+  const { pathname } = useLocation()
+
   return (
     <div
       className='mt-3 flex items-center justify-between border-t border-gray-100 px-2 max-lg:flex-col dark:border-slate-700'
@@ -25,9 +29,6 @@ function Navigation() {
           >
             <nav>
               <a href='#'>
-                <IonIcon className='text-xl' icon='pricetags-outline' /> Hủy kết bạn
-              </a>
-              <a href='#'>
                 <IonIcon className='text-xl' icon='time-outline' /> Mute story
               </a>
               <a href='#'>
@@ -37,23 +38,35 @@ function Navigation() {
                 <IonIcon className='text-xl' icon='share-outline' /> Chia sẻ trang cá nhân
               </a>
               <hr />
-              <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                <IonIcon className='text-xl' icon='stop-circle-outline' /> Chặn người dùng
-              </a>
             </nav>
           </div>
         </div>
       </div>
       <nav className='-mb-px flex gap-0.5 rounded-xl text-[15px] font-medium text-gray-600  max-md:w-full max-md:overflow-x-auto dark:text-white'>
-        <a href='#' className='inline-block  border-b-2 border-blue-600 px-3.5 py-3 leading-8 text-blue-600'>
+        <Link
+          to={'/profile'}
+          className={classNames('inline-block px-3.5 py-3 leading-8', {
+            'border-b-2 border-blue-600 text-blue-600': pathname === '/profile'
+          })}
+        >
           Trang cá nhân
-        </a>
-        <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-          Bạn bè <span className='hidden pl-2 text-xs font-normal lg:inline-block'>2,680</span>
-        </a>
-        <a href='#' className='inline-block px-3.5 py-3 leading-8'>
+        </Link>
+        <Link
+          to={'/profile/my_friends'}
+          className={classNames('inline-block px-3.5 py-3 leading-8', {
+            'border-b-2 border-blue-600 text-blue-600': pathname === '/profile/my_friends'
+          })}
+        >
+          Bạn bè
+        </Link>
+        <Link
+          to={'/profile/media_resource'}
+          className={classNames('inline-block px-3.5 py-3 leading-8', {
+            'border-b-2 border-blue-600 text-blue-600': pathname === '/profile/media_resource'
+          })}
+        >
           Hình ảnh
-        </a>
+        </Link>
         <a href='#' className='inline-block px-3.5 py-3 leading-8'>
           Video
         </a>
@@ -88,4 +101,4 @@ function Navigation() {
   )
 }
 
-export default Navigation
+export default React.memo(Navigation)
