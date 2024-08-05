@@ -287,24 +287,9 @@ function ArchiveStory() {
                 </div>
               )}
               <div className=' absolute bottom-0 right-0 flex flex-row items-center  space-x-3 p-4'>
-                <input
-                  type='text'
-                  className='dark:bg-dark3 w-200 rounded-full border border-gray-800 p-2 dark:border-gray-800'
-                  placeholder='Trả lời tin...'
-                />
+                
                 <div className='flex flex-row justify-center space-x-2'>
-                  <button className='text-blue-500'>
-                    <IonIcon name='thumbs-up' className='text-3xl' />
-                  </button>
-                  <button className='text-red-500'>
-                    <IonIcon name='heart' className='text-3xl' />
-                  </button>
-                  <button className='text-yellow-500'>
-                    <IonIcon name='happy' className='text-3xl' />
-                  </button>
-                  <button className='text-green-500'>
-                    <IonIcon name='sad' className='text-3xl' />
-                  </button>
+                 
                   <div className='group relative flex items-center space-x-1'>
                     <IonIcon name='eye-outline' className='text-3xl text-gray-600' />
                     <span className='absolute bottom-full mb-2 hidden rounded bg-black px-2 py-1 text-sm text-white group-hover:block'>
