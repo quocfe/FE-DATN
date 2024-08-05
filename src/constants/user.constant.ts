@@ -14,7 +14,6 @@ export const USER = {
   LIST_BLOCK_USERS: 'user/friend/list/block',
   UNBLOCKED_USER: 'user/friend/unblocked_user',
   CHANGE_PASSWORD: 'user/change_password',
-  SEARCH_FRIEND: 'user/friend/search',
   SEND_FRIEND_REQUESTS: 'user/list/sent_friend_request',
   CREATE_SEARCH_HISTORY: 'user/search/history/add',
   LIST_SEARCH_HISTORIES: 'user/search/histories',

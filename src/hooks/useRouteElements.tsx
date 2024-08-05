@@ -7,6 +7,9 @@ import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute
 import RejectedRoute from './components/RejectedRoute'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import Fanpage from '~/pages/Fanpage'
+import DStory from '~/pages/Story'
+import ArchiveStory from '~/pages/Story/Component/Archive'
 import Message from '~/pages/Message'
 import Dashboard from '~/pages/admin/Dashboard'
 import PublicProfile from '~/pages/PublicProfile'
@@ -121,6 +124,28 @@ function useRouteElements() {
           )
         },
         {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/story',
+          element: (
+              <DStory />
+          )
+        },
+        {
+          path: '/story/archive',
+          element: (
+              <ArchiveStory />
+          )
+        },
+        
+        
+{
           path: 'profile',
           children: [
             {
