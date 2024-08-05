@@ -72,6 +72,7 @@ const SideBarMessage = () => {
   if (status === 'pending') {
     return <SideBarMessageSkelaton />
   }
+
   return (
     <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
       <div
@@ -152,7 +153,6 @@ const SideBarMessage = () => {
                 </div>
                 <nav className='text-sm font-medium text-black dark:text-white'>
                   {resultSearch?.data?.data?.map((result: any, index: number) => {
-                    console.log(result)
                     return (
                       <a
                         key={index}

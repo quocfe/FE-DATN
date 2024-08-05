@@ -15,7 +15,6 @@ const Message = () => {
   const { selectedConversation, toggleBoxSearchMessage } = useConversationStore()
   const { inCommingVideoCall } = useMessageStore()
   let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
-
   return (
     <div className='relative -m-2.5 overflow-hidden border dark:border-slate-700'>
       <div className='dark:bg-dark2 flex bg-white '>

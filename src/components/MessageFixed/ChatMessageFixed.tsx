@@ -237,7 +237,7 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
               const showImg =
                 !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
               return (
-                <div key={item?.message_id}>
+                <div key={index}>
                   {showTime && (
                     <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>
                       {new Date(item?.createdAt).toLocaleTimeString('vi-VN', {
