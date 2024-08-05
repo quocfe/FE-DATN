@@ -1,36 +1,63 @@
 import { IonIcon } from '@ionic/react'
 import { useQueryClient } from '@tanstack/react-query'
+import classNames from 'classnames'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
-import useMutationBlockedUser from '~/hooks/mutations/user/useMutationBlockedUser'
+import { ENDPOINT } from '~/constants/endpoint.constant'
+import useMutationAcceptFriendRequest from '~/hooks/mutations/user/useMutationAcceptFriendRequest'
 import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
+import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
+import useBlockedUser from '~/hooks/user/useBlockedUser'
 
 interface Props {
   profile: UserProfile | null
-  status: string | null
+  relationship: {
+    user_id: string
+    friend_id: string
+    status: string
+  } | null
 }
 
-function Navigation({ profile, status }: Props) {
+function Navigation({ profile, relationship }: Props) {
   // Hooks
   const [showDialogBlockUser, setShowDialogBlockUser] = useState<boolean>(false)
   const [showDialogCancelFriendRequest, setShowDialogCancelFriendRequest] = useState<boolean>(false)
-  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   // React Query
   const queryClient = useQueryClient()
-  const blockedUserMutation = useMutationBlockedUser()
+  const senderFriendRequestMutation = useMutationSenderFriendRequest()
+  const acceptFriendRequestMutation = useMutationAcceptFriendRequest()
   const cancelFriendRequestMutation = useMutationCancelFriendRequest()
 
-  // Hủy kết bạn
-  const handleCancelFriendRequest = () => {
+  // Custom Hooks React Query
+  const { handleBlockedUser } = useBlockedUser(profile?.user_id)
+
+  // Gửi lời mời kết bạn
+  const handleSenderFriendRequest = (friend_id: string) => () => {
     if (profile) {
-      cancelFriendRequestMutation.mutate(profile.user_id, {
+      senderFriendRequestMutation.mutate(friend_id, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
-          setShowDialogCancelFriendRequest(false)
-          toast.success('Hủy kết bạn thành công')
+          toast.success('Gửi lời mời kết bạn thành công')
+        },
+        onError: (error) => {
+          toast.error('Đã có lỗi xảy ra')
+          console.log(error)
+        }
+      })
+    }
+  }
+
+  // Chấp nhận lời mời kết bạn
+  const handleAcceptFriendRequest = () => {
+    if (profile) {
+      acceptFriendRequestMutation.mutate(profile.user_id, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
+          toast.success('Đã chấp nhận lời mời kết bạn')
         },
         onError: (error) => {
           toast.error(error.message)
@@ -39,16 +66,19 @@ function Navigation({ profile, status }: Props) {
     }
   }
 
-  // Chặn người dùng
-  const handleBlockedUser = () => {
+  // Hủy kết bạn + lời mời
+  const handleCancelFriendRequest = (notifi: string) => () => {
     if (profile) {
-      blockedUserMutation.mutate(profile.user_id, {
+      cancelFriendRequestMutation.mutate(profile.user_id, {
         onSuccess: () => {
-          toast.success('Chặn người dùng thành công')
-          navigate('/')
+          queryClient.invalidateQueries({ queryKey: ['public_profile', { user_id: profile.user_id }] })
+          if (showDialogCancelFriendRequest) {
+            setShowDialogCancelFriendRequest(false)
+          }
+          toast.success(notifi)
         },
-        onError: () => {
-          toast.error('Đã có lỗi xảy ra!')
+onError: (error) => {
+          toast.error(error.message)
         }
       })
     }
@@ -72,7 +102,7 @@ function Navigation({ profile, status }: Props) {
         title={`Chắc chắn hủy kết bạn ${profile?.last_name} ${profile?.first_name}!`}
         description=' Khi hủy kết bạn, mối quan hệ trực tiếp giữa hai tài khoản sẽ được chấm dứt, và họ sẽ không còn nhìn thấy bài viết hay thông tin cá nhân của nhau trong nguồn cấp dữ liệu hoặc danh sách bạn bè, giúp người dùng có thêm quyền kiểm soát về mối quan hệ và thông tin cá nhân họ muốn chia sẻ.'
         textBtn='Hủy kết bạn'
-        callback={handleCancelFriendRequest}
+        callback={handleCancelFriendRequest(`Đã hủy kết bạn với ${profile?.last_name} ${profile?.first_name}`)}
       />
       <div
         className='mt-3 flex items-center justify-between border-t border-gray-100 px-2 max-lg:flex-col dark:border-slate-700'
@@ -91,32 +121,53 @@ function Navigation({ profile, status }: Props) {
               uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click;offset:10'
             >
               <nav>
-                {status === 'Đã chấp nhận' && (
+                {/* không có bản ghi nào */}
+                {relationship === null && (
+                  <a onClick={handleSenderFriendRequest(profile?.user_id ?? '')} className='cursor-pointer'>
+                    <IonIcon className='text-xl' icon='pricetags-outline' /> Kết bạn
+                  </a>
+                )}
+
+                {/* Đã là bạn bè */}
+                {relationship?.status === 'Đã chấp nhận' && (
                   <a
                     onClick={() => setShowDialogCancelFriendRequest(true)}
-                    className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
                   >
                     <IonIcon icon='close-circle-outline' className='text-[22px]' />
                     Hủy kết bạn
                   </a>
                 )}
 
-                {status === 'Chờ chấp nhận' && (
+                {/* status:  chờ chấp nhận &&  người gửi chính là tôi */}
+                {relationship?.status === 'Chờ chấp nhận' && relationship.user_id !== profile?.user_id && (
                   <>
-                    <a href='#'>
-                      <IonIcon className='text-xl' icon='pricetags-outline' /> Xác nhận
+                    <a
+                      onClick={handleCancelFriendRequest(
+                        `Đã hủy lời mời kết bạn ${profile?.last_name} ${profile?.first_name}`
+                      )}
+                      className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+                    >
+                      <IonIcon icon='close-circle-outline' className='text-[22px]' />
+                      Hủy lời mời
+                    </a>
+                  </>
+                )}
+
+                {relationship?.status === 'Chờ chấp nhận' && relationship.friend_id !== profile?.user_id && (
+                  <>
+                    <a
+                      onClick={handleAcceptFriendRequest}
+                      style={{ color: 'rgb(57 190 106)' }}
+                      className='cursor-pointer'
+                    >
+                      <IonIcon name='checkmark-done-outline' className='text-xl' /> Chấp nhận
                     </a>
                     <a className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
                       <IonIcon icon='close-circle-outline' className='text-[22px]' />
                       Xóa lời mời
                     </a>
                   </>
-                )}
-
-                {status === null && (
-                  <a href='#'>
-                    <IonIcon className='text-xl' icon='pricetags-outline' /> Kết bạn
-                  </a>
                 )}
 
                 <a href='#'>
@@ -140,12 +191,22 @@ function Navigation({ profile, status }: Props) {
           </div>
         </div>
         <nav className='-mb-px flex gap-0.5 rounded-xl text-[15px] font-medium text-gray-600  max-md:w-full max-md:overflow-x-auto dark:text-white'>
-          <a href='#' className='inline-block  border-b-2 border-blue-600 px-3.5 py-3 leading-8 text-blue-600'>
+          <Link
+            to={`${ENDPOINT.PROFILE}/${profile?.user_id}`}
+            className={classNames('inline-block px-3.5 py-3 leading-8 ', {
+'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}`
+            })}
+          >
             Trang cá nhân
-          </a>
-          <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-            Bạn bè <span className='hidden pl-2 text-xs font-normal lg:inline-block'>2,680</span>
-          </a>
+          </Link>
+          <Link
+            to={`${ENDPOINT.PROFILE}/${profile?.user_id}/friends`}
+            className={classNames('inline-block px-3.5 py-3 leading-8 ', {
+              'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}/friends`
+            })}
+          >
+            Bạn bè
+          </Link>
           <a href='#' className='inline-block px-3.5 py-3 leading-8'>
             Hình ảnh
           </a>

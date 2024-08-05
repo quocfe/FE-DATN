@@ -6,6 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SocketContextProvider } from './context/socket.tsx'
+import ConfirmProvider from './components/design-systems/comfirm/confirm-provider.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,9 +21,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <Router>
     <QueryClientProvider client={queryClient}>
       {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition='top-left' /> */}
-      <SocketContextProvider>
-        <App />
-      </SocketContextProvider>
+
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ConfirmProvider>
+        <SocketContextProvider>
+          <App />
+        </SocketContextProvider>
+      </ConfirmProvider>
     </QueryClientProvider>
   </Router>
 )

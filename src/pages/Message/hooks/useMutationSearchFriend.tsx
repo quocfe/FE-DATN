@@ -6,7 +6,7 @@ import { MessageForm } from '~/utils/rules'
 
 function useMutaionSearchFriend() {
   return useMutation({
-    mutationFn: (data: string) => userApi.searchFriend(data)
+    mutationFn: (data: string) => userApi.searchFriends(data)
   })
 }
 

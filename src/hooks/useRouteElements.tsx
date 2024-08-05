@@ -3,24 +3,103 @@ import MainLayout from '~/layouts/MainLayout'
 import Home from '~/pages/Home'
 import Login from '~/pages/Login'
 import Register from '~/pages/Register'
-import ProtectedRoute from './components/ProtectedRoute'
+import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute'
 import RejectedRoute from './components/RejectedRoute'
-import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
 import Message from '~/pages/Message'
 import Dashboard from '~/pages/admin/Dashboard'
-import LoginAdmin from '~/pages/admin/LoginAdmin'
 import PublicProfile from '~/pages/PublicProfile'
-import { FriendList, FriendRequest, FriendSuggest } from '~/pages/Friend'
 import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
 import RoomCall from '~/pages/RoomCall'
+import MyFriends from '~/pages/Profile/MyFriends'
+import FriendRequest from '~/pages/Friend/FriendRequest'
+import FriendSuggest from '~/pages/Friend/FriendSuggest'
+import FriendLayout from '~/pages/Friend/FriendLayout'
+import SentFriendRequests from '~/pages/Friend/SentFriendRequests'
+import PersonalPublic from '~/pages/PublicProfile/PersonalPublic'
+import PersonalPrivate from '~/pages/Profile/PersonalPrivate'
+import FriendInfoDisplay from '~/pages/PublicProfile/FriendInfoDisplay/FriendInfoDisplay'
+import MediaResources from '~/pages/Profile/MediaResources'
+import LoginAdmin from '~/pages/admin/LoginAdmin'
+import AdminLayout from '~/layouts/AdminLayout'
+import ListRole from '~/pages/admin/Role/ListRole'
+import PermissionList from '~/pages/admin/Permission/PermissionList'
+import AccountList from '~/pages/admin/User/AccountList'
+import AccessControl from './components/AccessControl'
+import Unauthorized from '~/pages/Unauthorized'
+import VideoLayout from '~/layouts/video-layout'
+import WatchSave from '~/pages/WatchSave'
+import { ROUTE_PATH } from '~/constants'
+import Watch from '~/pages/Watch'
+import WatchDetail from '~/pages/WatchDetail'
+import Profile from '~/pages/Profile'
+import Game from '~/pages/Game/Game'
+import GamePlay from '~/pages/Game/GamePlay'
 
 function useRouteElements() {
   const routeElements = useRoutes([
+    {
+      path: '/admin',
+      element: <AdminProtectedRoute />,
+      children: [
+        {
+          path: 'login',
+          element: <LoginAdmin />
+        },
+        {
+          path: 'dashboard',
+          element: (
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          )
+        },
+        {
+          path: 'role',
+          children: [
+            {
+              path: 'list',
+              element: (
+                <AccessControl requiredModules={['Role Management']} requiredPermissions={['view']}>
+                  <AdminLayout>
+                    <ListRole />
+                  </AdminLayout>
+                </AccessControl>
+              )
+            }
+          ]
+        },
+        {
+          path: 'permission',
+          children: [
+            {
+              path: 'list',
+              element: (
+                <AccessControl requiredModules={['Super Admin']}>
+                  <AdminLayout>
+                    <PermissionList />
+                  </AdminLayout>
+                </AccessControl>
+              )
+            }
+          ]
+        },
+        {
+          path: 'account/list',
+          element: (
+            <AccessControl requiredModules={['Super Admin']}>
+              <AdminLayout>
+                <AccountList />
+              </AdminLayout>
+            </AccessControl>
+          )
+        }
+      ]
+    },
     {
       path: '/',
       element: <ProtectedRoute />,
@@ -34,14 +113,6 @@ function useRouteElements() {
           )
         },
         {
-          path: '/profile',
-          element: (
-            <MainLayout>
-              <Profile />
-            </MainLayout>
-          )
-        },
-        {
           path: '/message',
           element: (
             <MainLayout>
@@ -50,33 +121,79 @@ function useRouteElements() {
           )
         },
         {
-          path: '/profile/:user_id',
-          element: (
-            <MainLayout>
-              <PublicProfile />
-            </MainLayout>
-          )
-        },
-        {
-          path: '/friend',
+          path: 'profile',
           children: [
             {
               path: '',
-              element: <Navigate to={'/friend/list'} replace />
-            },
-            {
-              path: 'list',
               element: (
                 <MainLayout>
-                  <FriendList />
+                  <Profile>
+                    <PersonalPrivate />
+                  </Profile>
                 </MainLayout>
               )
+            },
+            {
+              path: 'my_friends',
+              element: (
+                <MainLayout>
+                  <Profile>
+                    <MyFriends />
+                  </Profile>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'media_resource',
+              element: (
+                <MainLayout>
+                  <Profile>
+                    <MediaResources />
+                  </Profile>
+                </MainLayout>
+              )
+            },
+            {
+              path: ':user_id',
+              children: [
+                {
+                  path: '',
+                  element: (
+                    <MainLayout>
+                      <PublicProfile>
+                        <PersonalPublic />
+                      </PublicProfile>
+                    </MainLayout>
+                  )
+                },
+                {
+                  path: 'friends',
+                  element: (
+                    <MainLayout>
+                      <PublicProfile>
+                        <FriendInfoDisplay />
+                      </PublicProfile>
+                    </MainLayout>
+                  )
+                }
+              ]
+            }
+          ]
+        },
+        {
+          path: 'friend',
+          children: [
+            {
+              path: '',
+              element: <Navigate to='/profile/my_friends' replace />
             },
             {
               path: 'requests',
               element: (
                 <MainLayout>
-                  <FriendRequest />
+                  <FriendLayout>
+                    <FriendRequest />
+                  </FriendLayout>
                 </MainLayout>
               )
             },
@@ -84,14 +201,47 @@ function useRouteElements() {
               path: 'suggests',
               element: (
                 <MainLayout>
-                  <FriendSuggest />
+                  <FriendLayout>
+                    <FriendSuggest />
+                  </FriendLayout>
+                </MainLayout>
+              )
+            },
+            {
+              path: 'sent_requests',
+              element: (
+                <MainLayout>
+                  <FriendLayout>
+                    <SentFriendRequests />
+                  </FriendLayout>
                 </MainLayout>
               )
             }
           ]
         },
         {
-          path: '/setting',
+          path: 'game',
+          children: [
+            {
+              path: '',
+              element: (
+                <MainLayout>
+                  <Game />
+                </MainLayout>
+              )
+            },
+            {
+              path: 'play/:id',
+              element: (
+                <MainLayout>
+                  <GamePlay />
+                </MainLayout>
+              )
+            }
+          ]
+        },
+        {
+          path: 'setting',
           children: [
             {
               path: '',
@@ -128,6 +278,30 @@ function useRouteElements() {
         {
           path: '/videocall/:roomId/:userId/:groupId/:senderId',
           element: <RoomCall />
+        },
+        {
+          path: ROUTE_PATH.WATCH,
+          element: (
+            <VideoLayout>
+              <Watch />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_SAVE,
+          element: (
+            <VideoLayout>
+              <WatchSave />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_DETAIL,
+          element: (
+            <VideoLayout>
+              <WatchDetail />
+            </VideoLayout>
+          )
         }
       ]
     },
@@ -137,35 +311,26 @@ function useRouteElements() {
       element: <RejectedRoute />,
       children: [
         {
-          path: '/login',
+          path: 'login',
           element: <Login />
         },
         {
-          path: '/register',
+          path: 'register',
           element: <Register />
         }
       ]
     },
     {
-      path: '/confirm_otp/:email',
+      path: 'confirm_otp/:email',
       element: <ConfirmOTP />
     },
     {
-      path: '/admin',
-      children: [
-        {
-          path: '',
-          element: <Navigate to={'/admin/dashboard'} replace />
-        },
-        {
-          path: 'login',
-          element: <LoginAdmin />
-        },
-        {
-          path: 'dashboard',
-          element: <Dashboard />
-        }
-      ]
+      path: 'not_found',
+      element: <NotFound />
+    },
+    {
+      path: 'unauthorized',
+      element: <Unauthorized />
     },
     {
       path: '*',

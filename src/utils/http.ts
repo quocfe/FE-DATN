@@ -3,7 +3,8 @@ import {
   clearLocalStorage,
   getAccessTokenFromLocalStorage,
   setAccessTokenLocalToStorage,
-  setProfileLocalStorage
+  setProfileLocalStorage,
+  setTypeLoginToLocalStorage
 } from './auth'
 import { AUTH } from '~/constants/auth.constant'
 
@@ -46,6 +47,7 @@ class Http {
           const profile = data.data.user
           this.access_token = data.data.access_token
 
+          setTypeLoginToLocalStorage(data.data.type)
           setAccessTokenLocalToStorage(this.access_token)
           setProfileLocalStorage(profile)
         } else if (url === AUTH.LOGOUT) {

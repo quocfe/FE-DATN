@@ -1,3 +1,7 @@
+export const setTypeLoginToLocalStorage = (type: 'client' | 'admin') => {
+  localStorage.setItem('type', type)
+}
+
 export const setAccessTokenLocalToStorage = (access_token: string) => {
   localStorage.setItem('access_token', access_token)
 }
@@ -23,8 +27,13 @@ export const getProfileFromLocalStorage = () => {
   return profile ? JSON.parse(profile) : ''
 }
 
+export const getTypeLoginFromLocalStorage = () => {
+  return localStorage.getItem('type') || ''
+}
+
 export const clearLocalStorage = () => {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('refresh_token')
-  localStorage.removeItem('profile')
+  localStorage.clear()
+  // localStorage.removeItem('access_token')
+  // localStorage.removeItem('refresh_token')
+  // localStorage.removeItem('profile')
 }

@@ -16,6 +16,7 @@ interface FriendProps {
 const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
   const [resultSearch, setResultSearch] = useState<any>([])
   const { selectedConversation } = useConversationStore()
+  console.log('selectedConversation', selectedConversation)
   const searchMutaion = useMutaionSearchFriend()
   const { data: memberSuggest } = useQueryFriends()
   const { data: memberGroup } = useQueryMembers()

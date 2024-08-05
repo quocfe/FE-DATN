@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ROUTE_PATH } from '~/constants'
 
 function Sidebar() {
   return (
@@ -31,6 +32,10 @@ function Sidebar() {
                           <span> Bảng tin </span>
                         </Link>
                       </li>
+                      <Link to={'/friend/suggests'}>
+                        <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
+                        <span> Bạn bè </span>
+                      </Link>
                       <li>
                         <Link to={'/message'}>
                           <img src='src/assets/images/icons/message.png' alt='messages' className='w-5' />
@@ -38,10 +43,10 @@ function Sidebar() {
                         </Link>
                       </li>
                       <li>
-                        <a href='video.html'>
+                        <Link to={ROUTE_PATH.WATCH}>
                           <img src='/src/assets/images/icons/video.png' alt='messages' className='w-6' />
                           <span> Video </span>
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a href='event.html'>

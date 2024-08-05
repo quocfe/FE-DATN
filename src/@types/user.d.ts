@@ -1,18 +1,32 @@
-type User = {
+interface BaseUser {
   user_id: string
   first_name: string
   last_name: string
-  email: string
-  gender: number
+  profile_picture?: string
+  username?: string
 }
 
-type Profile = {
+interface BaseProfile {
+  profile_picture: string
+  cover_photo: string
+}
+
+type User = BaseUser & {
+  email: string
+  gender: number
+  role?: {
+    role_id: string
+    name: string
+    description: string
+  }
+  modules: ?ModulePermission[]
+}
+
+type Profile = BaseProfile & {
   profile_id: string
   phone_number: string
   date_of_birth: string
   biography: string
-  profile_picture: string
-  cover_photo: string
   home_town: string
   education: string
   relationship_status?: number
@@ -58,25 +72,35 @@ type SearchFriend = {
 }
 type ProfilePublicResponse = SuccessResponse<{
   user: UserProfile
-  relationship: { status: string } | null
+  relationship: { user_id: string; friend_id: string; status: string } | null
 }>
 
 type UserListReponse = SuccessResponse<{
   users: UserCompact[]
   friends: UserCompact[]
+  pages: number | string
+  total: number | string
 }>
 
-// user đơn giản
-type UserCompact = {
-  user_id: string
-  first_name: string
-  last_name: string
-  Profile: null | {
-    profile_picture: string
-  }
+type UserCompact = BaseUser & {
+  Profile: null | BaseProfile
+  CommonFriends: UserCompact[]
+}
+
+type UserCompactWithStatus = UserCompact & {
+  status: string
 }
 
 type ChangePassword = {
   old_password: string
   new_password: string
+}
+
+type SearchHistory = SuccessResponse<{
+  list: UserCompactWithStatus[]
+}>
+
+type UserConfigParams = {
+  _page: string
+  _limit: string
 }

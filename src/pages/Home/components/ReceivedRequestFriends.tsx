@@ -2,7 +2,6 @@ import React from 'react'
 import useQueryReceivedFriendRequests from '~/hooks/queries/user/useQueryReceivedFriendRequests'
 import FriendItem from './FriendItem'
 import { Link } from 'react-router-dom'
-
 function ReceivedRequestFriends() {
   // React Query Hooks
   const receivedFriendRequestQuery = useQueryReceivedFriendRequests()
