@@ -5,7 +5,7 @@ function useQueryPublicProfile(user_id: string) {
   return useQuery({
     queryKey: ['public_profile', { user_id }],
     queryFn: () => userApi.fetchPublicProfile(user_id),
-    staleTime: 30 * 60 * 1000
+    staleTime: 5 * 60 * 1000
   })
 }
 

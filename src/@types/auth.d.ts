@@ -1,5 +1,6 @@
 type AuthResponse = SuccessResponse<{
   user: UserProfile
+  type: 'client' | 'admin'
   access_token: string
 }>
 

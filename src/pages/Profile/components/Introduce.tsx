@@ -3,6 +3,7 @@ import HomeTownIcon from '~/components/icons/Profile/HomeTownIcon'
 import JobIcon from '~/components/icons/Profile/JobIcon'
 import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
 import MyFriends from './MyFriends'
+import React, { useState, useEffect } from 'react'
 
 interface Props {
   profile: UserProfile | null
@@ -14,7 +15,6 @@ const relationshipStatuses = [
   'Đang hẹn hò',
   'Đang tìm hiểu',
   'Phức tạp',
-  'Đã kết hôn',
   'Đã kết hôn',
   'Đã ly hôn',
   'Không xác định'
@@ -53,7 +53,7 @@ function Introduce({ profile, setShowModal }: Props) {
               <ProfileItem icon={<EducationIcon />} title='Học tại' text={profile.Profile.education} />
             )}
             {profile?.Profile.job && <ProfileItem icon={<JobIcon />} title='Làm việc tại' text={profile.Profile.job} />}
-            {profile?.Profile.relationship_status && profile.Profile.relationship_status < 6 && (
+            {profile?.Profile.relationship_status && profile.Profile.relationship_status < 7 && (
               <ProfileItem
                 icon={<RelationshipIcon />}
                 title='Tình trạng'
@@ -72,7 +72,7 @@ function Introduce({ profile, setShowModal }: Props) {
                 <path
                   strokeLinecap='round'
                   strokeLinejoin='round'
-                  d='M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
+d='M12.75 19.5v-.75a7.5 7.5 0 00-7.5-7.5H4.5m0-6.75h.75c7.87 0 14.25 6.38 14.25 14.25v.75M6 18.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                 />
               </svg>
               <div>
@@ -114,118 +114,9 @@ function Introduce({ profile, setShowModal }: Props) {
         </div>
         {/* Bạn bè */}
         <MyFriends />
-        {/* Groups You Manage  */}
-        <div className='border1 dark:bg-dark2 rounded-xl bg-white p-5 px-6 shadow'>
-          <div className='flex items-baseline justify-between text-black dark:text-white'>
-            <h3 className='text-base font-bold'> Suggested Manage </h3>
-            <a href='#' className='text-sm text-blue-500'>
-              See all
-            </a>
-          </div>
-          <div className='side-list'>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> John Michael</h4>
-                </a>
-                <div className='side-list-info'> Updated 6 day ago </div>
-              </div>
-              <button className='button bg-primary-soft dark:text-white'>Like</button>
-            </div>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> Martin Gray</h4>
-                </a>
-                <div className='side-list-info'> Updated 2 month ago </div>
-              </div>
-              <button className='button bg-primary-soft dark:text-white'>Like</button>
-            </div>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> Monroe Parker</h4>
-                </a>
-                <div className='side-list-info'> Updated 1 week ago </div>
-              </div>
-              <button className='button bg-primary-soft dark:text-white'>Like</button>
-            </div>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-1.jpg' alt='' className='side-list-image rounded-full' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> Jesse Steeve</h4>
-                </a>
-                <div className='side-list-info'> Updated 2 day ago </div>
-              </div>
-              <button className='button bg-primary-soft dark:text-white'>Like</button>
-            </div>
-          </div>
-          <button className='mt-2 w-full rounded-md bg-secondery px-3.5 py-1.5 text-sm font-medium text-black dark:text-white'>
-            See all
-          </button>
-        </div>
-        {/* Groups You Manage  */}
-        <div className='border1 dark:bg-dark2 rounded-xl bg-white p-5 px-6 shadow'>
-          <div className='flex items-baseline justify-between text-black dark:text-white'>
-            <h3 className='text-base font-bold'> Suggested Manage </h3>
-            <a href='#' className='text-sm text-blue-500'>
-              See all
-            </a>
-          </div>
-          <div className='side-list'>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-md' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> John Michael</h4>
-                </a>
-                <div className='side-list-info'> Updated 1 week ago </div>
-              </div>
-              <button className='button bg-primary text-white'>Like</button>
-            </div>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-md' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> Martin Gray</h4>
-                </a>
-                <div className='side-list-info'> Updated 4 week ago </div>
-              </div>
-              <button className='button bg-primary text-white'>Like</button>
-            </div>
-            <div className='side-list-item'>
-              <a href='timeline-group.html'>
-                <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-md' />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline-group.html'>
-                  <h4 className='side-list-title'> Monroe Parker</h4>
-                </a>
-                <div className='side-list-info'> Updated 2 month ago </div>
-              </div>
-              <button className='button bg-primary text-white'>Like</button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
 }
 
-export default Introduce
+export default React.memo(Introduce)

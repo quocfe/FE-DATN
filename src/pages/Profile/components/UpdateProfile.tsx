@@ -16,11 +16,14 @@ function UpdateProfile({ onClose }: Props) {
   // Hooks
   const { setProfile } = useAuthStore()
   const { data } = useQueryProfile()
+
   // React Hook Form
   const { register, handleSubmit, setValue } = useForm<UpdateProfile>()
+
   // React Query
   const queryClient = useQueryClient()
   const updateProfileMutation = useMutationUpdateProfile()
+
   // Variable
   const profile = data?.data.data.user.Profile
 
