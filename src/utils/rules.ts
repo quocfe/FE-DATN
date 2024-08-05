@@ -61,7 +61,7 @@ export const accountSchema = yup.object({
   status: yup.string().required('Vui lòng chọn trường này'),
   phone_number: yup.string().required('Vui lòng nhập trường này').matches(phoneRegExp, 'Số điện thoại không hợp lệ'),
   address: yup.string().required('Vui lòng nhập trường này!'),
-  role_id: yup.string().required('Vui lòng nhập trường này!')
+role_id: yup.string().required('Vui lòng nhập trường này!')
 })
 
 export const accountUpdateSchema = yup.object({

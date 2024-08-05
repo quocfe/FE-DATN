@@ -5,12 +5,10 @@ import Login from '~/pages/Login'
 import Register from '~/pages/Register'
 import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute'
 import RejectedRoute from './components/RejectedRoute'
-import Profile from '~/pages/Profile/Profile'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
 import Dashboard from '~/pages/admin/Dashboard'
 import PublicProfile from '~/pages/PublicProfile'
-import { Game, GamePlay } from '~/pages/Game'
 import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
@@ -31,6 +29,14 @@ import PermissionList from '~/pages/admin/Permission/PermissionList'
 import AccountList from '~/pages/admin/User/AccountList'
 import AccessControl from './components/AccessControl'
 import Unauthorized from '~/pages/Unauthorized'
+import VideoLayout from '~/layouts/video-layout'
+import WatchSave from '~/pages/WatchSave'
+import { ROUTE_PATH } from '~/constants'
+import Watch from '~/pages/Watch'
+import WatchDetail from '~/pages/WatchDetail'
+import Profile from '~/pages/Profile'
+import Game from '~/pages/Game/Game'
+import GamePlay from '~/pages/Game/GamePlay'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -258,6 +264,30 @@ function useRouteElements() {
               )
             }
           ]
+        },
+        {
+          path: ROUTE_PATH.WATCH,
+          element: (
+            <VideoLayout>
+              <Watch />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_SAVE,
+          element: (
+            <VideoLayout>
+              <WatchSave />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_DETAIL,
+          element: (
+            <VideoLayout>
+              <WatchDetail />
+            </VideoLayout>
+          )
         }
       ]
     },
