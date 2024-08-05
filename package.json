@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^10.12.3",
     "@cloudinary/url-gen": "^1.19.0",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
