@@ -90,7 +90,7 @@ function FeedStory() {
           >
             <div className='py-2.5 text-center dark:text-white'> Bạn đang suy nghĩ điều gì? </div>
           </div>
-          <div className='cursor-pointer rounded-lg bg-pink-100/60 p-1 px-1.5 transition-all hover:bg-pink-100 hover:bg-opacity-80'>
+<div className='cursor-pointer rounded-lg bg-pink-100/60 p-1 px-1.5 transition-all hover:bg-pink-100 hover:bg-opacity-80'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               className='h-8 w-8 fill-pink-200/70 stroke-pink-600'

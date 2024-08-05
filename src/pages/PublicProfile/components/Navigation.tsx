@@ -77,7 +77,7 @@ function Navigation({ profile, relationship }: Props) {
           }
           toast.success(notifi)
         },
-        onError: (error) => {
+onError: (error) => {
           toast.error(error.message)
         }
       })
@@ -132,7 +132,7 @@ function Navigation({ profile, relationship }: Props) {
                 {relationship?.status === 'Đã chấp nhận' && (
                   <a
                     onClick={() => setShowDialogCancelFriendRequest(true)}
-                    className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
                   >
                     <IonIcon icon='close-circle-outline' className='text-[22px]' />
                     Hủy kết bạn
@@ -194,7 +194,7 @@ function Navigation({ profile, relationship }: Props) {
           <Link
             to={`${ENDPOINT.PROFILE}/${profile?.user_id}`}
             className={classNames('inline-block px-3.5 py-3 leading-8 ', {
-              'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}`
+'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}`
             })}
           >
             Trang cá nhân

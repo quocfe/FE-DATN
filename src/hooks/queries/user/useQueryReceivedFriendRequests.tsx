@@ -1,13 +1,12 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import userApi from '~/apis/user.api'
 
-function useQueryReceivedFriendRequests(userConfigParams: UserConfigParams) {
+function useQueryPublicProfile(user_id: string) {
   return useQuery({
-    queryKey: ['received_friend_requests', userConfigParams],
-    queryFn: () => userApi.fetchAllReceivedFriendRequest(userConfigParams),
-    staleTime: 5 * 60 * 1000,
-    placeholderData: keepPreviousData
+    queryKey: ['public_profile', { user_id }],
+    queryFn: () => userApi.fetchPublicProfile(user_id),
+    staleTime: 5 * 60 * 1000
   })
 }
 
-export default useQueryReceivedFriendRequests
+export default useQueryPublicProfile

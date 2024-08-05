@@ -59,7 +59,7 @@ function UserInfo() {
                 ref={inputFileProfilePictureRef}
                 onChange={() => handleUpdateImage('profile_picture')}
               />
-            </button>
+</button>
           </div>
           <h3 className='text-base font-bold text-black md:text-3xl dark:text-white'>
             {profile?.last_name} {profile?.first_name} {profile?.Profile.alias ? `(${profile?.Profile.alias})` : ''}

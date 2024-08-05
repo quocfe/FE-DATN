@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ROUTE_PATH } from '~/constants'
 
 function Sidebar() {
   return (
@@ -31,23 +32,21 @@ function Sidebar() {
                           <span> Bảng tin </span>
                         </Link>
                       </li>
+                      <Link to={'/friend/suggests'}>
+                        <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
+                        <span> Bạn bè </span>
+                      </Link>
                       <li>
-                        <Link to={'/friend/suggests'}>
-                          <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
-                          <span> Bạn bè </span>
+                        <Link to={'/message'}>
+                          <img src='src/assets/images/icons/message.png' alt='messages' className='w-5' />
+                          <span> Trò chuyện </span>
                         </Link>
                       </li>
                       <li>
-                        <a href='messages.html'>
-                          <img src='/src/assets/images/icons/message.png' alt='messages' className='w-5' />
-                          <span> Trò chuyện </span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href='video.html'>
+                        <Link to={ROUTE_PATH.WATCH}>
                           <img src='/src/assets/images/icons/video.png' alt='messages' className='w-6' />
                           <span> Video </span>
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a href='event.html'>
@@ -55,18 +54,13 @@ function Sidebar() {
                           <span> Sự kiện </span>
                         </a>
                       </li>
-                      <li>
-                        <a href='pages.html'>
+                      <li className='fanpage'>
+                        <Link to={'/fanpage'}>
                           <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
-                        </a>
+                        </Link>
                       </li>
-                      <li>
-                        <a href='market.html'>
-                          <img src='/src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
-                          <span> Cửa hàng </span>
-                        </a>
-                      </li>
+                      
                       <li>
                         <a href='blog.html'>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />
