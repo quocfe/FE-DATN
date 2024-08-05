@@ -2,6 +2,8 @@ export const USER = {
   LIST: 'user/list',
   PROFILE: 'user/profile',
   UPDATE: 'user/profile/update',
+  SEARCH_FRIEND: 'user/friend/search',
+  SEARCH: 'user/friend/list/search',
   FRIENDS: 'user/friends',
   RECEIVERD_FRIEND_REQUEST: 'user/list/received_friend_request',
   SENDER_FRIEND_REQUEST: 'user/sender_friend_request',

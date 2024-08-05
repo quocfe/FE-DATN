@@ -7,12 +7,14 @@ import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute
 import RejectedRoute from './components/RejectedRoute'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import Message from '~/pages/Message'
 import Dashboard from '~/pages/admin/Dashboard'
 import PublicProfile from '~/pages/PublicProfile'
 import Setting from '~/pages/Setting'
 import BasicInfo from '~/pages/Setting/BasicInfo'
 import ChangePassword from '~/pages/Setting/ChangePassword'
 import ListBlocks from '~/pages/Setting/ListBlocks'
+import RoomCall from '~/pages/RoomCall'
 import MyFriends from '~/pages/Profile/MyFriends'
 import FriendRequest from '~/pages/Friend/FriendRequest'
 import FriendSuggest from '~/pages/Friend/FriendSuggest'
@@ -107,6 +109,14 @@ function useRouteElements() {
           element: (
             <MainLayout>
               <Home />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/message',
+          element: (
+            <MainLayout>
+              <Message />
             </MainLayout>
           )
         },
@@ -266,6 +276,10 @@ function useRouteElements() {
           ]
         },
         {
+          path: '/videocall/:roomId/:userId/:groupId/:senderId',
+          element: <RoomCall />
+        },
+        {
           path: ROUTE_PATH.WATCH,
           element: (
             <VideoLayout>
@@ -291,6 +305,7 @@ function useRouteElements() {
         }
       ]
     },
+
     {
       path: '',
       element: <RejectedRoute />,

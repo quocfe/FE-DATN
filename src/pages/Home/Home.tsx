@@ -80,7 +80,7 @@ function Home() {
       <div className='mx-auto max-w-[680px]'>
         {/* stories */}
         <div className='mb-8'>
-          <h3 className='hidden text-2xl  font-extrabold text-black dark:text-white'> Stories</h3>
+          <h3 className='hidden text-2xl font-extrabold text-black dark:text-white'> Stories</h3>
           <div className='relative' tabIndex={-1} uk-slider='auto play: true;finite: true' uk-lightbox=''>
             <div className='uk-slider-container py-5'>
               <ul
@@ -229,7 +229,7 @@ function Home() {
           </div>
         </div>
         {/* feed story */}
-        <div className='mx-auto flex-1 space-y-3 md:max-w-[580px] xl:space-y-6'>
+        <div className='mx-auto flex-1 space-y-3 md:max-w-[620px] xl:space-y-6'>
           {/* add story */}
           <div className='border1 dark:bg-dark2 space-y-4 rounded-xl bg-white p-2 text-sm font-medium shadow-sm md:p-4'>
             <div className='flex items-center gap-1 md:gap-3'>
@@ -282,238 +282,20 @@ function Home() {
             </div>
           </div>
           {/*  post image with slider*/}
-          <div className='border1 dark:bg-dark2 rounded-xl bg-white text-sm font-medium shadow-sm'>
-            {/* post heading */}
-            <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
-              <a href='timeline.html'>
-                <img
-                  src='https://i.pinimg.com/736x/0e/b6/5a/0eb65a09ad6a7e7d6da86ab1149ef9da.jpg'
-                  alt=''
-                  className='h-9 w-9 rounded-full'
-                />
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html'>
-                  <h4 className='text-black dark:text-white'> Monkey D Luffy </h4>
-                </a>
-                <div className='text-xs text-gray-500 dark:text-white/80'> 2 giờ trước</div>
-              </div>
-              <div className='-mr-1'>
-                <button type='button' className='button-icon h-8 w-8'>
-                  <IonIcon className='text-xl' icon='ellipsis-horizontal' />
-                </button>
-                <div
-                  className='w-[245px]'
-                  uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click'
-                >
-                  <nav>
-                    <a href='#'>
-                      <IonIcon className='shrink-0 text-xl' icon='bookmark-outline' /> Add to favorites
-                    </a>
-                    <a href='#'>
-                      <IonIcon className='shrink-0 text-xl' icon='notifications-off-outline' /> Mute Notification
-                    </a>
-                    <a href='#'>
-                      <IonIcon className='shrink-0 text-xl' icon='flag-outline' /> Report this post
-                    </a>
-                    <a href='#'>
-                      <IonIcon className='shrink-0 text-xl' icon='share-outline' /> Share your profile
-                    </a>
-                    <hr />
-                    <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                      <IonIcon className='shrink-0 text-xl' icon='stop-circle-outline' /> Unfollow
-                    </a>
-                  </nav>
-                </div>
-              </div>
-            </div>
-            {/* post image */}
-            <div className='uk-visible-toggle relative sm:px-4' tabIndex={-1} uk-slideshow='animation: push;ratio: 4:3'>
-              <ul className='uk-slideshow-items overflow-hidden rounded-xl' uk-lightbox='animation: fade'>
-                <li className='w-full'>
-                  <a className='inline' href='https://getuikit.com/docs/images/photo3.jpg' data-caption='Caption 1'>
-                    <img
-                      src='https://cdn.trangcongnghe.com.vn/uploads/posts/2023-09/one-pice.jpg'
-                      alt=''
-                      className='insta-0 absolute h-full w-full object-cover'
-                    />
-                  </a>
-                </li>
-                <li className='w-full'>
-                  <a className='inline' href='https://getuikit.com/docs/images/photo2.jpg' data-caption='Caption 2'>
-                    <img
-                      src='https://pic0.iqiyipic.com/image/20240108/f2/2e/a_100421840_m_601_en_m5_1013_569.jpg'
-                      alt=''
-                      className='insta-0 absolute h-full w-full object-cover'
-                    />
-                  </a>
-                </li>
-                <li className='w-full'>
-                  <a className='inline' href='https://getuikit.com/docs/images/photo.jpg' data-caption='Caption 3'>
-                    <img
-                      src='https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=1200,height=675/catalog/crunchyroll/a249096c7812deb8c3c2c907173f3774.jpe'
-                      alt=''
-                      className='insta-0 absolute h-full w-full object-cover'
-                    />
-                  </a>
-                </li>
-              </ul>
-              <a className='nav-prev left-6' href='#' uk-slideshow-item='previous'>
-                <IonIcon icon='chevron-back' className='text-2xl' />
-              </a>
-              <a className='nav-next right-6' href='#' uk-slideshow-item='next'>
-                <IonIcon icon='chevron-forward' className='text-2xl' />
+
+          <Post posts={posts} />
+          {pages > 1 && page < pages && posts.length < total && (
+            <div className='pagination mt-5 flex justify-center pb-5'>
+              <a
+                className='inline-block cursor-pointer text-center text-sm hover:text-primary'
+                onClick={handlePanigationPage}
+              >
+                Đang tải dữ liệu ...
               </a>
             </div>
-            {/* post icons */}
-            <div className='flex items-center gap-4 p-2.5 text-xs font-semibold sm:p-4'>
-              <div>
-                <div className='flex items-center gap-2.5'>
-                  <button type='button' className='button-icon bg-red-100 text-red-500 dark:bg-slate-700'>
-                    <IonIcon className='text-lg' icon='heart' />
-                  </button>
-                  <a href='#'>1,300</a>
-                </div>
-                <div
-                  className='w-[212px] rounded-full bg-white p-1 px-2 text-2xl drop-shadow-md dark:bg-slate-700'
-                  uk-drop='offset:10;pos: top-left; animate-out: true; animation: uk-animation-scale-up uk-transform-origin-bottom-left'
-                >
-                  <div
-                    className='flex gap-2'
-                    uk-scrollspy='target: > button; cls: uk-animation-scale-up; delay: 100 ;repeat: true'
-                  >
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      <span> 👍 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      <span> ❤️ </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      <span> 😂 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      <span> 😯 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      <span> 😢 </span>
-                    </button>
-                  </div>
-                  <div className='absolute -bottom-1 left-3 hidden h-2.5 w-2.5 rotate-45 bg-white' />
-                </div>
-              </div>
-              <div className='flex items-center gap-3'>
-                <button type='button' className='button-icon bg-slate-200/70 dark:bg-slate-700'>
-                  <IonIcon className='text-lg' icon='chatbubble-ellipses' />
-                </button>
-                <span>260</span>
-              </div>
-              <button type='button' className='button-icon ml-auto'>
-                <IonIcon className='text-xl' icon='paper-plane-outline' />
-              </button>
-              <button type='button' className='button-icon'>
-                <IonIcon className='text-xl' icon='share-outline' />
-              </button>
-            </div>
-            {/* comments */}
-            <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40'>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  <img
-                    src='https://revolucaonerd.com/wordpress/wp-content/files/revolucaonerd.com/2023/02/sanji-one-piece.webp'
-                    alt=''
-                    className='mt-1 h-6 w-6 rounded-full'
-                  />
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    Vinsmoke Sanji
-                  </a>
-                  <p className='mt-0.5'>Quý cô Nami à, Quý cô Robin à. Tôi yêu các cô 😍 </p>
-                </div>
-              </div>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  <img
-                    src='https://genk.mediacdn.vn/2019/4/16/anh-1-1555405706224872675384.jpg'
-                    alt=''
-                    className='mt-1 h-6 w-6 rounded-full'
-                  />
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    Rico Nami
-                  </a>
-                  <p className='mt-0.5'>
-                    {' '}
-                    Chỉ cần là nơi thuyền trưởng muốn tới, hoa tiêu tôi đây sẽ đưa thuyền trường tới đích an toàn.😎{' '}
-                  </p>
-                </div>
-              </div>
-              <button type='button' className='mt-2 flex items-center gap-1.5 text-gray-500 hover:text-blue-500'>
-                <IonIcon icon='chevron-down-outline' className='ml-auto duration-200 group-aria-expanded:rotate-180' />
-                Xem thêm bình luận
-              </button>
-            </div>
-            {/* add comment */}
-            <div className='flex items-center gap-1 border-t border-gray-100 p-2.5 sm:px-4 sm:py-3 dark:border-slate-700/40'>
-              <img
-                src='https://i.pinimg.com/736x/0e/b6/5a/0eb65a09ad6a7e7d6da86ab1149ef9da.jpg'
-                alt=''
-                className='h-6 w-6 rounded-full object-cover'
-              />
-              <div className='relative h-10 flex-1 overflow-hidden'>
-                <textarea
-                  placeholder='Nội dung bình luận ...'
-                  rows={1}
-                  className='w-full resize-none !bg-transparent px-4 py-2 focus:!border-transparent focus:!ring-transparent'
-                  defaultValue={''}
-                />
-                <div className='!top-2 pr-2' uk-drop='pos: bottom-right; mode: click'>
-                  <div
-                    className='flex items-center gap-2'
-                    uk-scrollspy='target: > svg; cls: uk-animation-slide-right-small; delay: 100 ;repeat: true'
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 24 24'
-                      fill='currentColor'
-                      className='h-6 w-6 fill-sky-600'
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z'
-                        clipRule='evenodd'
-                      />
-                    </svg>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
-                      className='h-5 w-5 fill-pink-600'
-                    >
-                      <path d='M3.25 4A2.25 2.25 0 001 6.25v7.5A2.25 2.25 0 003.25 16h7.5A2.25 2.25 0 0013 13.75v-7.5A2.25 2.25 0 0010.75 4h-7.5zM19 4.75a.75.75 0 00-1.28-.53l-3 3a.75.75 0 00-.22.53v4.5c0 .199.079.39.22.53l3 3a.75.75 0 001.28-.53V4.75z' />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <button type='submit' className='rounded-full bg-secondery px-3.5 py-1.5 text-sm'>
-                Bình luận
-              </button>
-            </div>
-          </div>
+          )}
         </div>
         {/* Bài đăng */}
-        <Post posts={posts} />
-        {pages > 1 && page < pages && posts.length < total && (
-          <div className='pagination mt-5 flex justify-center pb-5'>
-            <a
-              className='inline-block cursor-pointer text-center text-sm hover:text-primary'
-              onClick={handlePanigationPage}
-            >
-              Đang tải dữ liệu ...
-            </a>
-          </div>
-        )}
       </div>
       {/* sidebar */}
       <Sidebar />

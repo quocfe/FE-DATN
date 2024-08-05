@@ -109,7 +109,7 @@ class UserApi {
 
   // Danh sách lời mời kết bạn đã gửi
   fetchAllSendFriendRequests(userConfigParams: UserConfigParams) {
-const { _page, _limit } = userConfigParams
+    const { _page, _limit } = userConfigParams
 
     return http.get<UserListReponse>(USER.SEND_FRIEND_REQUESTS, {
       params: {

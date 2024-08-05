@@ -2,7 +2,7 @@ function Loading() {
   return (
     <>
       <div
-        className='fixed inset-0 flex h-full w-full items-center justify-center justify-center transition-opacity duration-300'
+        className='fixed inset-0 flex h-full w-full items-center justify-center transition-opacity duration-300'
         style={{ zIndex: 9999 }}
       >
         <img
