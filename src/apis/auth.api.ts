@@ -1,4 +1,5 @@
 import { AUTH } from '~/constants/auth.constant'
+import { USER } from '~/constants/user.constant'
 import http from '~/utils/http'
 import { LoginForm, RegisterForm } from '~/utils/rules'
 
