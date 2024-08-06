@@ -136,19 +136,14 @@ function useRouteElements() {
         },
         {
           path: '/story',
-          element: (
-              <DStory />
-          )
+          element: <DStory />
         },
         {
           path: '/story/archive',
-          element: (
-              <ArchiveStory />
-          )
+          element: <ArchiveStory />
         },
-        
-        
-{
+
+        {
           path: 'profile',
           children: [
             {
