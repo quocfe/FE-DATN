@@ -1,12 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import userApi from '~/apis/user.api'
 
-function useQueryPublicProfile(user_id: string) {
+function useQueryUsers(userConfigParams: UserConfigParams = { _page: '1', _limit: '8' }) {
   return useQuery({
-    queryKey: ['public_profile', { user_id }],
-    queryFn: () => userApi.fetchPublicProfile(user_id),
+    queryKey: ['users', userConfigParams],
+    queryFn: () => userApi.fetchAllUsers(userConfigParams),
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000
   })
 }
 
-export default useQueryPublicProfile
+export default useQueryUsers

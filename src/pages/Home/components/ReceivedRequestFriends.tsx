@@ -2,9 +2,14 @@ import React from 'react'
 import useQueryReceivedFriendRequests from '~/hooks/queries/user/useQueryReceivedFriendRequests'
 import FriendItem from './FriendItem'
 import { Link } from 'react-router-dom'
+import useUserConfigParams from '~/hooks/user/useUserConfigParams'
+
 function ReceivedRequestFriends() {
+  // Hooks
+  const userConfigParams = useUserConfigParams()
+
   // React Query Hooks
-  const receivedFriendRequestQuery = useQueryReceivedFriendRequests()
+  const receivedFriendRequestQuery = useQueryReceivedFriendRequests(userConfigParams)
 
   // danh sách lời mời kết bạn
   const friendRequests = receivedFriendRequestQuery.data?.data.data.friends
@@ -19,7 +24,7 @@ function ReceivedRequestFriends() {
       </div>
       <div className='side-list'>
         {friendRequests && friendRequests.length !== 0 ? (
-          friendRequests.map((friend) => <FriendItem type='request' user={friend} key={friend.user_id} />)
+          friendRequests.slice(0, 4).map((friend) => <FriendItem type='request' user={friend} key={friend.user_id} />)
         ) : (
           <div className='mt-2 text-center text-sm'>Hiện không có lời mời nào</div>
         )}
