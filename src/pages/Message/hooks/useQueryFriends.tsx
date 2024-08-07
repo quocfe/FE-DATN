@@ -6,6 +6,6 @@ import useConversationStore from '~/store/conversation.store'
 export const useQueryFriends = () => {
   return useQuery({
     queryKey: ['friends'],
-    queryFn: () => userApi.fetchAllMyFriends()
+    queryFn: () => userApi.fetchAllMyFriends({ _page: '1', _limit: '100' })
   })
 }

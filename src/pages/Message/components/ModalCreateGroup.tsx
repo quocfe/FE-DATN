@@ -52,7 +52,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const handleSetNameGroup = (e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)
 
   return (
-    <Modal isVisible={isOpen} onClose={onClose} height='3/4'>
+    <Modal isVisible={isOpen} onClose={!isLoading && onClose} iconClose={isLoading ? false : true} height='3/4'>
       <div className='flex h-full flex-col justify-evenly '>
         <div className='flex-1'>
           <div className='p-6'>

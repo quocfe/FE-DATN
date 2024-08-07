@@ -63,9 +63,8 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
         id: item.group_message_id,
         type: 2
       })
-    } else {
-      return body
     }
+
     const dataSeen = {
       group_id: item.group_message_id,
       user_id: user_id,
@@ -144,18 +143,18 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     >
       <div
         onClick={() => handleSelectedConversation(item)}
-        className='flex w-full flex-1 flex-row items-center justify-between gap-2'
+        className='flex flex-row items-center justify-between flex-1 w-full gap-2'
       >
         <div className='relative h-14 w-14 shrink-0'>
           <img
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
-            className='h-full w-full rounded-full object-cover'
+            className='object-cover w-full h-full rounded-full'
           />
           <div
             className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
           />
         </div>
-        <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
+        <div className='flex flex-col flex-1 h-full min-w-0 gap-1 justify-evenly'>
           <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
             {item?.group_name}
           </div>
@@ -179,7 +178,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       ) : (
         <div className={`uk-inline absolute right-2 top-1 rounded-full shadow-sm  `}>
           <button
-            className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
+            className='flex items-center justify-center w-6 h-6 rounded-full shadow-sm uk-button uk-button-default hover:bg-slate-100'
             type='button'
           >
             <IonIcon icon='ellipsis-horizontal' className='font-semibold' />

@@ -22,7 +22,7 @@ function MainLayout({ children }: Props) {
         </div>
       )}
       {hiddenMessageFix.length > 0 && !checkUrlMesage && (
-        <div className='fixed bottom-10 right-1 z-50 flex h-fit flex-col gap-2'>
+        <div className='fixed z-50 flex flex-col gap-2 bottom-10 right-1 h-fit'>
           {hiddenMessageFix.map((message_fix, index) => (
             <HiddenMessageFix key={index} message_fix={message_fix} />
           ))}

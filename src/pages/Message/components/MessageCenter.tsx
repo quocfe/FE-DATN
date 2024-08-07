@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { SocketContextProvider, useSocketContext } from '~/context/socket'
 import useConversationStore from '~/store/conversation.store'
 import { useQueryMessage } from '../hooks/useQueryMessage'
@@ -12,6 +12,8 @@ import CallVideo from './CallVideo'
 import useMessageStore from '~/store/message.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import InComingCallVideo from './InComingCallVideo'
+import BlockUi from './components/BlockUi'
+import BlockedUi from './components/BlockedUi'
 
 function MessageCenter() {
   const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
@@ -28,9 +30,11 @@ function MessageCenter() {
   const infoMessage = data?.data?.data?.info
   const { onlineUsers, socket } = useSocketContext()
   const { setVideoCall, videoCall, setAcceptCall } = useMessageStore()
-  const [calculateHeight, setCalculateHeight] = useState<number>(204)
-  const isOnline = onlineUsers.some((user_socket) => user_socket != user_id)
 
+  const isOnline = onlineUsers.some((user_socket) => user_socket != user_id)
+  const isBlock = infoMessage?.list_block_user.some((user_id) => user_id === infoMessage.group_id)
+  const isBlocked = infoMessage?.list_blocked_user.some((user_id) => user_id === infoMessage.group_id)
+  const [calculateHeight, setCalculateHeight] = useState<number>(204)
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
@@ -63,7 +67,7 @@ function MessageCenter() {
 
   useLayoutEffect(() => {
     if (toggleBoxReply || togglePreviewBox) {
-      let height = 204
+      let height = selectedConversation.type === 1 && (isBlocked || isBlock) ? 240 : 204
 
       if (boxReplyRef.current) {
         height = boxReplyRef.current.getBoundingClientRect().height + 195
@@ -75,9 +79,9 @@ function MessageCenter() {
 
       setCalculateHeight(height)
     } else {
-      setCalculateHeight(204)
+      setCalculateHeight(selectedConversation.type === 1 && (isBlocked || isBlock) ? 240 : 204)
     }
-  }, [toggleBoxReply, togglePreviewBox])
+  }, [toggleBoxReply, togglePreviewBox, selectedConversation])
 
   if (videoCall && Object.keys(videoCall).length > 0) {
     return <CallVideo />
@@ -85,6 +89,16 @@ function MessageCenter() {
 
   if (isLoading) {
     return <ChatMessageSkelaton />
+  }
+
+  const selectBlockType = () => {
+    if (isBlock) {
+      return <BlockUi />
+    } else if (isBlocked) {
+      return <BlockedUi />
+    } else {
+      return <SendMessage boxReplyRef={boxReplyRef} previewUploadRef={previewUploadRef} />
+    }
   }
 
   return (
@@ -176,7 +190,7 @@ function MessageCenter() {
       <CustomFileInput setPreview={() => {}} type={3} setFile={setFile} file={file}>
         <div
           style={{
-            height: `calc(100vh - ${calculateHeight}px)`
+            height: `calc(100vh - ${selectedConversation.type === 1 && (isBlocked || isBlock) ? 240 : calculateHeight}px)`
           }}
           ref={chatMessageRef}
           onScroll={handleScroll}
@@ -188,7 +202,8 @@ function MessageCenter() {
         </div>
       </CustomFileInput>
       {/* sending message area */}
-      <SendMessage boxReplyRef={boxReplyRef} previewUploadRef={previewUploadRef} />
+
+      {selectBlockType()}
     </div>
   )
 }

@@ -10,6 +10,7 @@ import useMessageFixStore from '~/store/messageFix.store'
 import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import { Link } from 'react-router-dom'
 
 function MessageHeader() {
   const { data, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useQueryInfinifyConversation()
@@ -142,7 +143,7 @@ function MessageHeader() {
             </div>
           </div>
 
-          <div className='min-h-80 p-2 pr-1 pt-0 dark:text-white/80'>
+          <div className='h-80 overflow-y-scroll p-2 pr-1 pt-0 dark:text-white/80'>
             {focusSearch ? (
               <nav className='text-sm font-medium text-black dark:text-white'>
                 {resultSearch?.data?.data?.map((result: any, index: number) => (
@@ -173,11 +174,11 @@ function MessageHeader() {
             )}
           </div>
           {/* footer */}
-          <a href='#!'>
+          <Link to={'/message'}>
             <div className='border-t border-slate-100 py-4 text-center text-sm font-medium text-blue-600 dark:border-gray-600 dark:text-white'>
               See all Messages
             </div>
-          </a>
+          </Link>
           <div className='dark:bg-dark3 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t bg-white max-md:hidden dark:border-transparent' />
         </div>
       </>

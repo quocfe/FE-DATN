@@ -92,7 +92,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
         setFile(null)
         // setPreview(null)
       }
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
       queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
       queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
 
@@ -115,7 +115,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
       await (toggleBoxReply ? replyMessageMutation.mutateAsync(likeData) : sendMessageMutation.mutateAsync(likeData))
       setValues('')
       setToggleBoxReply(null)
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
       queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
       queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
     } catch (error) {
@@ -152,7 +152,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
         }
 
         await sendMedia.mutateAsync(mediaData)
-        queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+        queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
         queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
         queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
       } catch (error) {
@@ -170,7 +170,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           </div>
         )
       case 2:
-        return <img src={toggleBoxReply?.sub_body} className='h-10 w-10 object-contain' />
+        return <img src={toggleBoxReply?.sub_body} className='object-contain w-10 h-10' />
       case 3:
         return <p className='text-sm'>{toggleBoxReply?.body}</p>
       default:
@@ -213,8 +213,8 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
     <div className='relative'>
       {toggleBoxReply && (
         <div ref={boxReplyRef} className='border-t-[1px] bg-white p-2 shadow-sm'>
-          <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
-            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
+            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               <span className='mb-2 block text-[12px] font-light'>
                 Trả lời tin nhắn <strong className='font-semibold'>{user_name}</strong>
               </span>
@@ -223,19 +223,19 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
             <IonIcon
               onClick={() => setToggleBoxReply(null)}
               icon='close'
-              className='cursor-pointer rounded-full bg-primary p-1 text-white'
+              className='p-1 text-white rounded-full cursor-pointer bg-primary'
             />
           </div>
         </div>
       )}
       {togglePreviewBox && (
         <div ref={previewUploadRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
-          <div className='item-center flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
-            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+          <div className='flex justify-between w-full px-3 py-2 rounded-md item-center bg-secondery'>
+            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               {preview?.type?.includes('video') && (
                 <video
                   src={URL?.createObjectURL(preview)}
-                  className='h-14 w-16 shrink-0 overflow-hidden rounded-sm object-cover'
+                  className='object-cover w-16 overflow-hidden rounded-sm h-14 shrink-0'
                 ></video>
               )}
               {preview?.type?.includes('image') && (
@@ -250,7 +250,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                 setTogglePreviewBox(false)
               }}
               icon='close'
-              className='cursor-pointer rounded-full bg-primary p-2 text-white'
+              className='p-2 text-white rounded-full cursor-pointer bg-primary'
             />
           </div>
         </div>
@@ -276,7 +276,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
         {openRecordMessage ? (
           <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
         ) : (
-          <div className='flex flex-1 flex-row items-center justify-around '>
+          <div className='flex flex-row items-center justify-around flex-1 '>
             <div className='flex h-full w-[90%] flex-shrink-0  flex-row items-center'>
               <textarea
                 id='body'
@@ -313,7 +313,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                   👍
                 </span>
               ) : (
-                <button onClick={handleSendMessage} className='text-dark shrink-0 p-2'>
+                <button onClick={handleSendMessage} className='p-2 text-dark shrink-0'>
                   <IonIcon className='flex text-sm font-bold text-primary' icon='send' />
                 </button>
               )}
@@ -324,7 +324,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
       {!isNotTyping && group_message_id === message_fix.group_id && (
         <div className='absolute -top-[15px] left-0 flex items-center justify-center p-1 text-[10px]'>
           <p>{`${fullname} đang nhập`}</p>
-          <img src={isTypingLogo} className='h-2 w-5 object-cover' alt='Typing...' />
+          <img src={isTypingLogo} className='object-cover w-5 h-2' alt='Typing...' />
         </div>
       )}
     </div>

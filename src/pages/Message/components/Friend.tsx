@@ -38,6 +38,9 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
     default:
       break
   }
+
+  console.log('memberSuggest', memberSuggest)
+  console.log('type', type)
   useEffect(() => {
     searchMutaion.mutate(querySearch, {
       onSuccess: (data: any) => {
@@ -112,7 +115,7 @@ const Friend: React.FC<FriendProps> = ({ setListUser, querySearch, type }) => {
           <>
             <p className='mt-2 text-sm'>Gợi ý</p>
             {arrMembers?.map((item: any, index: number) => (
-              <div key={item.user_id} className='mb-4 flex items-center p-2 shadow-sm'>
+              <div key={index} className='mb-4 flex items-center p-2 shadow-sm'>
                 <input
                   id={type === 'changeRole' ? `radio_${item.user_id}` : item.user_id}
                   type={type === 'changeRole' ? 'radio' : 'checkbox'}

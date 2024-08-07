@@ -13,6 +13,8 @@ import { useSocketContext } from '~/context/socket'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
 import CustomFileInput from '../InputFile/CustomFileInput'
+import BlockFixUi from './BlockFixUi'
+import BlockedFixUi from './BlockedFixUi'
 
 function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   const boxReplyRef = useRef<HTMLDivElement>(null)
@@ -24,16 +26,16 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   const [file, setFile] = useState<File | null>(null)
 
   const { data: messageData, isLoading } = useQuery({
-    queryKey: ['messageFix', message_fix.group_id],
+    queryKey: ['messageFix', message_fix.group_id && message_fix.id],
     queryFn: () =>
       message_fix.type === 1
         ? messageApi.getOneToOneMessage(message_fix.id, 1, 30)
         : messageApi.getGroupMessage(message_fix.group_id, 1, 30),
-    enabled: message_fix.group_id != null || message_fix.id != null,
-    staleTime: Infinity
+    enabled: message_fix.group_id != null || message_fix.id != null
   })
-
   const infoMessage = messageData?.data?.data?.info as InfoMessage
+  const isBlock = infoMessage?.list_block_user.some((user_id) => user_id === infoMessage.group_id)
+  const isBlocked = infoMessage?.list_blocked_user.some((user_id) => user_id === infoMessage.group_id)
   const { removeMessageFix, setHiddenMessageFix } = useMessageFixStore()
   const handleRemoveMessageFixed = () => {
     removeMessageFix(message_fix.group_id)
@@ -46,6 +48,23 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
 
   if (isLoading) {
     return <div className='h-[450px] w-[330px]  rounded-se-xl rounded-ss-xl bg-white shadow-2xl'></div>
+  }
+
+  const selectBlockType = () => {
+    if (isBlock) {
+      return <BlockFixUi />
+    } else if (isBlocked) {
+      return <BlockedFixUi />
+    } else {
+      return (
+        <SendMessageFixed
+          message_fix={message_fix}
+          infoMessage={infoMessage}
+          boxReplyRef={boxReplyRef}
+          previewUploadRef={previewUploadRef}
+        />
+      )
+    }
   }
 
   return (
@@ -106,12 +125,7 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
         </div>
       </div>
       <MessageCenter infoMessage={infoMessage} message_fix={message_fix} />
-      <SendMessageFixed
-        message_fix={message_fix}
-        infoMessage={infoMessage}
-        boxReplyRef={boxReplyRef}
-        previewUploadRef={previewUploadRef}
-      />
+      {selectBlockType()}
     </div>
   )
 }

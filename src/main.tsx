@@ -22,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition='top-left' /> */}
 
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ReactQueryDevtools initialIsOpen={false} position='right' buttonPosition='bottom-left' />
       <ConfirmProvider>
         <SocketContextProvider>
           <App />

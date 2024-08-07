@@ -27,6 +27,7 @@ export const useQueryInfinifyMessage = () => {
       } else {
         return undefined
       }
-    }
+    },
+    enabled: selectedConversation.id != null
   })
 }

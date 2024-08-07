@@ -18,6 +18,8 @@ type InfoMessage = {
   group_id: string
   avatar: string
   group_name: string
+  list_block_user: string[]
+  list_blocked_user: string[]
 }
 
 type GroupMessage = {
@@ -30,6 +32,8 @@ type GroupMessage = {
   createdAt: Date
   updatedAt: Date
   user_id: string
+  list_block_user: string[]
+  list_blocked_user: string[]
 }
 
 type MembersGroup = {
@@ -46,6 +50,8 @@ type TypeMembersGroup = Pick<MembersGroup, 'user_id' | 'role'> & {
   avatar: string
   fullname: string
   group_message_id: string
+  list_block_user: string[]
+  list_blocked_user: string[]
 }
 
 type RecallMessage = {

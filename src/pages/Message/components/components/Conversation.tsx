@@ -48,6 +48,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const lastestNotify: any = notifyData && notifyData.at(0)
   const checkBody = lastestNotify?.type === 1 ? body : lastestNotify?.content
   const message_id = item?.messages?.message_id
+
   const handleSelectedConversation = (item: GroupMessage) => {
     if (item.type === 1) {
       setSelectedConversation({

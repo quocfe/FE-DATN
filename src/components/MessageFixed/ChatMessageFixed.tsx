@@ -124,7 +124,7 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
     fetchNextPage,
     isLoading
   } = useInfiniteQuery({
-    queryKey: ['messageInfinity', message_fix.group_id && message_fix.id],
+    queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id],
     queryFn: fetchMessage,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -133,8 +133,11 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
       } else {
         return undefined
       }
-    }
+    },
+    enabled: message_fix.group_id != null || message_fix.id != null
   })
+
+  console.log(dataMsg)
 
   const { ref, inView } = useInView({ threshold: 0.25 })
   const [showNewMsg, setShowNewMsg] = useState(false)
@@ -197,8 +200,8 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
   return (
     <div>
       {!hasNextPage && (
-        <div className='py-5 text-center text-sm lg:pt-8'>
-          <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
+        <div className='py-5 text-sm text-center lg:pt-8'>
+          <img src={infoMessage?.avatar} className='object-cover w-24 h-24 mx-auto mb-3 rounded-full' />
           <div className='mt-2'>
             <div className='text-[12px] text-base font-medium text-black dark:text-white '>
               {infoMessage?.group_name}
@@ -213,7 +216,7 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
               {infoMessage?.group_id && (
                 <Link
                   to={`/profile/${infoMessage.group_id}`}
-                  className='inline-block rounded-lg bg-secondery px-2 py-1 text-sm font-semibold'
+                  className='inline-block px-2 py-1 text-sm font-semibold rounded-lg bg-secondery'
                 >
                   View profile
                 </Link>
@@ -225,42 +228,43 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
       {isFetchingNextPage && (
         <Spinner classNames='flex items-center justify-center' w='6' h='6' title='Đang tải tin nhắn' />
       )}
-      <p onClick={() => scrollIntoViewFn()}>scroll</p>
-      <div className='space-y-2 text-sm font-medium'>
-        {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
-          <div className='space-y-2' key={date}>
-            <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
-            {dayMessages.map((item, index) => {
-              const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
-              const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
-              const showTime = shouldShowTime(item, previousMessage)
-              const showImg =
-                !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
-              return (
-                <div key={index}>
-                  {showTime && (
-                    <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>
-                      {new Date(item?.createdAt).toLocaleTimeString('vi-VN', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </div>
-                  )}
-                  {item?.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
-                  {item?.type === 0 && <p className='my-2 text-center text-[8px]'>{item.body}</p>}
-                  {item?.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item?.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item?.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item?.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item?.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item?.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                </div>
-              )
-            })}
-          </div>
-        ))}
-        <PreviewFileUpload />
-      </div>
+      {dataMsg && dataMsg?.pages.length > 0 && (
+        <div className='space-y-2 text-sm font-medium'>
+          {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
+            <div className='space-y-2' key={date}>
+              <div className='text-xs text-center text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
+              {dayMessages.map((item, index) => {
+                const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
+                const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
+                const showTime = shouldShowTime(item, previousMessage)
+                const showImg =
+                  !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
+                return (
+                  <div key={index}>
+                    {showTime && (
+                      <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>
+                        {new Date(item?.createdAt).toLocaleTimeString('vi-VN', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
+                    )}
+                    {item?.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
+                    {item?.type === 0 && <p className='my-2 text-center text-[8px]'>{item.body}</p>}
+                    {item?.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                    {item?.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                    {item?.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                    {item?.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                    {item?.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                    {item?.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  </div>
+                )
+              })}
+            </div>
+          ))}
+          <PreviewFileUpload />
+        </div>
+      )}
       {showStatus && <StatusMessage group_id_fixed={message_fix.group_id} />}
       <div ref={bottomRef} className='h-[10px]' id='bottomRef' />
     </div>
