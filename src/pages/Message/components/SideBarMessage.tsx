@@ -174,6 +174,7 @@ const SideBarMessage = () => {
         <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto  p-2 md:h-[calc(100vh-204px)]'>
           {data?.pages.flat().map((conversation: ConvesationSideBar, index: number) => {
             const isOnline = onlineUsers.includes(conversation.user_id)
+
             if (index === data.pages.flat().length - 1) {
               return <Conversation innerRef={ref} key={index} item={conversation} isOnline={isOnline} />
             } else {

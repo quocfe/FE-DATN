@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useLayoutEffect, useState } from 'react'
+import { memo, useLayoutEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
@@ -15,6 +15,7 @@ import { fetchConversation } from '../../utils/fetchInfiniteConversation'
 import TimeAgo from './TimeAgo'
 import { useQueryInfinifyConversation } from '../../hooks/useQueryInfinifyConversation'
 import useNotifyMessage from '../../hooks/useNotifyMessage'
+import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
@@ -24,6 +25,7 @@ interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
 
 function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const [triggerHover, setTriggerHover] = useState<boolean>(false)
+  const [showDialogBlock, setShowDialogBlock] = useState<boolean>(false)
   const { setSelectedConversation, selectedConversation } = useConversationStore()
   const deleteNotify = useMutationDeleteNotify()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
@@ -33,6 +35,9 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const { socket } = useSocketContext()
   const { user_id } = getProfileFromLocalStorage()
   const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
+  const isBlock = item?.list_block_user?.some((id) => id === item.user_id)
+  const isBlocked = item?.list_blocked_user?.some((id) => id === item.user_id)
+  const checkStatusBlock = isBlocked && isBlock
 
   const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
     return !notify?.data?.data.some((data: any) => {
@@ -126,9 +131,11 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
             className='h-full w-full rounded-full object-cover'
           />
-          <div
-            className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
-          />
+          {checkStatusBlock && (
+            <div
+              className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
+            />
+          )}
         </div>
         <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
           <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
@@ -161,14 +168,6 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
           </button>
           <div uk-dropdown='mode: click' className={` w-[250px]`}>
             <div className='p-2'>
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='checkmark' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Đánh dấu là chưa đọc</p>
-              </div>
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='notifications-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Tắt thông báo</p>
-              </div>
               {/* message type = 1 */}
               {item.type === 1 && (
                 <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
@@ -176,20 +175,33 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
                   <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
                 </div>
               )}
+              {checkStatusBlock && (
+                <>
+                  <hr className='my-2' />
+                  <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                    <IonIcon icon='call-outline' className='text-[22px]' />
+                    <p className='text-[14px] font-semibold'>Gọi thoại</p>
+                  </div>
+                  <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                    <IonIcon icon='videocam-outline' className='text-[22px]' />
+                    <p className='text-[14px] font-semibold'>Chat video</p>
+                  </div>
+                </>
+              )}
               <hr className='my-2' />
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='call-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Gọi thoại</p>
-              </div>
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='videocam-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Chat video</p>
-              </div>
-              <hr className='my-2' />
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+              <div
+                onClick={() => setShowDialogBlock(true)}
+                className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+              >
                 <IonIcon icon='ban-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Chặn</p>
+                <p className='text-[14px] font-semibold'>{isBlock ? 'Bỏ chặn' : 'Chặn'}</p>
               </div>
+              <BlockOrUnBlockUserInMsg
+                type={isBlock ? 'unBlock' : 'block'}
+                show={showDialogBlock}
+                setShow={setShowDialogBlock}
+                user_id={item.user_id}
+              />
               <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
                 <IonIcon icon='alert-circle-outline' className='text-[22px]' />
                 <p className='text-[14px] font-semibold'>Báo cáo</p>
@@ -224,4 +236,4 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   )
 }
 
-export default Conversation
+export default memo(Conversation)

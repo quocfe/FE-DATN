@@ -15,6 +15,7 @@ import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
 import CustomFileInput from '../InputFile/CustomFileInput'
 import BlockFixUi from './BlockFixUi'
 import BlockedFixUi from './BlockedFixUi'
+import { Link } from 'react-router-dom'
 
 function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   const boxReplyRef = useRef<HTMLDivElement>(null)
@@ -36,6 +37,7 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   const infoMessage = messageData?.data?.data?.info as InfoMessage
   const isBlock = infoMessage?.list_block_user.some((user_id) => user_id === infoMessage.group_id)
   const isBlocked = infoMessage?.list_blocked_user.some((user_id) => user_id === infoMessage.group_id)
+  const checkStatusBlock = isBlocked && isBlock
   const { removeMessageFix, setHiddenMessageFix } = useMessageFixStore()
   const handleRemoveMessageFixed = () => {
     removeMessageFix(message_fix.group_id)
@@ -47,7 +49,23 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   }
 
   if (isLoading) {
-    return <div className='h-[450px] w-[330px]  rounded-se-xl rounded-ss-xl bg-white shadow-2xl'></div>
+    return (
+      <div className='flex h-[450px] w-[330px] flex-col overflow-hidden rounded-se-xl rounded-ss-xl bg-white shadow-2xl'>
+        <div className={`flex items-center justify-between border-b p-2 `}>
+          <div className='flex min-w-fit items-center justify-start '>
+            <div className='cursor-pointer rounded-md p-1 '>
+              <div className='h-[40px] w-[40px] rounded-full bg-slate-500'></div>
+            </div>
+            <div className='ml-2 flex flex-col items-start justify-between gap-1 '>
+              <p className='h-[5px] w-[50px] bg-slate-500'></p>
+            </div>
+          </div>
+          <div className='h-[5px] w-[10px] bg-slate-500'></div>
+        </div>
+        <div className='flex-1'></div>
+        <div className='h-[40px] w-full bg-slate-500'></div>
+      </div>
+    )
   }
 
   const selectBlockType = () => {
@@ -74,14 +92,14 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
         className={`flex items-center justify-between border-b p-2 dark:border-slate-800 ${showNotify ? 'bg-[#0084ff]' : ''}`}
       >
         <div className='flex min-w-fit items-center justify-start '>
-          <div className='cursor-pointer rounded-md p-1 '>
+          <Link to={`/profile/${infoMessage?.group_name}`} className='cursor-pointer rounded-md p-1 '>
             <img className='h-[40px] w-[40px] rounded-full  object-cover' src={infoMessage?.avatar} />
-          </div>
+          </Link>
           <div className='ml-2 flex flex-col items-start justify-between gap-1 '>
             <p className={`text-sm font-medium ${showNotify ? ' text-white' : ' text-black'} w-[150px] truncate`}>
               {infoMessage?.group_name}
             </p>
-            {isOnline && (
+            {checkStatusBlock && isOnline && (
               <div className='flex items-center gap-1'>
                 <div className='bottom-2 right-1 h-2 w-2 rounded-full bg-teal-500' />
                 <p className={`${showNotify ? ' text-green-500' : ' text-green-500'} text-[10px] font-bold`}>
@@ -91,28 +109,33 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
             )}
           </div>
         </div>
+
         <div className='flex items-center'>
-          <div className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'>
-            <IonIcon
-              className={`cursor-pointer text-xl  ${showNotify ? ' text-white' : ' text-[#0084ff]'}`}
-              icon='call'
-            />
-          </div>
-          <div className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'>
-            <IonIcon
-              className={`cursor-pointer text-xl  ${showNotify ? ' text-white' : ' text-[#0084ff]'}`}
-              icon='videocam'
-            />
-          </div>
-          <div
-            onClick={handleHiddenMessageFixed}
-            className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'
-          >
-            <IonIcon
-              className={`cursor-pointer text-xl  ${showNotify ? ' text-white' : ' text-[#0084ff]'}`}
-              icon='remove'
-            />
-          </div>
+          {checkStatusBlock && (
+            <>
+              <div className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'>
+                <IonIcon
+                  className={`cursor-pointer text-xl  ${showNotify ? ' text-white' : ' text-[#0084ff]'}`}
+                  icon='call'
+                />
+              </div>
+              <div className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'>
+                <IonIcon
+                  className={`cursor-pointer text-xl  ${showNotify ? ' text-white' : ' text-[#0084ff]'}`}
+                  icon='videocam'
+                />
+              </div>
+              <div
+                onClick={handleHiddenMessageFixed}
+                className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'
+              >
+                <IonIcon
+                  className={`cursor-pointer text-xl  ${showNotify ? ' text-white' : ' text-[#0084ff]'}`}
+                  icon='remove'
+                />
+              </div>
+            </>
+          )}
           <div
             onClick={handleRemoveMessageFixed}
             className='group flex items-center justify-center rounded-full p-1 hover:bg-slate-100'
