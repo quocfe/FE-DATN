@@ -7,6 +7,8 @@ import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute
 import RejectedRoute from './components/RejectedRoute'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import DStory from '~/pages/Story'
+import ArchiveStory from '~/pages/Story/Component/Archive'
 import Message from '~/pages/Message'
 import Dashboard from '~/pages/admin/Dashboard'
 import PublicProfile from '~/pages/PublicProfile'
@@ -31,6 +33,10 @@ import PermissionList from '~/pages/admin/Permission/PermissionList'
 import AccountList from '~/pages/admin/User/AccountList'
 import AccessControl from './components/AccessControl'
 import Unauthorized from '~/pages/Unauthorized'
+import Fanpage from '~/pages/Fanpage'
+import FanpageDetail from '~/pages/Fanpage/FanpageDetail/FanpageDetail'
+import FanpageCreate from '~/pages/Fanpage/FanpageCreate/FanpageCreate'
+import FanpageEdit from '~/pages/Fanpage/FanpageEdit/FanpageEdit'
 import VideoLayout from '~/layouts/video-layout'
 import WatchSave from '~/pages/WatchSave'
 import { ROUTE_PATH } from '~/constants'
@@ -121,6 +127,23 @@ function useRouteElements() {
           )
         },
         {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/story',
+          element: <DStory />
+        },
+        {
+          path: '/story/archive',
+          element: <ArchiveStory />
+        },
+
+        {
           path: 'profile',
           children: [
             {
@@ -133,6 +156,7 @@ function useRouteElements() {
                 </MainLayout>
               )
             },
+
             {
               path: 'my_friends',
               element: (
@@ -179,6 +203,30 @@ function useRouteElements() {
               ]
             }
           ]
+        },
+        {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/fanpage-create',
+          element: <FanpageCreate />
+        },
+        {
+          path: '/fanpage-edit/:fanpageId',
+          element: <FanpageEdit />
+        },
+        {
+          path: '/fanpage/:fanpageId',
+          element: (
+            <MainLayout>
+              <FanpageDetail />
+            </MainLayout>
+          )
         },
         {
           path: 'friend',

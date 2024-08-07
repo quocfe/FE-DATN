@@ -54,18 +54,13 @@ function Sidebar() {
                           <span> Sự kiện </span>
                         </a>
                       </li>
-                      <li>
-                        <a href='pages.html'>
+                      <li className='fanpage'>
+                        <Link to={'/fanpage'}>
                           <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
-                        </a>
+                        </Link>
                       </li>
-                      <li>
-                        <a href='market.html'>
-                          <img src='/src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
-                          <span> Cửa hàng </span>
-                        </a>
-                      </li>
+                      
                       <li>
                         <a href='blog.html'>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />
