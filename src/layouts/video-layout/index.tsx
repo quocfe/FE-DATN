@@ -1,5 +1,6 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, {  useState } from 'react'
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom'
 import Header from '~/components/Header'
 import { ROUTE_PATH } from '~/constants'
 import { cn } from '~/helpers'
@@ -8,7 +9,35 @@ interface VideoLayoutProps {
   children: React.ReactNode
 }
 
+const KEY_SEARCH = 'q'
+
 const VideoLayout = ({ children }: VideoLayoutProps) => {
+  const navigate = useNavigate()
+  const currentPath = location.pathname
+  const [value, setValue] = useState<string>('')
+  const [searchParams] = useSearchParams()
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      // Ngăn gửi form nếu muốn xử lý bằng cách khác
+      console.log('Enter')
+      event.preventDefault()
+      if (value.trim() !== '' && currentPath !== `watch/search?q=${value}`) {
+        return navigate(`/watch/search?q=${value}`)
+      }
+
+      return searchParams.set(KEY_SEARCH, value)
+    }
+  }
+
+  const onClickSearch = () => {
+    if (value.trim() !== '' && currentPath !== `watch/search?q=${value}`) {
+      return navigate(`/watch/search?q=${value}`)
+    }
+
+    return searchParams.set(KEY_SEARCH, value)
+  }
+
   return (
     <React.Fragment>
       <Header />
@@ -17,7 +46,7 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
         className='fixed left-0 top-0 z-[99] overflow-hidden pt-[--m-top] transition-transform max-xl:w-full max-xl:-translate-x-full xl:duration-500'
       >
         {/* sidebar inner */}
-        <div className='z-30 h-[calc(100vh-64px)] w-[300px] bg-white p-2 shadow-lg max-lg:border-r dark:border-slate-700 dark:max-xl:!bg-slate-700'>
+        <div className='z-[9] h-[calc(100vh-64px)] w-[300px] bg-white p-2 shadow-lg max-lg:border-r dark:border-slate-700 dark:max-xl:!bg-slate-700'>
           <div className='pr-4' data-simplebar='init'>
             <div className='simplebar-wrapper' style={{ margin: '0px -16px 0px 0px' }}>
               <div className='simplebar-height-auto-observer-wrapper'>
@@ -45,7 +74,7 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
                     </div>
                     <div className='mb-3 '>
                       <div className='flex items-center !rounded-full bg-[#F0F2F5] pl-4'>
-                        <div>
+                        <div className='cursor-pointer' onClick={onClickSearch}>
                           <svg
                             xmlns='http://www.w3.org/2000/svg'
                             viewBox='0 0 24 24'
@@ -61,8 +90,11 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
                         </div>
                         <input
                           type='text'
+                          value={value}
                           className='h-10 w-full !rounded-full bg-transparent !pl-2 focus:border-none focus:outline-none focus:ring-0'
                           placeholder='Tìm kiếm video'
+                          onChange={(e) => setValue(e.target.value.trim())}
+                          onKeyDown={handleKeyDown}
                         />
                       </div>
                     </div>
