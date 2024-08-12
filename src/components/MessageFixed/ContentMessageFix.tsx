@@ -2,25 +2,33 @@ import { IonIcon } from '@ionic/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import { calculateHoureAgo, formatTimeDuration } from '~/utils/helpers'
+import { formatTimeDuration } from '~/utils/helpers'
 
-import useFileUploadStore from '~/store/fileUpload.store'
-import LazyLoad from 'react-lazy-load'
+import { useQueryClient } from '@tanstack/react-query'
 import { useWavesurfer } from '@wavesurfer/react'
-import WaveSurfer from 'wavesurfer.js'
-import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
+import ModalMemberReact from '~/pages/Message/components/ModalMemberReact'
+import ModalUnSendOption from '~/pages/Message/components/ModalUnSendOption'
 import useMutationSendReactMessage from '~/pages/Message/hooks/useMutationSendReactMessage'
 import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
+import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
 import { downloadFileFormLink } from '~/pages/Message/utils/downloadFileFormLink'
-import { renderTypeFile } from '~/pages/Message/utils/renderTypeFile'
-import ModalMemberReact from '~/pages/Message/components/ModalMemberReact'
 import { handleToOldMessage } from '~/pages/Message/utils/handleToOldMessage'
-import ModalUnSendOption from '~/pages/Message/components/ModalUnSendOption'
+import { renderTypeFile } from '~/pages/Message/utils/renderTypeFile'
+import { MessageFix } from '~/store/messageFix.store'
+
+interface props {
+  infoMessage: InfoMessage
+  recall: boolean
+  me: boolean
+  item: TypeMessage | any
+  type?: string
+  message_fix: MessageFix
+}
 
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
-const ContentMessage = (params: any) => {
-  const { refetch, data } = useQueryMessage()
-  const groupId = data?.data?.data?.info?.group_id
+const ContentMessage = (params: props) => {
+  const item = params.type === 'reply' ? params.item : params.item
+
   const widthRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef(null)
   const [openEmoji, setOpenEmoji] = useState(false)
@@ -33,19 +41,23 @@ const ContentMessage = (params: any) => {
   const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
   const { data: temp } = useQueryMessage(1, 30)
   const { user_id } = getProfileFromLocalStorage()
-  const houreSend = calculateHoureAgo(params.item.createdAt)
-  const emojiUserSelected = params.item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
-
+  const queryClient = useQueryClient()
+  const emojiUserSelected = item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
+  const isBlockedOrBlocking =
+    params.infoMessage.list_block_user?.includes(params.infoMessage?.group_id) ||
+    params.infoMessage.list_blocked_user?.includes(params.infoMessage?.group_id)
   const handleChoiceReact = (emoji: string) => {
     const data = {
       emoji,
-      message_id: params.item.message_id,
-      receiver: groupId
+      message_id: item.message_id,
+      receiver: params.infoMessage.group_id
     }
+
     sendReactMessageMutaion.mutate(data, {
       onSuccess: () => {
         setOpenEmoji(false)
-        refetch()
+
+        queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
       },
       onError: () => {
         setOpenEmoji(false)
@@ -59,7 +71,7 @@ const ContentMessage = (params: any) => {
         setIsOpenModalOption(true)
         break
       case 'pin':
-        setPinMessage(params.item)
+        setPinMessage(item)
         break
       default:
         break
@@ -75,7 +87,7 @@ const ContentMessage = (params: any) => {
     barHeight: 10,
     barWidth: 2,
     cursorColor: 'none',
-    url: params.item.sub_body
+    url: item.sub_body
   })
 
   const onPlayPause = useCallback(() => {
@@ -101,42 +113,42 @@ const ContentMessage = (params: any) => {
   }, [wavesurfer])
 
   const renderContent = () => {
-    const isUnsent = params.item.status === false
+    const isUnsent = item.status === false
     const isReply = params.type === 'reply'
     const linkRegex = /(https?:\/\/[^\s]+)/g
 
-    switch (params.item.type) {
+    switch (item.type) {
       case 1:
-        return params.item.body.match(linkRegex) ? (
+        return item.body.match(linkRegex) ? (
           <a
-            href={params.item.body}
+            href={item.body}
             target='_blank'
             rel='noopener noreferrer'
             className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[14px] underline`}
           >
-            {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
+            {isUnsent ? 'Tin nhắn đã thu hồi' : item.body}
           </a>
         ) : (
-          <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[14px]`}>
-            {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
+          <p className={`${isReply ? '-mt-[10px] truncate  text-gray-400' : ''} break-words text-[14px]`}>
+            {isUnsent ? 'Tin nhắn đã thu hồi' : item.body}
           </p>
         )
       case 2:
         return !isReply ? (
           <div uk-lightbox='animation: fade'>
             <div className='group relative'>
-              <a className='uk-button uk-button-default' href={params.item.sub_body}>
+              <a className='uk-button uk-button-default' href={item.sub_body}>
                 <img
-                  alt={params.item.body}
-                  src={params.item.sub_body}
-                  className={`${!isReply ? 'h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-40 w-40 '} max-w-full object-contain`}
+                  alt={item.body}
+                  src={item.sub_body}
+                  className={`${!isReply ? 'h-full w-full ' : 'h-40 w-40 '} max-w-full object-contain`}
                 />
               </a>
               <div
                 onClick={() =>
                   downloadFileFormLink({
-                    pdfUrl: params.item.sub_body,
-                    fileName: params.item.body
+                    pdfUrl: item.sub_body,
+                    fileName: item.body
                   })
                 }
                 className={`absolute ${params.me ? 'left-[8px]' : 'right-[8px]'} top-4 hidden items-center rounded-sm bg-secondery p-[4px] group-hover:flex`}
@@ -148,46 +160,45 @@ const ContentMessage = (params: any) => {
         ) : isUnsent ? (
           'Tin nhắn đã thu hồi'
         ) : (
-          <img
-            alt={params.item?.body}
-            src={params.item?.sub_body}
-            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-20 w-20 rounded-[8px]'}
-              max-w-full object-cover 
-              opacity-90 contrast-50`}
-          />
+          // <img
+          //   alt={item?.body}
+          //   src={item?.sub_body}
+          //   className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-20 w-20 rounded-[8px]'}
+          //     max-w-full object-cover
+          //     opacity-90 contrast-50`}
+          // />
+          <p>Ảnh</p>
         )
       case 3:
         return (
           <div className={` flex items-center gap-2 ${params.me ? 'flex-row' : 'flex-row-reverse'} `}>
-            {params.item.body && renderTypeFile(params.item.body)}
+            {item.body && renderTypeFile(item.body)}
             {isReply ? (
-              <p className='truncate'>{isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}</p>
+              <p className='truncate'>{isUnsent ? 'Tin nhắn đã thu hồi' : item.body}</p>
             ) : (
               <a
-                className='underline'
+                className='break-words underline'
                 target='_blank'
-                href={`https://docs.google.com/gview?url=${params.item.sub_body}&embedded=true`}
+                href={`https://docs.google.com/gview?url=${item.sub_body}&embedded=true`}
               >
-                {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
+                {isUnsent ? 'Tin nhắn đã thu hồi' : item.body}
               </a>
             )}
           </div>
         )
       case 4:
         return params.type != 'reply' ? (
-          <video width={300} controls className='aspect-video rounded-[16px] p-2'>
-            <source src={params.item.sub_body} type='video/mp4' />
+          <video width={300} controls>
+            <source src={item.sub_body} type='video/mp4' />
           </video>
         ) : isUnsent ? (
           'Tin nhắn đã thu hồi'
         ) : (
-          <video width={100} className='rounded-[8px]'>
-            <source src={params.item.sub_body} type='video/mp4' />
-          </video>
+          <p>Video</p>
         )
       case 5:
         return params.type != 'reply' ? (
-          <div className='h-[40px] w-[200px]'>
+          <div className='h-[40px] w-[150px]'>
             <div className='flex flex-row items-center justify-start gap-1'>
               <div className='z-10 flex h-full w-10 items-center justify-center'>
                 <div
@@ -212,15 +223,13 @@ const ContentMessage = (params: any) => {
         )
       case 6:
         return !isUnsent ? (
-          params.item.sub_body ? (
+          item.sub_body ? (
             <div className='flex items-start justify-start gap-2 p-1'>
               <IonIcon icon='videocam' className='text-[20px]' />
               <div className='flex flex-col items-start justify-start'>
-                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[12px]`}>
-                  {params.item.body}
-                </p>
+                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[12px]`}>{item.body}</p>
                 <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[10px] font-extralight`}>
-                  {params.item.sub_body}
+                  {item.sub_body}
                 </p>
               </div>
             </div>
@@ -228,9 +237,7 @@ const ContentMessage = (params: any) => {
             <div className='flex items-center justify-start gap-2'>
               <IonIcon icon='videocam-off' className='text-[20px]' />
               <div className='flex flex-col justify-evenly gap-2'>
-                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[12px]`}>
-                  {params.item.body}
-                </p>
+                <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[12px]`}>{item.body}</p>
               </div>
             </div>
           )
@@ -245,31 +252,40 @@ const ContentMessage = (params: any) => {
 
   const renderEmoji = () => {
     return (
-      params.item.reactions?.length > 0 && (
+      item.reactions?.length > 0 && (
         <>
           <div
-            onClick={() => params.item.reactions?.length > 2 && setIsOpenModalReactMsg(true)}
+            onClick={() => params.message_fix.type === 2 && setIsOpenModalReactMsg(true)}
             className={`
             ${params.me ? 'left-0' : 'right-0'}
             absolute -bottom-[10px] flex items-center justify-center rounded-full bg-primary-soft  px-[5px]`}
           >
-            {params.item.reactions?.length > 2
-              ? params.item.reactions?.slice(0, 2).map((item: any, index: number) => (
-                  <>
+            {params.message_fix.type === 2
+              ? params.item.reactions?.length > 2
+                ? params.item.reactions?.slice(0, 2).map((item: any, index: number) => (
+                    <>
+                      <p key={index} className='text-[12px]'>
+                        {item.emoji ?? ''}
+                      </p>
+                      <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
+                    </>
+                  ))
+                : params.item.reactions.map((item: any, index: number) => (
                     <p key={index} className='text-[12px]'>
-                      {item.emoji ?? ''}
+                      {item.emoji}
                     </p>
-                    <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
-                  </>
-                ))
-              : params.item.reactions.map((item: any, index: number) => (
-                  <p key={index} className='text-[12px]'>
-                    {item.emoji}
-                  </p>
-                ))}
+                  ))
+              : params.message_fix.type === 1 && params.item.reactions?.length > 0
+                ? params.item.reactions.map((item: any, index: number) => (
+                    <p key={index} className='text-[12px]'>
+                      {item.emoji}
+                    </p>
+                  ))
+                : null}
           </div>
           <ModalMemberReact
-            reactArr={params.item.reactions}
+            group_id={item.group_message_id}
+            reactArr={item.reactions}
             isOpen={isOpenModalReactMsg}
             onClose={() => setIsOpenModalReactMsg(false)}
           />
@@ -280,13 +296,20 @@ const ContentMessage = (params: any) => {
 
   const handleGoToOldMessage = async () => {
     let totalPage = temp?.data.data.pagination.totalPage || 0
-    const checkEl = document.getElementById(params.item.message_id)
+    const checkEl = document.getElementById(item.message_id)
     if (!checkEl) {
       for (let i = 0; i < totalPage; i++) {
         if (hasNextPage) await fetchNextPage()
       }
     }
-    handleToOldMessage(params.item.message_id)
+    handleToOldMessage(item.message_id)
+  }
+
+  function handleMouseLeave() {
+    if (!isBlockedOrBlocking) {
+      setOpenEmoji(false)
+      setOpenOption(false)
+    }
   }
 
   if (params.recall) {
@@ -310,23 +333,22 @@ const ContentMessage = (params: any) => {
   return (
     <div
       ref={widthRef}
-      id={params.type === 'reply' ? '' : params.item.message_id}
-      onClick={() => (params.type === 'reply' && params.item.status === true ? handleGoToOldMessage() : '')}
-      onMouseLeave={() => {
-        setOpenEmoji(false)
-        setOpenOption(false)
-      }}
-      className={` relative mt-1 cursor-pointer border-[2px] border-transparent
-      ${params.item.type === 4 ? 'h-[100%]' : ''}
-      ${params.me ? 'max-w-[180px] text-left' : 'max-w-[140px] text-left'}
-      ${params.item.reactions?.length > 0 ? 'mb-3' : ''}
-      ${params.me ? (params.item.type === 2 || params.item.type === 4 ? 'bg-transparent ' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
+      id={params.type === 'reply' ? '' : item.message_id}
+      onClick={() => (params.type === 'reply' && item.status === true ? handleGoToOldMessage() : '')}
+      onMouseLeave={handleMouseLeave}
+      className={` relative min-w-[60px] cursor-pointer
+      rounded-[14px] border-[2px] border-transparent
+        px-[8px] py-[10px]
+      ${item.type === 4 ? 'h-[100%]' : ''}
+      ${params.me ? ' text-left' : 'text-left'}
+      ${item.reactions?.length > 0 ? 'mb-3' : ''}
+      ${params.me ? (item.type === 2 || item.type === 4 ? 'bg-transparent ' : ' bg-[#0084ff]') : 'bg-secondery !text-gray-700'}
       ${
         params.type != 'reply'
-          ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
-          : `-mb-4  !bg-secondery ${params.item.type === 2 || params.item.type === 4 ? 'p-0 opacity-30' : 'px-4 py-5'}  text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
+          ? `${(item.type === 2 || item.type === 4) && 'rounded-none px-[0px] py-[0px]'} group text-white shadow`
+          : `-mb-4 !bg-secondery  pb-4 ${item.type === 2 || item.type === 4 ? 'p-0 opacity-30' : ''}  text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }
-      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'min-w-[60%]' : '') : ''}
+      ${params.type === 'reply' ? (item.type == 1 || item.type == 3 ? 'max-w-[200px] ' : '') : ''}
       `}
     >
       <div
@@ -336,12 +358,12 @@ const ContentMessage = (params: any) => {
         {/* content */}
         {renderContent()}
         <div
-          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 z-50 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner group-hover:flex`}
+          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 z-50 hidden h-[30px] w-[70px] items-center justify-around rounded-[8px] bg-secondery shadow-inner ${!isBlockedOrBlocking && 'group-hover:flex'}`}
         >
           <div
             onClick={(e) => {
               e.stopPropagation()
-              setToggleBoxReply(params.item)
+              setToggleBoxReply(item)
             }}
             className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
           >
@@ -359,7 +381,7 @@ const ContentMessage = (params: any) => {
             <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:z-50 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
               <div
                 style={{ bottom: `40px` }}
-                className={`absolute ${openOption ? '' : 'hidden'}   h-fit w-[140px] rounded-[14px] bg-primary-soft py-3 shadow-2xl ${params.me ? '-right-16' : '-left-[80px]'} flex select-none flex-col gap-3 px-3 text-left`}
+                className={`absolute ${openOption ? '' : 'hidden'}   h-fit w-[120px] rounded-[14px] bg-primary-soft py-3 shadow-2xl ${params.me ? '-right-16' : '-left-[80px]'} flex select-none flex-col gap-2 px-2 text-left`}
               >
                 <p
                   onClick={() => handleClickOption('unsend')}
@@ -375,7 +397,7 @@ const ContentMessage = (params: any) => {
                 </p>
               </div>
               <ModalUnSendOption
-                message={params.item}
+                message={item}
                 isOpen={isOpenModalOption}
                 onClose={() => setIsOpenModalOption(false)}
               />
@@ -394,10 +416,10 @@ const ContentMessage = (params: any) => {
               <div
                 style={{ bottom: '40px' }}
                 className={`absolute ${openEmoji ? '' : 'hidden'} right-0 h-[30px] w-fit rounded-xl bg-primary-soft p-2 shadow-inner
-                ${params.me ? '-right-16' : 'right-0'}
+                ${params.me ? '-left-[70px]' : 'right-0'}
                 `}
               >
-                <div className='flex h-[100%] w-[100%] items-center gap-1 rounded-sm'>
+                <div className='flex h-[100%] w-[100%] items-center rounded-sm'>
                   {ListEmoji?.map((emoji) => {
                     return (
                       <span
@@ -417,22 +439,20 @@ const ContentMessage = (params: any) => {
           </div>
         </div>
       </div>
-      {params?.type != 'reply' && (
-        <div className={`mt-2 flex items-center text-[11px] ${params.item.type === 3 ? 'justify-between' : ''}`}>
+      {/* {params?.type != 'reply' && (
+        <div className={`mt-2 flex items-center text-[11px] ${item.type === 3 ? 'justify-between' : ''}`}>
           <p
-            className={`${params.me ? `${params.item.type === 2 || params.item.type === 4 ? 'px-2 py-2 text-gray-700' : ' text-white'}` : ` text-gray-700 ${params.item.type === 2 ? 'px-2 py-1' : ''}`} `}
+            className={`${params.me ? `${item.type === 2 || item.type === 4 ? 'px-2 py-2 text-gray-700' : ' text-white'}` : ` text-gray-700 ${item.type === 2 ? 'px-2 py-1' : ''}`} `}
           >
             {houreSend}
           </p>
-          {params.item.type === 3 && (
+          {item.type === 3 && (
             <div className='flex items-center gap-2'>
               <div
                 onClick={() =>
-                  params.type == 'reply'
-                    ? ''
-                    : downloadFileFormLink({ pdfUrl: params.item.sub_body, fileName: params.item.body })
+                  params.type == 'reply' ? '' : downloadFileFormLink({ pdfUrl: item.sub_body, fileName: item.body })
                 }
-                className='flex items-center justify-center rounded-xl p-2'
+                className='flex items-center justify-center p-2 rounded-xl'
               >
                 <IonIcon
                   className={`text-[12px] font-bold ${params.me ? 'text-white' : 'text-primary'}  `}
@@ -442,7 +462,7 @@ const ContentMessage = (params: any) => {
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
   )
 }

@@ -10,7 +10,6 @@ export function formatTime(dateString: string): string {
   return new Date(dateString).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
 }
 
-
 export function calculateTimeAgo(sentAt: string | Date): string {
   const sentTime = new Date(sentAt)
   const currentTime = new Date()
@@ -34,7 +33,7 @@ export function calculateTimeAgo(sentAt: string | Date): string {
   }
 }
 
-export function calculateHoureAgo(sentAt: string): string {
+export function calculateHoureAgo(sentAt: string | Date): string {
   const sentTime = new Date(sentAt)
   const hours = sentTime.getHours().toString().padStart(2, '0')
   const minutes = sentTime.getMinutes().toString().padStart(2, '0')

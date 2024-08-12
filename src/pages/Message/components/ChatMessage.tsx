@@ -1,18 +1,17 @@
 import { IonIcon } from '@ionic/react'
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { Link } from 'react-router-dom'
 import useAuthStore from '~/store/auth.store'
 import useConversationStore from '~/store/conversation.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 import { formatDate } from '~/utils/helpers'
 import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import Spinner from './Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessage'
 import PreviewFileUpload from './components/PreviewFileUpload'
-import { useSocketContext } from '~/context/socket'
 import StatusMessage from './components/StatusMessage'
-import { getProfileFromLocalStorage } from '~/utils/auth'
-import { Link } from 'react-router-dom'
 
 interface ChatMessageProps {
   showScrollBtn: boolean
@@ -62,14 +61,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   const lastArrRefs = newArr[0]
   const lastRef = lastArrRefs && lastArrRefs[0]
 
-  const scrollIntoViewFn = useCallback(() => {
+  const scrollIntoViewFn = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ block: 'end' })
     }
-  }, [])
+  }
 
-  useLayoutEffect(() => {
-    scrollIntoViewFn()
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      scrollIntoViewFn()
+    }, 100)
+    return () => clearTimeout(timeoutId)
   }, [selectedConversation.group_id])
 
   useEffect(() => {
@@ -106,23 +108,20 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
       {!hasNextPage && (
         <div className='py-10 text-center text-sm lg:pt-8'>
           <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
-          <div className='mt-8'>
+          <div className='mt-4'>
             <div className='text-base font-medium text-black md:text-xl dark:text-white '>
               {infoMessage?.group_name}
             </div>
-            {selectedConversation.type != 2 && (
-              <div className='text-sm text-gray-500 dark:text-white/80'>@{infoMessage?.group_id}</div>
-            )}
           </div>
 
           {selectedConversation.type != 2 && (
-            <div className='mt-3.5'>
+            <div className='mt-2.5'>
               {infoMessage?.group_id && (
                 <Link
                   to={`/profile/${infoMessage.group_id}`}
                   className='inline-block rounded-lg bg-secondery px-4 py-1.5 text-sm font-semibold'
                 >
-                  View profile
+                  Xem trang cá nhân
                 </Link>
               )}
             </div>
@@ -143,7 +142,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
               const showImg =
                 !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
               return (
-                <div key={item.message_id}>
+                <>
                   {showTime && (
                     <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>
                       {new Date(item?.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
@@ -157,7 +156,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
                   {item.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                   {item.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                   {item.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                </div>
+                </>
               )
             })}
           </div>

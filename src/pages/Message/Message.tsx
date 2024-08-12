@@ -8,20 +8,20 @@ import SideBarMessage from './components/SideBarMessage'
 import useMessageStore from '~/store/message.store'
 import useVideoCallMessageSocket from '~/hooks/socket/useVideoCallMessageSocket'
 import InComingCallVideo from './components/InComingCallVideo'
+import { useEffect } from 'react'
 
 const Message = () => {
   useMessageSocket()
 
   const { selectedConversation, toggleBoxSearchMessage } = useConversationStore()
-  const { inCommingVideoCall } = useMessageStore()
-  let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
+  // let showMessage = Object.keys(selectedConversation).length > 0 ? true : false
   return (
     <div className='relative -m-2.5 overflow-hidden border dark:border-slate-700'>
       <div className='dark:bg-dark2 flex bg-white '>
         {/* sidebar */}
         {toggleBoxSearchMessage ? <ResultSearchMessage /> : <SideBarMessage />}
         {/* message center */}
-        {showMessage ? <MessageCenter /> : <EmptyMessage />}
+        <MessageCenter />
         {/* <MessageCenter /> */}
         {/* user profile right info */}
         <ProfileRight />

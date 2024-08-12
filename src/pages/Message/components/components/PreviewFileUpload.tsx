@@ -26,7 +26,7 @@ function PreviewFileUpload() {
       <div className='mt-5 flex justify-end '>
         <div className='relative max-w-[70%]'>
           {previewImg?.type?.includes('video') && (
-            <div className='h-[100px] w-[200px]'>
+            <div className='h-[80px] w-[180px]'>
               <video src={objectURL} className='absolute  aspect-video  rounded-[14px] object-cover opacity-20' />
               <div className='inset-center' style={{ width: 50, height: 50 }}>
                 <CircularProgressbar value={fileStore?.progress} />
@@ -34,7 +34,7 @@ function PreviewFileUpload() {
             </div>
           )}
           {previewImg?.type?.includes('image') && (
-            <div className='h-[100px] w-[200px]'>
+            <div className='h-[80px] w-[180px]'>
               <img src={objectURL} className='absolute aspect-video rounded-[14px] object-fill opacity-50' />
               <div className='inset-center' style={{ width: 50, height: 50 }}>
                 <CircularProgressbar value={fileStore?.progress} />

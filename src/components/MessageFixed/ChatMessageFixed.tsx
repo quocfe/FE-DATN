@@ -14,11 +14,11 @@ import { MessageFix } from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { formatDate } from '~/utils/helpers'
 import CustomFileInput from '../InputFile/CustomFileInput'
-import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessageFix'
 import PreviewFileUpload from '~/pages/Message/components/components/PreviewFileUpload'
 import { useMutationSendMessage } from '~/pages/Message/hooks/useMutationSendMessage'
 import Loading from '../Loading'
 import Spinner from './../../pages/Message/components/Skelaton/Spinner'
+import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessageFix'
 
 // Tin nhan theo ngay
 const groupMessagesByDate = (messages: TypeMessage[]): Record<string, TypeMessage[]> => {
@@ -42,49 +42,25 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
   return currentTime - previousTime >= 5 * 60 * 1000 // 5 minutes in milliseconds
 }
 
-const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFix; infoMessage: InfoMessage }) => {
+const ChatMessageFixed = ({
+  message_fix,
+  infoMessage,
+  isAtBottom
+}: {
+  message_fix: MessageFix
+  infoMessage: InfoMessage
+  isAtBottom: boolean
+}) => {
   const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
     useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
-  const [callVideo, setCallVideo] = useState<boolean>(false)
-  const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const { socket } = useSocketContext()
   const { setVideoCall, setAcceptCall } = useMessageStore()
   const [calculateHeight, setCalculateHeight] = useState<number>(0)
-
-  const handleScroll = useCallback(() => {
-    if (chatMessageRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
-      setShowScrollBtn(scrollHeight - scrollTop > clientHeight * 1.5)
-      setIsAtBottom(scrollHeight - (scrollTop + clientHeight) < 20 ? true : false)
-    }
-  }, [])
-
-  const handleClickVideoCall = () => {
-    const dataToSocket = {
-      group_message_id: selectedConversation?.group_id,
-      user_id: user_id,
-      room_id: `123${Date.now()}`,
-      group_name: selectedConversation.type === 1 ? first_name + ' ' + last_name : infoMessage?.group_name,
-      avatar: selectedConversation.type === 1 ? Profile.profile_picture : infoMessage?.avatar
-    }
-    const dataVideoCall = {
-      group_message_id: selectedConversation?.group_id,
-      group_name: infoMessage?.group_name,
-      avatar: infoMessage?.avatar,
-      user_id: selectedConversation?.id
-    }
-
-    setAcceptCall(false)
-    setCallVideo(true)
-    setVideoCall(dataVideoCall as {})
-
-    socket?.emit('callVideo', dataToSocket)
-  }
 
   useLayoutEffect(() => {
     if (toggleBoxReply || togglePreviewBox) {
@@ -157,32 +133,29 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       scrollIntoViewFn()
-    }, 100) // Adjust the delay if needed
+    }, 100)
     return () => clearTimeout(timeoutId)
   }, [])
-  // useEffect(() => {
-  //   if (!isAtBottom && isFetchingNextPage) {
-  //     scrollIntoViewFn()
-  //   }
-  // }, [newArr.flat().length])
 
-  // useEffect(() => {
-  //   if (isAtBottom) {
-  //     scrollIntoViewFn()
-  //   } else {
-  //     setShowNewMsg(true)
-  //   }
-  // }, [newArr?.flat().slice(-1)[0]])
+  useEffect(() => {
+    if (!isAtBottom && isFetchingNextPage) {
+      scrollIntoViewFn()
+    }
+  }, [newArr.flat().length])
 
-  // useEffect(() => {
-  //   if (inView && hasNextPage) {
-  //     fetchNextPage()
-  //   }
-  // }, [inView, hasNextPage, fetchNextPage])
+  useEffect(() => {
+    scrollIntoViewFn()
+  }, [newArr?.flat().slice(-1)[0]])
 
-  // useEffect(() => {
-  //   isAtBottom && setShowNewMsg(false)
-  // }, [isAtBottom])
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, hasNextPage, fetchNextPage])
+
+  useEffect(() => {
+    isAtBottom && setShowNewMsg(false)
+  }, [isAtBottom])
 
   const groupedMessagesByDate = useMemo(() => groupMessagesByDate(newArr.flat() as TypeMessage[]), [newArr])
   const showStatus =
@@ -228,10 +201,10 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
         <Spinner classNames='flex items-center justify-center' w='6' h='6' title='Đang tải tin nhắn' />
       )}
       {dataMsg && dataMsg?.pages.length > 0 && (
-        <div className='space-y-2 text-sm font-medium'>
+        <div className='space-y-1 text-sm font-medium'>
           {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
-            <div className='space-y-2' key={date}>
-              <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
+            <div className='space-y-1' key={date}>
+              <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
               {dayMessages.map((item, index) => {
                 const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
                 const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
@@ -239,7 +212,7 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
                 const showImg =
                   !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
                 return (
-                  <div key={index}>
+                  <>
                     {showTime && (
                       <div className='text-center text-[10px] text-gray-500 dark:text-gray-400'>
                         {new Date(item?.createdAt).toLocaleTimeString('vi-VN', {
@@ -250,13 +223,61 @@ const ChatMessageFixed = ({ message_fix, infoMessage }: { message_fix: MessageFi
                     )}
                     {item?.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
                     {item?.type === 0 && <p className='my-2 text-center text-[8px]'>{item.body}</p>}
-                    {item?.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                    {item?.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                    {item?.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                    {item?.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                    {item?.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                    {item?.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  </div>
+                    {item?.type === 1 && (
+                      <TextMsg
+                        message_fix={message_fix}
+                        infoMessage={infoMessage}
+                        showImg={showImg}
+                        item={item}
+                        userid={profile?.user_id || ''}
+                      />
+                    )}
+                    {item?.type === 2 && (
+                      <ImageMsg
+                        message_fix={message_fix}
+                        infoMessage={infoMessage}
+                        showImg={showImg}
+                        item={item}
+                        userid={profile?.user_id || ''}
+                      />
+                    )}
+                    {item?.type === 3 && (
+                      <FileMsg
+                        message_fix={message_fix}
+                        infoMessage={infoMessage}
+                        showImg={showImg}
+                        item={item}
+                        userid={profile?.user_id || ''}
+                      />
+                    )}
+                    {item?.type === 4 && (
+                      <VideoMsg
+                        message_fix={message_fix}
+                        infoMessage={infoMessage}
+                        showImg={showImg}
+                        item={item}
+                        userid={profile?.user_id || ''}
+                      />
+                    )}
+                    {item?.type === 5 && (
+                      <AudioMsg
+                        message_fix={message_fix}
+                        infoMessage={infoMessage}
+                        showImg={showImg}
+                        item={item}
+                        userid={profile?.user_id || ''}
+                      />
+                    )}
+                    {item?.type === 6 && (
+                      <VideoCallMsg
+                        message_fix={message_fix}
+                        infoMessage={infoMessage}
+                        showImg={showImg}
+                        item={item}
+                        userid={profile?.user_id || ''}
+                      />
+                    )}
+                  </>
                 )
               })}
             </div>

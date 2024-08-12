@@ -14,6 +14,8 @@ import { getProfileFromLocalStorage } from '~/utils/auth'
 import InComingCallVideo from './InComingCallVideo'
 import BlockUi from './components/BlockUi'
 import BlockedUi from './components/BlockedUi'
+import FeatureNotAllow from '~/components/FeatureNotAllow'
+import useCallVideo from '../hooks/useCallVideo'
 
 function MessageCenter() {
   const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
@@ -23,20 +25,19 @@ function MessageCenter() {
 
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
-  const [callVideo, setCallVideo] = useState<boolean>(false)
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
+  const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
   const [file, setFile] = useState<File | null>(null)
   const [userIdInMessage, setUserIdInMessage] = useState<string>('')
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
   const { onlineUsers, socket } = useSocketContext()
-  const { setVideoCall, videoCall, setAcceptCall } = useMessageStore()
-
-  const isOnline = onlineUsers.some((user_socket) => user_socket != user_id)
+  const isOnline =
+    selectedConversation.type == 1 && onlineUsers?.some((user_socket) => user_socket == selectedConversation.id)
   const isBlockedOrBlocking =
-    infoMessage?.list_block_user.includes(infoMessage.group_id) ||
-    infoMessage?.list_blocked_user.includes(infoMessage.group_id)
+    infoMessage?.list_block_user?.includes(infoMessage.group_id) ||
+    infoMessage?.list_blocked_user?.includes(infoMessage.group_id)
   const [calculateHeight, setCalculateHeight] = useState<number>(204)
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
@@ -46,26 +47,17 @@ function MessageCenter() {
     }
   }, [])
 
-  const handleClickVideoCall = () => {
-    const dataToSocket = {
-      group_message_id: selectedConversation?.group_id,
-      user_id: user_id,
-      room_id: `123${Date.now()}`,
-      group_name: selectedConversation.type === 1 ? first_name + ' ' + last_name : infoMessage?.group_name,
-      avatar: selectedConversation.type === 1 ? Profile.profile_picture : infoMessage?.avatar
-    }
-    const dataVideoCall = {
-      group_message_id: selectedConversation?.group_id,
-      group_name: infoMessage?.group_name,
-      avatar: infoMessage?.avatar,
-      user_id: selectedConversation?.id
-    }
+  const handleClickVideoCall = useCallVideo({
+    group_message_id: selectedConversation?.group_id,
+    user_id: user_id,
+    group_name: selectedConversation.type === 1 ? first_name + ' ' + last_name : infoMessage?.group_name,
+    avatar: selectedConversation.type === 1 ? Profile.profile_picture : infoMessage?.avatar,
+    type: selectedConversation.type,
+    setFeatureNotAllow: setFeatureNotAllow
+  })
 
-    setAcceptCall(false)
-    setCallVideo(true)
-    setVideoCall(dataVideoCall as {})
-
-    socket?.emit('callVideo', dataToSocket)
+  const handleClickCall = () => {
+    setFeatureNotAllow(true)
   }
 
   useLayoutEffect(() => {
@@ -86,10 +78,6 @@ function MessageCenter() {
     }
   }, [toggleBoxReply, togglePreviewBox, selectedConversation])
 
-  if (videoCall && Object.keys(videoCall).length > 0) {
-    return <CallVideo />
-  }
-
   if (isLoading) {
     return <ChatMessageSkelaton />
   }
@@ -108,16 +96,13 @@ function MessageCenter() {
             uk-toggle='target: .rightt ; cls: hidden'
           >
             <img src={infoMessage?.avatar} className='h-8 w-8 rounded-full object-cover shadow' />
-            {isOnline && isBlockedOrBlocking && (
+            {isOnline && !isBlockedOrBlocking && (
               <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
             )}
           </div>
-          <div
-            className='w-[80%] cursor-pointer overflow-hidden text-ellipsis'
-            uk-toggle='target: .rightt ; cls: hidden'
-          >
-            <p className='text-base font-bold '> {infoMessage?.group_name}</p>
-            {isOnline && isBlockedOrBlocking && (
+          <div className='w-[80%] cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
+            <p className='truncate text-base font-bold'> {infoMessage?.group_name}</p>
+            {isOnline && !isBlockedOrBlocking && (
               <div className='text-xs font-semibold text-green-500'>Đang hoạt động</div>
             )}
           </div>
@@ -125,7 +110,7 @@ function MessageCenter() {
         <div className='flex items-center gap-2'>
           {!isBlockedOrBlocking && (
             <>
-              <button type='button' className='button__ico'>
+              <button onClick={handleClickCall} type='button' className='rounded-full p-1.5 hover:bg-slate-100'>
                 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' className='h-6 w-6'>
                   <path
                     fillRule='evenodd'
@@ -192,7 +177,7 @@ function MessageCenter() {
           }}
           ref={chatMessageRef}
           onScroll={handleScroll}
-          className={`w-full overflow-y-auto p-5  pb-4 pt-10 
+          className={`w-full overflow-y-auto overflow-x-hidden p-5  pb-4 pt-10 
         `}
           //  md:h-[calc(100vh-204px)]
         >
@@ -210,6 +195,8 @@ function MessageCenter() {
       ) : (
         <SendMessage boxReplyRef={boxReplyRef} previewUploadRef={previewUploadRef} />
       )}
+
+      <FeatureNotAllow showDiaLogFeatureNotAllow={featureNotAllow} setShowDiaLogFeatureNotAllow={setFeatureNotAllow} />
     </div>
   )
 }

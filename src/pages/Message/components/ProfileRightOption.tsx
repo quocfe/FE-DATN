@@ -1,15 +1,24 @@
 import { IonIcon } from '@ionic/react'
 import { renderTypeFile } from '../utils/renderTypeFile'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 
 type ProfileRightOptionProps = {
   title: string
   listImage: TypeMessage[] | undefined
   listVideo: TypeMessage[] | undefined
   listFile: TypeMessage[] | undefined
+  membersList: TypeMembersGroup[] | undefined
   typeConversation: string | number
 }
 
-function ProfileRightOption({ title, listImage, listVideo, listFile, typeConversation }: ProfileRightOptionProps) {
+function ProfileRightOption({
+  title,
+  listImage,
+  listVideo,
+  listFile,
+  typeConversation,
+  membersList
+}: ProfileRightOptionProps) {
   const data = [
     {
       title: 'Ảnh - Video'
@@ -17,6 +26,7 @@ function ProfileRightOption({ title, listImage, listVideo, listFile, typeConvers
     { title: 'File' },
     { title: typeConversation === 2 && 'Thành viên' }
   ]
+  const { user_id } = getProfileFromLocalStorage()
   return (
     <div className='relative z-20 h-full'>
       <div className='box !shadow-none'>
@@ -69,6 +79,26 @@ function ProfileRightOption({ title, listImage, listVideo, listFile, typeConvers
                   </div>
                   <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
                     <p className='text-sm'>{file.sub_body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className='uk-active'>
+            <div className='flex flex-col space-y-2 p-2'>
+              {/* map  */}
+              {membersList?.map((member, index) => (
+                <div key={index}>
+                  <div className='flex cursor-pointer items-center justify-start gap-2 rounded-[10px] p-1 hover:bg-slate-100'>
+                    <div className='flex items-center justify-center rounded-full bg-slate-300 hover:bg-primary-soft'>
+                      <img src={member.avatar} className='h-8 w-8 rounded-full' />
+                    </div>
+                    <div className='flex w-full flex-1 flex-col items-start justify-around truncate text-ellipsis'>
+                      <p className={`text-sm ${user_id === member.user_id ? 'text-primary' : 'text-slate-800'}`}>
+                        {member.fullname}
+                      </p>
+                      {member.role && <p className='text-[10px] font-semibold'>Nhóm trưởng</p>}
+                    </div>
                   </div>
                 </div>
               ))}

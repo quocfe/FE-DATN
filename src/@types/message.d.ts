@@ -34,6 +34,7 @@ type GroupMessage = {
   user_id: string
   list_block_user: string[]
   list_blocked_user: string[]
+  messages: Message
 }
 
 type MembersGroup = {
@@ -190,7 +191,7 @@ type MessageCenterProps = {
 
 type ReplyMessageInput = Pick<Message, 'body' | 'group_message_id' | 'type' | 'parent_id'>
 type ReactMessageInput = Pick<ReactMessage, 'message_id' | 'user_id' | 'emoji' | 'createdBy'>
-type ReplyMessage = Pick<Message, 'body' | 'message_id' | 'type' | 'createdBy'> & {
+type ReplyMessage = Pick<Message, 'body' | 'sub_body' | 'message_id' | 'type' | 'createdBy'> & {
   reply_user: string
 } & {
   recallInReply: []

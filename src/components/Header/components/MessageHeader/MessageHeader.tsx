@@ -10,7 +10,7 @@ import useMessageFixStore from '~/store/messageFix.store'
 import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function MessageHeader() {
   const { data, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useQueryInfinifyConversation()
@@ -24,6 +24,7 @@ function MessageHeader() {
   const { setMessageFix } = useMessageFixStore()
   const { data: notify } = useQueryNotifyMessage()
   const url = window.location.href
+  const navigate = useNavigate()
 
   let uniqueNotify: any = new Set()
   notify?.data?.data.forEach((data: any) => {
@@ -63,12 +64,13 @@ function MessageHeader() {
   }
 
   const checkUrlMesage = !url.split('/').includes('message')
+
   if (checkUrlMesage)
     return (
       <>
         <button
           type='button'
-          className='relative rounded-full p-1 sm:bg-secondery sm:p-2 dark:text-white'
+          className='relative p-1 rounded-full sm:bg-secondery sm:p-2 dark:text-white'
           uk-tooltip='title: Tin nhắn; pos: bottom; offset:6'
           aria-describedby='uk-tooltip-13'
           aria-haspopup='true'
@@ -78,7 +80,7 @@ function MessageHeader() {
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 24 24'
             fill='currentColor'
-            className='h-6 w-6 max-sm:hidden'
+            className='w-6 h-6 max-sm:hidden'
           >
             <path
               fillRule='evenodd'
@@ -87,13 +89,13 @@ function MessageHeader() {
             />
           </svg>
           {showAllNotify && (
-            <div className='absolute right-0 top-0 -m-1 h-4 w-4 rounded-full bg-red-600 px-1 '>
+            <div className='absolute top-0 right-0 w-4 h-4 px-1 -m-1 bg-red-600 rounded-full '>
               <p className='text-xs text-white'>{numberAllNotify}</p>
             </div>
           )}
           <IonIcon
             icon='chatbox-ellipses-outline'
-            className='md hydrated text-2xl sm:hidden'
+            className='text-2xl md hydrated sm:hidden'
             role='img'
             aria-label='chatbox ellipses outline'
           />
@@ -106,11 +108,16 @@ function MessageHeader() {
           <div className='flex items-center justify-between gap-2 p-4 pb-1'>
             <h3 className='text-xl font-bold'> Chats </h3>
             <div className='flex gap-2.5 text-lg text-slate-900 dark:text-white'>
-              <IonIcon icon='expand-outline' className='md hydrated' role='img' aria-label='expand outline' />
-              <IonIcon icon='create-outline' className='md hydrated' role='img' aria-label='create outline' />
+              <IonIcon
+                onClick={() => {
+                  navigate('/message')
+                }}
+                icon='expand-outline'
+                className='cursor-pointer rounded-full p-1.5 hover:bg-slate-100'
+              />
             </div>
           </div>
-          <div className='flex w-full items-center justify-evenly gap-2 p-2'>
+          <div className='flex items-center w-full gap-2 p-2 justify-evenly'>
             {focusSearch && (
               <IonIcon
                 onClick={() => {
@@ -136,14 +143,14 @@ function MessageHeader() {
               />
               <IonIcon
                 icon='search-outline'
-                className='md hydrated absolute left-7 top-1/2 -translate-y-1/2 dark:text-white'
+                className='absolute -translate-y-1/2 md hydrated left-7 top-1/2 dark:text-white'
                 role='img'
                 aria-label='search outline'
               />
             </div>
           </div>
 
-          <div className='h-80 overflow-y-scroll p-2 pr-1 pt-0 dark:text-white/80'>
+          <div className='p-2 pt-0 pr-1 overflow-y-scroll h-80 dark:text-white/80'>
             {focusSearch ? (
               <nav className='text-sm font-medium text-black dark:text-white'>
                 {resultSearch?.data?.data?.map((result: any, index: number) => (
@@ -152,7 +159,7 @@ function MessageHeader() {
                     className=' relative flex cursor-pointer items-center gap-4 rounded-lg px-3 py-1.5 hover:bg-secondery dark:hover:bg-white/10'
                     onClick={() => handleSelectConversation(result)}
                   >
-                    <img src={result?.group_thumbnail} className='h-9 w-9 rounded-full object-cover' alt='' />
+                    <img src={result?.group_thumbnail} className='object-cover rounded-full h-9 w-9' alt='' />
                     <div>{result.group_name}</div>
                   </a>
                 ))}
@@ -161,7 +168,7 @@ function MessageHeader() {
                 )}
               </nav>
             ) : (
-              <div className='p-2 pr-1 pt-0 dark:text-white/80'>
+              <div className='p-2 pt-0 pr-1 dark:text-white/80'>
                 {data?.pages.flat().map((conversation: ConvesationSideBar, index: number) => {
                   const isOnline = onlineUsers.includes(conversation.user_id)
                   if (index === data.pages.flat().length - 1) {
@@ -175,8 +182,8 @@ function MessageHeader() {
           </div>
           {/* footer */}
           <Link to={'/message'}>
-            <div className='border-t border-slate-100 py-4 text-center text-sm font-medium text-blue-600 dark:border-gray-600 dark:text-white'>
-              See all Messages
+            <div className='py-4 text-sm font-medium text-center text-blue-600 border-t border-slate-100 dark:border-gray-600 dark:text-white'>
+              Xem tất cả tin nhắn
             </div>
           </Link>
           <div className='dark:bg-dark3 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t bg-white max-md:hidden dark:border-transparent' />

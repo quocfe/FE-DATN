@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { memo, useLayoutEffect, useState } from 'react'
+import { memo, useEffect, useLayoutEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
@@ -16,6 +16,9 @@ import TimeAgo from './TimeAgo'
 import { useQueryInfinifyConversation } from '../../hooks/useQueryInfinifyConversation'
 import useNotifyMessage from '../../hooks/useNotifyMessage'
 import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
+import { Link, useLocation } from 'react-router-dom'
+import useCallVideo from '../../hooks/useCallVideo'
+import FeatureNotAllow from '~/components/FeatureNotAllow'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
@@ -24,8 +27,12 @@ interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
 }
 
 function Conversation({ item, isOnline, innerRef }: ConversationType) {
+  const location = useLocation()
+  const stateLocation = location.state
+
   const [triggerHover, setTriggerHover] = useState<boolean>(false)
   const [showDialogBlock, setShowDialogBlock] = useState<boolean>(false)
+  const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
   const { setSelectedConversation, selectedConversation } = useConversationStore()
   const deleteNotify = useMutationDeleteNotify()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
@@ -37,7 +44,8 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
   const isBlock = item?.list_block_user?.some((id) => id === item.user_id)
   const isBlocked = item?.list_blocked_user?.some((id) => id === item.user_id)
-  const checkStatusBlock = isBlocked && isBlock
+  const isBlockedOrBlocking =
+    item?.list_block_user?.includes(item.user_id) || item?.list_blocked_user?.includes(item.user_id)
 
   const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
     return !notify?.data?.data.some((data: any) => {
@@ -46,7 +54,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   })
 
   const body =
-    item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0 || item?.messages?.type === 6
+    item?.messages?.type === 1 || item?.messages?.type === 0 || item?.messages?.type === 6
       ? item?.messages?.body
       : item?.messages?.sub_body && checkBodyMessage(item?.messages?.type)
 
@@ -99,7 +107,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
 
   useLayoutEffect(() => {
-    if (showMessageSelect) {
+    if (showMessageSelect && !stateLocation) {
       const item = data?.pages?.flat()[0]
       if (item) {
         handleSelectedConversation(item)
@@ -107,6 +115,22 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     } else {
     }
   }, [data?.pages.flat()[0].group_message_id])
+
+  useLayoutEffect(() => {
+    const item = data?.pages?.flat()[0]
+    if (item && !stateLocation) {
+      handleSelectedConversation(item)
+    }
+  }, [])
+
+  const handleClickVideoCall = useCallVideo({
+    group_message_id: selectedConversation?.group_id,
+    user_id: user_id,
+    group_name: item?.group_name,
+    avatar: item?.group_thumbnail,
+    type: selectedConversation.type,
+    setFeatureNotAllow: setFeatureNotAllow
+  })
 
   return (
     <div
@@ -131,7 +155,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
             className='h-full w-full rounded-full object-cover'
           />
-          {checkStatusBlock && (
+          {!isBlockedOrBlocking && (
             <div
               className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
             />
@@ -170,32 +194,45 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
             <div className='p-2'>
               {/* message type = 1 */}
               {item.type === 1 && (
-                <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                  <IonIcon icon='person-circle-outline' className='text-[22px]' />
-                  <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
-                </div>
-              )}
-              {checkStatusBlock && (
                 <>
+                  <Link
+                    to={`/profile/${item.user_id}`}
+                    className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                  >
+                    <IonIcon icon='person-circle-outline' className='text-[22px]' />
+                    <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
+                  </Link>
                   <hr className='my-2' />
-                  <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                </>
+              )}
+              {!isBlockedOrBlocking && (
+                <>
+                  <div
+                    onClick={() => setFeatureNotAllow(true)}
+                    className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                  >
                     <IonIcon icon='call-outline' className='text-[22px]' />
                     <p className='text-[14px] font-semibold'>Gọi thoại</p>
                   </div>
-                  <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                  <div
+                    onClick={handleClickVideoCall}
+                    className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                  >
                     <IonIcon icon='videocam-outline' className='text-[22px]' />
                     <p className='text-[14px] font-semibold'>Chat video</p>
                   </div>
                 </>
               )}
               <hr className='my-2' />
-              <div
-                onClick={() => setShowDialogBlock(true)}
-                className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
-              >
-                <IonIcon icon='ban-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>{isBlock ? 'Bỏ chặn' : 'Chặn'}</p>
-              </div>
+              {item.type === 1 && (
+                <div
+                  onClick={() => setShowDialogBlock(true)}
+                  className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                >
+                  <IonIcon icon='ban-outline' className='text-[22px]' />
+                  <p className='text-[14px] font-semibold'>{isBlock ? 'Bỏ chặn' : 'Chặn'}</p>
+                </div>
+              )}
               <BlockOrUnBlockUserInMsg
                 type={isBlock ? 'unBlock' : 'block'}
                 show={showDialogBlock}
@@ -232,6 +269,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
           <p className='text-[10px] text-white'>{numberNotify}</p>
         </div>
       )}
+      <FeatureNotAllow showDiaLogFeatureNotAllow={featureNotAllow} setShowDiaLogFeatureNotAllow={setFeatureNotAllow} />
     </div>
   )
 }

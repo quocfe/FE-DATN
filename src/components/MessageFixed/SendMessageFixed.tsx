@@ -12,13 +12,14 @@ import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
 import useFileUpload from '~/pages/Message/utils/uploadApi'
 import useConversationStore from '~/store/conversation.store'
 import useMessageStore from '~/store/message.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
+import { clearLocalStorage, getProfileFromLocalStorage } from '~/utils/auth'
 import EmojiBox from './EmojiBoxFixed'
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { MessageFix } from '~/store/messageFix.store'
 import isTypingLogo from '../../assets/images/isTyping.gif'
 import useTypingMessageSocket from '~/hooks/socket/useTypingMessageSocket'
+import TextareaAutosize from 'react-textarea-autosize'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -28,7 +29,6 @@ type SendMessageType = {
 }
 
 function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_fix }: SendMessageType) {
-  useTypingMessageSocket()
   const [openRecordMessage, setOpenRecordMessage] = useState<boolean>(false)
   const receiverID = infoMessage?.group_id
   const sendMessageMutation = useMutationSendMessage()
@@ -59,7 +59,6 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
   // typing
-  const { group_message_id, fullname } = isTyping ?? { group_message_id: '', fullname: '' }
 
   const handleSendMessage = useCallback(async () => {
     try {
@@ -82,7 +81,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           setPreviewImg(null)
         } else if (!previewImg) {
           await sendMessageMutation.mutateAsync(baseData)
-          console.log('baseDate', baseData)
+
           setTogglePreviewBox(false)
         } else {
           setTogglePreviewBox(false)
@@ -131,7 +130,6 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
     let fileTepm = file != null ? file : previewImg
 
     if (fileTepm) {
-      console.log('running fl')
       try {
         const url = await upload(fileTepm)
 
@@ -170,7 +168,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           </div>
         )
       case 2:
-        return <img src={toggleBoxReply?.sub_body} className='object-contain w-10 h-10' />
+        return <img src={toggleBoxReply?.sub_body} className='h-10 w-10 object-contain' />
       case 3:
         return <p className='text-sm'>{toggleBoxReply?.body}</p>
       default:
@@ -213,8 +211,8 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
     <div className='relative'>
       {toggleBoxReply && (
         <div ref={boxReplyRef} className='border-t-[1px] bg-white p-2 shadow-sm'>
-          <div className='flex justify-between w-full px-3 py-2 rounded-md item-start bg-secondery'>
-            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+          <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
+            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               <span className='mb-2 block text-[12px] font-light'>
                 Trả lời tin nhắn <strong className='font-semibold'>{user_name}</strong>
               </span>
@@ -223,19 +221,19 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
             <IonIcon
               onClick={() => setToggleBoxReply(null)}
               icon='close'
-              className='p-1 text-white rounded-full cursor-pointer bg-primary'
+              className='cursor-pointer rounded-full bg-primary p-1 text-white'
             />
           </div>
         </div>
       )}
       {togglePreviewBox && (
         <div ref={previewUploadRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
-          <div className='flex justify-between w-full px-3 py-2 rounded-md item-center bg-secondery'>
-            <div className='relative w-4/5 ml-2 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
+          <div className='item-center flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
+            <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
               {preview?.type?.includes('video') && (
                 <video
                   src={URL?.createObjectURL(preview)}
-                  className='object-cover w-16 overflow-hidden rounded-sm h-14 shrink-0'
+                  className='h-14 w-16 shrink-0 overflow-hidden rounded-sm object-cover'
                 ></video>
               )}
               {preview?.type?.includes('image') && (
@@ -250,13 +248,15 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                 setTogglePreviewBox(false)
               }}
               icon='close'
-              className='p-2 text-white rounded-full cursor-pointer bg-primary'
+              className='cursor-pointer rounded-full bg-primary p-2 text-white'
             />
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 p-2 '>
-        <div className={`-mt-1.5 ${values ? 'hidden' : 'flex'} h-full items-center gap-1 dark:text-white`}>
+      <div className='flex items-center p-2 '>
+        <div
+          className={`-mt-1.5 transition-all duration-200 ease-in-out  ${values ? 'w-[0%]' : 'w-[20%]'} flex items-center gap-1 dark:text-white`}
+        >
           <CustomFileInput
             type={2}
             iconName={'attach-outline'}
@@ -276,9 +276,11 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
         {openRecordMessage ? (
           <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
         ) : (
-          <div className='flex flex-row items-center justify-around flex-1 '>
-            <div className='flex h-full w-[90%] flex-shrink-0  flex-row items-center'>
-              <textarea
+          <div
+            className={`z-50 flex flex-row items-end justify-around transition-all duration-200 ease-in-out ${values ? 'w-[100%]' : 'w-[80%]'}`}
+          >
+            <div className='flex h-full w-[80%] flex-1  flex-row items-end'>
+              <TextareaAutosize
                 id='body'
                 onChange={(e) => handleOnChange(e)}
                 onKeyDown={(e) => {
@@ -287,7 +289,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                     handleSendMessage()
                   }
                 }}
-                placeholder='Write your message'
+                placeholder='Aa'
                 onFocus={handleOnFocus}
                 onBlur={() => {
                   if (groupID) {
@@ -297,23 +299,25 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                 }}
                 value={values}
                 rows={1}
-                className='no-scrollbar block h-full w-full   resize-none rounded-full bg-secondery py-1 pe-6   text-[12px] focus:ring-transparent'
-              ></textarea>
+                className='no-scrollbar block h-full w-full resize-none rounded-[20px] bg-secondery py-1 pe-6 text-[12px] focus:ring-transparent'
+                minRows={1}
+                maxRows={6}
+              />
               <button
                 type='button'
                 onClick={() => setOpenEmoji(!openEmoji)}
-                className=' dark:bg-dark3 relative -ml-6 shrink-0 rounded-full text-green-600  duration-100 hover:scale-[1.15] dark:border-0'
+                className='relative -ml-6 shrink-0 rounded-full text-green-600 duration-100 hover:scale-[1.15] '
               >
-                <IonIcon className='flex text-xl' icon='happy-outline' />
+                <IonIcon className='text-xl ' icon='happy-outline' />
               </button>
             </div>
-            <div className='w-[20%] flex-1'>
+            <div className='w-[10%]'>
               {!values && !previewImg ? (
                 <span onClick={handleSendLike} className='cursor-pointer text-[18px]'>
                   👍
                 </span>
               ) : (
-                <button onClick={handleSendMessage} className='p-2 text-dark shrink-0'>
+                <button onClick={handleSendMessage} className='text-dark shrink-0 p-2'>
                   <IonIcon className='flex text-sm font-bold text-primary' icon='send' />
                 </button>
               )}
@@ -321,12 +325,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           </div>
         )}
       </div>
-      {!isNotTyping && group_message_id === message_fix.group_id && (
-        <div className='absolute -top-[15px] left-0 flex items-center justify-center p-1 text-[10px]'>
-          <p>{`${fullname} đang nhập`}</p>
-          <img src={isTypingLogo} className='object-cover w-5 h-2' alt='Typing...' />
-        </div>
-      )}
+      <IsTyping group_id={message_fix.group_id} type='fixed' />
     </div>
   )
 }

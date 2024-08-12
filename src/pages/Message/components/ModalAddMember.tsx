@@ -7,6 +7,7 @@ import useConversationStore from '~/store/conversation.store'
 import useMutaionAddMemberGroup from '../hooks/useMutaionAddMemberGroup'
 import Friend from './Friend'
 import Spinner from './Skelaton/Spinner'
+import { useQueryClient } from '@tanstack/react-query'
 
 const ModalAddMember = ({ isOpen, onClose }: any) => {
   const [listMember, setListMember] = useState<any[]>([])
@@ -14,7 +15,7 @@ const ModalAddMember = ({ isOpen, onClose }: any) => {
   const [querySearch, setQuerySearch] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const addMemberMutation = useMutaionAddMemberGroup()
-
+  const queryClient = useQueryClient()
   const listID = listMember.map((member) => member.user_id)
   const handleAdd = async () => {
     const data = {
@@ -25,13 +26,18 @@ const ModalAddMember = ({ isOpen, onClose }: any) => {
       onSuccess: () => {
         toast.success('Thêm thành công')
         onClose()
+        // queryClient.invalidateQueries({ queryKey: ['message'] })
+        // queryClient.invalidateQueries({ queryKey: ['conversations'] })
       },
-      onError: (error) => {
-        toast.error('Đã có l~~~i xảy ra!')
-        console.log('error', error)
+      onError: (error: any) => {
+        toast.error(error.response.data.message)
       }
     })
   }
+  // const handleRemoveMember = (index: number) => {
+  //   const updatedList = listMember.filter((_, i) => i !== index)
+  //   setListMember(updatedList)
+  // }
 
   return (
     <Modal isVisible={isOpen} onClose={onClose} height='3/4'>
@@ -58,11 +64,11 @@ const ModalAddMember = ({ isOpen, onClose }: any) => {
                   <div className='relative'>
                     <img
                       src={member.Profile.profile_picture}
-                      className='h-7 w-7 shrink-0 rounded-full shadow sm:h-9 sm:w-9'
+                      className='h-7 w-7 shrink-0 rounded-full object-cover shadow sm:h-9 sm:w-9'
                     />
-                    <div className='absolute -right-1 top-0 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-slate-600 shadow-sm'>
+                    {/* <div className='absolute top-0 flex items-center justify-center w-4 h-4 rounded-full shadow-sm cursor-pointer -right-1 bg-slate-600'>
                       <IonIcon icon='close' className='text-white ' />
-                    </div>
+                    </div> */}
                   </div>
                   <p className='text-[10px] text-gray-500'>
                     {member.first_name} {member.last_name}

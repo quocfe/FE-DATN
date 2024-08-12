@@ -9,7 +9,7 @@ type TypeMsg = {
   showImg?: boolean
 }
 
-export const TextMsg = ({ item, userid, showImg }: TypeMsg) => {
+export const TextMsg = ({ item, userid, showImg }: any) => {
   const { me, deleteFromOthers, recall, haveReplyMessage, userRep } = configTypeMessage({ item, userid })
   const recallInReply = item.replyMessage.recallInReply?.filter(
     (re: any) => re.message_id === item.replyMessage.message_id
@@ -28,36 +28,38 @@ export const TextMsg = ({ item, userid, showImg }: TypeMsg) => {
           ) : (
             <div className='h-9 w-9 ' />
           ))}
-        {haveReplyMessage ? (
-          <div
-            className={` 
+        <div className='max-w-[500px]'>
+          {haveReplyMessage ? (
+            <div
+              className={` 
               mt-2 flex 
                 flex-col ${me ? 'items-end' : 'items-start'} 
               `}
-          >
-            {!recall && !checkRecallInReply ? (
-              <div className='flex items-center gap-2'>
-                <IonIcon icon='arrow-undo' className='text-[17px]' />
-                <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
-              </div>
-            ) : (
-              ''
-            )}
-            <div
-              className={`rounded-[14px] 
-                ${me ? 'items-end' : 'items-start'} flex w-fit flex-col `}
             >
-              {!recall
-                ? !checkRecallInReply && (
-                    <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />
-                  )
-                : ''}
-              <ContentMessage me={me} recall={recall} item={item} />
+              {!recall && !checkRecallInReply ? (
+                <div className='flex items-center gap-2'>
+                  <IonIcon icon='arrow-undo' className='text-[17px]' />
+                  <p className={`${me ? 'text-right' : ''}`}>{userRep}</p>
+                </div>
+              ) : (
+                ''
+              )}
+              <div
+                className={`rounded-[14px] 
+                ${me ? 'items-end' : 'items-start'} flex w-fit flex-col `}
+              >
+                {!recall
+                  ? !checkRecallInReply && (
+                      <ContentMessage me={me} recall={recall} item={item.replyMessage} type='reply' />
+                    )
+                  : ''}
+                <ContentMessage me={me} recall={recall} item={item} />
+              </div>
             </div>
-          </div>
-        ) : (
-          <ContentMessage me={me} recall={recall} item={item} />
-        )}
+          ) : (
+            <ContentMessage me={me} recall={recall} item={item} />
+          )}
+        </div>
       </div>
     )
   )

@@ -15,11 +15,20 @@ import { useWavesurfer } from '@wavesurfer/react'
 import WaveSurfer from 'wavesurfer.js'
 import ModalMemberReact from './ModalMemberReact'
 import { renderTypeFile } from '../utils/renderTypeFile'
-
+import { MessageFix } from '~/store/messageFix.store'
+import { useQueryClient } from '@tanstack/react-query'
+interface props {
+  recall: boolean
+  me: boolean
+  item: TypeMessage | any
+  type?: string
+}
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
-const ContentMessage = (params: any) => {
+const ContentMessage = (params: props) => {
   const { refetch, data } = useQueryMessage()
-  const groupId = data?.data?.data.info.group_id
+  const queryClient = useQueryClient()
+  const infoMessage = data?.data?.data.info
+  const groupId = infoMessage?.group_id
   const widthRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef(null)
   const [openEmoji, setOpenEmoji] = useState(false)
@@ -34,6 +43,9 @@ const ContentMessage = (params: any) => {
   const { user_id } = getProfileFromLocalStorage()
   const houreSend = calculateHoureAgo(params.item.createdAt)
   const emojiUserSelected = params.item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
+  const isBlockedOrBlocking =
+    infoMessage?.list_block_user?.includes(infoMessage.group_id) ||
+    infoMessage?.list_blocked_user?.includes(infoMessage.group_id)
 
   const handleChoiceReact = (emoji: string) => {
     const data = {
@@ -116,7 +128,7 @@ const ContentMessage = (params: any) => {
             {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </a>
         ) : (
-          <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
+          <p className={`${isReply ? '-mt-[10px]  truncate text-gray-400' : ''} break-words text-[15px]`}>
             {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
         )
@@ -150,7 +162,7 @@ const ContentMessage = (params: any) => {
           <img
             alt={params.item?.body}
             src={params.item?.sub_body}
-            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-40 w-40 rounded-[8px]'}
+            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-20 w-20 rounded-[8px]'}
               max-w-full object-cover 
               opacity-90 contrast-50`}
           />
@@ -277,6 +289,7 @@ const ContentMessage = (params: any) => {
           </div>
           <ModalMemberReact
             reactArr={params.item.reactions}
+            group_id={params.item.group_message_id}
             isOpen={isOpenModalReactMsg}
             onClose={() => setIsOpenModalReactMsg(false)}
           />
@@ -294,6 +307,13 @@ const ContentMessage = (params: any) => {
       }
     }
     handleToOldMessage(params.item.message_id)
+  }
+
+  function handleMouseLeave() {
+    if (!isBlockedOrBlocking) {
+      setOpenEmoji(false)
+      setOpenOption(false)
+    }
   }
 
   if (params.recall) {
@@ -319,10 +339,7 @@ const ContentMessage = (params: any) => {
       ref={widthRef}
       id={params.type === 'reply' ? '' : params.item.message_id}
       onClick={() => (params.type === 'reply' && params.item.status === true ? handleGoToOldMessage() : '')}
-      onMouseLeave={() => {
-        setOpenEmoji(false)
-        setOpenOption(false)
-      }}
+      onMouseLeave={handleMouseLeave}
       className={` relative mt-1 cursor-pointer border-[2px] border-transparent
       ${params.item.type === 4 ? 'h-[100%]' : ''}
       ${params.me ? 'text-left' : 'text-left'}
@@ -333,7 +350,7 @@ const ContentMessage = (params: any) => {
           ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
           : `-mb-4  !bg-secondery ${params.item.type === 2 || params.item.type === 4 ? 'p-0 opacity-30' : 'px-4 py-5'}  text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }
-      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'w123-[40%]' : '') : ''}
+      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'max-w-[200px]' : '') : ''}
       `}
     >
       <div
@@ -343,7 +360,7 @@ const ContentMessage = (params: any) => {
         {/* content */}
         {renderContent()}
         <div
-          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner group-hover:flex`}
+          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner ${!isBlockedOrBlocking && 'group-hover:flex'}`}
         >
           <div
             onClick={(e) => {

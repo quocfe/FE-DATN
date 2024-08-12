@@ -1,7 +1,9 @@
 import { IonIcon } from '@ionic/react'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useLayoutEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import DeleteConversationMsg from '~/components/DeleteConversationMsg'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
@@ -34,8 +36,12 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const { socket } = useSocketContext()
   const { setMessageFix, messagesFix, hiddenMessageFix } = useMessageFixStore()
   const queryClient = useQueryClient()
-
+  const url = window.location.href
+  const checkUrlMesage = url.split('/').includes('message')
   const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
+  const isBlockedOrBlocking =
+    item?.list_block_user?.includes(item.user_id) || item?.list_blocked_user?.includes(item.user_id)
+
   const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
     return !notify?.data?.data.some((data: any) => {
       return page.group_message_id === data.group_message_id
@@ -50,6 +56,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const lastestNotify: any = notifyData && notifyData.at(0)
   const checkBody = lastestNotify?.type === 1 ? body : lastestNotify?.content
   const message_id = item?.messages?.message_id
+
   const handleSelectedConversation = (item: GroupMessage) => {
     if (item.type === 1) {
       setMessageFix({
@@ -76,26 +83,6 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     }
   }
 
-  const handleDeleteConversation = (id: string) => {
-    deleteConversatonMuation.mutate(id, {
-      onSuccess: () => {
-        setShowDiaLogDeleteConversation(false)
-        setTriggerHover(false)
-        refetchMessage()
-        refetch()
-        const item = conversationNoNotification && conversationNoNotification[0]
-        if (item && Object.keys(selectedConversation).length) {
-          handleSelectedConversation(item)
-        }
-      },
-      onError: () => {
-        toast.warning('Đã xảy ra lỗi')
-      }
-    })
-  }
-  const url = window.location.href
-  const checkUrlMesage = url.split('/').includes('message')
-
   useEffect(() => {
     socket?.on('newMessage', (data) => {
       if (!checkUrlMesage) {
@@ -111,21 +98,36 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
           }
         }
 
-        queryClient.invalidateQueries({ queryKey: ['messageInfinity', data.group_id && data.id] })
+        queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
         queryClient.invalidateQueries({ queryKey: ['conversations', user_id] })
       }
     })
     socket?.on('reactMessage', () => {
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
       queryClient.invalidateQueries({ queryKey: ['conversations', user_id] })
     })
     socket?.on('seenedMessage', () => {
       queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
     })
+    socket?.on('blockedMessage', () => {
+      !checkUrlMesage && queryClient.invalidateQueries({ queryKey: ['messageFix'] })
+    })
+    socket?.on('newGroupImage', () => {
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations', user_id] })
+      queryClient.invalidateQueries({ queryKey: ['messageFix'] })
+    })
+    socket?.on('newGroupName', () => {
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations', user_id] })
+      queryClient.invalidateQueries({ queryKey: ['messageFix'] })
+    })
+
     return () => {
       socket?.off('newMessage')
       socket?.off('reactMessage')
       socket?.off('seenedMessage')
+      socket?.off('blockedMessage')
     }
   }, [socket, checkUrlMesage])
 
@@ -143,18 +145,18 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     >
       <div
         onClick={() => handleSelectedConversation(item)}
-        className='flex flex-row items-center justify-between flex-1 w-full gap-2'
+        className='flex w-full flex-1 flex-row items-center justify-between gap-2'
       >
         <div className='relative h-14 w-14 shrink-0'>
           <img
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
-            className='object-cover w-full h-full rounded-full'
+            className='h-full w-full rounded-full object-cover'
           />
           <div
-            className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
+            className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline && !isBlockedOrBlocking ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
           />
         </div>
-        <div className='flex flex-col flex-1 h-full min-w-0 gap-1 justify-evenly'>
+        <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
           <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
             {item?.group_name}
           </div>
@@ -178,37 +180,23 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       ) : (
         <div className={`uk-inline absolute right-2 top-1 rounded-full shadow-sm  `}>
           <button
-            className='flex items-center justify-center w-6 h-6 rounded-full shadow-sm uk-button uk-button-default hover:bg-slate-100'
+            className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
             type='button'
           >
             <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
           </button>
           <div uk-dropdown='mode: click' className={` w-[250px]`}>
             <div className='p-2'>
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='checkmark' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Đánh dấu là chưa đọc</p>
-              </div>
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='notifications-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Tắt thông báo</p>
-              </div>
               {/* message type = 1 */}
               {item.type === 1 && (
-                <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                <Link
+                  to={`profile/${item.user_id}`}
+                  className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                >
                   <IonIcon icon='person-circle-outline' className='text-[22px]' />
                   <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
-                </div>
+                </Link>
               )}
-              <hr className='my-2' />
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='call-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Gọi thoại</p>
-              </div>
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='videocam-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Chat video</p>
-              </div>
               <hr className='my-2' />
               <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
                 <IonIcon icon='ban-outline' className='text-[22px]' />
@@ -225,14 +213,10 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
               >
                 <IonIcon icon='trash-outline' className='text-[22px] text-red-500' />
                 <p className='text-[14px] font-semibold'>Xóa đoạn hội thoại</p>
-                <Dialog
-                  isVisible={showDiaLogDeleteConversation}
-                  onClose={() => setShowDiaLogDeleteConversation(false)}
-                  type='warning'
-                  title='Xóa cuộc trò chuyện'
-                  description='Bạn không thể xem lại tin nhắn sau khi xóa cuộc hội thoại này!.'
-                  textBtn='Xóa'
-                  callback={() => handleDeleteConversation(item?.group_message_id)}
+                <DeleteConversationMsg
+                  showDiaLogDeleteConversation={showDiaLogDeleteConversation}
+                  setShowDiaLogDeleteConversation={setShowDiaLogDeleteConversation}
+                  group_id={item?.group_message_id}
                 />
               </div>
             </div>
