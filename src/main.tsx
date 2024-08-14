@@ -20,7 +20,9 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Router>
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition='top-left' /> */}
+
+      <ReactQueryDevtools initialIsOpen={false} position='right' buttonPosition='bottom-left' />
       <ConfirmProvider>
         <SocketContextProvider>
           <App />

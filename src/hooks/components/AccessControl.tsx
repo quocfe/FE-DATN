@@ -12,7 +12,7 @@ const AccessControl: React.FC<AccessControlProps> = ({ children, requiredPermiss
   const { profile, isAuthenticated } = useAuthStore()
   const role = profile?.role
   const modules = profile?.modules ?? []
-
+  console.log(profile)
   if (!isAuthenticated) {
     return <Navigate to='/admin' replace />
   }
@@ -22,6 +22,9 @@ const AccessControl: React.FC<AccessControlProps> = ({ children, requiredPermiss
     return <>{children}</>
   }
 
+  console.log('requiredModules', requiredModules)
+
+  console.log('modules', modules)
   // Kiểm tra xem người dùng có quyền truy cập hay không
   const hasAccess = modules.some(
     (module) =>

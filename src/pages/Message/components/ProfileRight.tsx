@@ -1,7 +1,7 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Loading from '~/components/Loading'
 import useConversationStore from '~/store/conversation.store'
@@ -23,16 +23,16 @@ import useMutationDeleteOrLeaveMember from '../hooks/useMutationDeleteOrLeaveMem
 import { renderTypeFile } from '../utils/renderTypeFile'
 import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
 import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import FeatureNotAllow from '~/components/FeatureNotAllow'
+import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
+import DeleteConversationMsg from '~/components/DeleteConversationMsg'
 
 const IconOptionList = [
   {
     icon: 'person-circle-outline',
     label: 'Profile'
   },
-  {
-    icon: 'search-outline',
-    label: 'Search'
-  },
+
   {
     icon: 'notifications-off-outline',
     label: 'Unmute'
@@ -44,13 +44,7 @@ const IconOptionList = [
 ]
 
 function ProfileRight() {
-  const { refetch: refetchMsgInfi } = useQueryInfinifyMessage()
-  const { data: dataMessage, refetch: refetchMsg } = useQueryMessage()
-  const { refetch: refetchConver } = useQueryConversation()
-  const avatar = dataMessage?.data?.data?.info?.avatar
-  const group_name = dataMessage?.data?.data?.info?.group_name
-  const group_id = dataMessage?.data?.data?.info?.group_id as string
-  const messages = dataMessage?.data?.data?.messages
+  // useState
   const [showBox, setShowBox] = useState<boolean>(false)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [showModalChangeRole, setShowModalChangeRole] = useState<boolean>(false)
@@ -59,21 +53,40 @@ function ProfileRight() {
   const [loading, setLoading] = useState<boolean>(false)
   const [dataDelete, setDataDelete] = useState<{ user_id: string; group_id: string }>({ user_id: '', group_id: '' })
   const [openModalAddMember, setOpenModalAddMember] = useState<boolean>(false)
+  const [showDiaLogDeleteOrLeaveMember, setShowDiaLogDeleteOrLeaveMember] = useState<boolean>(false)
+  const [showDiaLogFeatureNotAllow, setShowDiaLogFeatureNotAllow] = useState<boolean>(false)
+  const [showDialogBlock, setShowDialogBlock] = useState<boolean>(false)
+  //  hook
+  const { selectedConversation, setSelectedConversation } = useConversationStore()
   const { user_id } = getProfileFromLocalStorage()
-  const { data, refetch: refetchMembers } = useQueryMembers()
-  const changeImage = useMutationChangeImageGroup()
   const { setEmoji, emoji } = useEmojiStore()
   const { uploadNoPreview } = useFileUpload()
-  const { selectedConversation, setSelectedConversation } = useConversationStore()
+  const navigate = useNavigate()
+
+  // useQuery
+  const { refetch: refetchMsgInfi } = useQueryInfinifyMessage()
+  const { data: dataMessage, refetch: refetchMsg } = useQueryMessage()
+  const { refetch: refetchConver } = useQueryConversation()
+  const info = dataMessage?.data?.data?.info
+  const avatar = info?.avatar
+  const group_name = info?.group_name
+  const group_id = info?.group_id as string
+  const messages = dataMessage?.data?.data?.messages
+  const isBlock = info?.list_block_user?.some((id) => id === info?.group_id)
+  const isBlocked = info?.list_blocked_user?.some((id) => id === info?.group_id)
+  const isBlockedOrBlocking =
+    info?.list_block_user?.includes(info?.group_id) || info?.list_blocked_user?.includes(info?.group_id)
+  const { data, refetch: refetchMembers } = useQueryMembers(group_id)
+  const changeImage = useMutationChangeImageGroup()
   const members = data?.data.data
   const changeGroupNameMutation = useMutationChangeGroupName()
   const deleteOrLeaveMember = useMutationDeleteOrLeaveMember()
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
   const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
-  const [showDiaLogDeleteOrLeaveMember, setShowDiaLogDeleteOrLeaveMember] = useState<boolean>(false)
+  //
 
-  const renderList = (type: number) => {
+  const renderMessageList = (type: number) => {
     const listTemp = messages?.filter((message: TypeMessage) => {
       return message.type === type && message.status === true
     })
@@ -145,10 +158,20 @@ function ProfileRight() {
     setEmoji(emoji.native)
   }
 
+  const handleFeatureNotAllow = () => {
+    setShowDiaLogFeatureNotAllow(true)
+  }
+
   const handleClickOption = (label: string) => {
     switch (label) {
       case 'Add-user':
         setOpenModalAddMember(true)
+        break
+      case 'Profile':
+        navigate(`/profile/${group_id}`)
+        break
+      case 'Unmute':
+        handleFeatureNotAllow()
         break
       default:
         break
@@ -176,7 +199,7 @@ function ProfileRight() {
 
   return (
     <>
-      <div className='rightt absolute right-0 top-0 z-10 hidden h-full w-full transition-transform'>
+      <div className='rightt absolute right-0 top-0 z-40 hidden h-full w-full transition-transform'>
         <div className='uk-animation-slide-right-medium dark:bg-dark2 no-scrollbar absolute right-0 top-0 z-50 h-full w-[360px] overflow-y-scroll border-l bg-white shadow-lg delay-200 dark:border-slate-700'>
           {/* line color */}
           <div className='-mt-px h-1.5 w-full bg-gradient-to-r from-pink-500 via-red-500 to-purple-500' />
@@ -199,9 +222,10 @@ function ProfileRight() {
           {showBox ? (
             <ProfileRightOption
               title={titleBox}
-              listImage={renderList(2)}
-              listVideo={renderList(4)}
-              listFile={renderList(3)}
+              listImage={renderMessageList(2)}
+              listVideo={renderMessageList(4)}
+              listFile={renderMessageList(3)}
+              membersList={members}
               typeConversation={selectedConversation.type}
             />
           ) : (
@@ -244,7 +268,10 @@ function ProfileRight() {
                     {IconOptionList.map((option, index) => (
                       <div
                         key={index}
-                        className='flex cursor-pointer items-center justify-center rounded-full bg-slate-300 p-2 hover:bg-primary-soft'
+                        className={`flex cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-white hover:bg-primary-soft hover:text-slate-800 ${selectedConversation.type === 2 ? option.label === 'Profile' && 'hidden' : ''}
+                      
+                        ${selectedConversation.type === 1 ? option.label === 'Add-user' && 'hidden' : ''}
+                        `}
                         onClick={() => handleClickOption(option.label)}
                       >
                         <IonIcon icon={option.icon} className='text-[20px] ' />
@@ -276,10 +303,10 @@ function ProfileRight() {
                   </a>
                   <div className='uk-accordion-content dark:text-white/80'>
                     <div className='grid grid-cols-3 grid-rows-1 gap-2'>
-                      {renderList(2)?.map(({ sub_body }: { sub_body: string }) => (
+                      {renderMessageList(2)?.map(({ sub_body }: { sub_body: string }) => (
                         <img src={sub_body} key={sub_body} className='h-[90px] w-fit rounded-md object-cover' />
                       ))}
-                      {renderList(4)?.map(({ sub_body }: { sub_body: string }) => (
+                      {renderMessageList(4)?.map(({ sub_body }: { sub_body: string }) => (
                         <video src={sub_body} key={sub_body} className='h-[90px] w-fit rounded-md object-cover' />
                       ))}
                     </div>
@@ -317,7 +344,7 @@ function ProfileRight() {
                   <div className='uk-accordion-content dark:text-white/80'>
                     <div className='flex w-full flex-col gap-2'>
                       {/* ---- */}
-                      {renderList(3)
+                      {renderMessageList(3)
                         ?.slice(0, 2)
                         .map(({ body }: { body: string }) => (
                           <div key={body} className='flex cursor-pointer gap-3 p-2 shadow-sm'>
@@ -514,23 +541,18 @@ function ProfileRight() {
                   </a>
                   <div className='uk-accordion-content dark:text-white/80'>
                     <ul className='p-3 text-base font-medium'>
-                      {}
-                      <li>
-                        <button
-                          type='button'
-                          className='flex w-full items-center gap-5 rounded-md p-3 hover:bg-secondery'
-                        >
-                          <IonIcon icon='stop-circle-outline' className='text-2xl' /> Chặn người dùng
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          type='button'
-                          className='flex w-full items-center gap-5 rounded-md p-3 text-red-500 hover:bg-red-50'
-                        >
-                          <IonIcon icon='trash-outline' className='text-2xl' /> Xóa đoạn hội thoại
-                        </button>
-                      </li>
+                      {selectedConversation.type === 1 && (
+                        <li>
+                          <button
+                            onClick={() => setShowDialogBlock(true)}
+                            type='button'
+                            className='flex w-full items-center gap-5 rounded-md p-3 hover:bg-secondery'
+                          >
+                            <IonIcon icon='stop-circle-outline' className='text-2xl' />
+                            {isBlock ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
+                          </button>
+                        </li>
+                      )}
                     </ul>
                   </div>
                 </li>
@@ -564,6 +586,16 @@ function ProfileRight() {
           }
           textBtn={dataDelete.user_id === user_id ? 'Rời nhóm' : 'Xóa'}
           callback={() => handleDeleteOrLeaveMember()}
+        />
+        <FeatureNotAllow
+          setShowDiaLogFeatureNotAllow={setShowDiaLogFeatureNotAllow}
+          showDiaLogFeatureNotAllow={showDiaLogFeatureNotAllow}
+        />
+        <BlockOrUnBlockUserInMsg
+          type={isBlock ? 'unBlock' : 'block'}
+          show={showDialogBlock}
+          setShow={setShowDialogBlock}
+          user_id={selectedConversation.id}
         />
       </>
     </>

@@ -15,7 +15,16 @@ const useNotifyMessage = (group_message_id?: string, user_id?: string) => {
   const showAllNotify = notifyAllData && notifyAllData?.length > 0 ? true : false
   const numberAllNotify = notifyAllData && notifyAllData?.length < 10 ? notifyAllData?.length : '10+'
 
-  return { notify, notifyData, showNotify, numberNotify, showAllNotify, numberAllNotify, notifyAllData }
+  return {
+    notify,
+    notifyData,
+    showNotify,
+    numberNotify,
+    showAllNotify,
+    numberAllNotify,
+    notifyAllData,
+    notifyLength: notifyData?.length
+  }
 }
 
 export default useNotifyMessage

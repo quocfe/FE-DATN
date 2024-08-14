@@ -9,6 +9,9 @@ import { useQueryMessage } from '../hooks/useQueryMessage'
 import useConversationStore from '~/store/conversation.store'
 import { useMutationSendMessageAttach } from '../hooks/useMutationSendMessage'
 import AudioTimer from './AudioTimer'
+import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 
 type PropsRecord = {
   openRecordMessage: boolean
@@ -26,13 +29,15 @@ const RecordMessage = ({ setOpenRecordMessage, openRecordMessage }: PropsRecord)
   const { data } = useQueryMessage()
   const sendMedia = useMutationSendMessageAttach()
   const { selectedConversation, setPreviewImg } = useConversationStore()
-
+  const { refetch: refetchStatusMessage } = useQueryStatusMessage()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const receiverID = data?.data?.data?.info?.group_id
   let groupID = selectedConversation?.group_id
 
   const onStop = async (recordedBlob: any) => {
     setIsRecording(false)
-    setPreviewImg(recordedBlob.blobURL)
+    // setPreviewImg(recordedBlob.blobURL)
     setOpenRecordMessage(!openRecordMessage)
     const data = await uploadRecordMessage(recordedBlob.blob)
 
@@ -45,6 +50,9 @@ const RecordMessage = ({ setOpenRecordMessage, openRecordMessage }: PropsRecord)
     }
 
     sendMedia.mutate(mediaData)
+    refetchConversation()
+    refetchStatusMessage()
+    refetchMessage()
   }
 
   useEffect(() => {

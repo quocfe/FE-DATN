@@ -15,7 +15,7 @@ function CallVideo() {
     useMessageStore()
   const { socket, onlineUsers } = useSocketContext()
   const { user_id } = getProfileFromLocalStorage()
-  const { data } = useQueryMembers()
+  // const { data } = useQueryMembers()
   const [checkUserConnection, setCheckUserConnection] = useState<boolean>(false)
 
   const handleCancelVideoCall = async () => {
@@ -36,22 +36,22 @@ function CallVideo() {
 
   useEffect(() => {
     if (videoCall) {
-      const memberNotHaveUserLogin = data?.data.data.filter((member) => member.user_id != user_id)
-      const onlineUsersNotHaveUserLogin = onlineUsers.filter((member) => member != user_id)
-      const memmbersGroupOnline = memberNotHaveUserLogin?.some((member) => {
-        return onlineUsersNotHaveUserLogin?.includes(member.user_id)
-      })
-      const checkUserConnection = memmbersGroupOnline
-        ? memmbersGroupOnline
-        : onlineUsers.some((onlineUsers) => onlineUsers.includes(videoCall?.user_id))
+      const checkUserConnection = onlineUsers.some((onlineUser) => onlineUser.includes(videoCall?.user_id))
       checkUserConnection ? callingMessageCallAudio.play() : connectingMessageCallAudio.play()
       setCheckUserConnection(checkUserConnection)
+
+      // Đặt hẹn giờ để tự động hủy cuộc gọi sau 10 giây
+      const cancelTimeout = setTimeout(() => {
+        handleCancelVideoCall()
+      }, 10000) // 10000ms = 10 giây
+
+      return () => {
+        clearTimeout(cancelTimeout)
+        callingMessageCallAudio.pause()
+        connectingMessageCallAudio.pause()
+      }
     }
-    return () => {
-      callingMessageCallAudio.pause()
-      connectingMessageCallAudio.pause()
-    }
-  }, [onlineUsers])
+  }, [onlineUsers, videoCall])
 
   return (
     <div

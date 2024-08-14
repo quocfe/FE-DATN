@@ -13,6 +13,7 @@ function Header() {
 
   const handleLogout = () => {
     logoutMutation.mutate()
+    localStorage.removeItem('messageFixStore')
   }
 
   return (

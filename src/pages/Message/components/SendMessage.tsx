@@ -19,6 +19,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
 import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
 import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import TextareaAutosize from 'react-textarea-autosize'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -52,7 +53,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     setPreviewImg,
     previewImg
   } = useConversationStore()
-  const { setLoadingMessage } = useMessageStore()
+
   let groupID = selectedConversation?.group_id
 
   const profile = getProfileFromLocalStorage()
@@ -68,8 +69,6 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         parent_id: ''
       }
 
-      console.log(baseData)
-
       if (toggleBoxReply) {
         baseData.parent_id = toggleBoxReply.message_id
         await replyMessageMutation.mutateAsync(baseData)
@@ -79,11 +78,16 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           setTogglePreviewBox(false)
           await handleFileUpload()
           setPreviewImg(null)
-        } else {
-          await sendMessageMutation.mutateAsync(baseData)
-          setTogglePreviewBox(false)
+          console.log('gửi ảnh')
+        } else if (previewImg && values != '') {
+          console.log('gửi ảnh và tin nhắn')
           await handleFileUpload()
+          values.trim() && (await sendMessageMutation.mutateAsync(baseData))
+          setTogglePreviewBox(false)
           setPreviewImg(null)
+        } else if (values != '' && values.trim()) {
+          console.log('gửi tin nhắn')
+          await sendMessageMutation.mutateAsync(baseData)
         }
         setFile(null)
         refetchConversation()
@@ -213,7 +217,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   }
 
   return (
-    <div className='relative'>
+    <>
       {toggleBoxReply && (
         <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
           <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
@@ -258,8 +262,11 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 overflow-hidden p-2 md:gap-4 md:p-3'>
-        <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
+      <div className={`flex items-center overflow-hidden p-2 md:gap-4 md:p-3`}>
+        <div
+          id='message__wrap'
+          className={`-mt-1.5 flex h-full items-center gap-2 transition-all duration-300 ease-in-out dark:text-white`}
+        >
           <CustomFileInput
             type={2}
             iconName={'attach-outline'}
@@ -283,7 +290,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         {openRecordMessage ? (
           <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
         ) : (
-          <div className='relative flex-1'>
+          <div className={`relative flex-1 transition-all duration-300 ease-in-out ${values ? 'w-[100%]' : 'w-[80%]'}`}>
             <textarea
               id='body'
               onChange={(e) => handleOnChange(e)}
@@ -293,7 +300,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
                   handleSendMessage()
                 }
               }}
-              placeholder='Write your message'
+              placeholder='Aa'
               onFocus={handleOnFocus}
               onBlur={() => {
                 const data = { user_id: profile.user_id, groupID }
@@ -301,7 +308,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
               }}
               value={values}
               rows={1}
-              className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
+              className='w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
             ></textarea>
             {!values && !previewImg ? (
               <span
@@ -319,8 +326,8 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         )}
       </div>
 
-      <IsTyping />
-    </div>
+      <IsTyping group_id={selectedConversation.group_id} type='normal' />
+    </>
   )
 }
 

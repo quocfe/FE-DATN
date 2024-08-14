@@ -6,7 +6,7 @@ export const useQueryStatusMessage = (group_id?: string) => {
   const { selectedConversation } = useConversationStore()
   const id = selectedConversation.group_id ? selectedConversation.group_id : group_id
   return useQuery({
-    queryKey: ['statusMessage'],
+    queryKey: ['statusMessage', id],
     queryFn: () => messageApi.statusMessage(id),
     enabled: id != undefined
   })

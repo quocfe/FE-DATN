@@ -12,13 +12,14 @@ import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
 import useFileUpload from '~/pages/Message/utils/uploadApi'
 import useConversationStore from '~/store/conversation.store'
 import useMessageStore from '~/store/message.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
+import { clearLocalStorage, getProfileFromLocalStorage } from '~/utils/auth'
 import EmojiBox from './EmojiBoxFixed'
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { MessageFix } from '~/store/messageFix.store'
 import isTypingLogo from '../../assets/images/isTyping.gif'
 import useTypingMessageSocket from '~/hooks/socket/useTypingMessageSocket'
+import TextareaAutosize from 'react-textarea-autosize'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -28,7 +29,6 @@ type SendMessageType = {
 }
 
 function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_fix }: SendMessageType) {
-  useTypingMessageSocket()
   const [openRecordMessage, setOpenRecordMessage] = useState<boolean>(false)
   const receiverID = infoMessage?.group_id
   const sendMessageMutation = useMutationSendMessage()
@@ -59,7 +59,6 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
   // typing
-  const { group_message_id, fullname } = isTyping ?? { group_message_id: '', fullname: '' }
 
   const handleSendMessage = useCallback(async () => {
     try {
@@ -80,19 +79,20 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           setTogglePreviewBox(false)
           await handleFileUpload()
           setPreviewImg(null)
-        } else if (!previewImg) {
-          await sendMessageMutation.mutateAsync(baseData)
-          console.log('baseDate', baseData)
-          setTogglePreviewBox(false)
-        } else {
-          setTogglePreviewBox(false)
+          console.log('gửi ảnh')
+        } else if (previewImg && values != '') {
+          console.log('gửi ảnh và tin nhắn')
           await handleFileUpload()
+          values.trim() && (await sendMessageMutation.mutateAsync(baseData))
+          setTogglePreviewBox(false)
           setPreviewImg(null)
+        } else if (values != '' && values.trim()) {
+          console.log('gửi tin nhắn')
+          await sendMessageMutation.mutateAsync(baseData)
         }
         setFile(null)
-        // setPreview(null)
       }
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
       queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
       queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
 
@@ -115,7 +115,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
       await (toggleBoxReply ? replyMessageMutation.mutateAsync(likeData) : sendMessageMutation.mutateAsync(likeData))
       setValues('')
       setToggleBoxReply(null)
-      queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+      queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
       queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
       queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
     } catch (error) {
@@ -131,7 +131,6 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
     let fileTepm = file != null ? file : previewImg
 
     if (fileTepm) {
-      console.log('running fl')
       try {
         const url = await upload(fileTepm)
 
@@ -152,7 +151,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
         }
 
         await sendMedia.mutateAsync(mediaData)
-        queryClient.invalidateQueries({ queryKey: ['messageInfinity'] })
+        queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
         queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
         queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
       } catch (error) {
@@ -255,8 +254,10 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 p-2 '>
-        <div className={`-mt-1.5 ${values ? 'hidden' : 'flex'} h-full items-center gap-1 dark:text-white`}>
+      <div className='flex items-center p-2 '>
+        <div
+          className={`-mt-1.5 transition-all duration-200 ease-in-out  ${values ? 'w-[0%]' : 'w-[20%]'} flex items-center gap-1 dark:text-white`}
+        >
           <CustomFileInput
             type={2}
             iconName={'attach-outline'}
@@ -276,9 +277,11 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
         {openRecordMessage ? (
           <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
         ) : (
-          <div className='flex flex-1 flex-row items-center justify-around '>
-            <div className='flex h-full w-[90%] flex-shrink-0  flex-row items-center'>
-              <textarea
+          <div
+            className={`z-50 flex flex-row items-end justify-around transition-all duration-200 ease-in-out ${values ? 'w-[100%]' : 'w-[80%]'}`}
+          >
+            <div className='flex h-full w-[80%] flex-1  flex-row items-end'>
+              <TextareaAutosize
                 id='body'
                 onChange={(e) => handleOnChange(e)}
                 onKeyDown={(e) => {
@@ -287,7 +290,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                     handleSendMessage()
                   }
                 }}
-                placeholder='Write your message'
+                placeholder='Aa'
                 onFocus={handleOnFocus}
                 onBlur={() => {
                   if (groupID) {
@@ -297,17 +300,19 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
                 }}
                 value={values}
                 rows={1}
-                className='no-scrollbar block h-full w-full   resize-none rounded-full bg-secondery py-1 pe-6   text-[12px] focus:ring-transparent'
-              ></textarea>
+                className='no-scrollbar block h-full w-full resize-none rounded-[20px] bg-secondery py-1 pe-6 text-[12px] focus:ring-transparent'
+                minRows={1}
+                maxRows={6}
+              />
               <button
                 type='button'
                 onClick={() => setOpenEmoji(!openEmoji)}
-                className=' dark:bg-dark3 relative -ml-6 shrink-0 rounded-full text-green-600  duration-100 hover:scale-[1.15] dark:border-0'
+                className='relative -ml-6 shrink-0 rounded-full text-green-600 duration-100 hover:scale-[1.15] '
               >
-                <IonIcon className='flex text-xl' icon='happy-outline' />
+                <IonIcon className='text-xl ' icon='happy-outline' />
               </button>
             </div>
-            <div className='w-[20%] flex-1'>
+            <div className='w-[10%]'>
               {!values && !previewImg ? (
                 <span onClick={handleSendLike} className='cursor-pointer text-[18px]'>
                   👍
@@ -321,12 +326,7 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           </div>
         )}
       </div>
-      {!isNotTyping && group_message_id === message_fix.group_id && (
-        <div className='absolute -top-[15px] left-0 flex items-center justify-center p-1 text-[10px]'>
-          <p>{`${fullname} đang nhập`}</p>
-          <img src={isTypingLogo} className='h-2 w-5 object-cover' alt='Typing...' />
-        </div>
-      )}
+      <IsTyping group_id={message_fix.group_id} type='fixed' />
     </div>
   )
 }

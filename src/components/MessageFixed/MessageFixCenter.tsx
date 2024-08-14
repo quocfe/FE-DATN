@@ -77,13 +77,9 @@ function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; 
   }
 
   return (
-    <div
-      ref={chatMessageRef}
-      onScroll={handleScroll}
-      className='w-full flex-1 overflow-y-auto overflow-x-hidden px-2 py-2 '
-    >
+    <div ref={chatMessageRef} onScroll={handleScroll} className='w-full flex-1 overflow-x-hidden px-2 py-2 '>
       <CustomFileInput setPreview={() => {}} type={3} setFile={setFile} file={file}>
-        <ChatMessageFixed message_fix={message_fix} infoMessage={infoMessage} />
+        <ChatMessageFixed message_fix={message_fix} infoMessage={infoMessage} isAtBottom={isAtBottom} />
       </CustomFileInput>
     </div>
   )

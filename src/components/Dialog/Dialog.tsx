@@ -30,6 +30,10 @@ function Dialog({ isVisible, type, title, description, textBtn, onClose, callbac
     if (target.id === 'wrapper-modal') onClose()
   }
 
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') onClose()
+  })
+
   // Hiển thị
   const renderDialog = () => {
     switch (type) {

@@ -9,10 +9,10 @@ export const useQueryInfinifyMessage = () => {
   const { selectedConversation } = useConversationStore()
   const fetchMessage = async ({ pageParam }: { pageParam: number }) => {
     if (selectedConversation.type === 1) {
-      const data = await messageApi.getOneToOneMessage(selectedConversation.id, pageParam, 30)
+      const data = await messageApi.getOneToOneMessage(selectedConversation.id, pageParam, 20)
       return data.data.data.messages
     } else if (selectedConversation.type === 2) {
-      const data = await messageApi.getGroupMessage(selectedConversation.id, pageParam, 30)
+      const data = await messageApi.getGroupMessage(selectedConversation.id, pageParam, 20)
       return data.data.data.messages
     }
   }
@@ -22,11 +22,12 @@ export const useQueryInfinifyMessage = () => {
     queryFn: fetchMessage,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage && lastPage.length === 30) {
+      if (lastPage && lastPage.length === 20) {
         return allPages.length + 1
       } else {
         return undefined
       }
-    }
+    },
+    enabled: selectedConversation.id != null
   })
 }

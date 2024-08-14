@@ -10,14 +10,18 @@ const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 
 const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
   const { selectedConversation } = useConversationStore()
-  let idQueryStatusMessage = selectedConversation.group_id ? selectedConversation.group_id : group_id_fixed
+  let idQueryStatusMessage =
+    Object.keys(selectedConversation).length != 0 ? selectedConversation.group_id : group_id_fixed
   const { data: dataStatus } = useQueryStatusMessage(idQueryStatusMessage)
   const { loadingMessage, errorMessage } = useMessageStore()
-  const { status } = useMutationSendMessage()
 
   const highestStatus = useMemo(() => {
-    return STATUS_ORDER.find((status) => dataStatus?.data.data?.some((item) => item.status === status))
+    return STATUS_ORDER.find((status) =>
+      dataStatus?.data.data?.some((item) => item.status === status && item.group_message_id === idQueryStatusMessage)
+    )
   }, [dataStatus?.data.data])
+
+  // console.log(group_id_fixed)
 
   const renderContent = useCallback(
     (status: string) => {
@@ -39,7 +43,11 @@ const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
               )}
               {seenMessages.slice(0, 4).map((seen) => (
                 <div key={seen.seen_message_id} className='group relative'>
-                  <img src={seen.avatar} alt='Avatar' className='mr-1 h-5 w-5 rounded-full object-cover' />
+                  <img
+                    src={seen.avatar}
+                    alt='Avatar'
+                    className={`mr-1 ${group_id_fixed ? 'h-4 w-4' : 'h-5 w-5'} rounded-full object-cover`}
+                  />
                   <div className='absolute -top-6 right-0 hidden min-w-[120px] items-center justify-center rounded-sm bg-white p-1 shadow-sm group-hover:flex'>
                     <p className='text-[11px] font-medium'>
                       đã xem {calculateTimeAgo(seen.updatedAt?.toString() ?? '').toLocaleLowerCase()}

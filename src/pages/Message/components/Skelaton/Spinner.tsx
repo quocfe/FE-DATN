@@ -10,7 +10,7 @@ function Spinner({
   title?: string
 }) {
   return (
-    <div className='mb-5 flex flex-col items-center justify-center gap-1'>
+    <div className='flex flex-col items-center justify-center gap-1 '>
       <div role='status' className={classNames}>
         <svg
           aria-hidden='true'

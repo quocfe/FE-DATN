@@ -26,7 +26,7 @@ function RoomCall() {
   const dataCall = JSON.parse(localStorage.getItem('dataCall') ?? '') || null
   let timerId: ReturnType<typeof setInterval> | null = null
   let callStartTime: Date | null = null
-  console.log('dataCall local', dataCall)
+
   useEffect(() => {
     const token = async () => {
       try {
@@ -41,7 +41,7 @@ function RoomCall() {
 
   useEffect(() => {
     const startCall = async () => {
-      const zg = new ZegoExpressEngine(2061219188, '3ee15498db96049a3d34100bb51a1a48')
+      const zg = new ZegoExpressEngine(255480918, 'ca7dc8a52f4b7dd20e19f84c3efafd45')
       setZg(zg)
 
       zg.on('roomStreamUpdate', async (roomID, updateType, streamList) => {

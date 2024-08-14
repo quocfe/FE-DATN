@@ -32,7 +32,7 @@ function Profile({ children }: Props) {
   }, [])
 
   return (
-    <div className='mx-auto max-w-[1065px] max-lg:-m-2.5'>
+    <div className='mx-auto max-w-[1065px]  max-lg:-m-2.5'>
       <div className='dark:bg-dark2 bg-white shadow lg:-mt-10 lg:rounded-b-2xl'>
         {/* User Info */}
         <UserInfo />

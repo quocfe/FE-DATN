@@ -30,48 +30,54 @@ const useMessageSocket = () => {
   const { selectedConversation, previewImg } = useConversationStore()
   const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
-  const { refetch: refetchMember } = useQueryMembers()
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
   let audioNewMsg = new Audio(soundNewMessage)
 
   useEffect(() => {
-    ;(socket as Socket | null)?.on('newMessage', () => {
+    socket?.on('newMessage', () => {
       // audioNewMsg.play()
       refetchConversation()
       refetchMessage()
       refetchStatusMessage()
       document.title = 'có tin nhắn mới'
     })
-    ;(socket as Socket | null)?.on('deleteOrLeaveGroup', () => {
-      // refetchConversation()
-      // refetchMember()
+    socket?.on('deleteOrLeaveGroup', () => {
+      refetchConversation()
+      refetchMessage()
+      queryClient.invalidateQueries({ queryKey: ['memmbers'] })
     })
-    ;(socket as Socket | null)?.on('reactMessage', () => {
+    socket?.on('reactMessage', () => {
       refetchConversation()
       refetchMessage()
     })
-    ;(socket as Socket | null)?.on('newConversation', () => {
+    socket?.on('newConversation', () => {
       refetchConversation()
     })
-    ;(socket as Socket | null)?.on('newGroupImage', () => {
-      refetchConversation()
-      refetchMessage()
-    })
-    ;(socket as Socket | null)?.on('newGroupName', () => {
+    socket?.on('newGroupImage', () => {
       refetchConversation()
       refetchMessage()
     })
-    ;(socket as Socket | null)?.on('seenedMessage', () => {
+    socket?.on('newGroupName', () => {
+      refetchConversation()
+      refetchMessage()
+      queryClient.invalidateQueries({ queryKey: ['message'] })
+    })
+    socket?.on('seenedMessage', () => {
       refetchStatusMessage()
+    })
+    socket?.on('blockedMessage', () => {
+      queryClient.invalidateQueries({ queryKey: ['message'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations'] })
     })
 
     return () => {
-      ;(socket as Socket | null)?.off('newMessage')
-      ;(socket as Socket | null)?.off('reactMessage')
-      ;(socket as Socket | null)?.off('newConversation')
-      ;(socket as Socket | null)?.off('newGroupName')
-      ;(socket as Socket | null)?.off('newGroupImage')
-      ;(socket as Socket | null)?.off('seenedMessage')
+      socket?.off('newMessage')
+      socket?.off('reactMessage')
+      socket?.off('newConversation')
+      socket?.off('newGroupName')
+      socket?.off('newGroupImage')
+      socket?.off('seenedMessage')
+      socket?.off('blockedMessage')
     }
   }, [socket])
 }
