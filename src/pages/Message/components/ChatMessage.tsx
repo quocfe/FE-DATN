@@ -12,6 +12,7 @@ import Spinner from './Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessage'
 import PreviewFileUpload from './components/PreviewFileUpload'
 import StatusMessage from './components/StatusMessage'
+import useFileUploadStore from '~/store/fileUpload.store'
 
 interface ChatMessageProps {
   showScrollBtn: boolean

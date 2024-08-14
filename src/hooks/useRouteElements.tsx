@@ -103,6 +103,16 @@ function useRouteElements() {
               </AdminLayout>
             </AccessControl>
           )
+        },
+        {
+          path: 'message/list',
+          element: (
+            <AccessControl requiredModules={['Message Management']} requiredPermissions={['view']}>
+              <AdminLayout>
+                <AccountList />
+              </AdminLayout>
+            </AccessControl>
+          )
         }
       ]
     },

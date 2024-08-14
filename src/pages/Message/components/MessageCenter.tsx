@@ -28,11 +28,10 @@ function MessageCenter() {
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
   const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
   const [file, setFile] = useState<File | null>(null)
-  const [userIdInMessage, setUserIdInMessage] = useState<string>('')
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
-  const { onlineUsers, socket } = useSocketContext()
+  const { onlineUsers } = useSocketContext()
   const isOnline =
     selectedConversation.type == 1 && onlineUsers?.some((user_socket) => user_socket == selectedConversation.id)
   const isBlockedOrBlocking =
@@ -42,7 +41,7 @@ function MessageCenter() {
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
-      setShowScrollBtn(scrollHeight - scrollTop > clientHeight * 3.5)
+      setShowScrollBtn(scrollHeight - scrollTop > clientHeight * 1.5)
       setIsAtBottom(scrollHeight - (scrollTop + clientHeight) < 20 ? true : false)
     }
   }, [])

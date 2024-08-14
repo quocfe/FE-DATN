@@ -20,7 +20,7 @@ interface props {
   infoMessage: InfoMessage
   recall: boolean
   me: boolean
-  item: TypeMessage | any
+  item: TypeMessage
   type?: string
   message_fix: MessageFix
 }
@@ -171,13 +171,15 @@ const ContentMessage = (params: props) => {
         )
       case 3:
         return (
-          <div className={` flex items-center gap-2 ${params.me ? 'flex-row' : 'flex-row-reverse'} `}>
-            {item.body && renderTypeFile(item.body)}
+          <div
+            className={` flex w-full items-center justify-center gap-2 ${params.me ? 'flex-row' : 'flex-row-reverse'} `}
+          >
+            <div className='w-[20%]'>{item.body && renderTypeFile(item.body)}</div>
             {isReply ? (
               <p className='truncate'>{isUnsent ? 'Tin nhắn đã thu hồi' : item.body}</p>
             ) : (
               <a
-                className='break-words underline'
+                className='block w-[80%] break-words underline'
                 target='_blank'
                 href={`https://docs.google.com/gview?url=${item.sub_body}&embedded=true`}
               >
@@ -330,6 +332,24 @@ const ContentMessage = (params: props) => {
     )
   }
 
+  if (params.item.is_report) {
+    return (
+      <div
+        ref={widthRef}
+        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
+        ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
+        ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
+        `}
+      >
+        <div
+          className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
+        >
+          Tin nhắn đã bị xóa
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       ref={widthRef}
@@ -353,87 +373,82 @@ const ContentMessage = (params: props) => {
     >
       <div
         className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
+      />
+      {renderEmoji()}
+      {/* content */}
+      {renderContent()}
+      <div
+        className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 z-50 hidden h-[30px] w-[70px] items-center justify-around rounded-[8px] bg-secondery shadow-inner ${!isBlockedOrBlocking && 'group-hover:flex'}`}
       >
-        {renderEmoji()}
-        {/* content */}
-        {renderContent()}
         <div
-          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 z-50 hidden h-[30px] w-[70px] items-center justify-around rounded-[8px] bg-secondery shadow-inner ${!isBlockedOrBlocking && 'group-hover:flex'}`}
+          onClick={(e) => {
+            e.stopPropagation()
+            setToggleBoxReply(item)
+          }}
+          className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
         >
-          <div
-            onClick={(e) => {
-              e.stopPropagation()
-              setToggleBoxReply(item)
-            }}
-            className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
-          >
-            <IonIcon className='cursor-pointer text-black ' icon='arrow-undo-outline' />
-          </div>
-          <div
-            onClick={(e) => {
-              e.stopPropagation()
-              setOpenOption(!openOption)
-              setOpenEmoji(false)
-            }}
-            className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
-          >
-            <IonIcon className='cursor-pointer text-black ' icon='ellipsis-horizontal-outline' />
-            <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:z-50 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
-              <div
-                style={{ bottom: `40px` }}
-                className={`absolute ${openOption ? '' : 'hidden'}   h-fit w-[120px] rounded-[14px] bg-primary-soft py-3 shadow-2xl ${params.me ? '-right-16' : '-left-[80px]'} flex select-none flex-col gap-2 px-2 text-left`}
+          <IonIcon className='cursor-pointer text-black ' icon='arrow-undo-outline' />
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation()
+            setOpenOption(!openOption)
+            setOpenEmoji(false)
+          }}
+          className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
+        >
+          <IonIcon className='cursor-pointer text-black ' icon='ellipsis-horizontal-outline' />
+          <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:z-50 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
+            <div
+              style={{ bottom: `40px` }}
+              className={`absolute ${openOption ? '' : 'hidden'}   h-fit w-[120px] rounded-[14px] bg-primary-soft py-3 shadow-2xl ${params.me ? '-right-16' : '-left-[80px]'} flex select-none flex-col gap-2 px-2 text-left`}
+            >
+              <p
+                onClick={() => handleClickOption('unsend')}
+                className='cursor-pointer rounded-[8px] px-2 py-1 text-[12px] text-black hover:bg-secondery'
               >
-                <p
-                  onClick={() => handleClickOption('unsend')}
-                  className='cursor-pointer rounded-[8px] px-2 py-1 text-[12px] text-black hover:bg-secondery'
-                >
-                  Gỡ tin nhắn
-                </p>
-                <p
-                  onClick={() => handleClickOption('pin')}
-                  className='cursor-pointer rounded-[8px] px-2 py-1 text-[12px] text-black hover:bg-secondery'
-                >
-                  Ghim tin nhắn
-                </p>
-              </div>
-              <ModalUnSendOption
-                message={item}
-                isOpen={isOpenModalOption}
-                onClose={() => setIsOpenModalOption(false)}
-              />
+                Gỡ tin nhắn
+              </p>
+              <p
+                onClick={() => handleClickOption('pin')}
+                className='cursor-pointer rounded-[8px] px-2 py-1 text-[12px] text-black hover:bg-secondery'
+              >
+                Ghim tin nhắn
+              </p>
             </div>
+            <ModalUnSendOption message={item} isOpen={isOpenModalOption} onClose={() => setIsOpenModalOption(false)} />
           </div>
-          <div
-            onClick={(e) => {
-              e.stopPropagation()
-              setOpenEmoji(!openEmoji)
-              setOpenOption(false)
-            }}
-            className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
-          >
-            <IonIcon className='cursor-pointer text-black ' icon='happy-outline' />
-            <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
-              <div
-                style={{ bottom: '40px' }}
-                className={`absolute ${openEmoji ? '' : 'hidden'} right-0 h-[30px] w-fit rounded-xl bg-primary-soft p-2 shadow-inner
+        </div>
+        <div
+          onClick={(e) => {
+            e.stopPropagation()
+            setOpenEmoji(!openEmoji)
+            setOpenOption(false)
+          }}
+          className='relative flex items-center rounded-full p-1 shadow-2xl hover:bg-gray-300'
+        >
+          <IonIcon className='cursor-pointer text-black ' icon='happy-outline' />
+          <div className="before:content-[' '] before:absolute before:-top-7 before:right-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent">
+            <div
+              style={{ bottom: '40px' }}
+              className={`absolute ${openEmoji ? '' : 'hidden'} right-0 h-[30px] w-fit rounded-xl bg-primary-soft p-2 shadow-inner
                 ${params.me ? '-left-[70px]' : 'right-0'}
                 `}
-              >
-                <div className='flex h-[100%] w-[100%] items-center rounded-sm'>
-                  {ListEmoji?.map((emoji) => {
-                    return (
-                      <span
-                        key={emoji}
-                        className={`cursor-pointer rounded-full p-[2px] hover:bg-secondery
+            >
+              <div className='flex h-[100%] w-[100%] items-center rounded-sm'>
+                {ListEmoji?.map((emoji) => {
+                  return (
+                    <span
+                      key={emoji}
+                      className={`cursor-pointer rounded-full p-[2px] hover:bg-secondery
                           ${emojiUserSelected ? (emojiUserSelected[0]?.emoji === emoji ? 'bg-bgbody shadow-sm' : '') : ''}
                         `}
-                        onClick={() => handleChoiceReact(emoji)}
-                      >
-                        {emoji}
-                      </span>
-                    )
-                  })}
-                </div>
+                      onClick={() => handleChoiceReact(emoji)}
+                    >
+                      {emoji}
+                    </span>
+                  )
+                })}
               </div>
             </div>
           </div>

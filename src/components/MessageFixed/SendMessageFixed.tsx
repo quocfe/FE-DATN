@@ -79,17 +79,18 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
           setTogglePreviewBox(false)
           await handleFileUpload()
           setPreviewImg(null)
-        } else if (!previewImg) {
-          await sendMessageMutation.mutateAsync(baseData)
-
-          setTogglePreviewBox(false)
-        } else {
-          setTogglePreviewBox(false)
+          console.log('gửi ảnh')
+        } else if (previewImg && values != '') {
+          console.log('gửi ảnh và tin nhắn')
           await handleFileUpload()
+          values.trim() && (await sendMessageMutation.mutateAsync(baseData))
+          setTogglePreviewBox(false)
           setPreviewImg(null)
+        } else if (values != '' && values.trim()) {
+          console.log('gửi tin nhắn')
+          await sendMessageMutation.mutateAsync(baseData)
         }
         setFile(null)
-        // setPreview(null)
       }
       queryClient.invalidateQueries({ queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id] })
       queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })

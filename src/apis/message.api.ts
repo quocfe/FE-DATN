@@ -116,6 +116,10 @@ class MessageApi {
   generateTokenZego(userId: string) {
     return http.get<ZegoToken>(`${MESSAGE.GENERATE_TOKEN_ZEGO}/${userId}`)
   }
+
+  reportMessage(message_id: string) {
+    return http.post(`${MESSAGE.REPORT_MESSAGE}`, { message_id })
+  }
 }
 
 export default new MessageApi()

@@ -10,16 +10,18 @@ const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 
 const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
   const { selectedConversation } = useConversationStore()
-  let idQueryStatusMessage = selectedConversation.group_id ? selectedConversation.group_id : group_id_fixed
+  let idQueryStatusMessage =
+    Object.keys(selectedConversation).length != 0 ? selectedConversation.group_id : group_id_fixed
   const { data: dataStatus } = useQueryStatusMessage(idQueryStatusMessage)
   const { loadingMessage, errorMessage } = useMessageStore()
-  const { status } = useMutationSendMessage()
 
   const highestStatus = useMemo(() => {
     return STATUS_ORDER.find((status) =>
       dataStatus?.data.data?.some((item) => item.status === status && item.group_message_id === idQueryStatusMessage)
     )
   }, [dataStatus?.data.data])
+
+  // console.log(group_id_fixed)
 
   const renderContent = useCallback(
     (status: string) => {

@@ -24,12 +24,13 @@ export function configTypeMessage({ item, userid }: configType) {
 
   const meMessage = item.createdBy === userid ? item : ''
   const ortherMessage = item.createdBy != userid ? item : ''
-
+  const report = item.is_report
   return {
     me,
     deleteFromOthers,
     recall,
     haveReplyMessage,
-    userRep
+    userRep,
+    report
   }
 }

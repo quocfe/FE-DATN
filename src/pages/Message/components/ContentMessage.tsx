@@ -17,6 +17,8 @@ import ModalMemberReact from './ModalMemberReact'
 import { renderTypeFile } from '../utils/renderTypeFile'
 import { MessageFix } from '~/store/messageFix.store'
 import { useQueryClient } from '@tanstack/react-query'
+import ModalReportMessage from './ModalReportMessage'
+import ReportMessage from '~/components/ReportMessage'
 interface props {
   recall: boolean
   me: boolean
@@ -35,6 +37,7 @@ const ContentMessage = (params: props) => {
   const [openOption, setOpenOption] = useState(false)
   const [timeWaveSurfer, setTimeWaveSurfer] = useState<string>()
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
+  const [isOpenModalReport, setIsOpenModalReport] = useState(false)
   const [isOpenModalReactMsg, setIsOpenModalReactMsg] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply, setPinMessage, selectedConversation } = useConversationStore()
@@ -71,6 +74,9 @@ const ContentMessage = (params: props) => {
         break
       case 'pin':
         setPinMessage(params.item)
+        break
+      case 'report':
+        setIsOpenModalReport(true)
         break
       default:
         break
@@ -320,7 +326,7 @@ const ContentMessage = (params: props) => {
     return (
       <div
         ref={widthRef}
-        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
+        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px]
         ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
         ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
         `}
@@ -329,6 +335,24 @@ const ContentMessage = (params: props) => {
           className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
         >
           Tin nhắn đã được thu hồi
+        </div>
+      </div>
+    )
+  }
+
+  if (params.item.is_report) {
+    return (
+      <div
+        ref={widthRef}
+        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
+        ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
+        ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
+        `}
+      >
+        <div
+          className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
+        >
+          Tin nhắn vi phạm chính sách
         </div>
       </div>
     )
@@ -397,11 +421,22 @@ const ContentMessage = (params: props) => {
                 >
                   Ghim tin nhắn
                 </p>
+                <p
+                  onClick={() => handleClickOption('report')}
+                  className='cursor-pointer rounded-[8px] px-2 py-1 text-[12px] text-black hover:bg-secondery'
+                >
+                  Báo cáo
+                </p>
               </div>
               <ModalUnSendOption
                 message={params.item}
                 isOpen={isOpenModalOption}
                 onClose={() => setIsOpenModalOption(false)}
+              />
+              <ReportMessage
+                showDiaLogReportMessage={isOpenModalReport}
+                setShowDiaLogReportMessage={setIsOpenModalReport}
+                message_id={params.item.message_id}
               />
             </div>
           </div>

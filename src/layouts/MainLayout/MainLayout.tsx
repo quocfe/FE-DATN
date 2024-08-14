@@ -1,8 +1,10 @@
+import { useEffect } from 'react'
 import Header from '~/components/Header'
 import HiddenMessageFix from '~/components/MessageFixed/HiddenMessageFix'
 import MessageFixed from '~/components/MessageFixed/MessageFixed'
 import Sidebar from '~/components/Sidebar'
 import CallVideo from '~/pages/Message/components/CallVideo'
+import useConversationStore from '~/store/conversation.store'
 import useMessageStore from '~/store/message.store'
 import useMessageFixStore from '~/store/messageFix.store'
 
@@ -14,8 +16,15 @@ function MainLayout({ children }: Props) {
   const url = window.location.href
   const checkUrlMesage = url.split('/').includes('message')
   const { messagesFix, hiddenMessageFix, setMessageFix } = useMessageFixStore()
+  const { setSelectedConversation, selectedConversation } = useConversationStore()
   const { videoCall } = useMessageStore()
-  
+
+  useEffect(() => {
+    if (!checkUrlMesage && Object.keys(selectedConversation).length != 0) {
+      setSelectedConversation({})
+    }
+  })
+
   if (videoCall && Object.keys(videoCall).length > 0) {
     return <CallVideo />
   }
@@ -30,7 +39,7 @@ function MainLayout({ children }: Props) {
         </div>
       )}
       {hiddenMessageFix.length > 0 && !checkUrlMesage && (
-        <div className='fixed z-50 flex flex-col gap-2 bottom-10 right-5 h-fit'>
+        <div className='fixed bottom-10 right-5 z-50 flex h-fit flex-col gap-2'>
           {hiddenMessageFix.map((message_fix, index) => (
             <HiddenMessageFix key={index} message_fix={message_fix} />
           ))}

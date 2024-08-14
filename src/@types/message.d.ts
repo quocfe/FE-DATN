@@ -9,6 +9,8 @@ type Message = {
   detelectedAt: Date
   createdBy: string
   type: number
+  is_report: boolean
+  report_count: number
   createdAt: Date
   updatedAt: Date
   user_name: string
@@ -222,6 +224,8 @@ type TypeMessage = Pick<
   | 'detelectedAt'
   | 'createdBy'
   | 'type'
+  | 'is_report'
+  | 'report_count'
   | 'createdAt'
   | 'updatedAt'
   | 'user_name'

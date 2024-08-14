@@ -78,11 +78,16 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           setTogglePreviewBox(false)
           await handleFileUpload()
           setPreviewImg(null)
-        } else {
-          await sendMessageMutation.mutateAsync(baseData)
-          setTogglePreviewBox(false)
+          console.log('gửi ảnh')
+        } else if (previewImg && values != '') {
+          console.log('gửi ảnh và tin nhắn')
           await handleFileUpload()
+          values.trim() && (await sendMessageMutation.mutateAsync(baseData))
+          setTogglePreviewBox(false)
           setPreviewImg(null)
+        } else if (values != '' && values.trim()) {
+          console.log('gửi tin nhắn')
+          await sendMessageMutation.mutateAsync(baseData)
         }
         setFile(null)
         refetchConversation()
@@ -257,10 +262,10 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           </div>
         </div>
       )}
-      <div className={`flex items-center overflow-hidden p-2 ${!values && 'md:gap-4'} md:p-3`}>
+      <div className={`flex items-center overflow-hidden p-2 md:gap-4 md:p-3`}>
         <div
           id='message__wrap'
-          className={`-mt-1.5 flex h-full transition-all duration-300 ease-in-out  ${values ? 'w-[0%]' : 'w-[20%]'} items-center gap-2 dark:text-white`}
+          className={`-mt-1.5 flex h-full items-center gap-2 transition-all duration-300 ease-in-out dark:text-white`}
         >
           <CustomFileInput
             type={2}
@@ -285,7 +290,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         {openRecordMessage ? (
           <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
         ) : (
-          <div className={`relative transition-all duration-300 ease-in-out ${values ? 'w-[100%]' : 'w-[80%]'}`}>
+          <div className={`relative flex-1 transition-all duration-300 ease-in-out ${values ? 'w-[100%]' : 'w-[80%]'}`}>
             <textarea
               id='body'
               onChange={(e) => handleOnChange(e)}
@@ -303,8 +308,8 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
               }}
               value={values}
               rows={1}
-              className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
-            />
+              className='w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
+            ></textarea>
             {!values && !previewImg ? (
               <span
                 onClick={handleSendLike}

@@ -85,10 +85,10 @@ const ChatMessageFixed = ({
 
   const fetchMessage = async ({ pageParam }: { pageParam: number }) => {
     if (message_fix.type === 1) {
-      const data = await messageApi.getOneToOneMessage(message_fix.id, pageParam, 30)
+      const data = await messageApi.getOneToOneMessage(message_fix.id, pageParam, 10)
       return data.data.data.messages
     } else if (message_fix.type === 2) {
-      const data = await messageApi.getGroupMessage(message_fix.group_id, pageParam, 30)
+      const data = await messageApi.getGroupMessage(message_fix.group_id, pageParam, 10)
       return data.data.data.messages
     }
   }
@@ -104,7 +104,7 @@ const ChatMessageFixed = ({
     queryFn: fetchMessage,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage && lastPage.length === 30) {
+      if (lastPage && lastPage.length === 10) {
         return allPages.length + 1
       } else {
         return undefined
@@ -113,7 +113,7 @@ const ChatMessageFixed = ({
     enabled: message_fix.group_id != null || message_fix.id != null
   })
 
-  const { ref, inView } = useInView({ threshold: 0.25 })
+  const { ref, inView } = useInView()
   const [showNewMsg, setShowNewMsg] = useState(false)
   const newArr = useMemo(() => {
     if (dataMsg?.pages?.length) {
@@ -178,9 +178,6 @@ const ChatMessageFixed = ({
             <div className='text-[12px] text-base font-medium text-black dark:text-white '>
               {infoMessage?.group_name}
             </div>
-            {message_fix.type != 2 && (
-              <div className='text-[12px] text-gray-500 dark:text-white/80'>@{infoMessage?.group_id}</div>
-            )}
           </div>
 
           {message_fix.type != 2 && (

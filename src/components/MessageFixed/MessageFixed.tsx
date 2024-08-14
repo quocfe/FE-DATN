@@ -39,8 +39,8 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
     queryKey: ['messageFix', message_fix.group_id && message_fix.id],
     queryFn: () =>
       message_fix.type === 1
-        ? messageApi.getOneToOneMessage(message_fix.id, 1, 30)
-        : messageApi.getGroupMessage(message_fix.group_id, 1, 30),
+        ? messageApi.getOneToOneMessage(message_fix.id, 1, 1)
+        : messageApi.getGroupMessage(message_fix.group_id, 1, 1),
     enabled: message_fix.group_id != null || message_fix.id != null
   })
 

@@ -43,6 +43,7 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({
           setPreview(URL.createObjectURL(file))
         }
       },
+      multiple: false,
       accept: {
         'image/png': ['.png', '.jpg', '.jpeg', '.webp']
       }
@@ -78,6 +79,7 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({
           setPreview(file)
         }
       },
+      multiple: false,
       accept: {
         'image/png': ['.png', '.jpg', '.jpeg', '.webp'],
         'video/mp4': ['.mp4', '.mpeg', '.webm'],
@@ -110,6 +112,7 @@ const CustomFileInput: React.FC<CustomFileInputProps> = ({
         setTogglePreviewBox(true)
         setPreviewImg(file)
       },
+      multiple: false,
       onDragEnter: () => {
         if (typeof setIsDragAccept === 'function') {
           setIsDragAccept(true)
