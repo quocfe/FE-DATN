@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
-import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
+import useMutationCreateMessage from '../hooks/useMutaion/useMutationCreateGroup'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 import useFileUpload from '../utils/uploadApi'
 import Friend from './Friend'
 import Spinner from './Skelaton/Spinner'
-import useMutationChangeGroupName from '../hooks/useMutaionChangeGroupName'
+import useMutationChangeGroupName from '../hooks/useMutaion/useMutaionChangeGroupName'
 
 const ModalChangeGroupName = ({ isOpen, onClose }: any) => {
   const [groupName, setGroupName] = useState<string>('')

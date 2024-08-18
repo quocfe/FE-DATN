@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { calculateHoureAgo, formatTimeDuration } from '~/utils/helpers'
-import useMutationSendReactMessage from '../hooks/useMutationSendReactMessage'
+import useMutationSendReactMessage from '../hooks/useMutaion/useMutationSendReactMessage'
 import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 import { useQueryMessage } from '../hooks/useQueryMessage'
 import { downloadFileFormLink } from '../utils/downloadFileFormLink'
@@ -277,7 +277,6 @@ const ContentMessage = (params: props) => {
                       <p key={index} className='text-[12px]'>
                         {item.emoji ?? ''}
                       </p>
-                      <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
                     </>
                   ))
                 : params.item.reactions.map((item: any, index: number) => (
@@ -292,6 +291,9 @@ const ContentMessage = (params: props) => {
                     </p>
                   ))
                 : null}
+            {selectedConversation.type === 2 && params.item.reactions?.length > 2 && (
+              <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
+            )}
           </div>
           <ModalMemberReact
             reactArr={params.item.reactions}

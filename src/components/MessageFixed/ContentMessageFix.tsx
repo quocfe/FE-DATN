@@ -8,7 +8,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useWavesurfer } from '@wavesurfer/react'
 import ModalMemberReact from '~/pages/Message/components/ModalMemberReact'
 import ModalUnSendOption from '~/pages/Message/components/ModalUnSendOption'
-import useMutationSendReactMessage from '~/pages/Message/hooks/useMutationSendReactMessage'
+import useMutationSendReactMessage from '~/pages/Message/hooks/useMutaion/useMutationSendReactMessage'
 import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
 import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
 import { downloadFileFormLink } from '~/pages/Message/utils/downloadFileFormLink'
@@ -37,7 +37,7 @@ const ContentMessage = (params: props) => {
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
   const [isOpenModalReactMsg, setIsOpenModalReactMsg] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
-  const { setToggleBoxReply, setPinMessage, selectedConversation } = useConversationStore()
+  const { setToggleBoxReply } = useConversationStore()
   const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
   const { data: temp } = useQueryMessage(1, 30)
   const { user_id } = getProfileFromLocalStorage()
@@ -71,7 +71,6 @@ const ContentMessage = (params: props) => {
         setIsOpenModalOption(true)
         break
       case 'pin':
-        setPinMessage(item)
         break
       default:
         break
@@ -265,12 +264,9 @@ const ContentMessage = (params: props) => {
             {params.message_fix.type === 2
               ? params.item.reactions?.length > 2
                 ? params.item.reactions?.slice(0, 2).map((item: any, index: number) => (
-                    <>
-                      <p key={index} className='text-[12px]'>
-                        {item.emoji ?? ''}
-                      </p>
-                      <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
-                    </>
+                    <p key={index} className='text-[12px]'>
+                      {item.emoji ?? ''}
+                    </p>
                   ))
                 : params.item.reactions.map((item: any, index: number) => (
                     <p key={index} className='text-[12px]'>
@@ -284,6 +280,9 @@ const ContentMessage = (params: props) => {
                     </p>
                   ))
                 : null}
+            {params.message_fix.type === 2 && params.item.reactions?.length > 2 && (
+              <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
+            )}
           </div>
           <ModalMemberReact
             group_id={item.group_message_id}

@@ -1,12 +1,9 @@
 import { IonIcon } from '@ionic/react'
-import Modal from '~/components/Modal'
+import { useEffect, useState } from 'react'
 import { useSocketContext } from '~/context/socket'
 import useMessageStore from '~/store/message.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import CallMessage from '../../../assets/sound/Sound_call.mp3'
-import { useQueryMembers } from '../hooks/useQueryMembers'
-import { useEffect, useState } from 'react'
-import { useMutationSendCallMessage } from '../hooks/useMutationSendMessage'
+import { useMutationSendCallMessage } from '../hooks/useMutaion/useMutationSendMessage'
 
 function CallVideo() {
   const sendCallMessageMutation = useMutationSendCallMessage()
@@ -15,7 +12,6 @@ function CallVideo() {
     useMessageStore()
   const { socket, onlineUsers } = useSocketContext()
   const { user_id } = getProfileFromLocalStorage()
-  // const { data } = useQueryMembers()
   const [checkUserConnection, setCheckUserConnection] = useState<boolean>(false)
 
   const handleCancelVideoCall = async () => {

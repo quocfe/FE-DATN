@@ -4,15 +4,15 @@ import { useCallback, useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
-import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
+import useMutationCreateMessage from '../hooks/useMutaion/useMutationCreateGroup'
 import { useQueryConversation } from '../hooks/useQueryConversation'
 import useFileUpload from '../utils/uploadApi'
 import Friend from './Friend'
 import Spinner from './Skelaton/Spinner'
-import useMutaionChangeRoleGroup from '../hooks/useMutaionChangeRoleGroup'
+import useMutaionChangeRoleGroup from '../hooks/useMutaion/useMutaionChangeRoleGroup'
 import useConversationStore from '~/store/conversation.store'
 import Dialog from '~/components/Dialog'
-import useMutationDeleteOrLeaveMember from '../hooks/useMutationDeleteOrLeaveMember'
+import useMutationDeleteOrLeaveMember from '../hooks/useMutaion/useMutationDeleteOrLeaveMember'
 import { useQueryMembers } from '../hooks/useQueryMembers'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 
@@ -24,7 +24,7 @@ const ModalChageRole = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const { selectedConversation, setSelectedConversation } = useConversationStore()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const deleteOrLeaveMember = useMutationDeleteOrLeaveMember()
-  const { refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id)
+  const { refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id, 2)
   const { user_id: userLoggin } = getProfileFromLocalStorage()
 
   const handleChangeRole = async () => {

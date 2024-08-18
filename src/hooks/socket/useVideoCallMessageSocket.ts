@@ -25,21 +25,21 @@ const useVideoCallMessageSocket = () => {
   const { selectedConversation } = useConversationStore()
 
   useEffect(() => {
-    ;(socket as Socket | null)?.on('inComingCallVideo', (data) => {
+    socket?.on('inComingCallVideo', (data) => {
       inComingCallAudio.play()
       setInCommingVideoCall(data)
       // refetchNotifyMessage()
     })
-    ;(socket as Socket | null)?.on('cancelVideoCall', () => {
+    socket?.on('cancelVideoCall', () => {
       inComingCallAudio.pause()
       setInCommingVideoCall([])
     })
-    ;(socket as Socket | null)?.on('cancelInComingVideoCall', () => {
+    socket?.on('cancelInComingVideoCall', () => {
       callingMessageCallAudio.pause()
       inComingCallAudio.pause()
       setVideoCall([])
     })
-    ;(socket as Socket | null)?.on('acceptVideoCall', (data) => {
+    socket?.on('acceptVideoCall', (data) => {
       const { user_id: user_id_loggin } = getProfileFromLocalStorage()
       localStorage.setItem('dataCall', JSON.stringify(data))
       setAcceptCall(true)
@@ -56,10 +56,10 @@ const useVideoCallMessageSocket = () => {
       newWindow?.open()
     })
     return () => {
-      ;(socket as Socket | null)?.off('inComingCallVideo')
-      ;(socket as Socket | null)?.off('cancelVideoCall')
-      ;(socket as Socket | null)?.off('cancelInComingVideoCall')
-      ;(socket as Socket | null)?.off('acceptVideoCall')
+      socket?.off('inComingCallVideo')
+      socket?.off('cancelVideoCall')
+      socket?.off('cancelInComingVideoCall')
+      socket?.off('acceptVideoCall')
     }
   }, [socket])
 }

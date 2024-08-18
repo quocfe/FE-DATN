@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Modal from '~/components/Modal'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { useQueryMessage } from '../hooks/useQueryMessage'
-import useMutationReCallMessage from './../hooks/useMutationUnSend'
+import useMutationReCallMessage from '../hooks/useMutaion/useMutationUnSend'
 import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -56,23 +56,23 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
 
   return (
     <Modal isVisible={isOpen} onClose={onClose} height='3/6'>
-      <div className='p-6 border border-b-gray-400'>
+      <div className='border border-b-gray-400 p-6'>
         <h2 className='text-xl font-semibold'>Bạn muốn gỡ tin nhắn này ở phía ai?</h2>
       </div>
       {profile.user_id === message.createdBy ? (
         <div className='flex flex-col items-center'>
-          <div className='flex items-center w-full p-2 mb-4 shadow-sm'>
+          <div className='mb-4 flex w-full items-center p-2 shadow-sm'>
             <input
               id='everyone'
               checked={type === 'everyone'}
               type='checkbox'
               value='everyone'
-              className='w-4 h-4 rounded-full'
+              className='h-4 w-4 rounded-full'
               onChange={() => setType('everyone')}
             />
             <label
               htmlFor='everyone'
-              className='flex items-center w-full gap-2 p-2 text-sm font-medium text-gray-900 select-none ms-2 dark:text-gray-300'
+              className='ms-2 flex w-full select-none items-center gap-2 p-2 text-sm font-medium text-gray-900 dark:text-gray-300'
             >
               <div className='text-left'>
                 <p className='mb-1 text-sm font-semibold'>Thu hồi với mọi người</p>
@@ -84,18 +84,18 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
             </label>
           </div>
 
-          <div className='flex items-center w-full p-2 mb-4 shadow-sm'>
+          <div className='mb-4 flex w-full items-center p-2 shadow-sm'>
             <input
               id='onlyone'
               checked={type === 'onlyone'}
               type='checkbox'
               value='onlyone'
-              className='w-4 h-4 rounded-full'
+              className='h-4 w-4 rounded-full'
               onChange={() => setType('onlyone')}
             />
             <label
               htmlFor='onlyone'
-              className='flex items-center w-full gap-2 p-2 text-sm font-medium text-gray-900 select-none ms-2 dark:text-gray-300'
+              className='ms-2 flex w-full select-none items-center gap-2 p-2 text-sm font-medium text-gray-900 dark:text-gray-300'
             >
               <div className='text-left'>
                 <p className='mb-1 text-sm font-semibold'>Thu hồi ở phía bạn</p>
@@ -107,19 +107,19 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
           </div>
         </div>
       ) : (
-        <div className='flex flex-col items-center w-full'>
-          <div className='flex items-center w-full p-2 mb-4 shadow-sm'>
+        <div className='flex w-full flex-col items-center'>
+          <div className='mb-4 flex w-full items-center p-2 shadow-sm'>
             <input
               id='onlyone'
               checked={type === 'onlyone'}
               type='checkbox'
               value='onlyone'
-              className='w-4 h-4 rounded-full'
+              className='h-4 w-4 rounded-full'
               onChange={() => setType('onlyone')}
             />
             <label
               htmlFor='onlyone'
-              className='flex items-center w-full gap-2 p-2 text-sm font-medium text-gray-900 select-none ms-2 dark:text-gray-300'
+              className='ms-2 flex w-full select-none items-center gap-2 p-2 text-sm font-medium text-gray-900 dark:text-gray-300'
             >
               <div className='text-left'>
                 <p className='mb-1 text-sm font-semibold'>Thu hồi ở phía bạn</p>

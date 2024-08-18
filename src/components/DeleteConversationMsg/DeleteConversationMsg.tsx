@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify'
-import useMutationDeleteMessage from '~/pages/Message/hooks/useMutationDeleteGroup'
+import useMutationDeleteMessage from '~/pages/Message/hooks/useMutaion/useMutationDeleteGroup'
 import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
 import useMessageFixStore from '~/store/messageFix.store'
 import Dialog from '../Dialog'

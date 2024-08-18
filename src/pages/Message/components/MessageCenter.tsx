@@ -15,22 +15,42 @@ import InComingCallVideo from './InComingCallVideo'
 import BlockUi from './components/BlockUi'
 import BlockedUi from './components/BlockedUi'
 import FeatureNotAllow from '~/components/FeatureNotAllow'
-import useCallVideo from '../hooks/useCallVideo'
+import useCallVideo from '../hooks/useMutaion/useCallVideo'
+import { useMutationSendMessageAttach } from '../hooks/useMutaion/useMutationSendMessage'
+import useFileUpload from '../utils/uploadApi'
+import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
 
 function MessageCenter() {
-  const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
-    useConversationStore()
+  const {
+    toggleBoxReply,
+    setPreviewImg,
+    togglePreviewBox,
+    setToggleBoxSearchMessage,
+    pinMessage,
+    selectedConversation
+  } = useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
   const { isLoading, data } = useQueryMessage()
+  const sendMedia = useMutationSendMessageAttach()
+  const { upload } = useFileUpload()
+  const { refetch: refetchStatusMessage } = useQueryStatusMessage()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
 
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
   const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
   const [file, setFile] = useState<File | null>(null)
+  const [isDragAccept, setIsDragAccept] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
+  const receiverID = data?.data?.data?.info?.group_id
+  let groupID = selectedConversation?.group_id
+
   const { onlineUsers } = useSocketContext()
   const isOnline =
     selectedConversation.type == 1 && onlineUsers?.some((user_socket) => user_socket == selectedConversation.id)
@@ -38,6 +58,7 @@ function MessageCenter() {
     infoMessage?.list_block_user?.includes(infoMessage.group_id) ||
     infoMessage?.list_blocked_user?.includes(infoMessage.group_id)
   const [calculateHeight, setCalculateHeight] = useState<number>(204)
+
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
@@ -46,11 +67,52 @@ function MessageCenter() {
     }
   }, [])
 
+  const handleFileUpload = useCallback(async () => {
+    if (file) {
+      try {
+        const url = await upload(file)
+
+        if (url === null) {
+          setIsDragAccept(false)
+        }
+        const mediaData = {
+          body: `${url.original_filename}.${url.url.split('.').pop()}`,
+          sub_body: url.url,
+          receiver: receiverID,
+          group_message_id: groupID,
+          type: 0
+        }
+
+        if (url.resource_type === 'raw' || url.format === 'pdf') {
+          mediaData.type = 3
+        } else if (url.resource_type === 'video') {
+          mediaData.type = 4
+        } else {
+          mediaData.type = 2
+        }
+
+        await sendMedia.mutateAsync(mediaData)
+        setIsDragAccept(false)
+        refetchConversation()
+        refetchStatusMessage()
+        refetchMessage()
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }, [file, groupID, receiverID])
+
+  useEffect(() => {
+    if (isDragAccept) {
+      handleFileUpload()
+    }
+  }, [isDragAccept])
+
   const handleClickVideoCall = useCallVideo({
     group_message_id: selectedConversation?.group_id,
     user_id: user_id,
-    group_name: selectedConversation.type === 1 ? first_name + ' ' + last_name : infoMessage?.group_name,
-    avatar: selectedConversation.type === 1 ? Profile.profile_picture : infoMessage?.avatar,
+    group_name: infoMessage?.group_name,
+    avatar: infoMessage?.avatar as string,
     type: selectedConversation.type,
     setFeatureNotAllow: setFeatureNotAllow
   })
@@ -82,7 +144,7 @@ function MessageCenter() {
   }
 
   return (
-    <div className='flex-1 '>
+    <div className='relative flex-1'>
       {/* chat heading */}
       <div className='w- uk-animation-slide-top-medium relative z-10 flex  items-center justify-between gap-2 border-b px-6 py-3.5 dark:border-slate-700'>
         <div className='flex items-center gap-2 sm:gap-4'>
@@ -169,7 +231,7 @@ function MessageCenter() {
       </div>
 
       {/* chats bubble */}
-      <CustomFileInput setPreview={() => {}} type={3} setFile={setFile} file={file}>
+      <CustomFileInput setIsDragAccept={setIsDragAccept} setPreview={() => {}} type={3} setFile={setFile} file={file}>
         <div
           style={{
             height: `calc(100vh - ${selectedConversation.type === 1 && isBlockedOrBlocking ? 240 : calculateHeight}px)`

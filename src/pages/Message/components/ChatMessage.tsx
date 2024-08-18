@@ -13,6 +13,7 @@ import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './
 import PreviewFileUpload from './components/PreviewFileUpload'
 import StatusMessage from './components/StatusMessage'
 import useFileUploadStore from '~/store/fileUpload.store'
+import IsTyping from './components/IsTyping'
 
 interface ChatMessageProps {
   showScrollBtn: boolean
@@ -48,6 +49,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   const { data: messageData } = useQueryMessage()
   const infoMessage = messageData?.data?.data?.info
   const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
+  dataMsg
   const { ref, inView } = useInView({ threshold: 0.25 })
   const [showNewMsg, setShowNewMsg] = useState(false)
   const { user_id } = getProfileFromLocalStorage()
@@ -141,7 +143,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
               const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
               const showTime = shouldShowTime(item, previousMessage)
               const showImg =
-                !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
+                !nextMessage || nextMessage.createdBy !== item?.createdBy || shouldShowTime(nextMessage, item)
               return (
                 <>
                   {showTime && (
@@ -149,14 +151,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
                       {new Date(item?.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   )}
-                  {item.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
-                  {item.type === 0 && <p className='my-2 text-center text-[10px]'>{item.body}</p>}
-                  {item.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
+                  {item?.type === 0 && <p className='my-2 text-center text-[10px]'>{item?.body}</p>}
+                  {item?.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                 </>
               )
             })}

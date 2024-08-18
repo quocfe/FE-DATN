@@ -11,7 +11,7 @@ type ModalTypes = {
 
 const ModalMemberReact = ({ isOpen, onClose, reactArr, group_id }: ModalTypes) => {
   // console.log('react', reactArr)
-  const { data } = useQueryMembers(group_id)
+  const { data } = useQueryMembers(group_id, 2)
   const [arrReactType, setArrReactType] = useState<[]>([])
   const members = data?.data.data
   const allReact = reactArr.map((react: any) => {

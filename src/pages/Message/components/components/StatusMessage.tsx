@@ -4,7 +4,7 @@ import { IonIcon } from '@ionic/react'
 import { calculateTimeAgo } from '~/utils/helpers'
 import useMessageStore from '~/store/message.store'
 import useConversationStore from '~/store/conversation.store'
-import { useMutationSendMessage } from '../../hooks/useMutationSendMessage'
+import { useMutationSendMessage } from '../../hooks/useMutaion/useMutationSendMessage'
 
 const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 

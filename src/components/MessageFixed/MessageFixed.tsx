@@ -1,32 +1,29 @@
 import { IonIcon } from '@ionic/react'
-import { FileMsg, ImageMsg, TextMsg, VideoMsg } from '~/pages/Message/components/TypeMessage'
-import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
-import useAuthStore from '~/store/auth.store'
-import MessageCenter from './MessageFixCenter'
-import useMessageFixStore, { MessageFix } from '~/store/messageFix.store'
-import SendMessageFixed from './SendMessageFixed'
-import { useLayoutEffect, useRef, useState } from 'react'
-import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import messageApi from '~/apis/message.api'
 import { useSocketContext } from '~/context/socket'
+import useCallVideo from '~/pages/Message/hooks/useMutaion/useCallVideo'
+import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
+import useConversationStore from '~/store/conversation.store'
+import useMessageFixStore, { MessageFix } from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
-import CustomFileInput from '../InputFile/CustomFileInput'
+import BlockOrUnBlockUserInMsg from '../BlockOrUnBlockUserInMsg'
+import FeatureNotAllow from '../FeatureNotAllow'
 import BlockFixUi from './BlockFixUi'
 import BlockedFixUi from './BlockedFixUi'
-import { Link, useNavigate } from 'react-router-dom'
-import BlockOrUnBlockUserInMsg from '../BlockOrUnBlockUserInMsg'
-import useConversationStore from '~/store/conversation.store'
-import useCallVideo from '~/pages/Message/hooks/useCallVideo'
-import FeatureNotAllow from '../FeatureNotAllow'
+import MessageCenter from './MessageFixCenter'
+import SendMessageFixed from './SendMessageFixed'
+import DeleteConversationMsg from '../DeleteConversationMsg'
 
 function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const { onlineUsers, socket } = useSocketContext()
   const { user_id } = getProfileFromLocalStorage()
-  const isOnline = onlineUsers.includes(message_fix.id)
+  const isOnlineSocket = onlineUsers.includes(message_fix.id)
+  const isOnline = isOnlineSocket && message_fix.type === 1
   const { showNotify } = useNotifyMessage(message_fix.group_id, user_id)
   const [file, setFile] = useState<File | null>(null)
   const [showBlock, setShowBlock] = useState<boolean>(false)
@@ -34,14 +31,15 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
   const { setSelectedConversation } = useConversationStore()
   const { removeMessageFix, setHiddenMessageFix } = useMessageFixStore()
   const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
+  const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
+
+  const idQuery = message_fix.type === 1 ? message_fix.id : message_fix.group_id
 
   const { data: messageData, isLoading } = useQuery({
-    queryKey: ['messageFix', message_fix.group_id && message_fix.id],
+    queryKey: ['messageFix', idQuery],
     queryFn: () =>
-      message_fix.type === 1
-        ? messageApi.getOneToOneMessage(message_fix.id, 1, 1)
-        : messageApi.getGroupMessage(message_fix.group_id, 1, 1),
-    enabled: message_fix.group_id != null || message_fix.id != null
+      message_fix.type === 1 ? messageApi.getOneToOneMessage(idQuery, 1, 1) : messageApi.getGroupMessage(idQuery, 1, 1),
+    enabled: idQuery != null
   })
 
   const infoMessage = messageData?.data?.data?.info as InfoMessage
@@ -166,9 +164,14 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
               Báo cáo
             </a>
             <hr />
-            <a className='cursor-pointer text-red-500'>
+            <a onClick={() => setShowDiaLogDeleteConversation(true)} className='cursor-pointer text-red-500'>
               <IonIcon className='shrink-0 text-xl ' icon='trash-outline' /> Xóa đoạn hội thoại
             </a>
+            <DeleteConversationMsg
+              showDiaLogDeleteConversation={showDiaLogDeleteConversation}
+              setShowDiaLogDeleteConversation={setShowDiaLogDeleteConversation}
+              group_id={message_fix.group_id}
+            />
           </nav>
         </div>
 

@@ -15,10 +15,11 @@ import { getProfileFromLocalStorage } from '~/utils/auth'
 import { formatDate } from '~/utils/helpers'
 import CustomFileInput from '../InputFile/CustomFileInput'
 import PreviewFileUpload from '~/pages/Message/components/components/PreviewFileUpload'
-import { useMutationSendMessage } from '~/pages/Message/hooks/useMutationSendMessage'
+import { useMutationSendMessage } from '~/pages/Message/hooks/useMutaion/useMutationSendMessage'
 import Loading from '../Loading'
 import Spinner from './../../pages/Message/components/Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessageFix'
+import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
 
 // Tin nhan theo ngay
 const groupMessagesByDate = (messages: TypeMessage[]): Record<string, TypeMessage[]> => {
@@ -61,6 +62,7 @@ const ChatMessageFixed = ({
   const { socket } = useSocketContext()
   const { setVideoCall, setAcceptCall } = useMessageStore()
   const [calculateHeight, setCalculateHeight] = useState<number>(0)
+  const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessageFix(message_fix)
 
   useLayoutEffect(() => {
     if (toggleBoxReply || togglePreviewBox) {
@@ -82,36 +84,6 @@ const ChatMessageFixed = ({
 
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLDivElement>(null)
-
-  const fetchMessage = async ({ pageParam }: { pageParam: number }) => {
-    if (message_fix.type === 1) {
-      const data = await messageApi.getOneToOneMessage(message_fix.id, pageParam, 10)
-      return data.data.data.messages
-    } else if (message_fix.type === 2) {
-      const data = await messageApi.getGroupMessage(message_fix.group_id, pageParam, 10)
-      return data.data.data.messages
-    }
-  }
-
-  const {
-    data: dataMsg,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isLoading
-  } = useInfiniteQuery({
-    queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id],
-    queryFn: fetchMessage,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      if (lastPage && lastPage.length === 10) {
-        return allPages.length + 1
-      } else {
-        return undefined
-      }
-    },
-    enabled: message_fix.group_id != null || message_fix.id != null
-  })
 
   const { ref, inView } = useInView()
   const [showNewMsg, setShowNewMsg] = useState(false)
