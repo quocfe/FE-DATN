@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSocketContext } from '~/context/socket'
 import useMutaionSearchFriendAndGrMsg from '~/pages/Message/hooks/useMutaion/useMutationSearchFriendAndGrMsg'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
 import Conversation from './ConversationHeader'
 import useMessageFixStore from '~/store/messageFix.store'
 import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
@@ -34,7 +34,7 @@ function MessageHeader() {
 
   const showAllNotify = uniqueNotify && uniqueNotify?.length > 0 ? true : false
   const numberAllNotify = uniqueNotify && uniqueNotify?.length < 9 ? uniqueNotify?.length : '9+'
-  console.log(notify?.data?.data)
+
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage()

@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import Modal from '~/components/Modal'
 import useMutationReportMessage from '../hooks/useMutaion/useMutationReportMessage'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 
 type ModalTypes = {
   isOpen: boolean

@@ -1,5 +1,5 @@
 import Modal from '~/components/Modal'
-import { useQueryMembers } from '../hooks/useQueryMembers'
+import { useQueryMembers } from '../hooks/useQuery/useQueryMembers'
 import { useState } from 'react'
 
 type ModalTypes = {

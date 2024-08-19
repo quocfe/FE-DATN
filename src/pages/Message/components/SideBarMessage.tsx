@@ -6,7 +6,7 @@ import { useSocketContext } from '~/context/socket'
 import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
 import useConversationStore from '~/store/conversation.store'
 import useMutaionSearchFriendAndGrMsg from '../hooks/useMutaion/useMutationSearchFriendAndGrMsg'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
@@ -18,6 +18,8 @@ const SideBarMessage = () => {
   const searchMutation = useMutaionSearchFriendAndGrMsg()
   const { onlineUsers } = useSocketContext()
   const inputSearchRef = useRef<HTMLInputElement>(null)
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useQueryInfinifyConversation()
+
   // const { data: conversation, isLoading } = useQueryConversation()
   const { ref, inView } = useInView()
 
@@ -61,8 +63,6 @@ const SideBarMessage = () => {
     }
   }
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useQueryInfinifyConversation()
-
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage()
@@ -85,25 +85,6 @@ const SideBarMessage = () => {
             <h2 className='ml-1 text-2xl font-bold text-black dark:text-white'> Đoạn chat </h2>
             {/* right action buttons */}
             <div className='flex items-center gap-2.5'>
-              <button className='group'>
-                <IonIcon icon='settings-outline' className='flex text-2xl group-aria-expanded:rotate-180' />
-              </button>
-              <div
-                className='w-full md:w-[270px]'
-                uk-dropdown='pos: bottom-left; offset:10; animation: uk-animation-slide-bottom-small'
-              >
-                <nav>
-                  <a href='#'>
-                    <IonIcon className='-ml-1 shrink-0 text-2xl' icon='checkmark-outline' /> Mark all as read{' '}
-                  </a>
-                  <a href='#'>
-                    <IonIcon className='-ml-1 shrink-0 text-2xl' icon='notifications-outline' /> notifications setting{' '}
-                  </a>
-                  <a href='#'>
-                    <IonIcon className='-ml-1 shrink-0 text-xl' icon='volume-mute-outline' /> Mute notifications{' '}
-                  </a>
-                </nav>
-              </div>
               <button
                 type='button'
                 aria-expanded='false'

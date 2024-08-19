@@ -9,18 +9,18 @@ import { useWavesurfer } from '@wavesurfer/react'
 import ModalMemberReact from '~/pages/Message/components/ModalMemberReact'
 import ModalUnSendOption from '~/pages/Message/components/ModalUnSendOption'
 import useMutationSendReactMessage from '~/pages/Message/hooks/useMutaion/useMutationSendReactMessage'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
+import { useQueryMessage } from '~/pages/Message/hooks/useQuery/useQueryMessage'
 import { downloadFileFormLink } from '~/pages/Message/utils/downloadFileFormLink'
 import { handleToOldMessage } from '~/pages/Message/utils/handleToOldMessage'
 import { renderTypeFile } from '~/pages/Message/utils/renderTypeFile'
 import { MessageFix } from '~/store/messageFix.store'
+import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
 
 interface props {
   infoMessage: InfoMessage
   recall: boolean
   me: boolean
-  item: TypeMessage
+  item: TypeMessage | any
   type?: string
   message_fix: MessageFix
 }
@@ -38,8 +38,7 @@ const ContentMessage = (params: props) => {
   const [isOpenModalReactMsg, setIsOpenModalReactMsg] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply } = useConversationStore()
-  const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
-  const { data: temp } = useQueryMessage(1, 30)
+  const { fetchNextPage } = useQueryInfinifyMessageFix(params.message_fix)
   const { user_id } = getProfileFromLocalStorage()
   const queryClient = useQueryClient()
   const emojiUserSelected = item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
@@ -296,14 +295,38 @@ const ContentMessage = (params: props) => {
   }
 
   const handleGoToOldMessage = async () => {
-    let totalPage = temp?.data.data.pagination.totalPage || 0
-    const checkEl = document.getElementById(item.message_id)
-    if (!checkEl) {
-      for (let i = 0; i < totalPage; i++) {
-        if (hasNextPage) await fetchNextPage()
+    let checkEl = document.getElementById(params.item.message_id)
+
+    while (!checkEl) {
+      // Gọi hàm loadMoreMessages để tải thêm dữ liệu
+      const fetch = await fetchNextPage()
+
+      setTimeout(() => {
+        const element = document.getElementById(params.item.message_id)
+        if (element) {
+          handleToOldMessage(params.item.message_id)
+        } else {
+          console.log(' không tìm thấy tin nhắn cần tìm trong setTimeout')
+          return
+        }
+      }, 300)
+
+      if (!fetch.hasNextPage) {
+        console.log('Đã tải hết tin nhắn, không tìm thấy tin nhắn cần tìm.')
+        return
       }
     }
-    handleToOldMessage(item.message_id)
+    if (checkEl) {
+      setTimeout(() => {
+        const element = document.getElementById(params.item.message_id)
+        if (element) {
+          handleToOldMessage(params.item.message_id)
+        }
+      }, 300)
+      console.log('Đã di chuyển tới tin nhắn.')
+    } else {
+      console.log('Không tìm thấy tin nhắn.')
+    }
   }
 
   function handleMouseLeave() {

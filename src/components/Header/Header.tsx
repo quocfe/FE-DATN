@@ -4,9 +4,11 @@ import useMutationLogout from './hooks/useMutationLogout'
 import { Link } from 'react-router-dom'
 import MessageHeader from './components/MessageHeader/MessageHeader'
 import Search from './components/Search'
+import useMessageFixStore from '~/store/messageFix.store'
 
 function Header() {
   const { profile } = useAuthStore()
+  const { clearAll } = useMessageFixStore()
 
   // React Query
   const logoutMutation = useMutationLogout()
@@ -14,6 +16,8 @@ function Header() {
   const handleLogout = () => {
     logoutMutation.mutate()
     localStorage.removeItem('messageFixStore')
+    // clear message fix
+    clearAll()
   }
 
   return (

@@ -11,7 +11,7 @@ import {
   useMutationSendMessage,
   useMutationSendMessageAttach
 } from '~/pages/Message/hooks/useMutaion/useMutationSendMessage'
-import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
+import { useQueryMessage } from '~/pages/Message/hooks/useQuery/useQueryMessage'
 import useFileUpload from '~/pages/Message/utils/uploadApi'
 import useConversationStore from '~/store/conversation.store'
 import useMessageStore from '~/store/message.store'

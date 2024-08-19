@@ -2,7 +2,7 @@ import { IonIcon } from '@ionic/react'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { SocketContextProvider, useSocketContext } from '~/context/socket'
 import useConversationStore from '~/store/conversation.store'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import ChatMessage from './ChatMessage'
 import PinMessage from './PinMessage'
 import SendMessage from './SendMessage'
@@ -18,21 +18,15 @@ import FeatureNotAllow from '~/components/FeatureNotAllow'
 import useCallVideo from '../hooks/useMutaion/useCallVideo'
 import { useMutationSendMessageAttach } from '../hooks/useMutaion/useMutationSendMessage'
 import useFileUpload from '../utils/uploadApi'
-import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 
 function MessageCenter() {
-  const {
-    toggleBoxReply,
-    setPreviewImg,
-    togglePreviewBox,
-    setToggleBoxSearchMessage,
-    pinMessage,
-    selectedConversation
-  } = useConversationStore()
+  const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
+    useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
-  const { isLoading, data } = useQueryMessage()
+  const { isLoading, data } = useQueryMessage(1, 10)
   const sendMedia = useMutationSendMessageAttach()
   const { upload } = useFileUpload()
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
@@ -161,8 +155,8 @@ function MessageCenter() {
               <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
             )}
           </div>
-          <div className='w-[80%] cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
-            <p className='truncate text-base font-bold'> {infoMessage?.group_name}</p>
+          <div className='flex cursor-pointer items-center justify-start '>
+            <p className='w-[340px] truncate text-base font-bold text-black md:w-[200px]'> {infoMessage?.group_name}</p>
             {isOnline && !isBlockedOrBlocking && (
               <div className='text-xs font-semibold text-green-500'>Đang hoạt động</div>
             )}
@@ -198,7 +192,7 @@ function MessageCenter() {
               <button
                 onClick={() => setToggleBoxSearchMessage(true)}
                 type='button'
-                className='flex items-center rounded-full p-1.5 hover:bg-slate-100'
+                className='hidden items-center rounded-full p-1.5 hover:bg-slate-100 md:flex'
               >
                 <IonIcon icon='search-outline' className='h-6 w-6' />
               </button>

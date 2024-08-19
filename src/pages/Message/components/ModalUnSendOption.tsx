@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import Modal from '~/components/Modal'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import useMutationReCallMessage from '../hooks/useMutaion/useMutationUnSend'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 import { useQueryClient } from '@tanstack/react-query'
 
 type ModalTypes = {

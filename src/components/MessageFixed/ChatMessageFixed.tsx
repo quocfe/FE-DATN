@@ -21,6 +21,12 @@ import Spinner from './../../pages/Message/components/Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessageFix'
 import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
 
+type props = {
+  message_fix: MessageFix
+  infoMessage: InfoMessage
+  isAtBottom: boolean
+}
+
 // Tin nhan theo ngay
 const groupMessagesByDate = (messages: TypeMessage[]): Record<string, TypeMessage[]> => {
   return messages.reduce(
@@ -43,24 +49,21 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
   return currentTime - previousTime >= 5 * 60 * 1000 // 5 minutes in milliseconds
 }
 
-const ChatMessageFixed = ({
-  message_fix,
-  infoMessage,
-  isAtBottom
-}: {
-  message_fix: MessageFix
-  infoMessage: InfoMessage
-  isAtBottom: boolean
-}) => {
-  const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
-    useConversationStore()
+const ChatMessageFixed = ({ message_fix, infoMessage, isAtBottom }: props) => {
+  const scrollIntoViewFn = useCallback(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ block: 'end' })
+    }
+  }, [])
+
+  useEffect(() => {
+    scrollIntoViewFn()
+  }, [])
+
+  const { toggleBoxReply, togglePreviewBox } = useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
-  const chatMessageRef = useRef<HTMLInputElement>(null)
-  const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
-  const { socket } = useSocketContext()
-  const { setVideoCall, setAcceptCall } = useMessageStore()
   const [calculateHeight, setCalculateHeight] = useState<number>(0)
   const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessageFix(message_fix)
 
@@ -87,6 +90,7 @@ const ChatMessageFixed = ({
 
   const { ref, inView } = useInView()
   const [showNewMsg, setShowNewMsg] = useState(false)
+
   const newArr = useMemo(() => {
     if (dataMsg?.pages?.length) {
       return dataMsg.pages.slice().reverse()
@@ -96,18 +100,6 @@ const ChatMessageFixed = ({
 
   const lastArrRefs = newArr[0]
   const lastRef = lastArrRefs && lastArrRefs[0]
-  const scrollIntoViewFn = useCallback(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ block: 'end' })
-    }
-  }, [])
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      scrollIntoViewFn()
-    }, 100)
-    return () => clearTimeout(timeoutId)
-  }, [])
 
   useEffect(() => {
     if (!isAtBottom && isFetchingNextPage) {

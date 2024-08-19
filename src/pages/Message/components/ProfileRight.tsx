@@ -9,20 +9,20 @@ import useEmojiStore from '~/store/emoji.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationChangeGroupName from '../hooks/useMutaion/useMutaionChangeGroupName'
 import useMutationChangeImageGroup from '../hooks/useMutaion/useMutaionChangeImageGroup'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import { useQueryMembers } from '../hooks/useQueryMembers'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryConversation } from '../hooks/useQuery/useQueryConversation'
+import { useQueryMembers } from '../hooks/useQuery/useQueryMembers'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
 import ProfileRightOption from './ProfileRightOption'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 import ModalAddMember from './ModalAddMember'
 import Dialog from '~/components/Dialog'
 import ModalChageRole from './ModalChageRole'
 import useMutationDeleteOrLeaveMember from '../hooks/useMutaion/useMutationDeleteOrLeaveMember'
 import { renderTypeFile } from '../utils/renderTypeFile'
-import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 import FeatureNotAllow from '~/components/FeatureNotAllow'
 import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 import DeleteConversationMsg from '~/components/DeleteConversationMsg'
@@ -545,7 +545,7 @@ function ProfileRight() {
                   </a>
                   <div className='uk-accordion-content dark:text-white/80'>
                     <ul className='p-3 text-base font-medium'>
-                      {selectedConversation.type === 1 && (
+                      {selectedConversation.type === 1 && !isBlocked && (
                         <li>
                           <button
                             onClick={() => setShowDialogBlock(true)}

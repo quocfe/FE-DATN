@@ -8,7 +8,7 @@ import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationReplyMessage from '../hooks/useMutaion/useMutationReplyMessage'
 import { useMutationSendMessage, useMutationSendMessageAttach } from '../hooks/useMutaion/useMutationSendMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
 import IsTyping from './components/IsTyping'
 import EmojiBox from './EmojiBox'
@@ -16,9 +16,9 @@ import ModalRecordMessage from './RecordMessage'
 import RecordMessage from './RecordMessage'
 import useMessageStore from '~/store/message.store'
 import { useQueryClient } from '@tanstack/react-query'
-import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 import TextareaAutosize from 'react-textarea-autosize'
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
 import useNotifyMessage from '../hooks/useMutaion/useNotifyMessage'
@@ -82,6 +82,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
 
       if (toggleBoxReply) {
         baseData.parent_id = toggleBoxReply.message_id
+        console.log('baseData reply:', baseData)
         await replyMessageMutation.mutateAsync(baseData)
         setToggleBoxReply(null)
       } else {

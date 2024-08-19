@@ -1,12 +1,12 @@
 import useConversationStore from '~/store/conversation.store'
-import useMutationSearchMessage from '../hooks/useSearchMessage'
+import useMutationSearchMessage from '../hooks/useQuery/useSearchMessage'
 import { useEffect, useRef, useState } from 'react'
 import ResultSearchMessageSkelaton from './Skelaton/ResultSearchMessageSkelaton'
 import { highlightMatchedText } from '../utils/highlightMatchedText'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
 import BoxSearchMessage from './BoxSearchMessage'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 
 function ResultSearchMessage() {
   const boxSearchRef = useRef<HTMLDivElement>(null)
@@ -54,7 +54,7 @@ function ResultSearchMessage() {
   }
 
   return (
-    <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
+    <div className='relative hidden border-r md:block md:w-[360px] dark:border-slate-700'>
       <div
         id='side-chat'
         className='dark:bg-dark2 left-0 top-0 z-50 bg-white max-md:fixed max-md:h-screen max-md:w-5/6 max-md:-translate-x-full max-md:shadow'
@@ -66,8 +66,8 @@ function ResultSearchMessage() {
         </div>
         {searchMutation.status === 'success' ? (
           <>
-            <p className='p-2 text-[16px] font-bold text-[#000]'>Tin nhắn</p>
             <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto p-2 md:h-[calc(100vh-204px)]'>
+              <p className='p-2 text-[16px] font-bold text-[#000]'>Tin nhắn</p>
               {searchMessages.length > 0 ? (
                 searchMessages.map((message) => (
                   <div

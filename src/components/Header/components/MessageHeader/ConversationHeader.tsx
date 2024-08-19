@@ -3,6 +3,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 import DeleteConversationMsg from '~/components/DeleteConversationMsg'
 import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
@@ -11,8 +12,8 @@ import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage
 import TimeAgo from '~/pages/Message/components/components/TimeAgo'
 import useMutationDeleteMessage from '~/pages/Message/hooks/useMutaion/useMutationDeleteGroup'
 import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
 import { checkBodyMessage } from '~/pages/Message/utils/checkBodyMessage'
 import useConversationStore from '~/store/conversation.store'
 import useMessageFixStore from '~/store/messageFix.store'
@@ -25,28 +26,29 @@ interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
 }
 
 function Conversation({ item, isOnline, innerRef }: ConversationType) {
+  // state
   const [triggerHover, setTriggerHover] = useState<boolean>(false)
-  const { selectedConversation } = useConversationStore()
+  const [showBlock, setShowBlock] = useState<boolean>(false)
   const { user_id } = getProfileFromLocalStorage()
-  const deleteNotify = useMutationDeleteNotify()
-  const { refetch: refetchMessage } = useQueryInfinifyMessage()
-  const { data, refetch } = useQueryInfinifyConversation()
-  const deleteConversatonMuation = useMutationDeleteMessage()
   const [showDiaLogDeleteConversation, setShowDiaLogDeleteConversation] = useState<boolean>(false)
+
+  // hook
   const { socket } = useSocketContext()
   const { setMessageFix, messagesFix, hiddenMessageFix } = useMessageFixStore()
+  const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
+
+  // mutation --- query
+  const deleteNotify = useMutationDeleteNotify()
   const queryClient = useQueryClient()
+
+  // kiểm tra các điều kiện
   const url = window.location.href
   const checkUrlMesage = url.split('/').includes('message')
-  const { notify, notifyData, numberNotify, showNotify } = useNotifyMessage(item.group_message_id, user_id)
+
   const isBlockedOrBlocking =
     item?.list_block_user?.includes(item.user_id) || item?.list_blocked_user?.includes(item.user_id)
-
-  const conversationNoNotification = data?.pages?.flat()?.filter((page: any) => {
-    return !notify?.data?.data.some((data: any) => {
-      return page.group_message_id === data.group_message_id
-    })
-  })
+  const isBlocked = item?.list_blocked_user?.some((id) => id === item.user_id)
+  const isBlock = item?.list_block_user?.some((id) => id === item.user_id)
 
   const body =
     item?.messages?.type === 1 || item?.messages?.type === 3 || item?.messages?.type === 0 || item?.messages?.type === 6
@@ -198,10 +200,21 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
                 </Link>
               )}
               <hr className='my-2' />
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='ban-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Chặn</p>
-              </div>
+              {item.type === 1 && !isBlocked && (
+                <div
+                  onClick={() => setShowBlock(true)}
+                  className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                >
+                  <IonIcon icon='ban-outline' className='text-[22px]' />
+                  <p className='text-[14px] font-semibold'> {isBlock ? 'Bỏ chặn' : 'Chặn'}</p>
+                </div>
+              )}
+              <BlockOrUnBlockUserInMsg
+                type={isBlock ? 'unBlock' : 'block'}
+                show={showBlock}
+                setShow={setShowBlock}
+                user_id={item.user_id}
+              />
               <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
                 <IonIcon icon='alert-circle-outline' className='text-[22px]' />
                 <p className='text-[14px] font-semibold'>Báo cáo</p>

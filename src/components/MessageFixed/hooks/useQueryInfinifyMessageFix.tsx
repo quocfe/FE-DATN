@@ -9,10 +9,10 @@ export const useQueryInfinifyMessageFix = (message_fix: MessageFix) => {
 
   const fetchMessage = async ({ pageParam }: { pageParam: number }) => {
     if (message_fix.type === 1) {
-      const data = await messageApi.getOneToOneMessage(message_fix.id, pageParam, 10)
+      const data = await messageApi.getOneToOneMessage(message_fix.id, pageParam, 20)
       return data.data.data.messages
     } else if (message_fix.type === 2) {
-      const data = await messageApi.getGroupMessage(message_fix.group_id, pageParam, 10)
+      const data = await messageApi.getGroupMessage(message_fix.group_id, pageParam, 20)
       return data.data.data.messages
     }
   }
@@ -22,7 +22,7 @@ export const useQueryInfinifyMessageFix = (message_fix: MessageFix) => {
     queryFn: fetchMessage,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage && lastPage.length === 10) {
+      if (lastPage && lastPage.length === 20) {
         return allPages.length + 1
       } else {
         return undefined

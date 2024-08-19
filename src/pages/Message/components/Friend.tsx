@@ -2,9 +2,9 @@ import React, { memo, useEffect, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutaionSearchFriend from '../hooks/useMutaion/useMutationSearchFriend'
-import { useQueryFriends } from '../hooks/useQueryFriends'
-import { useQueryFriendSuggestGm } from '../hooks/useQueryFriendSuggestGm'
-import { useQueryMembers } from '../hooks/useQueryMembers'
+import { useQueryFriends } from '../hooks/useQuery/useQueryFriends'
+import { useQueryFriendSuggestGm } from '../hooks/useQuery/useQueryFriendSuggestGm'
+import { useQueryMembers } from '../hooks/useQuery/useQueryMembers'
 
 interface FriendProps {
   listUser: string[]

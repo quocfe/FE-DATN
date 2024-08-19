@@ -6,8 +6,8 @@ import useQueryNotifyMessage from '../queries/message/useQueryNotifyMessage'
 import useMessageStore from '~/store/message.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useConversationStore from '~/store/conversation.store'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
 
 const useVideoCallMessageSocket = () => {
   const { socket } = useSocketContext()

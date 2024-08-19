@@ -4,9 +4,11 @@ import { useSocketContext } from '~/context/socket'
 import useMessageStore from '~/store/message.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { useMutationSendCallMessage } from '../hooks/useMutaion/useMutationSendMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 
 function CallVideo() {
   const sendCallMessageMutation = useMutationSendCallMessage()
+  const { refetch: refetchConver } = useQueryInfinifyConversation()
 
   const { videoCall, setVideoCall, callingMessageCallAudio, endCallAudio, connectingMessageCallAudio } =
     useMessageStore()
@@ -28,6 +30,7 @@ function CallVideo() {
       sender: user_id
     }
     await sendCallMessageMutation.mutateAsync(baseData)
+    refetchConver()
   }
 
   useEffect(() => {
