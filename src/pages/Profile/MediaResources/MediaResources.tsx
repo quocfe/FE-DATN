@@ -14,6 +14,10 @@ function MediaResources() {
 
   const renderMediaResources = (media_type: 'image' | 'video') => {
     if (media_type === 'image') {
+      if (images.length === 0) {
+        return <p className='col-span-3 mt-5 text-center text-center text-sm text-gray-500'>Chưa có hình ảnh</p>
+      }
+
       return images.slice(0, imageRange).map((image) => {
         return (
           <div className='h-40 w-full' key={image.media_id}>
@@ -22,6 +26,10 @@ function MediaResources() {
         )
       })
     } else {
+      if (videos.length === 0) {
+        return <p className='col-span-3 mt-5 text-center text-center text-sm text-gray-500'>Chưa có video</p>
+      }
+
       return videos.slice(0, videoRange).map((video) => {
         return <video key={video.media_id} src={video.media_url} className='w-full object-cover' controls></video>
       })

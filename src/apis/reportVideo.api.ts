@@ -12,7 +12,10 @@ class ReportVideoApi {
   }
 
   pathReport(video_id: string, reason?: Array<string>) {
-    return http.patch<ResponsePatchReportVideo>(REPORT_VIDEO_PATH.PATCH_REPORT + '/' + video_id, {
+    // return http.patch<ResponsePatchReportVideo>(REPORT_VIDEO_PATH.PATCH_REPORT + '/' + video_id, {
+    //   reason
+    // })
+    return http.patch<any>(REPORT_VIDEO_PATH.PATCH_REPORT + '/' + video_id, {
       reason
     })
   }

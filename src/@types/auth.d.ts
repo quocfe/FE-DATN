@@ -7,3 +7,7 @@ type AuthResponse = SuccessResponse<{
 type RegisterResponse = SuccessResponse<{
   to: string
 }>
+
+type RefreshTokenResponse = SuccessResponse<{
+  access_token: string
+}>

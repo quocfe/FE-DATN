@@ -21,4 +21,8 @@ type PostResponse = SuccessResponse<{
   posts: Post[]
   pages: number
   total: number
+  fanpage: {
+    group_name: string
+    image_url: string | null
+  }
 }>
