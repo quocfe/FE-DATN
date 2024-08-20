@@ -9,12 +9,9 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import CreateStory from './Component/CreateStory'
 import ListStory from './Component/ListStory'
-<<<<<<< HEAD
-=======
 import Modal from '~/components/Modal'
 import CreatePost from '~/components/CreatePost'
 import usePostStore from '~/store/post.store'
->>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
 
 function Home() {
   const { isCreatePost, setIsCreatePost } = usePostStore()

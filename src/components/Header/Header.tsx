@@ -47,11 +47,7 @@ function Header() {
             </button>
             <div id='logo'>
               <Link to={'/'}>
-<<<<<<< HEAD
-                <img src='/src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
-=======
                 <img src='/src/assets/images/logodevbook.png' alt='' className='hidden w-28 md:block dark:!hidden' />
->>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
                 <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
                 <img
                   src='/src/assets/images/logo-mobile.png'
