@@ -1,14 +1,15 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
-import { InputHTMLAttributes, useCallback, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
-import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
-import { useQueryConversation } from '../hooks/useQueryConversation'
+import useMutationCreateMessage from '../hooks/useMutaion/useMutationCreateGroup'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 import useFileUpload from '../utils/uploadApi'
 import Friend from './Friend'
 import Spinner from './Skelaton/Spinner'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 
 const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const [listUser, setListUser] = useState<string[]>([])
@@ -16,15 +17,17 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const [querySearch, setQuerySearch] = useState<string>('')
   const [file, setFile] = useState<File | null>(null)
   const createMessageMutation = useMutationCreateMessage()
-  const { data, refetch } = useQueryConversation()
+  const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { upload } = useFileUpload()
+
   const handleCreate = async () => {
     let dataGroup = {
       list_user: JSON.stringify(listUser),
       group_name: groupName,
       group_thumbnail: ''
     }
+
     if (file) {
       setIsLoading(true)
       const url = await upload(file)
@@ -34,7 +37,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
     groupName.length < 50 &&
       createMessageMutation.mutate(dataGroup, {
         onSuccess: () => {
-          refetch()
+          queryClient.invalidateQueries({ queryKey: ['conversations'] })
           onClose()
           setIsLoading(false)
           dataGroup = {
@@ -50,13 +53,12 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   }
 
   const handleSetNameGroup = (e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)
-
   return (
-    <Modal isVisible={isOpen} onClose={onClose} height='3/4'>
+    <Modal isVisible={isOpen} onClose={!isLoading && onClose} iconClose={isLoading ? false : true} height='3/4'>
       <div className='flex h-full flex-col justify-evenly '>
         <div className='flex-1'>
           <div className='p-6'>
-            <h2 className='text-xl font-semibold'>Tạo</h2>
+            <h2 className='text-xl font-semibold'>Tạo nhóm</h2>
           </div>
           <div className='p-6 py-0'>
             <div className='mb-4 flex w-full gap-2'>
@@ -104,7 +106,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
           <button onClick={onClose} className='uk-modal-close rounded-md px-4 py-1.5' type='button'>
             Hủy
           </button>
-          {listUser.length < 2 || groupName.length > 50 ? (
+          {listUser.length < 2 || groupName.length > 50 || !file ? (
             <button className='cursor-not-allowed rounded-md bg-gray-400 px-5 py-1.5 text-white' type='button'>
               Tạo
             </button>

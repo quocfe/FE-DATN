@@ -1,18 +1,12 @@
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { Socket } from 'socket.io-client'
 import { useSocketContext } from '~/context/socket'
-import { fetchConversation } from '~/pages/Message/utils/fetchInfiniteConversation'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryStatusMessage } from '~/pages/Message/hooks/useQuery/useQueryStatusMessage'
 import useConversationStore from '~/store/conversation.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
 import soundNewMessage from '../../assets/sound/NotificationMessageSound.mp3'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
-import { useQueryMembers } from '~/pages/Message/hooks/useQueryMembers'
-import { useQueryStatusMessage } from '~/pages/Message/hooks/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
-import useMessageFixStore from '~/store/messageFix.store'
-import MessageFixed from '~/components/MessageFixed/MessageFixed'
-import HiddenMessageFix from '~/components/MessageFixed/HiddenMessageFix'
+import useQueryNotifyMessage from '../queries/message/useQueryNotifyMessage'
 
 type NewMessagetype = {
   body: string
@@ -30,48 +24,55 @@ const useMessageSocket = () => {
   const { selectedConversation, previewImg } = useConversationStore()
   const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
-  const { refetch: refetchMember } = useQueryMembers()
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
+  const { refetch: refetchNotifyMessage } = useQueryNotifyMessage()
   let audioNewMsg = new Audio(soundNewMessage)
 
   useEffect(() => {
-    ;(socket as Socket | null)?.on('newMessage', () => {
+    socket?.on('newMessage', () => {
       // audioNewMsg.play()
       refetchConversation()
       refetchMessage()
       refetchStatusMessage()
       document.title = 'có tin nhắn mới'
     })
-    ;(socket as Socket | null)?.on('deleteOrLeaveGroup', () => {
-      // refetchConversation()
-      // refetchMember()
+    socket?.on('deleteOrLeaveGroup', () => {
+      refetchConversation()
+      refetchMessage()
+      queryClient.invalidateQueries({ queryKey: ['memmbers'] })
     })
-    ;(socket as Socket | null)?.on('reactMessage', () => {
+    socket?.on('reactMessage', () => {
       refetchConversation()
       refetchMessage()
     })
-    ;(socket as Socket | null)?.on('newConversation', () => {
+    socket?.on('newConversation', () => {
       refetchConversation()
     })
-    ;(socket as Socket | null)?.on('newGroupImage', () => {
-      refetchConversation()
-      refetchMessage()
-    })
-    ;(socket as Socket | null)?.on('newGroupName', () => {
+    socket?.on('newGroupImage', () => {
       refetchConversation()
       refetchMessage()
     })
-    ;(socket as Socket | null)?.on('seenedMessage', () => {
+    socket?.on('newGroupName', () => {
+      refetchConversation()
+      refetchMessage()
+      queryClient.invalidateQueries({ queryKey: ['message'] })
+    })
+    socket?.on('seenedMessage', () => {
       refetchStatusMessage()
+    })
+    socket?.on('blockedMessage', () => {
+      queryClient.invalidateQueries({ queryKey: ['message'] })
+      queryClient.invalidateQueries({ queryKey: ['conversations'] })
     })
 
     return () => {
-      ;(socket as Socket | null)?.off('newMessage')
-      ;(socket as Socket | null)?.off('reactMessage')
-      ;(socket as Socket | null)?.off('newConversation')
-      ;(socket as Socket | null)?.off('newGroupName')
-      ;(socket as Socket | null)?.off('newGroupImage')
-      ;(socket as Socket | null)?.off('seenedMessage')
+      socket?.off('newMessage')
+      socket?.off('reactMessage')
+      socket?.off('newConversation')
+      socket?.off('newGroupName')
+      socket?.off('newGroupImage')
+      socket?.off('seenedMessage')
+      socket?.off('blockedMessage')
     }
   }, [socket])
 }

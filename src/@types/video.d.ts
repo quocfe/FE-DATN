@@ -5,6 +5,7 @@ interface VideoCreateResponse extends SuccessResponse {
 }
 
 interface VideoResponse extends SuccessResponse {
+  data: VideoResponse
 
   content: Array<DataVideoResponse>
   limit: number

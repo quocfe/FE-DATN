@@ -3,9 +3,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { calculateHoureAgo, formatTimeDuration } from '~/utils/helpers'
-import useMutationSendReactMessage from '../hooks/useMutationSendReactMessage'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import useMutationSendReactMessage from '../hooks/useMutaion/useMutationSendReactMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import { downloadFileFormLink } from '../utils/downloadFileFormLink'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
 import ModalUnSendOption from './ModalUnSendOption'
@@ -15,25 +15,40 @@ import { useWavesurfer } from '@wavesurfer/react'
 import WaveSurfer from 'wavesurfer.js'
 import ModalMemberReact from './ModalMemberReact'
 import { renderTypeFile } from '../utils/renderTypeFile'
-
+import { MessageFix } from '~/store/messageFix.store'
+import { useQueryClient } from '@tanstack/react-query'
+import ModalReportMessage from './ModalReportMessage'
+import ReportMessage from '~/components/ReportMessage'
+interface props {
+  recall: boolean
+  me: boolean
+  item: TypeMessage | any
+  type?: string
+}
 const ListEmoji = ['👍', '😀', '😍', '😆', '😱', '🫣']
-const ContentMessage = (params: any) => {
-  const { refetch, data } = useQueryMessage()
-  const groupId = data?.data?.data.info.group_id
+const ContentMessage = (params: props) => {
+  const { refetch, data } = useQueryMessage(1, 1)
+  const queryClient = useQueryClient()
+  const infoMessage = data?.data?.data.info
+  const groupId = infoMessage?.group_id
   const widthRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef(null)
   const [openEmoji, setOpenEmoji] = useState(false)
   const [openOption, setOpenOption] = useState(false)
   const [timeWaveSurfer, setTimeWaveSurfer] = useState<string>()
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
+  const [isOpenModalReport, setIsOpenModalReport] = useState(false)
   const [isOpenModalReactMsg, setIsOpenModalReactMsg] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
   const { setToggleBoxReply, setPinMessage, selectedConversation } = useConversationStore()
-  const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
-  const { data: temp } = useQueryMessage(1, 30)
+  const { fetchNextPage } = useQueryInfinifyMessage()
+
   const { user_id } = getProfileFromLocalStorage()
   const houreSend = calculateHoureAgo(params.item.createdAt)
   const emojiUserSelected = params.item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
+  const isBlockedOrBlocking =
+    infoMessage?.list_block_user?.includes(infoMessage.group_id) ||
+    infoMessage?.list_blocked_user?.includes(infoMessage.group_id)
 
   const handleChoiceReact = (emoji: string) => {
     const data = {
@@ -59,6 +74,9 @@ const ContentMessage = (params: any) => {
         break
       case 'pin':
         setPinMessage(params.item)
+        break
+      case 'report':
+        setIsOpenModalReport(true)
         break
       default:
         break
@@ -116,7 +134,7 @@ const ContentMessage = (params: any) => {
             {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </a>
         ) : (
-          <p className={`${isReply ? '-mt-[10px] truncate text-gray-400' : ''} text-[15px]`}>
+          <p className={`${isReply ? '-mt-[10px]  truncate text-gray-400' : ''} break-words text-[15px]`}>
             {isUnsent ? 'Tin nhắn đã thu hồi' : params.item.body}
           </p>
         )
@@ -150,7 +168,7 @@ const ContentMessage = (params: any) => {
           <img
             alt={params.item?.body}
             src={params.item?.sub_body}
-            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-40 w-40 rounded-[8px]'}
+            className={`${params.type != 'reply' ? 'aspect-square h-full w-full rounded-se-[14px] rounded-ss-[14px]' : 'h-20 w-20 rounded-[8px]'}
               max-w-full object-cover 
               opacity-90 contrast-50`}
           />
@@ -259,7 +277,6 @@ const ContentMessage = (params: any) => {
                       <p key={index} className='text-[12px]'>
                         {item.emoji ?? ''}
                       </p>
-                      <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
                     </>
                   ))
                 : params.item.reactions.map((item: any, index: number) => (
@@ -274,9 +291,13 @@ const ContentMessage = (params: any) => {
                     </p>
                   ))
                 : null}
+            {selectedConversation.type === 2 && params.item.reactions?.length > 2 && (
+              <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
+            )}
           </div>
           <ModalMemberReact
             reactArr={params.item.reactions}
+            group_id={params.item.group_message_id}
             isOpen={isOpenModalReactMsg}
             onClose={() => setIsOpenModalReactMsg(false)}
           />
@@ -285,22 +306,63 @@ const ContentMessage = (params: any) => {
     )
   }
 
+  const loadMore = async () => {
+    const a = await fetchNextPage()
+
+    if (a.hasNextPage) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   const handleGoToOldMessage = async () => {
-    let totalPage = temp?.data.data.pagination.totalPage || 0
-    const checkEl = document.getElementById(params.item.message_id)
-    if (!checkEl) {
-      for (let i = 0; i < totalPage; i++) {
-        if (hasNextPage) await fetchNextPage()
+    let checkEl = document.getElementById(params.item.message_id)
+
+    while (!checkEl) {
+      // Gọi hàm loadMoreMessages để tải thêm dữ liệu
+      const fetch = await fetchNextPage()
+
+      setTimeout(() => {
+        const element = document.getElementById(params.item.message_id)
+        if (element) {
+          handleToOldMessage(params.item.message_id)
+        } else {
+          console.log(' không tìm thấy tin nhắn cần tìm trong setTimeout')
+          return
+        }
+      }, 300)
+
+      if (!fetch.hasNextPage) {
+        console.log('Đã tải hết tin nhắn, không tìm thấy tin nhắn cần tìm.')
+        return
       }
     }
-    handleToOldMessage(params.item.message_id)
+    if (checkEl) {
+      setTimeout(() => {
+        const element = document.getElementById(params.item.message_id)
+        if (element) {
+          element.scrollIntoView()
+        }
+      }, 300)
+      console.log('Đã di chuyển tới tin nhắn.')
+    } else {
+      console.log('Không tìm thấy tin nhắn.')
+    }
+  }
+
+  function handleMouseLeave() {
+    if (!isBlockedOrBlocking) {
+      setOpenEmoji(false)
+      setOpenOption(false)
+    }
   }
 
   if (params.recall) {
     return (
       <div
         ref={widthRef}
-        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
+        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px]
         ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
         ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
         `}
@@ -314,15 +376,30 @@ const ContentMessage = (params: any) => {
     )
   }
 
+  if (params.item.is_report) {
+    return (
+      <div
+        ref={widthRef}
+        className={`relative w-fit max-w-sm cursor-pointer rounded-[10px] 
+        ${params.me ? 'bg-gradient-to-tr text-right text-white ' : 'bg-secondery text-left'}
+        ${params.type != 'reply' ? 'from-sky-500 to-blue-500 px-4 py-2 shadow' : 'mb-2 w-full px-2 py-1 text-end text-[10px]'}
+        `}
+      >
+        <div
+          className={`before:content-[' '] before:absolute ${params.me ? 'before:right-full' : 'before:left-full'} before:top-0 before:block before:h-[100%] before:w-[100px] before:bg-transparent`}
+        >
+          Tin nhắn vi phạm chính sách
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       ref={widthRef}
       id={params.type === 'reply' ? '' : params.item.message_id}
       onClick={() => (params.type === 'reply' && params.item.status === true ? handleGoToOldMessage() : '')}
-      onMouseLeave={() => {
-        setOpenEmoji(false)
-        setOpenOption(false)
-      }}
+      onMouseLeave={handleMouseLeave}
       className={` relative mt-1 cursor-pointer border-[2px] border-transparent
       ${params.item.type === 4 ? 'h-[100%]' : ''}
       ${params.me ? 'text-left' : 'text-left'}
@@ -333,7 +410,7 @@ const ContentMessage = (params: any) => {
           ? `${params.item.type === 2 || params.item.type === 4 ? '' : 'px-4 py-2'} group  rounded-[14px] text-white shadow`
           : `-mb-4  !bg-secondery ${params.item.type === 2 || params.item.type === 4 ? 'p-0 opacity-30' : 'px-4 py-5'}  text-gray-700 ${params.me ? 'rounded-s-[14px] rounded-t-[14px]' : 'rounded-e-[14px] rounded-ss-[14px]'}`
       }
-      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'w123-[40%]' : '') : ''}
+      ${params.type === 'reply' ? (params.item.type == 1 || params.item.type == 3 ? 'max-w-[200px]' : '') : ''}
       `}
     >
       <div
@@ -343,7 +420,7 @@ const ContentMessage = (params: any) => {
         {/* content */}
         {renderContent()}
         <div
-          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner group-hover:flex`}
+          className={`absolute ${params.me ? 'right-full mr-2' : 'left-full ml-2'} bottom-0 hidden h-[30px] w-[100px] items-center justify-around rounded-[8px] bg-secondery shadow-inner ${!isBlockedOrBlocking && 'group-hover:flex'}`}
         >
           <div
             onClick={(e) => {
@@ -380,11 +457,22 @@ const ContentMessage = (params: any) => {
                 >
                   Ghim tin nhắn
                 </p>
+                <p
+                  onClick={() => handleClickOption('report')}
+                  className='cursor-pointer rounded-[8px] px-2 py-1 text-[12px] text-black hover:bg-secondery'
+                >
+                  Báo cáo
+                </p>
               </div>
               <ModalUnSendOption
                 message={params.item}
                 isOpen={isOpenModalOption}
                 onClose={() => setIsOpenModalOption(false)}
+              />
+              <ReportMessage
+                showDiaLogReportMessage={isOpenModalReport}
+                setShowDiaLogReportMessage={setIsOpenModalReport}
+                message_id={params.item.message_id}
               />
             </div>
           </div>

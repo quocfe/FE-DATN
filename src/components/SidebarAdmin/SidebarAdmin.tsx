@@ -34,6 +34,8 @@ function SidebarAdmin() {
     )
   }
 
+  console.log('hasPermission', hasPermission(['Message Management'], []))
+
   return (
     <div className='fixed left-0 top-0 h-full w-[275px] bg-white shadow-md'>
       {/* Logo */}
@@ -105,6 +107,13 @@ function SidebarAdmin() {
               { to: '/admin/account/list', label: 'Danh sách tài khoản' },
               { to: '', label: 'Hạn chế người dùng' }
             ]}
+          />
+        )}
+        {hasPermission(['Message Management'], ['view']) && (
+          <SidebarItem
+            icon='fa-solid fa-user-group'
+            title='Quản lý tin nhắn'
+            links={[{ to: '/admin/message/list', label: 'Danh sách ms' }]}
           />
         )}
       </ul>

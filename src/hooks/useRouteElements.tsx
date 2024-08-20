@@ -7,7 +7,10 @@ import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute
 import RejectedRoute from './components/RejectedRoute'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+<<<<<<< HEAD
 import Fanpage from '~/pages/Fanpage'
+=======
+>>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
 import DStory from '~/pages/Story'
 import ArchiveStory from '~/pages/Story/Component/Archive'
 import Message from '~/pages/Message'
@@ -34,6 +37,10 @@ import PermissionList from '~/pages/admin/Permission/PermissionList'
 import AccountList from '~/pages/admin/User/AccountList'
 import AccessControl from './components/AccessControl'
 import Unauthorized from '~/pages/Unauthorized'
+import Fanpage from '~/pages/Fanpage'
+import FanpageDetail from '~/pages/Fanpage/FanpageDetail/FanpageDetail'
+import FanpageCreate from '~/pages/Fanpage/FanpageCreate/FanpageCreate'
+import FanpageEdit from '~/pages/Fanpage/FanpageEdit/FanpageEdit'
 import VideoLayout from '~/layouts/video-layout'
 import WatchSave from '~/pages/WatchSave'
 import { ROUTE_PATH } from '~/constants'
@@ -42,6 +49,10 @@ import WatchDetail from '~/pages/WatchDetail'
 import Profile from '~/pages/Profile'
 import Game from '~/pages/Game/Game'
 import GamePlay from '~/pages/Game/GamePlay'
+<<<<<<< HEAD
+=======
+import WatchSearch from '~/pages/WatchSearch'
+>>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -100,6 +111,16 @@ function useRouteElements() {
               </AdminLayout>
             </AccessControl>
           )
+        },
+        {
+          path: 'message/list',
+          element: (
+            <AccessControl requiredModules={['Message Management']} requiredPermissions={['view']}>
+              <AdminLayout>
+                <AccountList />
+              </AdminLayout>
+            </AccessControl>
+          )
         }
       ]
     },
@@ -133,6 +154,7 @@ function useRouteElements() {
         },
         {
           path: '/story',
+<<<<<<< HEAD
           element: (
               <DStory />
           )
@@ -146,6 +168,16 @@ function useRouteElements() {
         
         
 {
+=======
+          element: <DStory />
+        },
+        {
+          path: '/story/archive',
+          element: <ArchiveStory />
+        },
+
+        {
+>>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
           path: 'profile',
           children: [
             {
@@ -158,6 +190,7 @@ function useRouteElements() {
                 </MainLayout>
               )
             },
+
             {
               path: 'my_friends',
               element: (
@@ -204,6 +237,30 @@ function useRouteElements() {
               ]
             }
           ]
+        },
+        {
+          path: '/fanpage',
+          element: (
+            <MainLayout>
+              <Fanpage />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/fanpage-create',
+          element: <FanpageCreate />
+        },
+        {
+          path: '/fanpage-edit/:fanpageId',
+          element: <FanpageEdit />
+        },
+        {
+          path: '/fanpage/:fanpageId',
+          element: (
+            <MainLayout>
+              <FanpageDetail />
+            </MainLayout>
+          )
         },
         {
           path: 'friend',
@@ -325,6 +382,14 @@ function useRouteElements() {
           element: (
             <VideoLayout>
               <WatchDetail />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_SEARCH,
+          element: (
+            <VideoLayout>
+              <WatchSearch />
             </VideoLayout>
           )
         }

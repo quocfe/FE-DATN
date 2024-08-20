@@ -18,6 +18,7 @@ interface Action {
   setHiddenMessageFix: (hiddenMessageFix: MessageFix) => void
   removeMessageFix: (groupId: string) => void
   removeHiddenMessageFix: (groupId: string) => void
+  clearAll: () => void
 }
 
 const useMessageFixStore = create<State & Action>()(
@@ -62,6 +63,9 @@ const useMessageFixStore = create<State & Action>()(
         if (!existingMessage) {
           set((state) => ({ hiddenMessageFix: [...state.hiddenMessageFix, hiddenMessageFix] }))
         }
+      },
+      clearAll: () => {
+        set(() => ({ messagesFix: [], hiddenMessageFix: [] }))
       }
     }),
     {

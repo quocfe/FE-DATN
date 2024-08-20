@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useSocketContext } from '~/context/socket'
 import CallVideo from '~/pages/Message/components/CallVideo'
 import useConversationStore from '~/store/conversation.store'
@@ -8,10 +8,13 @@ import { MessageFix } from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import CustomFileInput from '../InputFile/CustomFileInput'
 import ChatMessageFixed from './ChatMessageFixed'
+import { useMutationSendMessageAttach } from '~/pages/Message/hooks/useMutaion/useMutationSendMessage'
+import useFileUpload from '~/pages/Message/utils/uploadApi'
+import { useQueryClient } from '@tanstack/react-query'
+import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
 
 function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; infoMessage: InfoMessage }) {
-  const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
-    useConversationStore()
+  const { toggleBoxReply, togglePreviewBox, setTogglePreviewBoxFix, selectedConversation } = useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
@@ -23,6 +26,12 @@ function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; 
   const { setVideoCall, videoCall, setAcceptCall } = useMessageStore()
   const [calculateHeight, setCalculateHeight] = useState<number>(0)
   const [file, setFile] = useState<File | null>(null)
+  const [isDragAccept, setIsDragAccept] = useState<boolean>(false)
+  const sendMedia = useMutationSendMessageAttach()
+  const { upload } = useFileUpload()
+  const queryClient = useQueryClient()
+  const { refetch: refetchInfinifyMessageFix } = useQueryInfinifyMessageFix(message_fix)
+  const profile = getProfileFromLocalStorage()
 
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
@@ -54,6 +63,50 @@ function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; 
     socket?.emit('callVideo', dataToSocket)
   }
 
+  const handleFileUpload = useCallback(async () => {
+    if (file) {
+      try {
+        setTogglePreviewBoxFix({ status: true, group_id: infoMessage?.group_id })
+        const url = await upload(file)
+        setTogglePreviewBoxFix({ status: false, group_id: '' })
+        if (url === null) {
+          setIsDragAccept(false)
+        }
+        const mediaData = {
+          body: `${url.original_filename}.${url.url.split('.').pop()}`,
+          sub_body: url.url,
+          receiver: infoMessage?.group_id,
+          group_message_id: message_fix?.group_id,
+          type: 0
+        }
+
+        if (url.resource_type === 'raw' || url.format === 'pdf') {
+          mediaData.type = 3
+        } else if (url.resource_type === 'video') {
+          mediaData.type = 4
+        } else {
+          mediaData.type = 2
+        }
+        setTogglePreviewBoxFix({ status: true, group_id: infoMessage?.group_id })
+        await sendMedia.mutateAsync(mediaData)
+        setTogglePreviewBoxFix({ status: false, group_id: '' })
+
+        setIsDragAccept(false)
+        refetchInfinifyMessageFix()
+        queryClient.invalidateQueries({ queryKey: ['conversations', profile.user_id] })
+        queryClient.invalidateQueries({ queryKey: ['statusMessage'] })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }, [file])
+
+  useEffect(() => {
+    if (isDragAccept) {
+      handleFileUpload()
+    }
+  }, [isDragAccept])
+
   useLayoutEffect(() => {
     if (toggleBoxReply || togglePreviewBox) {
       let height = 204
@@ -77,13 +130,9 @@ function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; 
   }
 
   return (
-    <div
-      ref={chatMessageRef}
-      onScroll={handleScroll}
-      className='w-full flex-1 overflow-y-auto overflow-x-hidden px-2 py-2 '
-    >
-      <CustomFileInput setPreview={() => {}} type={3} setFile={setFile} file={file}>
-        <ChatMessageFixed message_fix={message_fix} infoMessage={infoMessage} />
+    <div ref={chatMessageRef} onScroll={handleScroll} className='w-full flex-1 overflow-x-hidden px-2 py-2 '>
+      <CustomFileInput setIsDragAccept={setIsDragAccept} setPreview={() => {}} type={3} setFile={setFile} file={file}>
+        <ChatMessageFixed message_fix={message_fix} infoMessage={infoMessage} isAtBottom={isAtBottom} />
       </CustomFileInput>
     </div>
   )

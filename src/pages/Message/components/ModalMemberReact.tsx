@@ -1,16 +1,17 @@
 import Modal from '~/components/Modal'
-import { useQueryMembers } from '../hooks/useQueryMembers'
+import { useQueryMembers } from '../hooks/useQuery/useQueryMembers'
 import { useState } from 'react'
 
 type ModalTypes = {
   isOpen: boolean
   onClose: () => void
   reactArr: any
+  group_id: string
 }
 
-const ModalMemberReact = ({ isOpen, onClose, reactArr }: ModalTypes) => {
+const ModalMemberReact = ({ isOpen, onClose, reactArr, group_id }: ModalTypes) => {
   // console.log('react', reactArr)
-  const { data } = useQueryMembers()
+  const { data } = useQueryMembers(group_id, 2)
   const [arrReactType, setArrReactType] = useState<[]>([])
   const members = data?.data.data
   const allReact = reactArr.map((react: any) => {
@@ -35,7 +36,6 @@ const ModalMemberReact = ({ isOpen, onClose, reactArr }: ModalTypes) => {
   })
 
   const typeReact = (react: string) => {
-    console.log('click')
     const newArr = allReact.filter((item: any) => item.emoji === react)
     setArrReactType(newArr)
   }

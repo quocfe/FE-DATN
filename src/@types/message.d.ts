@@ -9,6 +9,8 @@ type Message = {
   detelectedAt: Date
   createdBy: string
   type: number
+  is_report: boolean
+  report_count: number
   createdAt: Date
   updatedAt: Date
   user_name: string
@@ -18,6 +20,8 @@ type InfoMessage = {
   group_id: string
   avatar: string
   group_name: string
+  list_block_user: string[]
+  list_blocked_user: string[]
 }
 
 type GroupMessage = {
@@ -30,6 +34,9 @@ type GroupMessage = {
   createdAt: Date
   updatedAt: Date
   user_id: string
+  list_block_user: string[]
+  list_blocked_user: string[]
+  messages: Message
 }
 
 type MembersGroup = {
@@ -46,6 +53,8 @@ type TypeMembersGroup = Pick<MembersGroup, 'user_id' | 'role'> & {
   avatar: string
   fullname: string
   group_message_id: string
+  list_block_user: string[]
+  list_blocked_user: string[]
 }
 
 type RecallMessage = {
@@ -184,7 +193,7 @@ type MessageCenterProps = {
 
 type ReplyMessageInput = Pick<Message, 'body' | 'group_message_id' | 'type' | 'parent_id'>
 type ReactMessageInput = Pick<ReactMessage, 'message_id' | 'user_id' | 'emoji' | 'createdBy'>
-type ReplyMessage = Pick<Message, 'body' | 'message_id' | 'type' | 'createdBy'> & {
+type ReplyMessage = Pick<Message, 'body' | 'sub_body' | 'message_id' | 'type' | 'createdBy'> & {
   reply_user: string
 } & {
   recallInReply: []
@@ -215,6 +224,8 @@ type TypeMessage = Pick<
   | 'detelectedAt'
   | 'createdBy'
   | 'type'
+  | 'is_report'
+  | 'report_count'
   | 'createdAt'
   | 'updatedAt'
   | 'user_name'

@@ -30,6 +30,10 @@ function Modal({ isVisible, onClose, children, height, width, iconClose = true }
     if (target.id === 'wrapper-modal') onClose()
   }
 
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') onClose()
+  })
+
   return (
     <div
       className='fixed inset-0 z-[8888] flex items-center bg-black bg-opacity-10 backdrop-blur-sm'

@@ -16,6 +16,11 @@ interface State {
   isTyping: typingMessage | null
   isNotTyping: boolean
   pinMessage: TypeMessage[] | null
+  togglePreviewBoxFix: {
+    status: boolean
+    group_id: string
+  }
+  checkDropAttach: boolean
 }
 
 interface Action {
@@ -30,6 +35,8 @@ interface Action {
   setPinMessage: (pinMessage: TypeMessage | null) => void
   setIsTyping: (isTyping: typingMessage) => void
   setIsNotTyping: (isNotTyping: boolean) => void
+  setCheckDropAttach: (checkDropAttach: boolean) => void
+  setTogglePreviewBoxFix: (togglePreviewBoxFix: { status: boolean; group_id: string }) => void
 }
 
 export const useConversationStore = create<State & Action>((set: any) => ({
@@ -40,22 +47,26 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   toggleBoxReply: null,
   previewImg: null,
   togglePreviewBox: false,
+  togglePreviewBoxFix: { status: false, group_id: '' },
   toggleBoxSearchMessage: false,
   searchParam: '',
   pinMessage: null,
   isTyping: null,
   isNotTyping: true,
+  checkDropAttach: false,
   setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
   setMessages: (messages) => set({ messages }),
   setSelectedNoConversation: (selectedNoConversation) => set({ selectedNoConversation }),
   setToggleBoxReply: (toggleBoxReply) => set({ toggleBoxReply }),
   setPreviewImg: (previewImg) => set({ previewImg }),
   setTogglePreviewBox: (togglePreviewBox) => set({ togglePreviewBox }),
+  setTogglePreviewBoxFix: (togglePreviewBoxFix) => set({ togglePreviewBoxFix }),
   setToggleBoxSearchMessage: (toggleBoxSearchMessage) => set({ toggleBoxSearchMessage }),
   setSearchParam: (searchParam) => set({ searchParam }),
   setPinMessage: (pinMessage) => set({ pinMessage }),
   setIsTyping: (isTyping) => set({ isTyping }),
-  setIsNotTyping: (isNotTyping) => set({ isNotTyping })
+  setIsNotTyping: (isNotTyping) => set({ isNotTyping }),
+  setCheckDropAttach: (checkDropAttach) => set({ checkDropAttach })
 }))
 
 export default useConversationStore

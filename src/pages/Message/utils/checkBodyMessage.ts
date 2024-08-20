@@ -5,6 +5,9 @@ export function checkBodyMessage(type: number) {
     case 2:
       result = 'đã gửi một ảnh'
       break
+    case 3:
+      result = 'đã gửi một tiệp'
+      break
     case 4:
       result = 'đã gửi một video'
       break

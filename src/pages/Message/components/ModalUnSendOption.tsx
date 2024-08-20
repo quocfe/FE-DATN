@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import Modal from '~/components/Modal'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import { useQueryMessage } from '../hooks/useQueryMessage'
-import useMutationReCallMessage from './../hooks/useMutationUnSend'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
+import useMutationReCallMessage from '../hooks/useMutaion/useMutationUnSend'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryClient } from '@tanstack/react-query'
 
 type ModalTypes = {
   isOpen: boolean
@@ -14,6 +15,7 @@ type ModalTypes = {
 const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
   const [type, setType] = useState<string>('')
   const { refetch } = useQueryInfinifyMessage()
+  const queryClient = useQueryClient()
   const mutationRecall = useMutationReCallMessage()
   const profile = getProfileFromLocalStorage() || {}
 
@@ -27,6 +29,7 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
         onSuccess: () => {
           onClose()
           refetch()
+          queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
         },
         onError: (error) => {
           console.log(error)
@@ -41,6 +44,7 @@ const ModalUnSendOption = ({ isOpen, onClose, message }: ModalTypes) => {
         onSuccess: () => {
           onClose()
           refetch()
+          queryClient.invalidateQueries({ queryKey: ['messageFixInfinity'] })
         },
         onError: (error) => {
           console.log(error)

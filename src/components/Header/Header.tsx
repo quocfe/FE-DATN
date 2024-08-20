@@ -4,15 +4,20 @@ import useMutationLogout from './hooks/useMutationLogout'
 import { Link } from 'react-router-dom'
 import MessageHeader from './components/MessageHeader/MessageHeader'
 import Search from './components/Search'
+import useMessageFixStore from '~/store/messageFix.store'
 
 function Header() {
   const { profile } = useAuthStore()
+  const { clearAll } = useMessageFixStore()
 
   // React Query
   const logoutMutation = useMutationLogout()
 
   const handleLogout = () => {
     logoutMutation.mutate()
+    localStorage.removeItem('messageFixStore')
+    // clear message fix
+    clearAll()
   }
 
   return (
@@ -42,7 +47,11 @@ function Header() {
             </button>
             <div id='logo'>
               <Link to={'/'}>
+<<<<<<< HEAD
                 <img src='/src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
+=======
+                <img src='/src/assets/images/logodevbook.png' alt='' className='hidden w-28 md:block dark:!hidden' />
+>>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
                 <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
                 <img
                   src='/src/assets/images/logo-mobile.png'
@@ -235,9 +244,9 @@ function Header() {
                   >
                     <img src='/src/assets/images/icons/page.png' alt='' className='w-7' />
                     <div className='flex-1'>
-                      <a href='timeline.html'>
+                      <Link to={'/fanpage-create'}>
                         <h4 className='text-sm font-medium text-black dark:text-white'> Pages </h4>
-                      </a>
+                      </Link>
                       <div className='mt-1'> Find and connect with businesses.</div>
                     </div>
                   </li>

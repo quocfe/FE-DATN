@@ -8,3 +8,12 @@ interface ErrorResponse<Data = undefined> {
   status: number
   errors?: Data
 }
+
+interface ErrorUnauthorizedResponse {
+  errors: {
+    message: string
+    errorName: string
+  }
+  message: string
+  status: number
+}

@@ -23,5 +23,6 @@ export const MESSAGE = {
   CHANGE_ROLE_GROUP: 'message/changerolegroup',
   SEARCH_FR_AND_GR: 'message/searchfrandgr',
   STATUS_MESSAGE: 'message/getallseen',
-  GENERATE_TOKEN_ZEGO: 'message/generateTokenZego'
+  GENERATE_TOKEN_ZEGO: 'message/generateTokenZego',
+  REPORT_MESSAGE: 'message/reportmessage'
 } as const

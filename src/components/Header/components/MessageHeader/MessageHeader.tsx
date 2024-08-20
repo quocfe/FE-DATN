@@ -3,13 +3,14 @@ import _ from 'lodash'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSocketContext } from '~/context/socket'
-import useMutaionSearchFriendAndGrMsg from '~/pages/Message/hooks/useMutationSearchFriendAndGrMsg'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
+import useMutaionSearchFriendAndGrMsg from '~/pages/Message/hooks/useMutaion/useMutationSearchFriendAndGrMsg'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
 import Conversation from './ConversationHeader'
 import useMessageFixStore from '~/store/messageFix.store'
-import useNotifyMessage from '~/pages/Message/hooks/useNotifyMessage'
+import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import { Link, useNavigate } from 'react-router-dom'
 
 function MessageHeader() {
   const { data, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useQueryInfinifyConversation()
@@ -23,6 +24,7 @@ function MessageHeader() {
   const { setMessageFix } = useMessageFixStore()
   const { data: notify } = useQueryNotifyMessage()
   const url = window.location.href
+  const navigate = useNavigate()
 
   let uniqueNotify: any = new Set()
   notify?.data?.data.forEach((data: any) => {
@@ -31,7 +33,7 @@ function MessageHeader() {
   uniqueNotify = Array.from(uniqueNotify)
 
   const showAllNotify = uniqueNotify && uniqueNotify?.length > 0 ? true : false
-  const numberAllNotify = uniqueNotify && uniqueNotify?.length < 10 ? uniqueNotify?.length : '10+'
+  const numberAllNotify = uniqueNotify && uniqueNotify?.length < 9 ? uniqueNotify?.length : '9+'
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -62,6 +64,7 @@ function MessageHeader() {
   }
 
   const checkUrlMesage = !url.split('/').includes('message')
+
   if (checkUrlMesage)
     return (
       <>
@@ -105,8 +108,13 @@ function MessageHeader() {
           <div className='flex items-center justify-between gap-2 p-4 pb-1'>
             <h3 className='text-xl font-bold'> Chats </h3>
             <div className='flex gap-2.5 text-lg text-slate-900 dark:text-white'>
-              <IonIcon icon='expand-outline' className='md hydrated' role='img' aria-label='expand outline' />
-              <IonIcon icon='create-outline' className='md hydrated' role='img' aria-label='create outline' />
+              <IonIcon
+                onClick={() => {
+                  navigate('/message')
+                }}
+                icon='expand-outline'
+                className='cursor-pointer rounded-full p-1.5 hover:bg-slate-100'
+              />
             </div>
           </div>
           <div className='flex w-full items-center justify-evenly gap-2 p-2'>
@@ -142,7 +150,7 @@ function MessageHeader() {
             </div>
           </div>
 
-          <div className='min-h-80 p-2 pr-1 pt-0 dark:text-white/80'>
+          <div className='h-80 overflow-y-scroll p-2 pr-1 pt-0 dark:text-white/80'>
             {focusSearch ? (
               <nav className='text-sm font-medium text-black dark:text-white'>
                 {resultSearch?.data?.data?.map((result: any, index: number) => (
@@ -173,11 +181,11 @@ function MessageHeader() {
             )}
           </div>
           {/* footer */}
-          <a href='#!'>
+          <Link to={'/message'}>
             <div className='border-t border-slate-100 py-4 text-center text-sm font-medium text-blue-600 dark:border-gray-600 dark:text-white'>
-              See all Messages
+              Xem tất cả tin nhắn
             </div>
-          </a>
+          </Link>
           <div className='dark:bg-dark3 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t bg-white max-md:hidden dark:border-transparent' />
         </div>
       </>

@@ -7,31 +7,31 @@ const useFileUpload = () => {
   const upload = async (file: File) => {
     if (!file) return
 
-    const maxSize = 20 * 1024 * 1024 // 20MB
+    const maxSize = 10 * 1024 * 1024 // 10MB
 
-    const allowedMimeTypes = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/webp',
-      'video/mp4',
-      'video/mpeg',
-      'video/webm',
-      'audio/mp3',
-      'audio/wav',
-      'audio/ogg',
-      'audio/webm',
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-powerpoint',
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ]
+    // const allowedMimeTypes = [
+    //   'image/jpeg',
+    //   'image/jpg',
+    //   'image/png',
+    //   'image/webp',
+    //   'video/mp4',
+    //   'video/mpeg',
+    //   'video/webm',
+    //   'audio/mp3',
+    //   'audio/wav',
+    //   'audio/ogg',
+    //   'audio/webm',
+    //   'application/pdf',
+    //   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //   'application/vnd.ms-powerpoint',
+    //   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    //   'application/vnd.ms-excel',
+    //   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    // ]
 
     if (file.size > maxSize) {
-      toast.error('Kích thước file không được vượt quá 20MB')
-      return
+      toast.error('Kích thước file không được vượt quá 10MB')
+      return null
     }
 
     const formData = new FormData()

@@ -1,21 +1,19 @@
 import { IonIcon } from '@ionic/react'
-import Modal from '~/components/Modal'
+import { useEffect, useState } from 'react'
 import { useSocketContext } from '~/context/socket'
 import useMessageStore from '~/store/message.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import CallMessage from '../../../assets/sound/Sound_call.mp3'
-import { useQueryMembers } from '../hooks/useQueryMembers'
-import { useEffect, useState } from 'react'
-import { useMutationSendCallMessage } from '../hooks/useMutationSendMessage'
+import { useMutationSendCallMessage } from '../hooks/useMutaion/useMutationSendMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 
 function CallVideo() {
   const sendCallMessageMutation = useMutationSendCallMessage()
+  const { refetch: refetchConver } = useQueryInfinifyConversation()
 
   const { videoCall, setVideoCall, callingMessageCallAudio, endCallAudio, connectingMessageCallAudio } =
     useMessageStore()
   const { socket, onlineUsers } = useSocketContext()
   const { user_id } = getProfileFromLocalStorage()
-  const { data } = useQueryMembers()
   const [checkUserConnection, setCheckUserConnection] = useState<boolean>(false)
 
   const handleCancelVideoCall = async () => {
@@ -32,26 +30,27 @@ function CallVideo() {
       sender: user_id
     }
     await sendCallMessageMutation.mutateAsync(baseData)
+    refetchConver()
   }
 
   useEffect(() => {
     if (videoCall) {
-      const memberNotHaveUserLogin = data?.data.data.filter((member) => member.user_id != user_id)
-      const onlineUsersNotHaveUserLogin = onlineUsers.filter((member) => member != user_id)
-      const memmbersGroupOnline = memberNotHaveUserLogin?.some((member) => {
-        return onlineUsersNotHaveUserLogin?.includes(member.user_id)
-      })
-      const checkUserConnection = memmbersGroupOnline
-        ? memmbersGroupOnline
-        : onlineUsers.some((onlineUsers) => onlineUsers.includes(videoCall?.user_id))
+      const checkUserConnection = onlineUsers.some((onlineUser) => onlineUser.includes(videoCall?.user_id))
       checkUserConnection ? callingMessageCallAudio.play() : connectingMessageCallAudio.play()
       setCheckUserConnection(checkUserConnection)
+
+      // Đặt hẹn giờ để tự động hủy cuộc gọi sau 10 giây
+      const cancelTimeout = setTimeout(() => {
+        handleCancelVideoCall()
+      }, 10000) // 10000ms = 10 giây
+
+      return () => {
+        clearTimeout(cancelTimeout)
+        callingMessageCallAudio.pause()
+        connectingMessageCallAudio.pause()
+      }
     }
-    return () => {
-      callingMessageCallAudio.pause()
-      connectingMessageCallAudio.pause()
-    }
-  }, [onlineUsers])
+  }, [onlineUsers, videoCall])
 
   return (
     <div

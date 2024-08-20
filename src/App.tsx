@@ -7,6 +7,7 @@ import useVideoCallMessageSocket from './hooks/socket/useVideoCallMessageSocket'
 import useRouteElements from './hooks/useRouteElements'
 import InComingCallVideo from './pages/Message/components/InComingCallVideo'
 import useMessageStore from './store/message.store'
+import Loading from './components/Loading'
 
 function App() {
   useVideoCallMessageSocket()
@@ -23,7 +24,7 @@ function App() {
 
   return (
     <div id='wrapper'>
-      {/* {isFetching + isMutating !== 0 && <Loading />} */}
+      {isFetching + isMutating !== 0 && <Loading />}
       {routeElements}
       <ToastContainer position='bottom-right' />
     </div>

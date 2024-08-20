@@ -1,11 +1,14 @@
-import { Link } from 'react-router-dom'
+import classNames from 'classnames'
+import { Link, useLocation } from 'react-router-dom'
 import { ROUTE_PATH } from '~/constants'
 
 function Sidebar() {
+  const { pathname } = useLocation()
+
   return (
     <div
       id='site__sidebar'
-      className='fixed left-0 top-0 z-[99] overflow-hidden pt-[--m-top] transition-transform max-xl:w-full max-xl:-translate-x-full xl:duration-500'
+      className='fixed left-0 top-0 z-[40] overflow-hidden pt-[--m-top] transition-transform max-xl:w-full max-xl:-translate-x-full xl:duration-500'
     >
       {/* sidebar inner */}
       <div className='relative z-30 h-[calc(100vh-64px)] w-[80%] p-2 shadow-sm max-xl:bg-white max-lg:border-r sm:w-64 2xl:w-72 dark:border-slate-700 dark:max-xl:!bg-slate-700'>
@@ -26,23 +29,45 @@ function Sidebar() {
                 >
                   <nav id='side'>
                     <ul>
-                      <li className='active'>
+                      <li
+                        className={classNames('', {
+                          active: pathname === '/'
+                        })}
+                      >
                         <Link to={'/'}>
                           <img src='/src/assets/images/icons/home.png' alt='feeds' className='w-6' />
                           <span> Bảng tin </span>
                         </Link>
                       </li>
-                      <Link to={'/friend/suggests'}>
-                        <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
-                        <span> Bạn bè </span>
-                      </Link>
-                      <li>
+                      <li
+                        className={classNames('', {
+                          active: pathname === '/friend/suggests'
+                        })}
+                      >
+                        <Link to={'/friend/suggests'}>
+                          <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
+                          <span> Bạn bè </span>
+                        </Link>
+                      </li>
+                      <li
+                        className={classNames('', {
+                          active: pathname === '/message'
+                        })}
+                      >
                         <Link to={'/message'}>
-                          <img src='src/assets/images/icons/message.png' alt='messages' className='w-5' />
+                          <img
+                            src='http://localhost:8080/src/assets/images/icons/message.png'
+                            alt='messages'
+                            className='w-5'
+                          />
                           <span> Trò chuyện </span>
                         </Link>
                       </li>
-                      <li>
+                      <li
+                        className={classNames('', {
+                          active: pathname === ROUTE_PATH.WATCH
+                        })}
+                      >
                         <Link to={ROUTE_PATH.WATCH}>
                           <img src='/src/assets/images/icons/video.png' alt='messages' className='w-6' />
                           <span> Video </span>
@@ -54,13 +79,19 @@ function Sidebar() {
                           <span> Sự kiện </span>
                         </a>
                       </li>
-                      <li>
-                        <a href='pages.html'>
+                      <li className='fanpage'>
+                        <Link to={'/fanpage'}>
                           <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
+<<<<<<< HEAD
                         </a>
                       </li>
                       
+=======
+                        </Link>
+                      </li>
+
+>>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
                       <li>
                         <a href='blog.html'>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />

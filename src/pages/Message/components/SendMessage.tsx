@@ -6,9 +6,9 @@ import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import useMutationReplyMessage from '../hooks/useMutationReplyMessage'
-import { useMutationSendMessage, useMutationSendMessageAttach } from '../hooks/useMutationSendMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import useMutationReplyMessage from '../hooks/useMutaion/useMutationReplyMessage'
+import { useMutationSendMessage, useMutationSendMessageAttach } from '../hooks/useMutaion/useMutationSendMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
 import IsTyping from './components/IsTyping'
 import EmojiBox from './EmojiBox'
@@ -16,9 +16,12 @@ import ModalRecordMessage from './RecordMessage'
 import RecordMessage from './RecordMessage'
 import useMessageStore from '~/store/message.store'
 import { useQueryClient } from '@tanstack/react-query'
-import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
+import TextareaAutosize from 'react-textarea-autosize'
+import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import useNotifyMessage from '../hooks/useMutaion/useNotifyMessage'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -34,6 +37,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
   const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
+  const { user_id } = getProfileFromLocalStorage()
 
   const deleteNotify = useMutationDeleteNotify()
   const sendMedia = useMutationSendMessageAttach()
@@ -43,6 +47,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<any>(null)
   const [values, setValues] = useState('')
+
   const {
     selectedConversation,
     toggleBoxReply,
@@ -50,14 +55,21 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
     togglePreviewBox,
     setToggleBoxReply,
     setPreviewImg,
-    previewImg
+    previewImg,
+    checkDropAttach,
+    setCheckDropAttach
   } = useConversationStore()
-  const { setLoadingMessage } = useMessageStore()
+
   let groupID = selectedConversation?.group_id
 
+  // notify
+  const { showNotify, numberNotify } = useNotifyMessage(groupID, user_id)
+
+  // username reply
   const profile = getProfileFromLocalStorage()
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
+  // handle
   const handleSendMessage = useCallback(async () => {
     try {
       const baseData = {
@@ -68,10 +80,9 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         parent_id: ''
       }
 
-      console.log(baseData)
-
       if (toggleBoxReply) {
         baseData.parent_id = toggleBoxReply.message_id
+        console.log('baseData reply:', baseData)
         await replyMessageMutation.mutateAsync(baseData)
         setToggleBoxReply(null)
       } else {
@@ -79,11 +90,16 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           setTogglePreviewBox(false)
           await handleFileUpload()
           setPreviewImg(null)
-        } else {
-          await sendMessageMutation.mutateAsync(baseData)
-          setTogglePreviewBox(false)
+          console.log('gửi ảnh')
+        } else if (previewImg && values != '') {
+          console.log('gửi ảnh và tin nhắn')
           await handleFileUpload()
+          values.trim() && (await sendMessageMutation.mutateAsync(baseData))
+          setTogglePreviewBox(false)
           setPreviewImg(null)
+        } else if (values != '' && values.trim()) {
+          console.log('gửi tin nhắn')
+          await sendMessageMutation.mutateAsync(baseData)
         }
         setFile(null)
         refetchConversation()
@@ -174,13 +190,14 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
   }, [toggleBoxReply])
 
   useEffect(() => {
-    setPreviewImg(preview)
+    preview && setPreviewImg(preview.file)
     preview && setTogglePreviewBox(true)
   }, [preview])
 
-  useEffect(() => {
-    setPreview(previewImg)
-  }, [previewImg])
+  // useEffect(() => {
+  //   checkDropAttach && setPreview(previewImg)
+  //   console.log('drop', previewImg)
+  // }, [previewImg])
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValues(e.target.value)
@@ -211,9 +228,8 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
       deleteNotify.mutate(groupID)
     }
   }
-
   return (
-    <div className='relative'>
+    <>
       {toggleBoxReply && (
         <div ref={boxReplyRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
           <div className='item-start flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
@@ -235,22 +251,23 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         <div ref={previewUploadRef} className='border-t-[1px] bg-white p-4 shadow-sm'>
           <div className='item-center flex w-full justify-between rounded-md bg-secondery px-3 py-2'>
             <div className='relative ml-2 w-4/5 after:absolute after:-left-3 after:bottom-0 after:top-0 after:h-full after:w-1 after:bg-primary'>
-              {preview?.type?.includes('video') && (
+              {preview?.file?.type?.includes('video') && (
                 <video
-                  src={URL?.createObjectURL(preview)}
+                  src={URL?.createObjectURL(preview?.file)}
                   className='h-14 w-16 shrink-0 overflow-hidden rounded-sm object-cover'
                 ></video>
               )}
-              {preview?.type?.includes('image') && (
-                <img src={URL?.createObjectURL(preview)} className='h-[50px] w-[100px] object-contain' />
+              {preview?.file?.type?.includes('image') && (
+                <img src={URL?.createObjectURL(preview?.file)} className='h-[50px] w-[100px] object-contain' />
               )}
-              {preview?.type?.includes('application') && <p className='text-sm'>{preview.path}</p>}
+              {preview?.file?.type?.includes('application') && <p className='text-sm'>{preview?.file.path}</p>}
             </div>
             <IonIcon
               onClick={() => {
                 setPreviewImg(null)
                 setPreview(null)
                 setTogglePreviewBox(false)
+                setCheckDropAttach(false)
               }}
               icon='close'
               className='cursor-pointer rounded-full bg-primary p-2 text-white'
@@ -258,8 +275,11 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           </div>
         </div>
       )}
-      <div className='flex items-center gap-2 overflow-hidden p-2 md:gap-4 md:p-3'>
-        <div id='message__wrap' className='-mt-1.5 flex h-full items-center gap-2 dark:text-white'>
+      <div className={`flex items-center overflow-hidden p-2 md:gap-4 md:p-3`}>
+        <div
+          id='message__wrap'
+          className={`-mt-1.5 flex h-full items-center gap-2 transition-all duration-300 ease-in-out dark:text-white`}
+        >
           <CustomFileInput
             type={2}
             iconName={'attach-outline'}
@@ -283,7 +303,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
         {openRecordMessage ? (
           <RecordMessage setOpenRecordMessage={setOpenRecordMessage} openRecordMessage={openRecordMessage} />
         ) : (
-          <div className='relative flex-1'>
+          <div className={`relative flex-1 transition-all duration-300 ease-in-out ${values ? 'w-[100%]' : 'w-[80%]'}`}>
             <textarea
               id='body'
               onChange={(e) => handleOnChange(e)}
@@ -293,7 +313,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
                   handleSendMessage()
                 }
               }}
-              placeholder='Write your message'
+              placeholder='Aa'
               onFocus={handleOnFocus}
               onBlur={() => {
                 const data = { user_id: profile.user_id, groupID }
@@ -301,7 +321,7 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
               }}
               value={values}
               rows={1}
-              className='no-scrollbar w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
+              className='w-full resize-none rounded-full bg-secondery p-2 pl-4 pr-8 focus:ring-transparent'
             ></textarea>
             {!values && !previewImg ? (
               <span
@@ -318,9 +338,8 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
           </div>
         )}
       </div>
-
-      <IsTyping />
-    </div>
+      <IsTyping group_id={selectedConversation.group_id} type='normal' />
+    </>
   )
 }
 

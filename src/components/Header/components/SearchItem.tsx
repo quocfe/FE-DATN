@@ -55,9 +55,11 @@ function SearchItem({ user, isHistory }: Props) {
         <img src={user.Profile?.profile_picture} className='h-9 w-9 rounded-full object-cover' alt='' />
         <div>
           <div>
-            {user.last_name} {user.first_name}{' '}
+            {user.last_name} {user.first_name}
           </div>
-          <div className='mt-0.5 text-xs font-medium text-blue-500'> {user.status} </div>
+          <div className='mt-0.5 text-xs font-medium text-blue-500'>
+            {user.status === 'Đã chấp nhận' ? 'Bạn bè' : user.status}
+          </div>
         </div>
       </Link>
       {isHistory && (

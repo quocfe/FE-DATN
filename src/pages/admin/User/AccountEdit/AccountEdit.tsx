@@ -89,6 +89,8 @@ function AccountEdit({ account, setShowEditAccount }: Props) {
         }))
     }))
 
+    console.log(selectedModules)
+
     const dataUpdate = {
       account_id: account.account_id,
       account: {
@@ -242,7 +244,12 @@ function AccountEdit({ account, setShowEditAccount }: Props) {
           </label>
         </div>
       </div>
-      <h1 className='mb-5 mt-7 text-xl font-medium text-gray-700'>Quyền của vai trò</h1>
+      <div className='mb-5 mt-7'>
+        <h1 className='text-xl font-medium text-gray-700'>Quyền của vai trò</h1>
+        <span>
+          Chọn tất cả <input type='checkbox' />
+        </span>
+      </div>
       {modules.map((module) => (
         <div key={module.module_id} className='flex items-center justify-between py-4 text-[15px]'>
           <label htmlFor='' className=''>
