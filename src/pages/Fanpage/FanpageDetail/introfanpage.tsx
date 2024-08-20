@@ -2,9 +2,9 @@ import EducationIcon from '~/components/icons/Profile/EducationIcon'
 import HomeTownIcon from '~/components/icons/Profile/HomeTownIcon'
 import JobIcon from '~/components/icons/Profile/JobIcon'
 import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
-import MyFriends from './MyFriends'
+// import MyFriends from './MyFriends'
 import React, { useState, useEffect } from 'react'
-
+// import { UserProfile } from '~/@types/user'
 
 interface Props {
   profile: UserProfile | null
@@ -114,7 +114,7 @@ function Introduce({ profile, setShowModal }: Props) {
           </div>
         </div>
         {/* Bạn bè */}
-        <MyFriends />
+        {/* <MyFriends /> */}
       </div>
     </div>
   )
