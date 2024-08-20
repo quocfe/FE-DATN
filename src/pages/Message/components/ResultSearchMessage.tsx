@@ -39,17 +39,37 @@ function ResultSearchMessage() {
   }, [])
 
   const handleClickToOldMessage = async (message_id: string) => {
-    const messageOldId = message_id
-    const element = document.getElementById(messageOldId)
-    if (element) {
-      handleToOldMessage(messageOldId)
-    } else {
-      let totalPage = temp?.data.data.pagination.totalPage || 0
+    let checkEl = document.getElementById(message_id)
 
-      for (let i = 0; i < totalPage; i++) {
-        if (hasNextPage) await fetchNextPage()
+    while (!checkEl) {
+      // Gọi hàm loadMoreMessages để tải thêm dữ liệu
+      const fetch = await fetchNextPage()
+
+      setTimeout(() => {
+        const element = document.getElementById(message_id)
+        if (element) {
+          handleToOldMessage(message_id)
+        } else {
+          console.log(' không tìm thấy tin nhắn cần tìm trong setTimeout')
+          return
+        }
+      }, 300)
+
+      if (!fetch.hasNextPage) {
+        console.log('Đã tải hết tin nhắn, không tìm thấy tin nhắn cần tìm.')
+        return
       }
-      handleToOldMessage(messageOldId)
+    }
+    if (checkEl) {
+      setTimeout(() => {
+        const element = document.getElementById(message_id)
+        if (element) {
+          handleToOldMessage(message_id)
+        }
+      }, 300)
+      console.log('Đã di chuyển tới tin nhắn.')
+    } else {
+      console.log('Không tìm thấy tin nhắn.')
     }
   }
 

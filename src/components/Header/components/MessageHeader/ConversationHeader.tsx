@@ -134,114 +134,115 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   }, [socket, checkUrlMesage])
 
   return (
-    <div
-      ref={innerRef}
-      className={`
-    relative flex cursor-pointer items-center rounded-xl p-2 duration-200`}
-      onMouseEnter={() => {
-        setTriggerHover(true)
-      }}
-      onMouseLeave={() => {
-        setTriggerHover(false)
-      }}
-    >
+    <>
       <div
-        onClick={() => handleSelectedConversation(item)}
-        className='flex w-full flex-1 flex-row items-center justify-between gap-2'
+        ref={innerRef}
+        className={` relative flex cursor-pointer items-center rounded-xl p-2 duration-200`}
+        onMouseEnter={() => {
+          setTriggerHover(true)
+        }}
+        onMouseLeave={() => {
+          setTriggerHover(false)
+        }}
       >
-        <div className='relative h-14 w-14 shrink-0'>
-          <img
-            src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
-            className='h-full w-full rounded-full object-cover'
-          />
-          <div
-            className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline && !isBlockedOrBlocking ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
-          />
-        </div>
-        <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
-          <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
-            {item?.group_name}
+        <div
+          onClick={() => handleSelectedConversation(item)}
+          className='flex w-full flex-1 flex-row items-center justify-between gap-2'
+        >
+          <div className='relative h-14 w-14 shrink-0'>
+            <img
+              src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
+              className='h-full w-full rounded-full object-cover'
+            />
+            <div
+              className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline && !isBlockedOrBlocking ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
+            />
           </div>
-          <div className='flex items-center justify-between gap-2'>
-            <p
-              className={`w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]  text-gray-600
+          <div className='flex h-full min-w-0 flex-1 flex-col justify-evenly gap-1'>
+            <div className='mr-auto w-[70%] overflow-hidden truncate text-ellipsis text-sm font-medium text-black dark:text-white'>
+              {item?.group_name}
+            </div>
+            <div className='flex items-center justify-between gap-2'>
+              <p
+                className={`w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]  text-gray-600
                 ${showNotify ? 'font-semibold' : 'font-thin'}
                 `}
-            >
-              {checkBody === undefined ? body : checkBody}
-            </p>
-          </div>
-        </div>
-      </div>
-      {!triggerHover ? (
-        item?.messages?.createdAt ? (
-          <TimeAgo time={item?.messages?.createdAt || 0} />
-        ) : (
-          <TimeAgo time={item?.createdAt || 0} />
-        )
-      ) : (
-        <div className={`uk-inline absolute right-2 top-1 rounded-full shadow-sm  `}>
-          <button
-            className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
-            type='button'
-          >
-            <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
-          </button>
-          <div uk-dropdown='mode: click' className={` w-[250px]`}>
-            <div className='p-2'>
-              {/* message type = 1 */}
-              {item.type === 1 && (
-                <Link
-                  to={`profile/${item.user_id}`}
-                  className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
-                >
-                  <IonIcon icon='person-circle-outline' className='text-[22px]' />
-                  <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
-                </Link>
-              )}
-              <hr className='my-2' />
-              {item.type === 1 && !isBlocked && (
-                <div
-                  onClick={() => setShowBlock(true)}
-                  className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
-                >
-                  <IonIcon icon='ban-outline' className='text-[22px]' />
-                  <p className='text-[14px] font-semibold'> {isBlock ? 'Bỏ chặn' : 'Chặn'}</p>
-                </div>
-              )}
-              <BlockOrUnBlockUserInMsg
-                type={isBlock ? 'unBlock' : 'block'}
-                show={showBlock}
-                setShow={setShowBlock}
-                user_id={item.user_id}
-              />
-              <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
-                <IonIcon icon='alert-circle-outline' className='text-[22px]' />
-                <p className='text-[14px] font-semibold'>Báo cáo</p>
-              </div>
-              <hr className='my-2' />
-              <div
-                onClick={() => setShowDiaLogDeleteConversation(true)}
-                className='flex items-center justify-start gap-2 rounded-[10px] p-2 text-red-500 hover:bg-slate-100'
               >
-                <IonIcon icon='trash-outline' className='text-[22px] text-red-500' />
-                <p className='text-[14px] font-semibold'>Xóa đoạn hội thoại</p>
-                <DeleteConversationMsg
-                  showDiaLogDeleteConversation={showDiaLogDeleteConversation}
-                  setShowDiaLogDeleteConversation={setShowDiaLogDeleteConversation}
-                  group_id={item?.group_message_id}
-                />
-              </div>
+                {checkBody === undefined ? body : checkBody}
+              </p>
             </div>
           </div>
         </div>
-      )}
-      {showNotify && (
-        <div className='absolute bottom-4 right-2 flex h-[20px] w-[20px] items-center justify-center rounded-full  bg-red-500'>
-          <p className='text-[10px] text-white'>{numberNotify}</p>
-        </div>
-      )}
-    </div>
+        {!triggerHover ? (
+          item?.messages?.createdAt ? (
+            <TimeAgo time={item?.messages?.createdAt || 0} />
+          ) : (
+            <TimeAgo time={item?.createdAt || 0} />
+          )
+        ) : (
+          <div className={`uk-inline absolute right-2 top-1 rounded-full shadow-sm  `}>
+            <button
+              className='uk-button uk-button-default flex h-6 w-6 items-center justify-center rounded-full shadow-sm hover:bg-slate-100'
+              type='button'
+            >
+              <IonIcon icon='ellipsis-horizontal' className='font-semibold' />
+            </button>
+            <div uk-dropdown='mode: click' className={` w-[250px]`}>
+              <div className='p-2'>
+                {/* message type = 1 */}
+                {item.type === 1 && (
+                  <Link
+                    to={`profile/${item.user_id}`}
+                    className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                  >
+                    <IonIcon icon='person-circle-outline' className='text-[22px]' />
+                    <p className='text-[14px] font-semibold'>Xem trang cá nhân</p>
+                  </Link>
+                )}
+                <hr className='my-2' />
+                {item.type === 1 && !isBlocked && (
+                  <div
+                    onClick={() => setShowBlock(true)}
+                    className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'
+                  >
+                    <IonIcon icon='ban-outline' className='text-[22px]' />
+                    <p className='text-[14px] font-semibold'> {isBlock ? 'Bỏ chặn' : 'Chặn'}</p>
+                  </div>
+                )}
+                <BlockOrUnBlockUserInMsg
+                  type={isBlock ? 'unBlock' : 'block'}
+                  show={showBlock}
+                  setShow={setShowBlock}
+                  user_id={item.user_id}
+                />
+                <div className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'>
+                  <IonIcon icon='alert-circle-outline' className='text-[22px]' />
+                  <p className='text-[14px] font-semibold'>Báo cáo</p>
+                </div>
+                <hr className='my-2' />
+                <div
+                  onClick={() => setShowDiaLogDeleteConversation(true)}
+                  className='flex items-center justify-start gap-2 rounded-[10px] p-2 text-red-500 hover:bg-slate-100'
+                >
+                  <IonIcon icon='trash-outline' className='text-[22px] text-red-500' />
+                  <p className='text-[14px] font-semibold'>Xóa đoạn hội thoại</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {showNotify && (
+          <div className='absolute bottom-4 right-2 flex h-[20px] w-[20px] items-center justify-center rounded-full  bg-red-500'>
+            <p className='text-[10px] text-white'>{numberNotify}</p>
+          </div>
+        )}
+      </div>
+      <DeleteConversationMsg
+        showDiaLogDeleteConversation={showDiaLogDeleteConversation}
+        setShowDiaLogDeleteConversation={setShowDiaLogDeleteConversation}
+        group_id={item?.group_message_id}
+      />
+    </>
   )
 }
 

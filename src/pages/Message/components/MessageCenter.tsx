@@ -155,7 +155,7 @@ function MessageCenter() {
               <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
             )}
           </div>
-          <div className='flex cursor-pointer items-center justify-start '>
+          <div className='flex cursor-pointer flex-col items-start justify-start '>
             <p className='w-[340px] truncate text-base font-bold text-black md:w-[200px]'> {infoMessage?.group_name}</p>
             {isOnline && !isBlockedOrBlocking && (
               <div className='text-xs font-semibold text-green-500'>Đang hoạt động</div>

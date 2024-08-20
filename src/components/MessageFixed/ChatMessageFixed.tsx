@@ -50,11 +50,11 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
 }
 
 const ChatMessageFixed = ({ message_fix, infoMessage, isAtBottom }: props) => {
-  const scrollIntoViewFn = useCallback(() => {
+  const scrollIntoViewFn = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ block: 'end' })
     }
-  }, [])
+  }
 
   useEffect(() => {
     scrollIntoViewFn()
@@ -122,6 +122,7 @@ const ChatMessageFixed = ({ message_fix, infoMessage, isAtBottom }: props) => {
   }, [isAtBottom])
 
   const groupedMessagesByDate = useMemo(() => groupMessagesByDate(newArr.flat() as TypeMessage[]), [newArr])
+
   const showStatus =
     newArr.flat()[newArr.flat().length - 1]?.createdBy === user_id && newArr.flat()[newArr.flat().length - 1]?.type != 0
 
