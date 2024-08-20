@@ -8,7 +8,7 @@ function Sidebar() {
   return (
     <div
       id='site__sidebar'
-      className='fixed left-0 top-0 z-[99] overflow-hidden pt-[--m-top] transition-transform max-xl:w-full max-xl:-translate-x-full xl:duration-500'
+      className='fixed left-0 top-0 z-[40] overflow-hidden pt-[--m-top] transition-transform max-xl:w-full max-xl:-translate-x-full xl:duration-500'
     >
       {/* sidebar inner */}
       <div className='relative z-30 h-[calc(100vh-64px)] w-[80%] p-2 shadow-sm max-xl:bg-white max-lg:border-r sm:w-64 2xl:w-72 dark:border-slate-700 dark:max-xl:!bg-slate-700'>

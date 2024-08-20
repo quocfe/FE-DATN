@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import Modal from '~/components/Modal'
-import useMutationCreateMessage from '../hooks/useMutationCreateGroup'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import useMutationCreateMessage from '../hooks/useMutaion/useMutationCreateGroup'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 import useFileUpload from '../utils/uploadApi'
 import Friend from './Friend'
 import Spinner from './Skelaton/Spinner'
@@ -20,12 +20,14 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { upload } = useFileUpload()
+
   const handleCreate = async () => {
     let dataGroup = {
       list_user: JSON.stringify(listUser),
       group_name: groupName,
       group_thumbnail: ''
     }
+
     if (file) {
       setIsLoading(true)
       const url = await upload(file)
@@ -51,7 +53,6 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   }
 
   const handleSetNameGroup = (e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)
-
   return (
     <Modal isVisible={isOpen} onClose={!isLoading && onClose} iconClose={isLoading ? false : true} height='3/4'>
       <div className='flex h-full flex-col justify-evenly '>
@@ -105,7 +106,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
           <button onClick={onClose} className='uk-modal-close rounded-md px-4 py-1.5' type='button'>
             Hủy
           </button>
-          {listUser.length < 2 || groupName.length > 50 ? (
+          {listUser.length < 2 || groupName.length > 50 || !file ? (
             <button className='cursor-not-allowed rounded-md bg-gray-400 px-5 py-1.5 text-white' type='button'>
               Tạo
             </button>

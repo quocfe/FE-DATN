@@ -15,10 +15,17 @@ import { getProfileFromLocalStorage } from '~/utils/auth'
 import { formatDate } from '~/utils/helpers'
 import CustomFileInput from '../InputFile/CustomFileInput'
 import PreviewFileUpload from '~/pages/Message/components/components/PreviewFileUpload'
-import { useMutationSendMessage } from '~/pages/Message/hooks/useMutationSendMessage'
+import { useMutationSendMessage } from '~/pages/Message/hooks/useMutaion/useMutationSendMessage'
 import Loading from '../Loading'
 import Spinner from './../../pages/Message/components/Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessageFix'
+import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
+
+type props = {
+  message_fix: MessageFix
+  infoMessage: InfoMessage
+  isAtBottom: boolean
+}
 
 // Tin nhan theo ngay
 const groupMessagesByDate = (messages: TypeMessage[]): Record<string, TypeMessage[]> => {
@@ -42,25 +49,23 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
   return currentTime - previousTime >= 5 * 60 * 1000 // 5 minutes in milliseconds
 }
 
-const ChatMessageFixed = ({
-  message_fix,
-  infoMessage,
-  isAtBottom
-}: {
-  message_fix: MessageFix
-  infoMessage: InfoMessage
-  isAtBottom: boolean
-}) => {
-  const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
-    useConversationStore()
+const ChatMessageFixed = ({ message_fix, infoMessage, isAtBottom }: props) => {
+  const scrollIntoViewFn = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ block: 'end' })
+    }
+  }
+
+  useEffect(() => {
+    scrollIntoViewFn()
+  }, [])
+
+  const { toggleBoxReply, togglePreviewBox } = useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
-  const chatMessageRef = useRef<HTMLInputElement>(null)
-  const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
-  const { socket } = useSocketContext()
-  const { setVideoCall, setAcceptCall } = useMessageStore()
   const [calculateHeight, setCalculateHeight] = useState<number>(0)
+  const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessageFix(message_fix)
 
   useLayoutEffect(() => {
     if (toggleBoxReply || togglePreviewBox) {
@@ -83,38 +88,9 @@ const ChatMessageFixed = ({
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  const fetchMessage = async ({ pageParam }: { pageParam: number }) => {
-    if (message_fix.type === 1) {
-      const data = await messageApi.getOneToOneMessage(message_fix.id, pageParam, 10)
-      return data.data.data.messages
-    } else if (message_fix.type === 2) {
-      const data = await messageApi.getGroupMessage(message_fix.group_id, pageParam, 10)
-      return data.data.data.messages
-    }
-  }
-
-  const {
-    data: dataMsg,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isLoading
-  } = useInfiniteQuery({
-    queryKey: ['messageFixInfinity', message_fix.group_id && message_fix.id],
-    queryFn: fetchMessage,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      if (lastPage && lastPage.length === 10) {
-        return allPages.length + 1
-      } else {
-        return undefined
-      }
-    },
-    enabled: message_fix.group_id != null || message_fix.id != null
-  })
-
   const { ref, inView } = useInView()
   const [showNewMsg, setShowNewMsg] = useState(false)
+
   const newArr = useMemo(() => {
     if (dataMsg?.pages?.length) {
       return dataMsg.pages.slice().reverse()
@@ -124,18 +100,6 @@ const ChatMessageFixed = ({
 
   const lastArrRefs = newArr[0]
   const lastRef = lastArrRefs && lastArrRefs[0]
-  const scrollIntoViewFn = useCallback(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ block: 'end' })
-    }
-  }, [])
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      scrollIntoViewFn()
-    }, 100)
-    return () => clearTimeout(timeoutId)
-  }, [])
 
   useEffect(() => {
     if (!isAtBottom && isFetchingNextPage) {
@@ -158,6 +122,7 @@ const ChatMessageFixed = ({
   }, [isAtBottom])
 
   const groupedMessagesByDate = useMemo(() => groupMessagesByDate(newArr.flat() as TypeMessage[]), [newArr])
+
   const showStatus =
     newArr.flat()[newArr.flat().length - 1]?.createdBy === user_id && newArr.flat()[newArr.flat().length - 1]?.type != 0
 

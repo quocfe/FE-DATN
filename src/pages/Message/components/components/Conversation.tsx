@@ -6,18 +6,18 @@ import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
 import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import useMutationDeleteMessage from '../../hooks/useMutationDeleteGroup'
+import useMutationDeleteMessage from '../../hooks/useMutaion/useMutationDeleteGroup'
 import { checkBodyMessage } from '../../utils/checkBodyMessage'
 import { fetchConversation } from '../../utils/fetchInfiniteConversation'
 import TimeAgo from './TimeAgo'
-import { useQueryInfinifyConversation } from '../../hooks/useQueryInfinifyConversation'
-import useNotifyMessage from '../../hooks/useNotifyMessage'
+import { useQueryInfinifyConversation } from '../../hooks/useQuery/useQueryInfinifyConversation'
+import useNotifyMessage from '../../hooks/useMutaion/useNotifyMessage'
 import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 import { Link, useLocation } from 'react-router-dom'
-import useCallVideo from '../../hooks/useCallVideo'
+import useCallVideo from '../../hooks/useMutaion/useCallVideo'
 import FeatureNotAllow from '~/components/FeatureNotAllow'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
@@ -223,8 +223,8 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
                   </div>
                 </>
               )}
-              <hr className='my-2' />
-              {item.type === 1 && (
+              {!isBlockedOrBlocking && <hr className='my-2' />}
+              {item.type === 1 && !isBlocked && (
                 <div
                   onClick={() => setShowDialogBlock(true)}
                   className='flex items-center justify-start gap-2 rounded-[10px] p-2 hover:bg-slate-100'

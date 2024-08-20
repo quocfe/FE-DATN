@@ -1,11 +1,10 @@
 import React, { memo, useEffect, useState } from 'react'
-import { getProfileFromLocalStorage } from '~/utils/auth'
-import useMutaionSearchFriend from '../hooks/useMutationSearchFriend'
-import { useQueryFriends } from '../hooks/useQueryFriends'
-import { useQueryFriendSuggestGm } from '../hooks/useQueryFriendSuggestGm'
 import useConversationStore from '~/store/conversation.store'
-import { useQueryMembers } from '../hooks/useQueryMembers'
-import { checkIllegalCharacters } from 'zego-express-engine-webrtc/sdk/src/util/client-util'
+import { getProfileFromLocalStorage } from '~/utils/auth'
+import useMutaionSearchFriend from '../hooks/useMutaion/useMutationSearchFriend'
+import { useQueryFriends } from '../hooks/useQuery/useQueryFriends'
+import { useQueryFriendSuggestGm } from '../hooks/useQuery/useQueryFriendSuggestGm'
+import { useQueryMembers } from '../hooks/useQuery/useQueryMembers'
 
 interface FriendProps {
   listUser: string[]
@@ -19,7 +18,7 @@ const Friend: React.FC<FriendProps> = ({ listUser, setListUser, querySearch, typ
   const { selectedConversation } = useConversationStore()
   const searchMutaion = useMutaionSearchFriend()
   const { data: memberSuggest } = useQueryFriends()
-  const { data: memberGroup } = useQueryMembers(selectedConversation.group_id)
+  const { data: memberGroup } = useQueryMembers(selectedConversation.group_id, type as string)
   const { data: memberSuggestGMsg } = useQueryFriendSuggestGm(selectedConversation.group_id)
   const profile = getProfileFromLocalStorage() || {}
   const [currentUserSelect, setCurrentUserSelect] = useState<string[]>([profile.user_id])

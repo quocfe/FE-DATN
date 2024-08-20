@@ -8,16 +8,14 @@ import { IonIcon } from '@ionic/react'
 
 function PreviewFileUpload() {
   const { file: fileStore } = useFileUploadStore()
-  const { previewImg } = useConversationStore()
+  const { setPreviewImg, previewImg } = useConversationStore()
+
   const [objectURL, setObjectURL] = useState('')
-  const blobString = typeof previewImg === 'string' && previewImg?.split(':')[0] === 'blob'
   useEffect(() => {
     if (previewImg) {
-      if (!blobString) {
-        const url = URL.createObjectURL(previewImg)
-        setObjectURL(url)
-        return () => URL.revokeObjectURL(url)
-      }
+      const url = URL?.createObjectURL(previewImg)
+      setObjectURL(url)
+      return () => URL.revokeObjectURL(url)
     }
   }, [previewImg])
 
@@ -55,17 +53,6 @@ function PreviewFileUpload() {
                 baseBgColor='#E4F1FC'
                 completed={fileStore?.progress}
               />
-            </div>
-          )}
-          {blobString && previewImg?.split(':')[0] === 'blob' && (
-            <div className='flex h-[88px] w-[236px] cursor-pointer flex-col  rounded-[14px] border-[2px] border-transparent bg-[#0084ff] px-4 py-2  text-left text-white shadow'>
-              <div className='flex flex-row items-center justify-start gap-1'>
-                <div className='z-10 flex h-full w-10 items-center justify-center'>
-                  <div className='flex h-full w-full flex-1  items-center justify-evenly bg-[#0084ff]'>
-                    <IonIcon name='play-circle' className='text-[30px] text-white' />
-                  </div>
-                </div>
-              </div>
             </div>
           )}
         </div>

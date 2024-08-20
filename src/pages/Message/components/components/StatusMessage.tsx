@@ -1,10 +1,10 @@
 import { memo, useCallback, useMemo } from 'react'
-import { useQueryStatusMessage } from '../../hooks/useQueryStatusMessage'
+import { useQueryStatusMessage } from '../../hooks/useQuery/useQueryStatusMessage'
 import { IonIcon } from '@ionic/react'
 import { calculateTimeAgo } from '~/utils/helpers'
 import useMessageStore from '~/store/message.store'
 import useConversationStore from '~/store/conversation.store'
-import { useMutationSendMessage } from '../../hooks/useMutationSendMessage'
+import { useMutationSendMessage } from '../../hooks/useMutaion/useMutationSendMessage'
 
 const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 
@@ -72,7 +72,14 @@ const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
             </div>
           )
         default:
-          return null
+          return (
+            <div className='group relative'>
+              <IonIcon className='my-anchor-element' name='checkmark-circle' />
+              <div className='absolute -top-6 right-0 hidden min-w-[60px] items-center justify-center rounded-sm bg-white p-1 shadow-sm group-hover:flex'>
+                <p className='text-[11px] font-semibold'>đã gửi</p>
+              </div>
+            </div>
+          )
       }
     },
     [dataStatus?.data.data]

@@ -7,7 +7,7 @@ import ZegoLocalStream from 'zego-express-engine-webrtc/sdk/code/zh/ZegoLocalStr
 import messageApi from '~/apis/message.api'
 import { useSocketContext } from '~/context/socket'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import { useMutationSendCallMessage } from '../Message/hooks/useMutationSendMessage'
+import { useMutationSendCallMessage } from '../Message/hooks/useMutaion/useMutationSendMessage'
 
 function RoomCall() {
   const { user_id } = getProfileFromLocalStorage()

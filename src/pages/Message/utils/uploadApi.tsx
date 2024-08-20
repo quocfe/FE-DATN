@@ -31,7 +31,7 @@ const useFileUpload = () => {
 
     if (file.size > maxSize) {
       toast.error('Kích thước file không được vượt quá 10MB')
-      return
+      return null
     }
 
     const formData = new FormData()
