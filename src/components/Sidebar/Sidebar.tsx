@@ -1,7 +1,10 @@
-import { Link } from 'react-router-dom'
+import classNames from 'classnames'
+import { Link, useLocation } from 'react-router-dom'
 import { ROUTE_PATH } from '~/constants'
 
 function Sidebar() {
+  const { pathname } = useLocation()
+
   return (
     <div
       id='site__sidebar'
@@ -26,25 +29,45 @@ function Sidebar() {
                 >
                   <nav id='side'>
                     <ul>
-                      <li className='active'>
+                      <li
+                        className={classNames('', {
+                          active: pathname === '/'
+                        })}
+                      >
                         <Link to={'/'}>
                           <img src='/src/assets/images/icons/home.png' alt='feeds' className='w-6' />
                           <span> Bảng tin </span>
                         </Link>
                       </li>
-                      <li>
+                      <li
+                        className={classNames('', {
+                          active: pathname === '/friend/suggests'
+                        })}
+                      >
                         <Link to={'/friend/suggests'}>
                           <img src='/src/assets/images/icons/group.png' alt='groups' className='w-6' />
                           <span> Bạn bè </span>
                         </Link>
                       </li>
-                      <li>
-                        <a href='messages.html'>
-                          <img src='/src/assets/images/icons/message.png' alt='messages' className='w-5' />
+                      <li
+                        className={classNames('', {
+                          active: pathname === '/message'
+                        })}
+                      >
+                        <Link to={'/message'}>
+                          <img
+                            src='http://localhost:8080/src/assets/images/icons/message.png'
+                            alt='messages'
+                            className='w-5'
+                          />
                           <span> Trò chuyện </span>
-                        </a>
+                        </Link>
                       </li>
-                      <li>
+                      <li
+                        className={classNames('', {
+                          active: pathname === ROUTE_PATH.WATCH
+                        })}
+                      >
                         <Link to={ROUTE_PATH.WATCH}>
                           <img src='/src/assets/images/icons/video.png' alt='messages' className='w-6' />
                           <span> Video </span>
@@ -56,18 +79,13 @@ function Sidebar() {
                           <span> Sự kiện </span>
                         </a>
                       </li>
-                      <li>
-                        <a href='pages.html'>
+                      <li className='fanpage'>
+                        <Link to={'/fanpage'}>
                           <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
-                        </a>
+                        </Link>
                       </li>
-                      <li>
-                        <a href='market.html'>
-                          <img src='/src/assets/images/icons/market.png' alt='market' className='-ml-1 w-7' />
-                          <span> Cửa hàng </span>
-                        </a>
-                      </li>
+
                       <li>
                         <a href='blog.html'>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />

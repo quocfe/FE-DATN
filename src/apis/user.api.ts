@@ -109,7 +109,7 @@ class UserApi {
 
   // Danh sách lời mời kết bạn đã gửi
   fetchAllSendFriendRequests(userConfigParams: UserConfigParams) {
-const { _page, _limit } = userConfigParams
+    const { _page, _limit } = userConfigParams
 
     return http.get<UserListReponse>(USER.SEND_FRIEND_REQUESTS, {
       params: {
@@ -142,6 +142,9 @@ const { _page, _limit } = userConfigParams
   // Danh sách hình ảnh và video
   getAllMediaResource() {
     return http.get<MediaResourceResponse>(USER.LIST_MEDIA_RESOURCES)
+  }
+  fetchUserProfile(userId: string) {
+    return http.get<ProfileResponse>(`${USER.PROFILE}/${userId}`, { withCredentials: true })
   }
 }
 

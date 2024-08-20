@@ -43,7 +43,7 @@ function FriendItem({ friend }: Props) {
           <div className='mt-2 flex items-center'>
             {commonFriends.slice(0, 2).map((user) => {
               return (
-                <Link to={`${ENDPOINT.PROFILE}/${user.user_id}`} className='-mr-2 h-6 w-6'>
+                <Link key={user.user_id} to={`${ENDPOINT.PROFILE}/${user.user_id}`} className='-mr-2 h-6 w-6'>
                   <img
                     src={user.Profile?.profile_picture}
                     className='h-full w-full rounded-full border-2 border-gray-200'

@@ -38,6 +38,10 @@ class PostApi {
   deletePost(post_id: string) {
     return http.delete(`${POST.DELETE}/${post_id}`)
   }
+
+  getAllFanpagePosts(fanpage_id: string) {
+    return http.get<PostResponse>(`${POST.FANPAGE_POST}/${fanpage_id}`)
+  }
 }
 
 export default new PostApi()

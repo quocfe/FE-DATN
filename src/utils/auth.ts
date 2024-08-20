@@ -24,7 +24,7 @@ export const setProfileLocalStorage = (profile: UserProfile) => {
 
 export const getProfileFromLocalStorage = () => {
   const profile = localStorage.getItem('profile')
-  return profile ? JSON.parse(profile) : null
+  return profile ? JSON.parse(profile) : ''
 }
 
 export const getTypeLoginFromLocalStorage = () => {

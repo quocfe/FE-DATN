@@ -10,6 +10,7 @@ import useMutationAcceptFriendRequest from '~/hooks/mutations/user/useMutationAc
 import useMutationCancelFriendRequest from '~/hooks/mutations/user/useMutationCancelFriendRequest'
 import useMutationSenderFriendRequest from '~/hooks/mutations/user/useMutationSenderFriendRequest'
 import useBlockedUser from '~/hooks/user/useBlockedUser'
+import useMessageFixStore from '~/store/messageFix.store'
 
 interface Props {
   profile: UserProfile | null
@@ -25,6 +26,7 @@ function Navigation({ profile, relationship }: Props) {
   const [showDialogBlockUser, setShowDialogBlockUser] = useState<boolean>(false)
   const [showDialogCancelFriendRequest, setShowDialogCancelFriendRequest] = useState<boolean>(false)
   const { pathname } = useLocation()
+  const { setMessageFix } = useMessageFixStore()
 
   // React Query
   const queryClient = useQueryClient()
@@ -77,11 +79,21 @@ function Navigation({ profile, relationship }: Props) {
           }
           toast.success(notifi)
         },
-onError: (error) => {
+        onError: (error) => {
           toast.error(error.message)
         }
       })
     }
+  }
+
+  // Gửi tin nhắn
+  const handleMessage = () => {
+    if (profile)
+      setMessageFix({
+        group_id: profile.user_id,
+        id: profile.user_id,
+        type: 1
+      })
   }
 
   return (
@@ -132,7 +144,7 @@ onError: (error) => {
                 {relationship?.status === 'Đã chấp nhận' && (
                   <a
                     onClick={() => setShowDialogCancelFriendRequest(true)}
-className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
+                    className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'
                   >
                     <IonIcon icon='close-circle-outline' className='text-[22px]' />
                     Hủy kết bạn
@@ -169,6 +181,9 @@ className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/5
                     </a>
                   </>
                 )}
+                <a onClick={handleMessage} className='cursor-pointer'>
+                  <IonIcon className='text-xl' icon='chatbubble-ellipses-outline' /> Nhắn tin
+                </a>
 
                 <a href='#'>
                   <IonIcon className='text-xl' icon='time-outline' /> Mute story
@@ -194,7 +209,7 @@ className='cursor-pointer text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/5
           <Link
             to={`${ENDPOINT.PROFILE}/${profile?.user_id}`}
             className={classNames('inline-block px-3.5 py-3 leading-8 ', {
-'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}`
+              'border-b-2 border-blue-600 text-blue-600': pathname === `${ENDPOINT.PROFILE}/${profile?.user_id}`
             })}
           >
             Trang cá nhân

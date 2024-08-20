@@ -12,13 +12,15 @@ import Dialog from '~/components/Dialog'
 import { toast } from 'react-toastify'
 import useQueryPostComments from '~/hooks/queries/postComment/useQueryPostComments'
 import useQueryPostReactions from '~/hooks/queries/postReaction/useQueryPostReactions'
+import { Link } from 'react-router-dom'
 
 interface Props {
   post: Post
   isCommentDetail?: boolean
+  fanpage?: { group_name: string; image_url: string | null }
 }
 
-function PostItem({ post, isCommentDetail = false }: Props) {
+function PostItem({ post, isCommentDetail = false, fanpage }: Props) {
   const [isDeletePost, setIsDeletePost] = useState<boolean>(false)
   const [editComment, setEditComment] = useState<PostComment | null>(null)
   const [replyPostComment, setReplyPostComment] = useState<PostComment | null>(null)
@@ -51,6 +53,7 @@ function PostItem({ post, isCommentDetail = false }: Props) {
     deletePostMutation.mutate(post.post_id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['my_posts'] })
+        queryClient.invalidateQueries({ queryKey: ['my_media_resources'] })
         queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
         toast.success('Xóa bài đăng thành công')
       }
@@ -70,15 +73,19 @@ function PostItem({ post, isCommentDetail = false }: Props) {
       />
       <div className='border1 dark:bg-dark2 rounded-xl bg-white shadow-sm'>
         <div className='flex gap-3 p-2.5 font-medium sm:p-4'>
-          <a href='timeline.html'>
-            <img src={author?.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full object-cover' />
-          </a>
+          <Link to={profile?.user_id === post.user_id ? '/profile' : `/profile/${post.user_id}`}>
+            <img
+              src={fanpage ? (fanpage.image_url ?? '') : author?.Profile.profile_picture}
+              alt=''
+              className='h-9 w-9 rounded-full object-cover'
+            />
+          </Link>
           <div className='flex-1'>
-            <a href='timeline.html'>
+            <Link to={profile?.user_id === post.user_id ? '/profile' : `/profile/${post.user_id}`}>
               <h4 className='text-black dark:text-white'>
-                {author?.last_name} {author?.first_name}
+                {fanpage ? fanpage.group_name : `${author?.last_name} ${author?.first_name}`}
               </h4>
-            </a>
+            </Link>
             <div className='flex items-center gap-2 text-xs text-gray-500 dark:text-white/80'>
               {calculateTimeAgo(post.createdAt)} ({renderPrivary()}){' '}
               {post.location ? (

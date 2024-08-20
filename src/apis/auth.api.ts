@@ -1,10 +1,11 @@
 import { AUTH } from '~/constants/auth.constant'
+import { USER } from '~/constants/user.constant'
 import http from '~/utils/http'
 import { LoginForm, RegisterForm } from '~/utils/rules'
 
 class authApi {
   login(data: LoginForm) {
-    return http.post<AuthResponse>(AUTH.LOGIN, data)
+    return http.post<AuthResponse>(AUTH.LOGIN, data, { withCredentials: true })
   }
 
   register(data: RegisterForm) {
