@@ -83,9 +83,15 @@ function Sidebar() {
                         <Link to={'/fanpage'}>
                           <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
+<<<<<<< HEAD
+                        </a>
+                      </li>
+                      
+=======
                         </Link>
                       </li>
 
+>>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
                       <li>
                         <a href='blog.html'>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />
