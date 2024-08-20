@@ -10,6 +10,7 @@ import likeVideoApi from '~/apis/like-video.api'
 import { cn } from '~/helpers'
 import ShowLikeOfComment from '~/components/design-systems/show-like-of-comment'
 import VideoAction from '~/components/design-systems/video-action'
+import SlateEditor from '~/components/design-systems/slate-editor'
 
 const Content = () => {
   const { id } = useParams()
@@ -163,7 +164,12 @@ const Content = () => {
                   </div> */}
                   {videoData && <VideoAction dataVideo={videoData as never} />}
                 </div>
-                <p className='px-6 text-sm font-normal leading-6'>{videoData?.content}</p>
+                {/* <p className='px-6 text-sm font-normal leading-6'>{videoData?.content}</p> */}
+                <SlateEditor
+                  className='!my-5 overflow-y-auto overflow-x-hidden px-6'
+                  valueSaleRender={videoData?.content && JSON.parse(videoData.content)}
+                  readOnly
+                />
               </div>
 
               <div id='scroll-base' className='px-4 lg:h-[240px]'>
