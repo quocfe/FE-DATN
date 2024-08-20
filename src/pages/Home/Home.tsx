@@ -9,8 +9,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import CreateStory from './Component/CreateStory'
 import ListStory from './Component/ListStory'
+import Modal from '~/components/Modal'
+import CreatePost from '~/components/CreatePost'
+import usePostStore from '~/store/post.store'
 
 function Home() {
+  const { isCreatePost, setIsCreatePost } = usePostStore()
   const [page, setPage] = useState<number>(1)
   const queryClient = useQueryClient()
   const { data } = useQueryPostsFromFriendsAndPendingRequests()
@@ -111,18 +115,20 @@ function Home() {
         {/* feed story */}
         <div className='mx-auto flex-1 space-y-3 md:max-w-[620px] xl:space-y-6'>
           {/* add story */}
-          <div className='border1 dark:bg-dark2 space-y-4 rounded-xl bg-white p-2 text-sm font-medium shadow-sm md:p-4'>
-            <div className='flex items-center gap-1 md:gap-3'>
+          <Modal isVisible={isCreatePost} onClose={() => setIsCreatePost(false)} width='40%'>
+            <CreatePost />
+          </Modal>
+
+          {/* Thêm mới bài viết */}
+          <div className='border1 dark:bg-dark2 space-y-4 rounded-xl bg-white p-4 text-sm font-medium shadow-sm'>
+            <div className='flex items-center gap-3'>
               <div
                 className='dark:bg-dark3 flex-1 cursor-pointer rounded-lg bg-slate-100 transition-all hover:bg-opacity-80'
-                uk-toggle='target: #create-status'
+                onClick={() => setIsCreatePost(true)}
               >
                 <div className='py-2.5 text-center dark:text-white'> Bạn đang suy nghĩ điều gì? </div>
               </div>
-              <div
-                className='cursor-pointer rounded-xl bg-pink-100/60 p-1 px-1.5 transition-all hover:bg-pink-100 hover:bg-opacity-80 dark:bg-white/10 dark:hover:bg-white/20'
-                uk-toggle='target: #create-status'
-              >
+              <div className='cursor-pointer rounded-lg bg-pink-100/60 p-1 px-1.5 transition-all hover:bg-pink-100 hover:bg-opacity-80'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   className='h-8 w-8 fill-pink-200/70 stroke-pink-600'
@@ -140,10 +146,7 @@ function Home() {
                   <path d='M14 14l1 -1c.928 -.893 2.072 -.893 3 0l2.5 2.5' />
                 </svg>
               </div>
-              <div
-                className='cursor-pointer rounded-xl bg-sky-100/60 p-1 px-1.5 transition-all hover:bg-sky-100 hover:bg-opacity-80 dark:bg-white/10 dark:hover:bg-white/20'
-                uk-toggle='target: #create-status'
-              >
+              <div className='cursor-pointer rounded-lg bg-sky-100/60 p-1 px-1.5 transition-all hover:bg-sky-100 hover:bg-opacity-80'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   className='h-8 w-8 fill-sky-200/70 stroke-sky-600 '
@@ -161,7 +164,6 @@ function Home() {
               </div>
             </div>
           </div>
-          {/*  post image with slider*/}
 
           <Post posts={posts} />
           {pages > 1 && page < pages && posts.length < total && (

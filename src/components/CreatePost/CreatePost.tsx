@@ -91,7 +91,9 @@ function CreatePost() {
         if (user_id) {
           queryClient.invalidateQueries({ queryKey: ['user_posts', { user_id }] })
         } else {
+          queryClient.invalidateQueries({ queryKey: ['my_media_resources'] })
           queryClient.invalidateQueries({ queryKey: ['my_posts'] })
+          queryClient.invalidateQueries({ queryKey: ['posts_from_friends_and_pending_requests'] })
         }
 
         toast.success('Đăng bài mới thành công')

@@ -6,9 +6,16 @@ import FanpageApi from '~/apis/fanpage.api'
 import uploadFileApi from '~/apis/uploadFileApi'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { FanpageNoId, FanpageResponse, Fanpage as FanpageType } from '~/@types/fanpage'
+import Modal from '~/components/Modal'
+import CreatePost from '~/components/CreatePost'
+import usePostStore from '~/store/post.store'
+import useQueryListPostFanpage from '~/hooks/queries/post/useQueryListPostFanpage'
+import Post from '~/components/Post'
 //FanpageMember
 function FanpageDetail() {
+  const { isCreatePost, setIsCreatePost } = usePostStore()
   const { fanpageId } = useParams<{ fanpageId: any }>()
+  const { data } = useQueryListPostFanpage(fanpageId)
   const [fanpage, setFanpage] = React.useState<any | null>(null)
   const [isFollowing, setIsFollowing] = React.useState<boolean>(false)
   const [isJoin, setIsJoin] = React.useState<boolean>(false)
@@ -17,6 +24,10 @@ function FanpageDetail() {
   const [inviteUserId, setInviteUserId] = React.useState<string>('')
   const [likesCount, setLikesCount] = React.useState<number>(0)
   const [followsCount, setFollowsCount] = React.useState<number>(0)
+
+  const pages = data?.data.data.pages ?? 0
+  const total = data?.data.data.total ?? 0
+  const posts = data?.data.data.posts ?? []
 
   const fetchFanpage = async () => {
     try {
@@ -279,18 +290,20 @@ function FanpageDetail() {
         {/* feed story */}
         <div className='flex-1 space-y-3 xl:space-y-6'>
           {/* add story */}
+          <Modal isVisible={isCreatePost} onClose={() => setIsCreatePost(false)} width='40%'>
+            <CreatePost />
+          </Modal>
+
+          {/* Thêm mới bài viết */}
           <div className='border1 dark:bg-dark2 space-y-4 rounded-xl bg-white p-4 text-sm font-medium shadow-sm'>
             <div className='flex items-center gap-3'>
               <div
                 className='dark:bg-dark3 flex-1 cursor-pointer rounded-lg bg-slate-100 transition-all hover:bg-opacity-80'
-                uk-toggle='target: #create-status'
+                onClick={() => setIsCreatePost(true)}
               >
-                <div className='py-2.5 text-center dark:text-white'> Bạn có suy nghĩ gì? </div>
+                <div className='py-2.5 text-center dark:text-white'> Bạn đang suy nghĩ điều gì? </div>
               </div>
-              <div
-                className='cursor-pointer rounded-lg bg-pink-100/60 p-1 px-1.5 transition-all hover:bg-pink-100 hover:bg-opacity-80'
-                uk-toggle='target: #create-status'
-              >
+              <div className='cursor-pointer rounded-lg bg-pink-100/60 p-1 px-1.5 transition-all hover:bg-pink-100 hover:bg-opacity-80'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   className='h-8 w-8 fill-pink-200/70 stroke-pink-600'
@@ -308,10 +321,7 @@ function FanpageDetail() {
                   <path d='M14 14l1 -1c.928 -.893 2.072 -.893 3 0l2.5 2.5' />
                 </svg>
               </div>
-              <div
-                className='cursor-pointer rounded-lg bg-sky-100/60 p-1 px-1.5 transition-all hover:bg-sky-100 hover:bg-opacity-80'
-                uk-toggle='target: #create-status'
-              >
+              <div className='cursor-pointer rounded-lg bg-sky-100/60 p-1 px-1.5 transition-all hover:bg-sky-100 hover:bg-opacity-80'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   className='h-8 w-8 fill-sky-200/70 stroke-sky-600 '
@@ -329,454 +339,8 @@ function FanpageDetail() {
               </div>
             </div>
           </div>
-          {/*  post image*/}
-          <div className='border1 dark:bg-dark2 rounded-xl bg-white text-sm font-medium shadow-sm'>
-            {/* post heading */}
-            <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
-              <a href='timeline.html'>
-                {' '}
-                <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='h-9 w-9 rounded-full' />{' '}
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html'>
-                  {' '}
-                  <h4 className='text-black dark:text-white'> Monroe Parker </h4>{' '}
-                </a>
-                <div className='text-xs text-gray-500 dark:text-white/80'> 2 giờ trước</div>
-              </div>
-              <div className='-mr-1'>
-                <button type='button' className='button-icon h-8 w-8'>
-                  {' '}
-                  <IonIcon className='text-xl' name='ellipsis-horizontal' />{' '}
-                </button>
-                <div
-                  className='w-[245px]'
-                  uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click'
-                >
-                  <nav>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon className='shrink-0 text-xl' name='bookmark-outline' /> Thêm vào mục yêu thích{' '}
-                    </a>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon className='shrink-0 text-xl' name='notifications-off-outline' /> Tắt tiếng thông báo{' '}
-                    </a>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon className='shrink-0 text-xl' name='flag-outline' /> Báo cáo bài viết này{' '}
-                    </a>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon className='shrink-0 text-xl' name='share-outline' /> Chia sẻ hồ sơ của bạn{' '}
-                    </a>
-                    <hr />
-                    <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                      {' '}
-                      <IonIcon className='shrink-0 text-xl' name='stop-circle-outline' /> Hủy theo dõi{' '}
-                    </a>
-                  </nav>
-                </div>
-              </div>
-            </div>
-            {/* post image */}
-            <div className='relative h-full w-full sm:px-4 lg:h-96'>
-              <img src='src/assets/images/post/img-2.jpg' alt='' className='h-full w-full object-cover sm:rounded-lg' />
-            </div>
-            {/* post icons */}
-            <div className='flex items-center gap-4 p-2.5 text-xs font-semibold sm:p-4'>
-              <div>
-                <div className='flex items-center gap-2.5'>
-                  <button type='button' className='button-icon bg-red-100 text-red-500 dark:bg-slate-700'>
-                    {' '}
-                    <IonIcon className='text-lg' name='heart' />{' '}
-                  </button>
-                  <a href='#'>1,300</a>
-                </div>
-                <div
-                  className='w-[212px] rounded-full bg-white p-1 px-2 text-2xl drop-shadow-md dark:bg-slate-700'
-                  uk-drop='offset:10;pos: top-left; animate-out: true; animation: uk-animation-scale-up uk-transform-origin-bottom-left'
-                >
-                  <div
-                    className='flex gap-2'
-                    uk-scrollspy='target: > button; cls: uk-animation-scale-up; delay: 100 ;repeat: true'
-                  >
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 👍 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> ❤️ </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 😂 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 😯 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 😢 </span>
-                    </button>
-                  </div>
-                  <div className='absolute -bottom-1 left-3 hidden h-2.5 w-2.5 rotate-45 bg-white' />
-                </div>
-              </div>
-              <div className='flex items-center gap-3'>
-                <button type='button' className='button-icon bg-slate-200/70 dark:bg-slate-700'>
-                  {' '}
-                  <IonIcon className='text-lg' name='chatbubble-ellipses' />{' '}
-                </button>
-                <span>260</span>
-              </div>
-              <button type='button' className='button-icon ml-auto'>
-                {' '}
-                <IonIcon className='text-xl' name='paper-plane-outline' />{' '}
-              </button>
-              <button type='button' className='button-icon'>
-                {' '}
-                <IonIcon className='text-xl' name='share-outline' />{' '}
-              </button>
-            </div>
-            {/* comments */}
-            <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40'>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  {' '}
-                  <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />{' '}
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    {' '}
-                    Steeve{' '}
-                  </a>
-                  <p className='mt-0.5'>Thật là một bức ảnh đẹp! Tôi thích điều đó. 😍 </p>
-                </div>
-              </div>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  {' '}
-                  <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />{' '}
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    {' '}
-                    Monroe{' '}
-                  </a>
-                  <p className='mt-0.5'> Bạn đã ghi lại khoảnh khắc.😎 </p>
-                </div>
-              </div>
-              <button type='button' className='mt-2 flex items-center gap-1.5 text-gray-500 hover:text-blue-500'>
-                <IonIcon name='chevron-down-outline' className='ml-auto duration-200 group-aria-expanded:rotate-180' />
-                Thêm bình luận
-              </button>
-            </div>
-            {/* add comment */}
-            <div className='flex items-center gap-1 border-t border-gray-100 p-2.5 sm:px-4 sm:py-3 dark:border-slate-700/40'>
-              <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='h-6 w-6 rounded-full' />
-              <div className='relative h-10 flex-1 overflow-hidden'>
-                <textarea
-                  placeholder='Add Comment....'
-                  rows={1}
-                  className='w-full resize-none !bg-transparent px-4 py-2 focus:!border-transparent focus:!ring-transparent'
-                  defaultValue={''}
-                />
-                <div className='!top-2 pr-2' uk-drop='pos: bottom-right; mode: click'>
-                  <div
-                    className='flex items-center gap-2'
-                    uk-scrollspy='target: > svg; cls: uk-animation-slide-right-small; delay: 100 ;repeat: true'
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 24 24'
-                      fill='currentColor'
-                      className='h-6 w-6 fill-sky-600'
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z'
-                        clipRule='evenodd'
-                      />
-                    </svg>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
-                      className='h-5 w-5 fill-pink-600'
-                    >
-                      <path d='M3.25 4A2.25 2.25 0 001 6.25v7.5A2.25 2.25 0 003.25 16h7.5A2.25 2.25 0 0013 13.75v-7.5A2.25 2.25 0 0010.75 4h-7.5zM19 4.75a.75.75 0 00-1.28-.53l-3 3a.75.75 0 00-.22.53v4.5c0 .199.079.39.22.53l3 3a.75.75 0 001.28-.53V4.75z' />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <button type='submit' className='rounded-full bg-secondery px-3.5 py-1.5 text-sm'>
-                {' '}
-                Replay
-              </button>
-            </div>
-          </div>
-          {/* post text*/}
-          <div className='border1 dark:bg-dark2 rounded-xl bg-white text-sm font-medium shadow-sm'>
-            {/* post heading */}
-            <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
-              <a href='timeline.html'>
-                {' '}
-                <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='h-9 w-9 rounded-full' />{' '}
-              </a>
-              <div className='flex-1'>
-                <a href='timeline.html'>
-                  {' '}
-                  <h4 className='text-black dark:text-white'> John Michael </h4>{' '}
-                </a>
-                <div className='text-xs text-gray-500 dark:text-white/80'> 2 hours ago</div>
-              </div>
-              <div className='-mr-1'>
-                <button type='button' className='button__ico h-8 w-8' aria-haspopup='true' aria-expanded='false'>
-                  {' '}
-                  <IonIcon
-                    className='md hydrated text-xl'
-                    name='ellipsis-horizontal'
-                    role='img'
-                    aria-label='ellipsis horizontal'
-                  />{' '}
-                </button>
-                <div
-                  className='uk-dropdown w-[245px]'
-                  uk-dropdown='pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click'
-                >
-                  <nav>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon
-                        className='md hydrated shrink-0 text-xl'
-                        name='bookmark-outline'
-                        role='img'
-                        aria-label='bookmark outline'
-                      />{' '}
-                      Thêm vào mục yêu thích{' '}
-                    </a>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon
-                        className='md hydrated shrink-0 text-xl'
-                        name='notifications-off-outline'
-                        role='img'
-                        aria-label='notifications off outline'
-                      />{' '}
-                      Tắt tiếng thông báo{' '}
-                    </a>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon
-                        className='md hydrated shrink-0 text-xl'
-                        name='flag-outline'
-                        role='img'
-                        aria-label='flag outline'
-                      />{' '}
-                      Báo cáo bài viết này{' '}
-                    </a>
-                    <a href='#'>
-                      {' '}
-                      <IonIcon
-                        className='md hydrated shrink-0 text-xl'
-                        name='share-outline'
-                        role='img'
-                        aria-label='share outline'
-                      />{' '}
-                      Chia sẻ hồ sơ của bạn{' '}
-                    </a>
-                    <hr />
-                    <a href='#' className='text-red-400 hover:!bg-red-50 dark:hover:!bg-red-500/50'>
-                      {' '}
-                      <IonIcon
-                        className='md hydrated shrink-0 text-xl'
-                        name='stop-circle-outline'
-                        role='img'
-                        aria-label='stop circle outline'
-                      />{' '}
-                      Hủy theo dõi{' '}
-                    </a>
-                  </nav>
-                </div>
-              </div>
-            </div>
-            <div className='p-2.5 pt-0 sm:px-4'>
-              <p className='font-normal'>
-                {' '}
-                Nhiếp ảnh là nghệ thuật thu ánh sáng bằng máy ảnh. Nó có thể được sử dụng để tạo ra hình ảnh cho biết
-                câu chuyện, thể hiện cảm xúc hoặc ghi lại thực tế. Nó có thể là niềm vui, thử thách hoặc bổ ích. Nó cũng
-                có thể là Một sở thích, một nghề nghiệp hoặc một niềm đam mê. 📷{' '}
-              </p>
-            </div>
-            {/* post icons */}
-            <div className='flex items-center gap-4 p-2.5 text-xs font-semibold sm:p-4'>
-              <div>
-                <div className='flex items-center gap-2.5'>
-                  <button type='button' className='button-icon bg-red-100 text-red-500 dark:bg-slate-700'>
-                    {' '}
-                    <IonIcon className='text-lg' name='heart' />{' '}
-                  </button>
-                  <a href='#'>1,300</a>
-                </div>
-                <div
-                  className='w-[212px] rounded-full bg-white p-1 px-2 text-2xl drop-shadow-md dark:bg-slate-700'
-                  uk-drop='offset:10;pos: top-left; animate-out: true; animation: uk-animation-scale-up uk-transform-origin-bottom-left'
-                >
-                  <div
-                    className='flex gap-2'
-                    uk-scrollspy='target: > button; cls: uk-animation-scale-up; delay: 100 ;repeat: true'
-                  >
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 👍 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> ❤️ </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 😂 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 😯 </span>
-                    </button>
-                    <button type='button' className='text-red-600 duration-300 hover:scale-125'>
-                      {' '}
-                      <span> 😢 </span>
-                    </button>
-                  </div>
-                  <div className='absolute -bottom-1 left-3 hidden h-2.5 w-2.5 rotate-45 bg-white' />
-                </div>
-              </div>
-              <div className='flex items-center gap-3'>
-                <button type='button' className='button-icon bg-slate-200/70 dark:bg-slate-700'>
-                  {' '}
-                  <IonIcon className='text-lg' name='chatbubble-ellipses' />{' '}
-                </button>
-                <span>260</span>
-              </div>
-              <button type='button' className='button-icon ml-auto'>
-                {' '}
-                <IonIcon className='text-xl' name='paper-plane-outline' />{' '}
-              </button>
-              <button type='button' className='button-icon'>
-                {' '}
-                <IonIcon className='text-xl' name='share-outline' />{' '}
-              </button>
-            </div>
-            {/* comments */}
-            <div className='relative space-y-3 border-t border-gray-100 p-2.5 font-normal sm:p-4 dark:border-slate-700/40'>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  {' '}
-                  <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />{' '}
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    {' '}
-                    Steeve{' '}
-                  </a>
-                  <p className='mt-0.5'> I love taking photos of nature and animals. 🌳🐶</p>
-                </div>
-              </div>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  {' '}
-                  <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />{' '}
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    {' '}
-                    Monroe{' '}
-                  </a>
-                  <p className='mt-0.5'> I enjoy people and emotions. 😊😢 </p>
-                </div>
-              </div>
-              <div className='relative flex items-start gap-3'>
-                <a href='timeline.html'>
-                  {' '}
-                  <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='mt-1 h-6 w-6 rounded-full' />{' '}
-                </a>
-                <div className='flex-1'>
-                  <a href='timeline.html' className='inline-block font-medium text-black dark:text-white'>
-                    {' '}
-                    Jesse{' '}
-                  </a>
-                  <p className='mt-0.5'> Photography is my passion. 🎨📸 </p>
-                </div>
-              </div>
-            </div>
-            {/* add comment */}
-            <div className='flex items-center gap-1 border-t border-gray-100 p-2.5 sm:px-4 sm:py-3 dark:border-slate-700/40'>
-              <img src='src/assets/images/avatars/avatar-7.jpg' alt='' className='h-6 w-6 rounded-full' />
-              <div className='relative h-10 flex-1 overflow-hidden'>
-                <textarea
-                  placeholder='Add Comment....'
-                  rows={1}
-                  className='w-full resize-none !bg-transparent px-4 py-2 focus:!border-transparent focus:!ring-transparent'
-                  aria-haspopup='true'
-                  aria-expanded='false'
-                  defaultValue={''}
-                />
-                <div className='uk-drop !top-2 pr-2' uk-drop='pos: bottom-right; mode: click'>
-                  <div
-                    className='flex items-center gap-2'
-                    uk-scrollspy='target: > svg; cls: uk-animation-slide-right-small; delay: 100 ;repeat: true'
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 24 24'
-                      fill='currentColor'
-                      className='h-6 w-6 fill-sky-600'
-                      style={{ opacity: 0 }}
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z'
-                        clipRule='evenodd'
-                      />
-                    </svg>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 20 20'
-                      fill='currentColor'
-                      className='h-5 w-5 fill-pink-600'
-                      style={{ opacity: 0 }}
-                    >
-                      <path d='M3.25 4A2.25 2.25 0 001 6.25v7.5A2.25 2.25 0 003.25 16h7.5A2.25 2.25 0 0013 13.75v-7.5A2.25 2.25 0 0010.75 4h-7.5zM19 4.75a.75.75 0 00-1.28-.53l-3 3a.75.75 0 00-.22.53v4.5c0 .199.079.39.22.53l3 3a.75.75 0 001.28-.53V4.75z' />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <button type='submit' className='rounded-full bg-secondery px-3.5 py-1.5 text-sm'>
-                {' '}
-                Replay
-              </button>
-            </div>
-          </div>
-          {/* placeholder */}
-          <div className='border1 dark:bg-dark2 animate-pulse space-y-4 rounded-xl bg-slate-200/40 p-4 shadow-sm'>
-            <div className='flex gap-3'>
-              <div className='h-9 w-9 rounded-full bg-slate-300/20' />
-              <div className='flex-1 space-y-3'>
-                <div className='h-5 w-40 rounded-md bg-slate-300/20' />
-                <div className='h-4 w-24 rounded-md bg-slate-300/20' />
-              </div>
-              <div className='h-6 w-6 rounded-full bg-slate-300/20' />
-            </div>
-            <div className='my-3 h-52 w-full rounded-lg bg-slate-300/10'> </div>
-            <div className='flex gap-3'>
-              <div className='h-5 w-16 rounded-md bg-slate-300/20' />
-              <div className='h-5 w-14 rounded-md bg-slate-300/20' />
-              <div className='ml-auto h-6 w-6 rounded-full bg-slate-300/20' />
-              <div className='h-6 w-6 rounded-full bg-slate-300/20  ' />
-            </div>
-          </div>
+
+          <Post posts={posts} fanpage={data?.data.data.fanpage} />
         </div>
         <div className='lg:w-[400px]'>
           <div

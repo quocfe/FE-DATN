@@ -85,7 +85,7 @@ function Search({ profile }: Props) {
 
       <div
         className='uk- open uk-drop z-10 hidden'
-uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
+        uk-drop='pos: bottom-center ; animation: uk-animation-slide-bottom-small;mode:click '
       >
         <div className='dark:bg-dark3 -mt-14 w-screen rounded-lg bg-white p-2 pt-14 shadow-lg sm:w-96 xl:w-[694px]'>
           {searchValue === '' ? (
