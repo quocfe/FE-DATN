@@ -168,9 +168,10 @@ function FanpageCreate() {
               <div className='relative z-10 mb-4 h-20 w-20'>
                 <div className='relative shrink-0 overflow-hidden rounded-full border-gray-100 shadow md:border-[2px] dark:border-slate-900'>
                   <img
-                    src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                    // src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                    src={file || 'https://i.pinimg.com/originals/b4/4a/ae/b44aae119e1a1334eb416905f2082ad1.jpg'}
                     alt='Avatar'
-                    className='inset-0 h-full w-full object-cover'
+                    className='inset-0 h-[78px] w-full object-cover'
                   />
                 </div>
               </div>
