@@ -27,6 +27,10 @@ function PublicProfile({ children }: Props) {
   const relationship = data?.data.data.relationship ?? null
   const profile = data?.data.data.user ?? null
 
+  if (relationship?.status === 'Đã chặn') {
+    navigate('/setting/blocks')
+  }
+
   return (
     <div className='mx-auto max-w-[1065px] max-lg:-m-2.5'>
       <div className='dark:bg-dark2 bg-white shadow lg:-mt-10 lg:rounded-b-2xl'>

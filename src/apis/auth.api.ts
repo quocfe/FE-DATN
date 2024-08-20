@@ -5,7 +5,7 @@ import { LoginForm, RegisterForm } from '~/utils/rules'
 
 class authApi {
   login(data: LoginForm) {
-    return http.post<AuthResponse>(AUTH.LOGIN, data)
+    return http.post<AuthResponse>(AUTH.LOGIN, data, { withCredentials: true })
   }
 
   register(data: RegisterForm) {

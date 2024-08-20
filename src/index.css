@@ -33,6 +33,7 @@
   /* Basic */
   body {
     @apply bg-bgbody font-normal text-gray-600 dark:text-white;
+    overflow-y: visible !important;
   }
 
   /* Basic */
