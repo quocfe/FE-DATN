@@ -86,7 +86,7 @@ const FormUpdateContent = ({ setIsOpenUpdate, dataVideo, setVideoData }: FormUpd
           <div className='mt-3 space-y-5  p-2'>
             <div className='flex items-center gap-x-2 px-2'>
               <div className='relative shrink-0 cursor-pointer rounded-full'>
-                <img className='size-9 shrink-0 rounded-full shadow ' src={profile?.Profile.cover_photo} alt='' />
+                <img className='size-9 shrink-0 rounded-full shadow ' src={profile?.Profile.profile_picture} alt='' />
               </div>
               <div className=''>
                 <div className='text-sm font-medium text-black'>{profile?.first_name}</div>

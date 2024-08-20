@@ -18,8 +18,8 @@ class VideoApi {
     })
   }
 
-  async get(page: number) {
-    const res = await http.get<VideoResponse>(VIDEO_PATH.GET + `?page=${page}`)
+  async get(page: number, contentText: string = '') {
+    const res = await http.get<VideoResponse>(VIDEO_PATH.GET + `?page=${page}&contentText=${contentText}`)
     return res.data
   }
 

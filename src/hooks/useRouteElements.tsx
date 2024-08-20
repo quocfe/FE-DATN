@@ -45,6 +45,7 @@ import WatchDetail from '~/pages/WatchDetail'
 import Profile from '~/pages/Profile'
 import Game from '~/pages/Game/Game'
 import GamePlay from '~/pages/Game/GamePlay'
+import WatchSearch from '~/pages/WatchSearch'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -358,6 +359,14 @@ function useRouteElements() {
           element: (
             <VideoLayout>
               <WatchDetail />
+            </VideoLayout>
+          )
+        },
+        {
+          path: ROUTE_PATH.WATCH_SEARCH,
+          element: (
+            <VideoLayout>
+              <WatchSearch />
             </VideoLayout>
           )
         }

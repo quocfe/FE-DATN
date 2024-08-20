@@ -43,7 +43,7 @@ function Header() {
             </button>
             <div id='logo'>
               <Link to={'/'}>
-                <img src='/src/assets/images/logo.png' alt='' className='hidden w-28 md:block dark:!hidden' />
+                <img src='/src/assets/images/logodevbook.png' alt='' className='hidden w-28 md:block dark:!hidden' />
                 <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
                 <img
                   src='/src/assets/images/logo-mobile.png'
