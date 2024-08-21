@@ -17,7 +17,6 @@ function CreateStory({ closeStory }: any) {
   const [previewImg, setPreviewImg] = useState<string>('')
   const { uploadStory } = useFileUpload()
 
- 
   const [searchParams] = useSearchParams()
   const idSearch: any = searchParams.get('isEdit')
   const idSearch2: any = searchParams.get('id')
@@ -70,7 +69,8 @@ function CreateStory({ closeStory }: any) {
       text: dataStory,
       privacy: '1',
       tag: '1231323',
-      music: 'ccc'
+      music: 'ccc',
+      is_archived: false
     }
     idSearch ? handelEdit(idSearch2, test) : handelCreate(test)
     queryClient.invalidateQueries()
@@ -157,37 +157,29 @@ function CreateStory({ closeStory }: any) {
                 className='mt-3 w-full'
               />
             </div>
-           <div
-  className='border1 relative h-72 w-full overflow-hidden rounded-lg'
-  style={{
-    backgroundImage: !isVideo ? `url(${preview})` : 'none'
-  }}
->
-  <label
-    htmlFor='createStatusUrl'
-    className='absolute bottom-0 left-1/2 z-10 flex w-full -translate-x-1/2 cursor-pointer flex-col items-center justify-center bg-gradient-to-t from-gray-700/60 pb-6 pt-10'
-  >
-    <div {...getRootProps()}>
-      <input {...getInputProps()} className='hidden' />
-      <IonIcon name={isVideo ? 'videocam' : 'image'} className='text-5xl text-teal-600' />
-    </div>
-  </label>
-  {isVideo ? (
-    <video
-      id='createStatusVideo'
-      src={preview}
-      controls
-      className='absolute h-full w-full object-cover'
-    />
-  ) : (
-    <img
-      id='createStatusImage'
-      src={preview}
-      alt=''
-      className='absolute h-full w-full object-cover'
-    />
-  )}
-</div>
+            <div
+              className='border1 relative h-72 w-full overflow-hidden rounded-lg'
+              style={{
+                backgroundImage: !isVideo ? `url(${preview})` : 'none'
+              }}
+            >
+              <label
+                htmlFor='createStatusUrl'
+                className='absolute bottom-0 left-1/2 top-0 z-10 flex w-full -translate-x-1/2 cursor-pointer flex-col items-center justify-center bg-gradient-to-t from-gray-700/60 pb-6 pt-10'
+              >
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} className='hidden' />
+                  <IonIcon name={isVideo ? 'videocam' : 'image'} className='text-5xl text-teal-600' />
+                </div>
+              </label>
+              {isVideo ? (
+                <video id='createStatusVideo' src={preview} controls className='absolute h-full w-full object-cover' />
+              ) : (
+                preview != '' && (
+                  <img id='createStatusImage' src={preview} alt='' className='absolute h-full w-full object-cover' />
+                )
+              )}
+            </div>
             <div className='flex items-center justify-between'>
               <div className='flex items-start gap-2'>
                 <IonIcon

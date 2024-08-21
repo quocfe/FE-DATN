@@ -25,7 +25,7 @@ function ListStory({ handelCheckToggle }: any) {
 
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  
+
   const handleCreate = (data: any) => {
     mutation.mutate(data, {
       onSuccess: () => {
@@ -43,7 +43,7 @@ function ListStory({ handelCheckToggle }: any) {
   return (
     <>
       {showCreateStory && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+        <div className='fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50'>
           <CreateStory handelCheckToggle={handelCheckToggle} closeStory={closeStory} />
         </div>
       )}

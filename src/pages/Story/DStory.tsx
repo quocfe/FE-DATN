@@ -36,8 +36,8 @@ function DStory() {
       if (!data) return
 
       const currentTime = new Date().getTime()
-      const twentyFourHours = 24 * 60 * 60 * 1000  // 24 hours in milliseconds
-      
+      const twentyFourHours = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+
       data.data.data.story.forEach((story: Story) => {
         const postedTime = new Date(story.story_time).getTime()
 
@@ -214,6 +214,7 @@ function DStory() {
       ]
     })
   }
+
   return (
     <>
       <Header />
@@ -276,7 +277,11 @@ function DStory() {
                     }`}
                   >
                     <div className='relative h-14 w-14 shrink-0'>
-                      <img src={story.content} alt='' className='h-full w-full rounded-full object-cover' />
+                      <img
+                        src={story.user.Profile.profile_picture}
+                        alt=''
+                        className='h-full w-full rounded-full object-cover'
+                      />
                       <div className='absolute bottom-0 right-0 h-4 w-4 rounded-full border border-white dark:border-slate-800' />
                     </div>
                     <div className='min-w-0 flex-1'>
@@ -303,7 +308,7 @@ function DStory() {
           </div>
           {/* Story center */}
           <div className='flex-1'>
-            <div className='aspect-w-9 aspect-h-16 relative top-7 mx-auto flex h-[700px] w-[450px] items-center justify-center rounded-2xl bg-gray-300'>
+            <div className='relative top-7 mx-auto flex h-[90%] w-[450px] items-center justify-center rounded-2xl bg-gray-300'>
               <button className='absolute right-4 top-4 z-20' onClick={toggleDropdown}>
                 <IonIcon name='ellipsis-horizontal' className='text-2xl' />
               </button>
@@ -379,11 +384,11 @@ function DStory() {
               {currentStory && currentStory.text && (
                 <div className='absolute bottom-10 left-0 right-0 p-6' justify-center='true'>
                   <div className='dark:bg-dark3 rounded-lg bg-white p-2 shadow-lg'>
-                    <p className='text-center text-black  dark:text-white'>{currentStory.text}</p>
+                    <p className='text-center text-black dark:text-white'>{currentStory.text}</p>
                   </div>
                 </div>
               )}
-              <div className=' absolute bottom-0 right-0 flex flex-row items-center  space-x-3 p-4'>
+              <div className='absolute bottom-0 right-0 flex flex-row items-center space-x-3 p-4 '>
                 <input
                   type='text'
                   className='dark:bg-dark3 w-200 rounded-full border border-gray-800 p-2 dark:border-gray-800'
