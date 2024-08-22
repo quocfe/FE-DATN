@@ -43,16 +43,6 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
 const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) => {
   const { selectedConversation, previewImg } = useConversationStore()
 
-  const scrollIntoViewFn = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ block: 'end' })
-    }
-  }
-
-  useLayoutEffect(() => {
-    scrollIntoViewFn()
-  }, [selectedConversation.group_id])
-
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLDivElement>(null)
   const { data: messageData } = useQueryMessage(1, 3)
@@ -80,6 +70,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   //     scrollIntoViewFn()
   //   }
   // }, [newArr.flat().length])
+  const scrollIntoViewFn = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ block: 'end' })
+    }
+  }
+
+  useLayoutEffect(() => {
+    scrollIntoViewFn()
+  }, [selectedConversation.group_id])
 
   useEffect(() => {
     if (isAtBottom) {

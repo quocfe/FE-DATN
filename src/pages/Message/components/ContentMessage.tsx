@@ -121,7 +121,9 @@ const ContentMessage = (params: props) => {
     const isUnsent = params.item.status === false
     const isReply = params.type === 'reply'
     const linkRegex = /(https?:\/\/[^\s]+)/g
-
+    if (Object.keys(params.item).length == 0 && params.type == 'reply') {
+      return <p className={`-mt-[10px]  truncate break-words text-[15px] text-gray-400`}>Bạn đã xóa tin nhắn này</p>
+    }
     switch (params.item.type) {
       case 1:
         return params.item.body.match(linkRegex) ? (
@@ -308,16 +310,6 @@ const ContentMessage = (params: props) => {
     )
   }
 
-  const loadMore = async () => {
-    const a = await fetchNextPage()
-
-    if (a.hasNextPage) {
-      return true
-    } else {
-      return false
-    }
-  }
-
   const handleGoToOldMessage = async () => {
     let checkEl = document.getElementById(params.item.message_id)
 
@@ -344,7 +336,7 @@ const ContentMessage = (params: props) => {
       setTimeout(() => {
         const element = document.getElementById(params.item.message_id)
         if (element) {
-          element.scrollIntoView()
+          handleToOldMessage(params.item.message_id)
         }
       }, 300)
       console.log('Đã di chuyển tới tin nhắn.')
