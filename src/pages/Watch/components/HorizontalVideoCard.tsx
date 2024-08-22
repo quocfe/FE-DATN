@@ -49,6 +49,7 @@ const HorizontalVideoCard = ({ video, setVideoData }: HorizontalVideoCardProps) 
               readOnly
             />
           </div>
+          {/* Action video item */}
           <VideoAction dataVideo={video} setVideoData={setVideoData} />
         </div>
         {/* <img src='src/assets/images/video/img-2.png' alt='' />

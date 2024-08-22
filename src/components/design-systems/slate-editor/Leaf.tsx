@@ -1,6 +1,8 @@
 import React from 'react'
 import type { RenderLeafProps } from 'slate-react'
 
+// Custom html css highlight content
+
 const Leaf: React.FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   if (leaf.highlight && !leaf.highlightTag) {
     return (
