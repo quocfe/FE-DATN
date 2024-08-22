@@ -1,10 +1,10 @@
 import { IonIcon } from '@ionic/react'
-import useAuthStore from '~/store/auth.store'
-import useMutationLogout from './hooks/useMutationLogout'
 import { Link } from 'react-router-dom'
+import useAuthStore from '~/store/auth.store'
+import useMessageFixStore from '~/store/messageFix.store'
 import MessageHeader from './components/MessageHeader/MessageHeader'
 import Search from './components/Search'
-import useMessageFixStore from '~/store/messageFix.store'
+import useMutationLogout from './hooks/useMutationLogout'
 
 function Header() {
   const { profile } = useAuthStore()
@@ -48,13 +48,12 @@ function Header() {
             <div id='logo'>
               <Link to={'/'}>
                 <img src='/src/assets/images/logodevbook.png' alt='' className='hidden w-28 md:block dark:!hidden' />
-                <img src='/src/assets/images/logo-light.png' alt='' className='hidden dark:md:block' />
                 <img
-                  src='/src/assets/images/logo-mobile.png'
+                  src='/src/assets/images/logodevbook.png'
                   className='hidden w-20 max-md:block dark:!hidden'
                   alt=''
                 />
-                <img src='/src/assets/images/logo-mobile-light.png' className='hidden w-20 dark:max-md:block' alt='' />
+                <img src='/src/assets/images/logodevbook.png' className='hidden w-20 dark:max-md:block' alt='' />
               </Link>
             </div>
           </div>

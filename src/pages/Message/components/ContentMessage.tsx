@@ -295,12 +295,14 @@ const ContentMessage = (params: props) => {
               <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
             )}
           </div>
-          <ModalMemberReact
-            reactArr={params.item.reactions}
-            group_id={params.item.group_message_id}
-            isOpen={isOpenModalReactMsg}
-            onClose={() => setIsOpenModalReactMsg(false)}
-          />
+          {selectedConversation.type === 2 && (
+            <ModalMemberReact
+              reactArr={params.item.reactions}
+              group_id={params.item.group_message_id}
+              isOpen={isOpenModalReactMsg}
+              onClose={() => setIsOpenModalReactMsg(false)}
+            />
+          )}
         </>
       )
     )

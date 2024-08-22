@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
 import useAuthStore from '~/store/auth.store'
@@ -49,7 +49,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     scrollIntoViewFn()
   }, [selectedConversation.group_id])
 
@@ -73,14 +73,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   const lastArrRefs = newArr[0]
   const lastRef = lastArrRefs && lastArrRefs[0]
 
-  useEffect(() => {
-    if (!isAtBottom && isFetchingNextPage) {
-      scrollIntoViewFn()
-    }
-  }, [newArr.flat().length])
+  // useEffect(() => {
+  //   console.log('test 1')
+  //   if (!isAtBottom && isFetchingNextPage) {
+  //     console.log('scrolling 1')
+  //     scrollIntoViewFn()
+  //   }
+  // }, [newArr.flat().length])
 
   useEffect(() => {
     if (isAtBottom) {
+      console.log('scrolling 2')
       scrollIntoViewFn()
     } else {
       setShowNewMsg(true)
@@ -130,8 +133,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
         <Spinner classNames='flex items-center justify-center' w='6' h='6' title='Đang tải tin nhắn' />
       )}
       <div className='space-y-2 text-sm font-medium'>
-        {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
-          <div className='space-y-2' key={date}>
+        {Object.entries(groupedMessagesByDate).map(([date, dayMessages], index) => (
+          <div className='space-y-2' key={index}>
             <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
             {dayMessages.map((item, index) => {
               const previousMessage = index > 0 ? dayMessages[index - 1] : undefined

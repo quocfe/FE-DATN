@@ -2,10 +2,9 @@ import EducationIcon from '~/components/icons/Profile/EducationIcon'
 import HomeTownIcon from '~/components/icons/Profile/HomeTownIcon'
 import JobIcon from '~/components/icons/Profile/JobIcon'
 import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
-import MyFriends from './MyFriends'
-import React from 'react'
-import useQueryMediaResources from '~/hooks/queries/user/useQueryMediaResources'
-
+// import MyFriends from './MyFriends'
+import React, { useState, useEffect } from 'react'
+// import { UserProfile } from '~/@types/user'
 
 interface Props {
   profile: UserProfile | null
@@ -32,8 +31,6 @@ const ProfileItem = ({ icon, title, text }: { icon: JSX.Element; title: string; 
 )
 
 function Introduce({ profile, setShowModal }: Props) {
-  const { data } = useQueryMediaResources()
-  const media_resources = data?.data.data.media_resources ?? []
   const getRelationshipStatus = (status: number) => relationshipStatuses[status] || 'Không xác định'
 
   return (
@@ -61,9 +58,7 @@ function Introduce({ profile, setShowModal }: Props) {
               <ProfileItem
                 icon={<RelationshipIcon />}
                 title='Tình trạng'
-                text={getRelationshipStatus(
-                  profile.Profile.relationship_status === 0 ? 0 : profile.Profile.relationship_status - 1
-                )}
+                text={getRelationshipStatus(profile.Profile.relationship_status - 1)}
               />
             )}
             <li className='flex items-center gap-3'>
@@ -100,28 +95,26 @@ function Introduce({ profile, setShowModal }: Props) {
             </div>
           )}
           <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
-            {media_resources.slice(0, 4).map((media) => {
-              if (media.media_type === 'image') {
-                return (
-                  <div className='relative aspect-[4/3] w-full' key={media.media_id}>
-                    <img src={media.media_url} alt='' className='inset-0 h-full w-full object-cover object-center' />
-                  </div>
-                )
-              } else {
-                return (
-                  <video
-                    key={media.media_id}
-                    src={media.media_url}
-                    className='h-full w-full object-cover'
-                    controls
-                  ></video>
-                )
-              }
-            })}
+            <div className='relative aspect-[4/3] w-full'>
+              <img
+                src='https://res.cloudinary.com/dswainylr/image/upload/v1717866186/50615f8b24c2879cded3_ykqrnu.jpg'
+                alt=''
+                className='inset-0 h-full w-full object-cover object-center'
+              />
+            </div>
+            <div className='relative aspect-[4/3] w-full'>
+              <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+            </div>
+            <div className='relative aspect-[4/3] w-full'>
+              <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+            </div>
+            <div className='relative aspect-[4/3] w-full'>
+              <img src='src/assets/images/avatars/avatar-6.jpg' alt='' className='inset-0 h-full w-full object-cover' />
+            </div>
           </div>
         </div>
         {/* Bạn bè */}
-        <MyFriends />
+        {/* <MyFriends /> */}
       </div>
     </div>
   )

@@ -1,4 +1,5 @@
 import { IonIcon } from '@ionic/react'
+import { useQueryClient } from '@tanstack/react-query'
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
@@ -8,20 +9,15 @@ import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import useMutationReplyMessage from '../hooks/useMutaion/useMutationReplyMessage'
 import { useMutationSendMessage, useMutationSendMessageAttach } from '../hooks/useMutaion/useMutationSendMessage'
+import useNotifyMessage from '../hooks/useMutaion/useNotifyMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
 import useFileUpload from '../utils/uploadApi'
 import IsTyping from './components/IsTyping'
 import EmojiBox from './EmojiBox'
-import ModalRecordMessage from './RecordMessage'
 import RecordMessage from './RecordMessage'
-import useMessageStore from '~/store/message.store'
-import { useQueryClient } from '@tanstack/react-query'
-import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
-import TextareaAutosize from 'react-textarea-autosize'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
-import useNotifyMessage from '../hooks/useMutaion/useNotifyMessage'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -223,9 +219,11 @@ function SendMessage({ boxReplyRef, previewUploadRef }: SendMessageType) {
       user_id: profile.user_id
     }
     if (groupID) {
-      socket?.emit('seenMessage', JSON.stringify(dataSeen))
       socket?.emit('isTyping', JSON.stringify(data))
-      deleteNotify.mutate(groupID)
+      if (numberNotify) {
+        socket?.emit('seenMessage', JSON.stringify(dataSeen))
+        deleteNotify.mutate(groupID)
+      }
     }
   }
   return (

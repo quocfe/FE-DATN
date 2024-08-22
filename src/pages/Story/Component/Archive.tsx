@@ -12,6 +12,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css' // Import CSS của th�
 import { Story } from '~/@types/story'
 import useMutationRestore from './hook/userMutationArchive'
 import useQueryArchive from './hook/useMutationGetArchived'
+import Dialog from '~/components/Dialog'
 
 function ArchiveStory() {
   const [currentStory, setCurrentStory] = useState<Story | null>(null)
@@ -20,6 +21,8 @@ function ArchiveStory() {
   const idSearch: any = searchParams.get('id')
   const storyId = searchParams.get('id')
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null)
   const mutation = useMutationRemove()
@@ -52,32 +55,17 @@ function ArchiveStory() {
   // Xóa tin
   const handelDelete = (data: any) => {
     // Hộp thoại xác nhận
-    confirmAlert({
-      title: 'Xác nhận Xóa',
-      message: 'Bạn có chắc chắn muốn Xóa tin này không?',
-      buttons: [
-        {
-          label: 'Có',
-          onClick: () => {
-            mutation.mutate(data, {
-              onSuccess: () => {
-                toast.success('Xóa tin thành công')
-                queryClient.invalidateQueries()
-                if (currentStory?.story_id === storyId) {
-                  setCurrentStory(null) // Xóa currentStory nếu câu chuyện bị xóa
-                }
-              },
-              onError: (error) => {
-                console.log('Error delete story:', error)
-              }
-            })
-          }
-        },
-        {
-          label: 'Không',
-          onClick: () => {}
+    mutation.mutate(data, {
+      onSuccess: () => {
+        toast.success('Xóa tin thành công')
+        queryClient.invalidateQueries()
+        if (currentStory?.story_id === storyId) {
+          setCurrentStory(null) // Xóa currentStory nếu câu chuyện bị xóa
         }
-      ]
+      },
+      onError: (error) => {
+        console.log('Error delete story:', error)
+      }
     })
   }
   // Sao chép đường link liên kết
@@ -98,52 +86,36 @@ function ArchiveStory() {
 
   const handleRestoreStory = (id: string | null) => {
     if (!id) return
+    restoreMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success('Khôi phục tin thành công!')
+        queryClient.invalidateQueries()
 
-    confirmAlert({
-      title: 'Xác nhận khôi phục',
-      message: 'Bạn có chắc chắn muốn khôi phục tin này không?',
-      buttons: [
-        {
-          label: 'Có',
-          onClick: () => {
-            restoreMutation.mutate(id, {
-              onSuccess: () => {
-                toast.success('Khôi phục tin thành công!')
-                queryClient.invalidateQueries()
-
-                // Nếu story hiện tại đã được khôi phục thì chuyển sang tin tiếp theo hoặc đặt về null
-                const remainingStories = data?.data.data.story.filter((story: Story) => story.story_id !== storyId)
-                if (remainingStories && remainingStories.length > 0) {
-                  const nextStory = remainingStories[0]
-                  setCurrentStory(nextStory)
-                  setSelectedStoryId(nextStory.story_id)
-                  navigate({
-                    search: `?id=${nextStory.story_id}`
-                  })
-                } else {
-                  setCurrentStory(null)
-                  setSelectedStoryId(null)
-                  navigate({
-                    search: ''
-                  })
-                }
-              },
-              onError: (error) => {
-                console.log('Error restoring story:', error)
-                toast.error('Khôi phục tin thất bại.')
-              }
-            })
-          }
-        },
-        {
-          label: 'Không',
-          onClick: () => {
-            // Không làm gì nếu người dùng chọn "Không"
-          }
+        // Nếu story hiện tại đã được khôi phục thì chuyển sang tin tiếp theo hoặc đặt về null
+        const remainingStories = data?.data.data.story.filter((story: Story) => story.story_id !== storyId)
+        if (remainingStories && remainingStories.length > 0) {
+          const nextStory = remainingStories[0]
+          setCurrentStory(nextStory)
+          setSelectedStoryId(nextStory.story_id)
+          navigate({
+            search: `?id=${nextStory.story_id}`
+          })
+        } else {
+          setCurrentStory(null)
+          setSelectedStoryId(null)
+          navigate({
+            search: ''
+          })
         }
-      ]
+      },
+      onError: (error) => {
+        console.log('Error restoring story:', error)
+        toast.error('Khôi phục tin thất bại.')
+      }
     })
   }
+
+  console.log('data?.data.data.story', data?.data.data.story)
   return (
     <>
       <Header />
@@ -189,7 +161,7 @@ function ArchiveStory() {
               </div>
               {/* story list */}
               <div className='h-[calc(94vh-81px)] space-y-2 overflow-y-auto p-2 '>
-                {data?.data.data.story.map((story) => (
+                {data?.data.data.story.map((story: any) => (
                   <a
                     key={story.story_id}
                     href='#'
@@ -199,7 +171,11 @@ function ArchiveStory() {
                     }`}
                   >
                     <div className='relative h-14 w-14 shrink-0'>
-                      <img src={story.content} alt='' className='h-full w-full rounded-full object-cover' />
+                      <img
+                        src={story?.user?.Profile?.profile_picture}
+                        alt=''
+                        className='h-full w-full rounded-full object-cover'
+                      />
                       <div className='absolute bottom-0 right-0 h-4 w-4 rounded-full border border-white dark:border-slate-800' />
                     </div>
                     <div className='min-w-0 flex-1'>
@@ -235,20 +211,37 @@ function ArchiveStory() {
                     className={`block w-full px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-700 ${
                       selectedItem === 'Gỡ tin' ? 'bg-gray-200 dark:bg-gray-700' : ''
                     }`}
-                    onClick={() => handelDelete(idSearch)}
+                    onClick={() => setShowConfirmDelete(true)}
                     style={{ zIndex: '9999999999999999999999999999999999999999999' }}
                   >
                     Xóa tin
                   </button>
-
+                  <Dialog
+                    isVisible={showConfirmDelete}
+                    onClose={() => setShowConfirmDelete(false)}
+                    type='warning'
+                    title={'Xóa tin'}
+                    description={'Bạn có chắc chắn muốn xóa tin này không?'}
+                    textBtn={'Xóa'}
+                    callback={() => handelDelete(idSearch)}
+                  />
                   <button
                     className={`block w-full px-4 py-2 text-left hover:bg-gray-200 dark:hover:bg-gray-700 ${
                       selectedItem === 'Khôi phục tin ' ? 'bg-gray-200 dark:bg-gray-700' : ''
                     }`}
-                    onClick={() => handleRestoreStory(idSearch)}
+                    onClick={() => setShowConfirm(true)}
                   >
                     Khôi phục tin
                   </button>
+                  <Dialog
+                    isVisible={showConfirm}
+                    onClose={() => setShowConfirm(false)}
+                    type='warning'
+                    title={'Khôi phục tin'}
+                    description={'Bạn có chắc chắn muốn khôi tin này không?'}
+                    textBtn={'Khôi phục'}
+                    callback={() => handleRestoreStory(idSearch)}
+                  />
                 </div>
               )}
 
@@ -282,14 +275,12 @@ function ArchiveStory() {
               {currentStory && currentStory.text && (
                 <div className='absolute bottom-10 left-0 right-0 p-6' justify-center>
                   <div className='dark:bg-dark3 rounded-lg bg-white p-2 shadow-lg'>
-                    <p className='text-center text-black  dark:text-white'>{currentStory.text}</p>
+                    <p className='text-center text-black dark:text-white'>{currentStory.text}</p>
                   </div>
                 </div>
               )}
-              <div className=' absolute bottom-0 right-0 flex flex-row items-center  space-x-3 p-4'>
-                
+              <div className='absolute bottom-0 right-0 flex flex-row items-center space-x-3 p-4 '>
                 <div className='flex flex-row justify-center space-x-2'>
-                 
                   <div className='group relative flex items-center space-x-1'>
                     <IonIcon name='eye-outline' className='text-3xl text-gray-600' />
                     <span className='absolute bottom-full mb-2 hidden rounded bg-black px-2 py-1 text-sm text-white group-hover:block'>

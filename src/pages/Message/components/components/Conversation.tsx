@@ -1,24 +1,22 @@
 import { IonIcon } from '@ionic/react'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { memo, useEffect, useLayoutEffect, useState } from 'react'
+import { memo, useLayoutEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 import Dialog from '~/components/Dialog'
+import FeatureNotAllow from '~/components/FeatureNotAllow'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
 import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
 import useConversationStore from '~/store/conversation.store'
+import useMessageFixStore from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import useMutationDeleteMessage from '../../hooks/useMutaion/useMutationDeleteGroup'
-import { checkBodyMessage } from '../../utils/checkBodyMessage'
-import { fetchConversation } from '../../utils/fetchInfiniteConversation'
-import TimeAgo from './TimeAgo'
-import { useQueryInfinifyConversation } from '../../hooks/useQuery/useQueryInfinifyConversation'
-import useNotifyMessage from '../../hooks/useMutaion/useNotifyMessage'
-import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
-import { Link, useLocation } from 'react-router-dom'
 import useCallVideo from '../../hooks/useMutaion/useCallVideo'
-import FeatureNotAllow from '~/components/FeatureNotAllow'
+import useMutationDeleteMessage from '../../hooks/useMutaion/useMutationDeleteGroup'
+import useNotifyMessage from '../../hooks/useMutaion/useNotifyMessage'
+import { useQueryInfinifyConversation } from '../../hooks/useQuery/useQueryInfinifyConversation'
+import { checkBodyMessage } from '../../utils/checkBodyMessage'
+import TimeAgo from './TimeAgo'
 
 interface ConversationType extends React.HTMLAttributes<HTMLParagraphElement> {
   item: ConvesationSideBar
@@ -35,6 +33,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
   const { setSelectedConversation, selectedConversation } = useConversationStore()
   const deleteNotify = useMutationDeleteNotify()
+  const { removeMessageFix, removeHiddenMessageFix } = useMessageFixStore()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const { data, refetch } = useQueryInfinifyConversation()
   const deleteConversatonMuation = useMutationDeleteMessage()
@@ -63,13 +62,13 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
   const message_id = item?.messages?.message_id
 
   const handleSelectedConversation = (item: GroupMessage) => {
-    if (item.type === 1) {
+    if (item.type == 1) {
       setSelectedConversation({
         group_id: item.group_message_id,
         id: item.user_id,
         type: 1
       })
-    } else if (item.type === 2) {
+    } else if (item.type == 2) {
       setSelectedConversation({
         group_id: item.group_message_id,
         id: item.group_message_id,
@@ -83,8 +82,12 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       user_id: user_id,
       message_id: message_id
     }
-    socket?.emit('seenMessage', JSON.stringify(dataSeen))
-    if (item.group_message_id) showNotify && deleteNotify.mutate(item.group_message_id)
+    if (item.group_message_id && numberNotify) {
+      isBlockedOrBlocking && socket?.emit('seenMessage', JSON.stringify(dataSeen))
+      deleteNotify.mutate(item.group_message_id)
+    }
+
+    // if (item.group_message_id) showNotify &&
   }
 
   const handleDeleteConversation = (id: string) => {
@@ -94,7 +97,10 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
         setTriggerHover(false)
         refetchMessage()
         refetch()
+        removeMessageFix(id)
+        removeHiddenMessageFix(id)
         const item = conversationNoNotification && conversationNoNotification[0]
+
         if (item && Object.keys(selectedConversation).length) {
           handleSelectedConversation(item)
         }
@@ -104,6 +110,7 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       }
     })
   }
+
   let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
 
   useLayoutEffect(() => {
@@ -112,15 +119,17 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       if (item) {
         handleSelectedConversation(item)
       }
-    } else {
     }
   }, [data?.pages.flat()[0].group_message_id])
 
   useLayoutEffect(() => {
-    const item = data?.pages?.flat()[0]
-    if (item && !stateLocation) {
-      handleSelectedConversation(item)
-    }
+    const timer = setTimeout(() => {
+      const item = data?.pages?.flat()[0]
+      if (item && !stateLocation) {
+        handleSelectedConversation(item)
+      }
+    }, 200)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleClickVideoCall = useCallVideo({
@@ -155,9 +164,9 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
             src={`${item?.group_thumbnail ? item?.group_thumbnail : 'src/assets/images/avatars/avatar-5.jpg'} `}
             className='h-full w-full rounded-full object-cover'
           />
-          {!isBlockedOrBlocking && (
+          {isOnline && !isBlockedOrBlocking && (
             <div
-              className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  ${isOnline ? 'border border-white bg-green-500' : ''} dark:border-slate-800`}
+              className={`absolute bottom-0 right-0 h-4 w-4 rounded-full  border border-white bg-green-500 dark:border-slate-800`}
             />
           )}
         </div>

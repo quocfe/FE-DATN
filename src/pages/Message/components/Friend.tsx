@@ -14,11 +14,12 @@ interface FriendProps {
 }
 
 const Friend: React.FC<FriendProps> = ({ listUser, setListUser, querySearch, type }) => {
+  console.log('Friend')
   const [resultSearch, setResultSearch] = useState<any>([])
   const { selectedConversation } = useConversationStore()
   const searchMutaion = useMutaionSearchFriend()
   const { data: memberSuggest } = useQueryFriends()
-  const { data: memberGroup } = useQueryMembers(selectedConversation.group_id, type as string)
+  const { data: memberGroup } = useQueryMembers(selectedConversation.group_id, selectedConversation.type)
   const { data: memberSuggestGMsg } = useQueryFriendSuggestGm(selectedConversation.group_id)
   const profile = getProfileFromLocalStorage() || {}
   const [currentUserSelect, setCurrentUserSelect] = useState<string[]>([profile.user_id])

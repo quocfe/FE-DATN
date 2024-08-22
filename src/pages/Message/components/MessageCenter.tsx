@@ -131,7 +131,7 @@ function MessageCenter() {
     } else {
       setCalculateHeight(selectedConversation.type === 1 && isBlockedOrBlocking ? 240 : 204)
     }
-  }, [toggleBoxReply, togglePreviewBox, selectedConversation])
+  }, [toggleBoxReply, togglePreviewBox, selectedConversation, isBlockedOrBlocking])
 
   if (isLoading) {
     return <ChatMessageSkelaton />

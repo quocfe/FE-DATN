@@ -1,9 +1,12 @@
 import { IonIcon } from '@ionic/react'
+import { useQueryClient } from '@tanstack/react-query'
 import React, { memo, useCallback, useEffect, useState } from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 import { toast } from 'react-toastify'
 import CustomFileInput from '~/components/InputFile/CustomFileInput'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
+import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
 import RecordMessage from '~/pages/Message/components/RecordMessage'
 import IsTyping from '~/pages/Message/components/components/IsTyping'
 import useMutationReplyMessage from '~/pages/Message/hooks/useMutaion/useMutationReplyMessage'
@@ -11,19 +14,11 @@ import {
   useMutationSendMessage,
   useMutationSendMessageAttach
 } from '~/pages/Message/hooks/useMutaion/useMutationSendMessage'
-import { useQueryMessage } from '~/pages/Message/hooks/useQuery/useQueryMessage'
 import useFileUpload from '~/pages/Message/utils/uploadApi'
 import useConversationStore from '~/store/conversation.store'
 import useMessageStore from '~/store/message.store'
-import { clearLocalStorage, getProfileFromLocalStorage } from '~/utils/auth'
-import EmojiBox from './EmojiBoxFixed'
-import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
-import { useQueryClient } from '@tanstack/react-query'
 import useMessageFixStore, { MessageFix } from '~/store/messageFix.store'
-import isTypingLogo from '../../assets/images/isTyping.gif'
-import useTypingMessageSocket from '~/hooks/socket/useTypingMessageSocket'
-import TextareaAutosize from 'react-textarea-autosize'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
 
 type SendMessageType = {

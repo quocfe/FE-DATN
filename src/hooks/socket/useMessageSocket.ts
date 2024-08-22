@@ -6,7 +6,6 @@ import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQuery
 import { useQueryStatusMessage } from '~/pages/Message/hooks/useQuery/useQueryStatusMessage'
 import useConversationStore from '~/store/conversation.store'
 import soundNewMessage from '../../assets/sound/NotificationMessageSound.mp3'
-import useQueryNotifyMessage from '../queries/message/useQueryNotifyMessage'
 
 type NewMessagetype = {
   body: string
@@ -25,7 +24,6 @@ const useMessageSocket = () => {
   const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
   const { refetch: refetchStatusMessage } = useQueryStatusMessage()
-  const { refetch: refetchNotifyMessage } = useQueryNotifyMessage()
   let audioNewMsg = new Audio(soundNewMessage)
 
   useEffect(() => {
