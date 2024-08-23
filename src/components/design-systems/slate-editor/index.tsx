@@ -45,6 +45,8 @@ const initialValue: Descendant[] = [
   }
 ]
 
+// Trình hỗ trợ viết content video => mở rộng hastag + tag user
+
 const SlateEditor = ({
   className,
   placeholder = '',

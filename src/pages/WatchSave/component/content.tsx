@@ -44,7 +44,11 @@ const Content = ({ video, refetchFavoriteVideos }: ContentProps) => {
       <div className='py-2'>
         <div className='flex gap-x-2'>
           <div className='relative shrink-0 cursor-pointer rounded-full'>
-            <img className='h-10 w-10 shrink-0 rounded-full shadow' src={video.video.user.Profile.cover_photo} alt='' />
+            <img
+              className='h-10 w-10 shrink-0 rounded-full shadow'
+              src={video.video.user.Profile.profile_picture}
+              alt=''
+            />
           </div>
           <div className=''>
             <p className='text-sm font-medium text-black'>{video.video.user.first_name}</p>
