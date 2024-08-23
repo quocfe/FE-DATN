@@ -5,6 +5,7 @@ import App from './App.tsx'
 import ConfirmProvider from './components/design-systems/comfirm/confirm-provider.tsx'
 import { SocketContextProvider } from './context/socket.tsx'
 import './index.css'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +19,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Router>
     <QueryClientProvider client={queryClient}>
-      {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right' /> */}
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right' />
 
       {/* <ReactQueryDevtools initialIsOpen={false} position='right' buttonPosition='bottom-left' /> */}
       <ConfirmProvider>
