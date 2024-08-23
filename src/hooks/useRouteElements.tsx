@@ -7,10 +7,7 @@ import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute
 import RejectedRoute from './components/RejectedRoute'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
-<<<<<<< HEAD
 import Fanpage from '~/pages/Fanpage'
-=======
->>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
 import DStory from '~/pages/Story'
 import ArchiveStory from '~/pages/Story/Component/Archive'
 import Message from '~/pages/Message'
@@ -49,10 +46,8 @@ import WatchDetail from '~/pages/WatchDetail'
 import Profile from '~/pages/Profile'
 import Game from '~/pages/Game/Game'
 import GamePlay from '~/pages/Game/GamePlay'
-<<<<<<< HEAD
-=======
 import WatchSearch from '~/pages/WatchSearch'
->>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
+import UserMediaResources from '~/pages/PublicProfile/UserMediaResources'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -154,7 +149,6 @@ function useRouteElements() {
         },
         {
           path: '/story',
-<<<<<<< HEAD
           element: (
               <DStory />
           )
@@ -168,16 +162,13 @@ function useRouteElements() {
         
         
 {
-=======
           element: <DStory />
         },
         {
           path: '/story/archive',
           element: <ArchiveStory />
         },
-
         {
->>>>>>> 7077d3f21008e4d09dd239ed6ad4da308f8307c7
           path: 'profile',
           children: [
             {
@@ -190,7 +181,6 @@ function useRouteElements() {
                 </MainLayout>
               )
             },
-
             {
               path: 'my_friends',
               element: (
@@ -230,6 +220,16 @@ function useRouteElements() {
                     <MainLayout>
                       <PublicProfile>
                         <FriendInfoDisplay />
+                      </PublicProfile>
+                    </MainLayout>
+                  )
+                },
+                {
+                  path: 'resources',
+                  element: (
+                    <MainLayout>
+                      <PublicProfile>
+                        <UserMediaResources />
                       </PublicProfile>
                     </MainLayout>
                   )

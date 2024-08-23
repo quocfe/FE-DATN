@@ -5,6 +5,7 @@ import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
 import MyFriends from './MyFriends'
 import React from 'react'
 import useQueryMediaResources from '~/hooks/queries/user/useQueryMediaResources'
+import useQueryReceivedFriendRequests from '~/hooks/queries/user/useQueryReceivedFriendRequests'
 
 
 interface Props {
@@ -32,9 +33,12 @@ const ProfileItem = ({ icon, title, text }: { icon: JSX.Element; title: string; 
 )
 
 function Introduce({ profile, setShowModal }: Props) {
+  const { data: resfriendRequests } = useQueryReceivedFriendRequests({ _page: '1', _limit: '100' })
   const { data } = useQueryMediaResources()
   const media_resources = data?.data.data.media_resources ?? []
   const getRelationshipStatus = (status: number) => relationshipStatuses[status] || 'Không xác định'
+
+  const friendRequests = resfriendRequests?.data.data.friends
 
   return (
     <div className='lg:w-[400px]'>
@@ -82,7 +86,8 @@ function Introduce({ profile, setShowModal }: Props) {
                 />
               </svg>
               <div>
-                Có <span className='font-semibold text-black dark:text-white'> 3,240 </span> người theo dõi
+                Có <span className='font-semibold text-black dark:text-white'> {friendRequests?.length} </span> người
+                theo dõi
               </div>
             </li>
           </ul>

@@ -1,13 +1,16 @@
 import { IonIcon } from '@ionic/react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useIsMutating, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import useMutationAddNewPost from '~/hooks/mutations/post/useMutationAddNewPost'
 import usePostStore from '~/store/post.store'
+import Loading from '../Loading'
 
 function CreatePost() {
+  const isFetching = useIsFetching()
+  const isMutating = useIsMutating()
   const { setIsCreatePost } = usePostStore()
   const { user_id } = useParams()
   const [privary, setPrivacy] = useState<string>('public')
@@ -127,6 +130,7 @@ function CreatePost() {
 
   return (
     <>
+      {isFetching + isMutating !== 0 && <Loading />}
       <div
         className='relative mx-auto flex h-full w-full flex-col overflow-x-hidden overflow-y-scroll rounded-lg bg-white shadow-xl'
         style={{ maxHeight: '575px', scrollbarWidth: 'thin' }}
