@@ -1,10 +1,9 @@
-import { memo, useCallback, useMemo } from 'react'
-import { useQueryStatusMessage } from '../../hooks/useQuery/useQueryStatusMessage'
 import { IonIcon } from '@ionic/react'
-import { calculateTimeAgo } from '~/utils/helpers'
-import useMessageStore from '~/store/message.store'
+import { memo, useCallback, useMemo } from 'react'
 import useConversationStore from '~/store/conversation.store'
-import { useMutationSendMessage } from '../../hooks/useMutaion/useMutationSendMessage'
+import useMessageStore from '~/store/message.store'
+import { calculateTimeAgo } from '~/utils/helpers'
+import { useQueryStatusMessage } from '../../hooks/useQuery/useQueryStatusMessage'
 
 const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 
@@ -13,15 +12,12 @@ const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
   let idQueryStatusMessage =
     Object.keys(selectedConversation).length != 0 ? selectedConversation.group_id : group_id_fixed
   const { data: dataStatus } = useQueryStatusMessage(idQueryStatusMessage)
-  const { loadingMessage, errorMessage } = useMessageStore()
 
   const highestStatus = useMemo(() => {
     return STATUS_ORDER.find((status) =>
       dataStatus?.data.data?.some((item) => item.status === status && item.group_message_id === idQueryStatusMessage)
     )
   }, [dataStatus?.data.data])
-
-  // console.log(group_id_fixed)
 
   const renderContent = useCallback(
     (status: string) => {

@@ -43,7 +43,7 @@ const FormAddCommentReply = ({
       ></div>
       <form onSubmit={handleSubmit(onSubmit)} className='w-full'>
         <div className='flex w-full flex-1 items-center gap-1 gap-x-2 dark:border-slate-700/40'>
-          <img src={profile?.Profile.cover_photo} alt='' className='h-8 w-8 rounded-full' />
+          <img src={profile?.Profile.profile_picture} alt='' className='h-8 w-8 rounded-full' />
           <div className='relative min-h-10 flex-1 overflow-hidden rounded-2xl bg-gray-100'>
             <input
               id='content-comment'

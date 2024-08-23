@@ -1,13 +1,10 @@
 import { useEffect } from 'react'
-import { Socket } from 'socket.io-client'
 import { useSocketContext } from '~/context/socket'
-import soundCallMessage from '../../assets/sound/Sound_call.mp3'
-import useQueryNotifyMessage from '../queries/message/useQueryNotifyMessage'
-import useMessageStore from '~/store/message.store'
-import { getProfileFromLocalStorage } from '~/utils/auth'
-import useConversationStore from '~/store/conversation.store'
 import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
 import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
+import useConversationStore from '~/store/conversation.store'
+import useMessageStore from '~/store/message.store'
+import { getProfileFromLocalStorage } from '~/utils/auth'
 
 const useVideoCallMessageSocket = () => {
   const { socket } = useSocketContext()

@@ -114,7 +114,9 @@ const ContentMessage = (params: props) => {
     const isUnsent = item.status === false
     const isReply = params.type === 'reply'
     const linkRegex = /(https?:\/\/[^\s]+)/g
-
+    if (Object.keys(params.item).length == 0 && params.type == 'reply') {
+      return <p className={`-mt-[10px]  truncate break-words text-[13px] text-gray-400`}>Bạn đã xóa tin nhắn này</p>
+    }
     switch (item.type) {
       case 1:
         return item.body.match(linkRegex) ? (
@@ -283,12 +285,14 @@ const ContentMessage = (params: props) => {
               <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
             )}
           </div>
-          <ModalMemberReact
-            group_id={item.group_message_id}
-            reactArr={item.reactions}
-            isOpen={isOpenModalReactMsg}
-            onClose={() => setIsOpenModalReactMsg(false)}
-          />
+          {params.message_fix.type === 2 && (
+            <ModalMemberReact
+              group_id={item.group_message_id}
+              reactArr={item.reactions}
+              isOpen={isOpenModalReactMsg}
+              onClose={() => setIsOpenModalReactMsg(false)}
+            />
+          )}
         </>
       )
     )

@@ -78,7 +78,7 @@ function ProfileRight() {
   const isBlockedOrBlocking =
     info?.list_block_user?.includes(info?.group_id) || info?.list_blocked_user?.includes(info?.group_id)
 
-  const { data, refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id, 2)
+  const { data, refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id, selectedConversation.type)
   const changeImage = useMutationChangeImageGroup()
   const members = data?.data.data
   const changeGroupNameMutation = useMutationChangeGroupName()
@@ -588,10 +588,15 @@ function ProfileRight() {
         />
       </div>
       <>
-        {/* modal add member */}
-        <ModalAddMember isOpen={openModalAddMember} onClose={() => setOpenModalAddMember(false)} />
-        {/* modal change role */}
-        <ModalChageRole isOpen={showModalChangeRole} onClose={() => setShowModalChangeRole(false)} />
+        {selectedConversation.type === 2 && (
+          <>
+            {/* modal add member */}
+            <ModalAddMember isOpen={openModalAddMember} onClose={() => setOpenModalAddMember(false)} />
+            {/* modal change role */}
+
+            <ModalChageRole isOpen={showModalChangeRole} onClose={() => setShowModalChangeRole(false)} />
+          </>
+        )}
         {/* Dialog */}
         <Dialog
           isVisible={showDiaLogDeleteOrLeaveMember}

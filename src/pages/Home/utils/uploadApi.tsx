@@ -5,10 +5,10 @@ const useFileUpload = () => {
   const uploadStory = async (file: File) => {
     if (!file) return
 
-    const maxSize = 20 * 1024 * 1024 // 20MB
+    const maxSize = 10 * 1024 * 1024 // 20MB
 
     if (file.size > maxSize) {
-      toast.error('Kích thước file không được vượt quá 20MB')
+      toast.error('Kích thước file không được vượt quá 10MB')
       return
     }
 
@@ -20,8 +20,7 @@ const useFileUpload = () => {
     try {
       const response = await fetch('https://api.cloudinary.com/v1_1/dfb778pls/upload', {
         method: 'POST',
-        body: formData,
-      
+        body: formData
       })
 
       if (!response.ok) {

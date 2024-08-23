@@ -12,6 +12,7 @@ import { useMutationSendMessageAttach } from '~/pages/Message/hooks/useMutaion/u
 import useFileUpload from '~/pages/Message/utils/uploadApi'
 import { useQueryClient } from '@tanstack/react-query'
 import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
+import { IonIcon } from '@ionic/react'
 
 function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; infoMessage: InfoMessage }) {
   const { toggleBoxReply, togglePreviewBox, setTogglePreviewBoxFix, selectedConversation } = useConversationStore()
@@ -125,16 +126,31 @@ function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; 
     }
   }, [toggleBoxReply, togglePreviewBox])
 
+  const handleClickScrollBottom = () => {
+    if (chatMessageRef.current) {
+      chatMessageRef.current.scrollTo({ top: chatMessageRef.current.scrollHeight })
+    }
+  }
+
   if (videoCall && Object.keys(videoCall).length > 0) {
     return <CallVideo />
   }
 
   return (
-    <div ref={chatMessageRef} onScroll={handleScroll} className='w-full flex-1 overflow-x-hidden px-2 py-2 '>
-      <CustomFileInput setIsDragAccept={setIsDragAccept} setPreview={() => {}} type={3} setFile={setFile} file={file}>
-        <ChatMessageFixed message_fix={message_fix} infoMessage={infoMessage} isAtBottom={isAtBottom} />
-      </CustomFileInput>
-    </div>
+    <>
+      <div ref={chatMessageRef} onScroll={handleScroll} className='relative w-full flex-1 overflow-x-hidden px-2 py-2 '>
+        <CustomFileInput setIsDragAccept={setIsDragAccept} setPreview={() => {}} type={3} setFile={setFile} file={file}>
+          <ChatMessageFixed message_fix={message_fix} infoMessage={infoMessage} isAtBottom={isAtBottom} />
+        </CustomFileInput>
+      </div>
+
+      <button
+        onClick={handleClickScrollBottom}
+        className={`bottom-up-transition absolute left-2/4 z-[70] h-[40px] w-[40px] -translate-x-2/4 cursor-pointer items-center rounded-full bg-[#3498db] p-2 text-primary shadow-inner ${showScrollBtn ? 'visible bottom-20 ' : 'bottom-0 hidden'}`}
+      >
+        <IonIcon name='arrow-down-circle-outline' className='text-2xl text-white' />
+      </button>
+    </>
   )
 }
 

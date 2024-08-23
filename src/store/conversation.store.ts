@@ -21,6 +21,7 @@ interface State {
     group_id: string
   }
   checkDropAttach: boolean
+  emptyConversation: boolean
 }
 
 interface Action {
@@ -37,6 +38,7 @@ interface Action {
   setIsNotTyping: (isNotTyping: boolean) => void
   setCheckDropAttach: (checkDropAttach: boolean) => void
   setTogglePreviewBoxFix: (togglePreviewBoxFix: { status: boolean; group_id: string }) => void
+  setEmptyConversation: (emptyConversation: boolean) => void
 }
 
 export const useConversationStore = create<State & Action>((set: any) => ({
@@ -54,6 +56,7 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   isTyping: null,
   isNotTyping: true,
   checkDropAttach: false,
+  emptyConversation: false,
   setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
   setMessages: (messages) => set({ messages }),
   setSelectedNoConversation: (selectedNoConversation) => set({ selectedNoConversation }),
@@ -66,7 +69,8 @@ export const useConversationStore = create<State & Action>((set: any) => ({
   setPinMessage: (pinMessage) => set({ pinMessage }),
   setIsTyping: (isTyping) => set({ isTyping }),
   setIsNotTyping: (isNotTyping) => set({ isNotTyping }),
-  setCheckDropAttach: (checkDropAttach) => set({ checkDropAttach })
+  setCheckDropAttach: (checkDropAttach) => set({ checkDropAttach }),
+  setEmptyConversation: (emptyConversation) => set({ emptyConversation })
 }))
 
 export default useConversationStore

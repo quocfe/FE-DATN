@@ -24,7 +24,7 @@ const ModalChageRole = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const { selectedConversation, setSelectedConversation } = useConversationStore()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const deleteOrLeaveMember = useMutationDeleteOrLeaveMember()
-  const { refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id, 2)
+  const { refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id, selectedConversation.type)
   const { user_id: userLoggin } = getProfileFromLocalStorage()
 
   const handleChangeRole = async () => {

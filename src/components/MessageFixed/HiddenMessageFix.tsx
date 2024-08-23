@@ -1,10 +1,7 @@
 import { IonIcon } from '@ionic/react'
-import { useEffect, useState } from 'react'
-import { useSocketContext } from '~/context/socket'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
+import { useState } from 'react'
 import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
 import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
-import { checkBodyMessage } from '~/pages/Message/utils/checkBodyMessage'
 import useMessageFixStore, { MessageFix } from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 

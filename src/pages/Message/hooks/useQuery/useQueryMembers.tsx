@@ -6,6 +6,6 @@ export const useQueryMembers = (group_id: string, type: number | string) => {
   return useQuery({
     queryKey: ['memmbers', group_id],
     queryFn: () => messageApi.getMembersGroup(group_id),
-    enabled: group_id != null
+    enabled: type != 1
   })
 }

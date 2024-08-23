@@ -41,7 +41,7 @@ const Content = () => {
   })
 
   return (
-    <div className='mx-auto grid w-full grid-cols-3 gap-6'>
+    <div className='container mx-auto grid w-full grid-cols-3 gap-6 pt-4'>
       <div className='col-span-3 lg:col-span-3'>
         {/*  post image*/}
         <div className='border1 dark:bg-dark2 rounded-xl bg-white text-sm font-medium shadow-sm'>
@@ -126,7 +126,7 @@ const Content = () => {
               <div className='border-b border-b-secondery pb-2'>
                 <div className='flex gap-3 p-2.5 text-sm font-medium sm:p-4'>
                   <a href='#'>
-                    <img src={videoData?.user.Profile.cover_photo} alt='' className='h-9 w-9 rounded-full' />
+                    <img src={videoData?.user.Profile.profile_picture} alt='' className='h-9 w-9 rounded-full' />
                   </a>
                   <div className='flex-1'>
                     <a href='#'>
