@@ -45,7 +45,7 @@ function Navigation() {
       <nav className='-mb-px flex gap-0.5 rounded-xl text-[15px] font-medium text-gray-600  max-md:w-full max-md:overflow-x-auto dark:text-white'>
         <Link
           to={'/profile'}
-          className={classNames('inline-block px-3.5 py-3 leading-8', {
+          className={classNames('inline-block whitespace-nowrap px-3.5 py-3 leading-8', {
             'border-b-2 border-blue-600 text-blue-600': pathname === '/profile'
           })}
         >
@@ -53,7 +53,7 @@ function Navigation() {
         </Link>
         <Link
           to={'/profile/my_friends'}
-          className={classNames('inline-block px-3.5 py-3 leading-8', {
+          className={classNames('inline-block whitespace-nowrap px-3.5 py-3 leading-8', {
             'border-b-2 border-blue-600 text-blue-600': pathname === '/profile/my_friends'
           })}
         >
@@ -61,24 +61,14 @@ function Navigation() {
         </Link>
         <Link
           to={'/profile/media_resource'}
-          className={classNames('inline-block px-3.5 py-3 leading-8', {
+          className={classNames('inline-block whitespace-nowrap px-3.5 py-3 leading-8', {
             'border-b-2 border-blue-600 text-blue-600': pathname === '/profile/media_resource'
           })}
         >
-          Hình ảnh
+          Hình ảnh & Video
         </Link>
-        <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-          Video
-        </a>
-        <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-          Check in
-        </a>
-        <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-          Video
-        </a>
-        {/* dropdown */}
         <div>
-          <a href='#' className='inline-flex items-center gap-2 px-3 py-3 leading-8'>
+          <a href='#' className='inline-flex items-center gap-2 whitespace-nowrap px-3 py-3 leading-8'>
             Xem thêm <IonIcon icon='chevron-down' />
           </a>
           <div

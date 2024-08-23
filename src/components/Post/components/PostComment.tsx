@@ -2,6 +2,8 @@ import { IonIcon } from '@ionic/react'
 import PostCommentItem from './PostCommentItem'
 import { useState } from 'react'
 import classNames from 'classnames'
+import { useIsFetching, useIsMutating } from '@tanstack/react-query'
+import Loading from '~/components/Loading'
 
 interface Props {
   comments: PostComment[]
