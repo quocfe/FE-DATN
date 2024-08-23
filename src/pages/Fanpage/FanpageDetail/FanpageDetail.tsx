@@ -196,9 +196,10 @@ function FanpageDetail() {
             <div className='relative z-10 mb-4 h-20 w-20'>
               <div className='group relative shrink-0 overflow-hidden rounded-full border-gray-100 shadow md:border-[2px] dark:border-slate-900'>
                 <img
-                  src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                  src={fanpage.image_url}
+                  // src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
                   alt='Avatar'
-                  className='inset-0 h-full w-full object-cover'
+                  className='inset-0 h-[78px] w-[78px] object-cover'
                 />
                 <div className='z-60 absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform group-hover:block'>
                   <label htmlFor='icons'>
@@ -485,7 +486,7 @@ function FanpageDetail() {
               <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-5.jpg'
+                    src='https://res.cloudinary.com/dswainylr/image/upload/v1717866186/50615f8b24c2879cded3_ykqrnu.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />

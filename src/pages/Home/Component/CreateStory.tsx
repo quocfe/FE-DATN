@@ -16,8 +16,6 @@ function CreateStory({ closeStory }: any) {
   const [file, setFile] = useState<File | null>(null)
   const [previewImg, setPreviewImg] = useState<string>('')
   const { uploadStory } = useFileUpload()
-
- 
   const [searchParams] = useSearchParams()
   const idSearch: any = searchParams.get('isEdit')
   const idSearch2: any = searchParams.get('id')
@@ -122,10 +120,9 @@ function CreateStory({ closeStory }: any) {
   return (
     <>
       <div className='absolute '>
-        <div className='uk-modal-dialog tt dark:bg-dark2 relative mx-auto w-full overflow-hidden rounded-lg bg-white p-7 shadow-xl  md:w-[600px]'>
+        <div className='uk-modal-dialog  tt dark:bg-dark2 relative mx-auto w-full overflow-hidden rounded-lg bg-white p-7 shadow-xl  md:w-[600px]'>
           <div className='-m-7 mb-0 border-b py-3 text-center dark:border-slate-700'>
             <h2 className='text-sm font-medium'> {idSearch ? 'Sửa Trạng Thái' : 'Tạo Trạng Thái'} </h2>
-
             <button
               onClick={() => {
                 idSearch ? reload2() : closeStory()
@@ -145,7 +142,7 @@ function CreateStory({ closeStory }: any) {
               </svg>
             </button>
           </div>
-          <form className='mt-7 space-y-5'>
+          <form className='mt-7 space-y-5 '>
             <div>
               <label htmlFor='' className='text-base'>
                 Bạn đang nghĩ gì?{' '}
@@ -157,37 +154,27 @@ function CreateStory({ closeStory }: any) {
                 className='mt-3 w-full'
               />
             </div>
-           <div
-  className='border1 relative h-72 w-full overflow-hidden rounded-lg'
-  style={{
-    backgroundImage: !isVideo ? `url(${preview})` : 'none'
-  }}
->
-  <label
-    htmlFor='createStatusUrl'
-    className='absolute bottom-0 left-1/2 z-10 flex w-full -translate-x-1/2 cursor-pointer flex-col items-center justify-center bg-gradient-to-t from-gray-700/60 pb-6 pt-10'
-  >
-    <div {...getRootProps()}>
-      <input {...getInputProps()} className='hidden' />
-      <IonIcon name={isVideo ? 'videocam' : 'image'} className='text-5xl text-teal-600' />
-    </div>
-  </label>
-  {isVideo ? (
-    <video
-      id='createStatusVideo'
-      src={preview}
-      controls
-      className='absolute h-full w-full object-cover'
-    />
-  ) : (
-    <img
-      id='createStatusImage'
-      src={preview}
-      alt=''
-      className='absolute h-full w-full object-cover'
-    />
-  )}
-</div>
+            <div
+              className='border1 relative h-72 w-full overflow-hidden rounded-lg'
+              style={{
+                backgroundImage: !isVideo ? `url(${preview})` : 'none'
+              }}
+            >
+              <label
+                htmlFor='createStatusUrl'
+                className='absolute bottom-0 left-1/2 z-10 flex w-full -translate-x-1/2 cursor-pointer flex-col items-center justify-center bg-gradient-to-t from-gray-700/60 pb-6 pt-10'
+              >
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} className='hidden' />
+                  <IonIcon name={isVideo ? 'videocam' : 'image'} className='text-5xl text-teal-600' />
+                </div>
+              </label>
+              {isVideo ? (
+                <video id='createStatusVideo' src={preview} controls className='absolute h-full w-full object-cover' />
+              ) : (
+                <img id='createStatusImage' src={preview} alt='' className='absolute h-full w-full object-cover' />
+              )}
+            </div>
             <div className='flex items-center justify-between'>
               <div className='flex items-start gap-2'>
                 <IonIcon
@@ -198,7 +185,7 @@ function CreateStory({ closeStory }: any) {
                   Trạng thái của bạn sẽ có sẵn <br /> trong <span className='text-gray-800'> 24 giờ</span>{' '}
                 </p>
               </div>
-              <button onClick={createStory} type='button' className='button relative z-50 bg-blue-500 px-8 text-white'>
+              <button onClick={createStory} type='button' className='button relative bg-blue-500 px-8 text-white'>
                 {idSearch ? 'Sửa ' : 'Tạo '}
               </button>
             </div>

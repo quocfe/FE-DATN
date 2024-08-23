@@ -36,8 +36,8 @@ function DStory() {
       if (!data) return
 
       const currentTime = new Date().getTime()
-      const twentyFourHours = 24 * 60 * 60 * 1000  // 24 hours in milliseconds
-      
+      const twentyFourHours = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+
       data.data.data.story.forEach((story: Story) => {
         const postedTime = new Date(story.story_time).getTime()
 
@@ -217,7 +217,7 @@ function DStory() {
   return (
     <>
       <Header />
-      <div className='-m-2.4 relative top-12 overflow-hidden border dark:border-slate-700'>
+      <div className='-m-2.4  relative top-12 overflow-hidden border dark:border-slate-700'>
         <div className='dark:bg-dark2 flex bg-white'>
           {/* sidebar */}
           <div className='relative border-r md:w-[360px] dark:border-slate-700'>
@@ -302,8 +302,8 @@ function DStory() {
             />
           </div>
           {/* Story center */}
-          <div className='flex-1'>
-            <div className='aspect-w-9 aspect-h-16 relative top-7 mx-auto flex h-[700px] w-[450px] items-center justify-center rounded-2xl bg-gray-300'>
+          <div className=' flex-1'>
+            <div className='aspect-w-9 aspect-h-16  relative top-5 mx-auto flex h-[700px] w-[450px] items-center justify-center rounded-2xl bg-gray-300'>
               <button className='absolute right-4 top-4 z-20' onClick={toggleDropdown}>
                 <IonIcon name='ellipsis-horizontal' className='text-2xl' />
               </button>

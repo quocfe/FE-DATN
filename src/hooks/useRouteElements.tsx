@@ -7,6 +7,7 @@ import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute
 import RejectedRoute from './components/RejectedRoute'
 import ConfirmOTP from '~/pages/ConfirmOTP'
 import NotFound from '~/pages/NotFound/NotFound'
+import Fanpage from '~/pages/Fanpage'
 import DStory from '~/pages/Story'
 import ArchiveStory from '~/pages/Story/Component/Archive'
 import Message from '~/pages/Message'
@@ -148,6 +149,19 @@ function useRouteElements() {
         },
         {
           path: '/story',
+          element: (
+              <DStory />
+          )
+        },
+        {
+          path: '/story/archive',
+          element: (
+              <ArchiveStory />
+          )
+        },
+        
+        
+{
           element: <DStory />
         },
         {
