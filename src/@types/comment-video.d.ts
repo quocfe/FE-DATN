@@ -12,6 +12,7 @@ interface CommentVideoItem {
   user: {
     Profile: {
       cover_photo: string
+      profile_picture: string
     }
     first_name: string
     last_name: string

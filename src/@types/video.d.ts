@@ -34,6 +34,7 @@ interface DataVideoResponse {
     last_name: string
     Profile: {
       cover_photo: string
+      profile_picture: string
     }
   }
   total_likes: number
@@ -61,6 +62,7 @@ interface VideoDetail {
     last_name: string
     Profile: {
       cover_photo: string
+      profile_picture: string
     }
   }
   like_count: number

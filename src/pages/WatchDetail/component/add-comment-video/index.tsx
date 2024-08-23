@@ -51,14 +51,13 @@ const AddCommentVideo = ({ reply, video_id, setRefetchComment }: AddCommentVideo
       console.log(data)
       handleAddComment(data)
     }
-
     return
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className='mt-3 flex items-center gap-2 p-2.5 sm:px-4 sm:py-3 lg:mt-0 lg:pr-0 dark:border-slate-700/40'>
-        <img src={profile?.Profile.cover_photo} alt='' className='h-8 w-8 rounded-full' />
+        <img src={profile?.Profile.profile_picture} alt='' className='h-8 w-8 rounded-full' />
         <div className='relative min-h-10 flex-1 overflow-hidden rounded-2xl bg-gray-100 px-2'>
           <input
             {...register('content')}
