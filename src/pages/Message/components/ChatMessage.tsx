@@ -12,6 +12,7 @@ import Spinner from './Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessage'
 import PreviewFileUpload from './components/PreviewFileUpload'
 import StatusMessage from './components/StatusMessage'
+import { milliseconds } from 'date-fns'
 
 interface ChatMessageProps {
   showScrollBtn: boolean
@@ -41,7 +42,17 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) => {
-  const { selectedConversation, previewImg } = useConversationStore()
+  const { selectedConversation } = useConversationStore()
+
+  const scrollIntoViewFn = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ block: 'end' })
+    }
+  }
+
+  useLayoutEffect(() => {
+    scrollIntoViewFn()
+  }, [selectedConversation.group_id])
 
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -70,15 +81,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   //     scrollIntoViewFn()
   //   }
   // }, [newArr.flat().length])
-  const scrollIntoViewFn = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ block: 'end' })
-    }
-  }
-
-  useLayoutEffect(() => {
-    scrollIntoViewFn()
-  }, [selectedConversation.group_id])
 
   useEffect(() => {
     if (isAtBottom) {
@@ -132,8 +134,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
         <Spinner classNames='flex items-center justify-center' w='6' h='6' title='Đang tải tin nhắn' />
       )}
       <div className='space-y-2 text-sm font-medium'>
-        {Object.entries(groupedMessagesByDate).map(([date, dayMessages], index) => (
-          <div className='space-y-2' key={index}>
+        {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
+          <div className='space-y-2'>
             <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
             {dayMessages.map((item, index) => {
               const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
@@ -176,7 +178,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
         </div>
       </div>
       {showStatus && <StatusMessage />}
-      <div ref={bottomRef} className='h-[10px]' />
+      <div ref={bottomRef} className='refMsg h-[1px]' />
     </div>
   )
 }

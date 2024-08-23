@@ -42,8 +42,6 @@ function MessageCenter({ message_fix, infoMessage }: { message_fix: MessageFix; 
     }
   }, [])
 
-  console.log(showScrollBtn)
-
   const handleClickVideoCall = () => {
     const dataToSocket = {
       group_message_id: selectedConversation?.group_id,

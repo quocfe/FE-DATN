@@ -111,27 +111,6 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
     })
   }
 
-  let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
-
-  useLayoutEffect(() => {
-    if (showMessageSelect && !stateLocation) {
-      const item = data?.pages?.flat()[0]
-      if (item) {
-        handleSelectedConversation(item)
-      }
-    }
-  }, [data?.pages.flat()[0].group_message_id])
-
-  useLayoutEffect(() => {
-    const timer = setTimeout(() => {
-      const item = data?.pages?.flat()[0]
-      if (item && !stateLocation) {
-        handleSelectedConversation(item)
-      }
-    }, 200)
-    return () => clearTimeout(timer)
-  }, [])
-
   const handleClickVideoCall = useCallVideo({
     group_message_id: selectedConversation?.group_id,
     user_id: user_id,

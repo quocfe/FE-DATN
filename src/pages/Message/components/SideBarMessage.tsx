@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSocketContext } from '~/context/socket'
 import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
@@ -10,6 +10,7 @@ import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinify
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
+import { useLocation } from 'react-router-dom'
 
 const SideBarMessage = () => {
   const { setSelectedConversation } = useConversationStore()
@@ -18,6 +19,8 @@ const SideBarMessage = () => {
   const searchMutation = useMutaionSearchFriendAndGrMsg()
   const { onlineUsers } = useSocketContext()
   const inputSearchRef = useRef<HTMLInputElement>(null)
+  const location = useLocation()
+  const stateLocation = location.state
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useQueryInfinifyConversation()
 
   // const { data: conversation, isLoading } = useQueryConversation()
@@ -68,6 +71,46 @@ const SideBarMessage = () => {
       fetchNextPage()
     }
   }, [inView, isFetchingNextPage])
+
+  const { selectedConversation } = useConversationStore()
+
+  let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
+  const handleSelectedConversation = (item: GroupMessage) => {
+    if (item.type == 1) {
+      setSelectedConversation({
+        group_id: item.group_message_id,
+        id: item.user_id,
+        type: 1
+      })
+    } else if (item.type == 2) {
+      setSelectedConversation({
+        group_id: item.group_message_id,
+        id: item.group_message_id,
+        type: 2
+      })
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (showMessageSelect && !stateLocation) {
+      const item = data?.pages?.flat()[0]
+      if (item) {
+        console.log('select 1')
+        handleSelectedConversation(item)
+      }
+    }
+  }, [data?.pages.flat()[0]?.group_message_id])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const item = data?.pages?.flat()[0]
+      if (item) {
+        console.log('select 2')
+        handleSelectedConversation(item)
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   if (status === 'pending') {
     return <SideBarMessageSkelaton />

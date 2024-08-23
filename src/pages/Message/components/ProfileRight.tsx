@@ -44,8 +44,6 @@ const IconOptionList = [
 ]
 
 function ProfileRight() {
-  console.log('ProfileRight')
-
   // useState
   const [showBox, setShowBox] = useState<boolean>(false)
   const [isOpen, setIsOpen] = useState<boolean>(false)
