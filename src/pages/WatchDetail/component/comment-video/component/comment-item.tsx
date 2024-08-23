@@ -110,7 +110,7 @@ const CommentItem = ({ commentPartents, refetchComment, comment, handClickReply 
         ></div>
       )}
       <div className='flex items-start space-x-2 px-2 lg:pr-0'>
-        <img src={comment?.user?.Profile.cover_photo} alt='profile' className='h-8 w-8 rounded-full' />
+        <img src={comment?.user?.Profile.profile_picture} alt='profile' className='h-8 w-8 rounded-full' />
         <div className=' group flex w-full items-center gap-x-2'>
           <div className={editComment ? 'relative mb-2 w-full' : 'relative w-full'}>
             <div
