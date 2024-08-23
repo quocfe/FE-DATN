@@ -35,7 +35,7 @@ const HorizontalVideoCard = ({ video, setVideoData }: HorizontalVideoCardProps) 
           <div className=''>
             <div className='flex gap-x-2 px-2'>
               <div className='relative shrink-0 cursor-pointer rounded-full'>
-                <img className='size-10 rounded-full shadow' src={video?.user.Profile.cover_photo} alt='' />
+                <img className='size-10 rounded-full shadow' src={video?.user.Profile.profile_picture} alt='' />
               </div>
               <div className=''>
                 <p className='font-medium text-black'>{video?.user.first_name}</p>
@@ -49,6 +49,7 @@ const HorizontalVideoCard = ({ video, setVideoData }: HorizontalVideoCardProps) 
               readOnly
             />
           </div>
+          {/* Action video item */}
           <VideoAction dataVideo={video} setVideoData={setVideoData} />
         </div>
         {/* <img src='src/assets/images/video/img-2.png' alt='' />
