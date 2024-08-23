@@ -2,7 +2,7 @@ import { IonIcon } from '@ionic/react'
 import { useQueryClient } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import { ENDPOINT } from '~/constants/endpoint.constant'
@@ -23,6 +23,7 @@ interface Props {
 
 function Navigation({ profile, relationship }: Props) {
   // Hooks
+  const { user_id } = useParams()
   const [showDialogBlockUser, setShowDialogBlockUser] = useState<boolean>(false)
   const [showDialogCancelFriendRequest, setShowDialogCancelFriendRequest] = useState<boolean>(false)
   const { pathname } = useLocation()
@@ -222,17 +223,16 @@ function Navigation({ profile, relationship }: Props) {
           >
             Bạn bè
           </Link>
-          <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-            Hình ảnh
-          </a>
-          <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-            Video
-          </a>
+          <Link
+            to={`/profile/${user_id}/resources`}
+            className={classNames('inline-block px-3.5 py-3 leading-8', {
+              'border-b-2 border-blue-600 text-blue-600': pathname === `/profile/${user_id}/resources`
+            })}
+          >
+            Hình ảnh & Video
+          </Link>
           <a href='#' className='inline-block px-3.5 py-3 leading-8'>
             Check in
-          </a>
-          <a href='#' className='inline-block px-3.5 py-3 leading-8'>
-            Video
           </a>
           {/* dropdown */}
           <div>
