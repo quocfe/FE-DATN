@@ -1,6 +1,7 @@
 import { useIsFetching, useIsMutating } from '@tanstack/react-query'
 import PostItem from './components/PostItem'
 import Loading from '../Loading'
+import useMessageFixStore from '~/store/messageFix.store'
 
 interface Props {
   posts: Post[]
@@ -10,6 +11,7 @@ interface Props {
 function Post({ posts, fanpage }: Props) {
   const isFetching = useIsFetching()
   const isMutating = useIsMutating()
+
   return (
     <>
       {isFetching + isMutating !== 0 && <Loading />}

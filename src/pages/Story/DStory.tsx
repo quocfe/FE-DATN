@@ -39,7 +39,7 @@ function DStory() {
 
       const currentTime = new Date().getTime()
       // const twentyFourHours = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
-      const twentyFourHours = 5 * 1000 // 24 hours in milliseconds
+      const twentyFourHours = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
       data.data.data.story.forEach((story: Story) => {
         const postedTime = new Date(story.story_time).getTime()
@@ -59,7 +59,7 @@ function DStory() {
           })
         }
       })
-    }, 5000)
+    }, 60000)
 
     return () => clearInterval(intervalId)
   }, [data, user_id, archiveMutation, queryClient])

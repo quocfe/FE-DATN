@@ -24,7 +24,7 @@ const ModalCreateGroup = ({ isOpen, onClose }: any) => {
   const handleCreate = async () => {
     let dataGroup = {
       list_user: JSON.stringify(listUser),
-      group_name: groupName,
+      group_name: groupName.trim(),
       group_thumbnail: ''
     }
 

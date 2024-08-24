@@ -21,7 +21,6 @@ function App() {
   return (
     <CheckConnection>
       <div id='wrapper'>
-        {/* {isFetching + isMutating !== 0 && <Loading />} */}
         {routeElements}
         <ToastContainer position='bottom-right' />
       </div>

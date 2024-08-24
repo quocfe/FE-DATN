@@ -99,7 +99,7 @@ function Sidebar() {
                       <li className='!hidden' id='show__more'>
                         <a href='games.html'>
                           <img src='/src/assets/images/icons/game.png' alt='games' className='w-6' />
-                          <span> Games </span>
+                          <span> Trò chơi </span>
                         </a>
                       </li>
                     </ul>
