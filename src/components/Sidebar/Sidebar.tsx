@@ -89,10 +89,6 @@ function Sidebar() {
                           <span> Trang </span>
                         </Link>
                       </li>
-<<<<<<< HEAD
-=======
-
->>>>>>> e416ffbfcf129b44097f2796c3c906f9986710c5
                       <li>
                         <a>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />

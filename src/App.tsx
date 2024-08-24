@@ -5,10 +5,13 @@ import useVideoCallMessageSocket from './hooks/socket/useVideoCallMessageSocket'
 import useRouteElements from './hooks/useRouteElements'
 import InComingCallVideo from './pages/Message/components/InComingCallVideo'
 import useMessageStore from './store/message.store'
-import { useEffect, useState } from 'react'
 import CheckConnection from './components/CheckConnection/CheckConnection'
+import Loading from './components/Loading'
+import { useIsFetching, useIsMutating } from '@tanstack/react-query'
 
 function App() {
+  const isMutating = useIsMutating()
+  const isFetching = useIsFetching()
   useVideoCallMessageSocket()
   useNotifyMessageSocket()
   const routeElements = useRouteElements()
@@ -20,8 +23,8 @@ function App() {
 
   return (
     <CheckConnection>
+      {isMutating + isFetching !== 0 && <Loading />}
       <div id='wrapper'>
-        {/* {isFetching + isMutating !== 0 && <Loading />} */}
         {routeElements}
         <ToastContainer position='bottom-right' />
       </div>
