@@ -378,16 +378,16 @@ function DStory() {
                   />
                   <div className='flex flex-row justify-center space-x-2'>
                     <button className='text-blue-500'>
-                      <IonIcon name='thumbs-up' className='text-3xl' />
+                      <img src='/src/assets/images/post/like.svg' alt='like' className='h-7 w-7' />
                     </button>
                     <button className='text-red-500'>
-                      <IonIcon name='heart' className='text-3xl' />
+                      <img src='/src/assets/images/post/love.svg' alt='love' className='h-7 w-7' />
                     </button>
                     <button className='text-yellow-500'>
-                      <IonIcon name='happy' className='text-3xl' />
+                      <img src='/src/assets/images/post/haha.svg' alt='haha' className='h-7 w-7' />
                     </button>
                     <button className='text-green-500'>
-                      <IonIcon name='sad' className='text-3xl' />
+                      <img src='/src/assets/images/post/wow.svg' alt='wow' className='h-7 w-7' />
                     </button>
                     <div className='group relative flex items-center space-x-1'>
                       <IonIcon name='eye-outline' className='text-3xl text-gray-600' />
