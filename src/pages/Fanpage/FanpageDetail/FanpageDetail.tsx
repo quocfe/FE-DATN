@@ -488,28 +488,28 @@ function FanpageDetail() {
               <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='https://res.cloudinary.com/dswainylr/image/upload/v1717866186/50615f8b24c2879cded3_ykqrnu.jpg'
+                    src='https://images5.alphacoders.com/135/thumb-1920-1355115.jpeg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
                 </div>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-7.jpg'
+                    src='https://c4.wallpaperflare.com/wallpaper/18/776/964/one-piece-monkey-d-luffy-hd-wallpaper-preview.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
                 </div>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-4.jpg'
+                    src='https://moewalls.com/wp-content/uploads/2024/03/roronoa-zoro-one-piece-thumb.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
                 </div>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-6.jpg'
+                    src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/d96bb958-4e6c-4ce0-9447-fbe226fbbecf/dftcoip-9df651bc-fd92-4d3c-a8e5-5e72dbf5a156.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
@@ -517,55 +517,7 @@ function FanpageDetail() {
               </div>
             </div>
             {/* related pages  */}
-            <div className='box p-5 px-6'>
-              <div className='flex items-baseline justify-between text-black dark:text-white'>
-                <h3 className='text-base font-bold'> Trang bạn quản lý </h3>
-                <a href='#' className='text-sm text-blue-500'>
-                  Xem tất cả
-                </a>
-              </div>
-              <div className='side-list'>
-                <div className='side-list-item'>
-                  <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-full' />
-                  </a>
-                  <div className='flex-1'>
-                    <a href='timeline-page.html'>
-                      <h4 className='side-list-title'> Martin Gray</h4>
-                    </a>
-                    <div className='side-list-info'> 320k Following </div>
-                  </div>
-                  <button className='button bg-secondery'>Chỉnh sửa</button>
-                  <button className='button bg-secondery'>Xóa</button>
-                </div>
-                <div className='side-list-item'>
-                  <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-full' />
-                  </a>
-                  <div className='flex-1'>
-                    <a href='timeline-page.html'>
-                      <h4 className='side-list-title'> Monroe Parker</h4>
-                    </a>
-                    <div className='side-list-info'> 125k Following</div>
-                  </div>
-                  <button className='button bg-secondery'>Chỉnh sửa</button>
-                  <button className='button bg-secondery'>Xóa</button>
-                </div>
-                <div className='side-list-item'>
-                  <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-full' />
-                  </a>
-                  <div className='flex-1'>
-                    <a href='timeline-page.html'>
-                      <h4 className='side-list-title'> John Michael</h4>
-                    </a>
-                    <div className='side-list-info'> 320k Following </div>
-                  </div>
-                  <button className='button bg-secondery'>Chỉnh sửa</button>
-                  <button className='button bg-secondery'>Xóa</button>
-                </div>
-              </div>
-            </div>
+
             {/* related pages  */}
             {/* <div className='p-5 px-6 box'>
               <div className='flex items-baseline justify-between text-black dark:text-white'>

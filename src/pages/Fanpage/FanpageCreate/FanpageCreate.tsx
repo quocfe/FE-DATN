@@ -59,8 +59,9 @@ function FanpageCreate() {
 
   const handleChangeImage = async (e: any) => {
     setLoading(true)
+
     try {
-      const response = await upload(e.current.files[0])
+      const response = await upload(e.target.files[0])
       if (typeof response.url === 'string') {
         setUploadFile(response.url)
       } else {
@@ -108,7 +109,13 @@ function FanpageCreate() {
             </div>
             <div className='mb-4'>
               <label className='block text-sm font-medium text-gray-700'>Ảnh:</label>
-              <input type='file' onChange={handleChangeImage} id='avatar' name='file' accept='image/png, image/jpeg' />
+              <input
+                type='file'
+                onChange={(e) => handleChangeImage(e)}
+                id='avatar'
+                name='file'
+                accept='image/png, image/jpeg'
+              />
             </div>
             <div className='mb-4'>
               <label className='block text-sm font-medium text-gray-700'>Loại:</label>

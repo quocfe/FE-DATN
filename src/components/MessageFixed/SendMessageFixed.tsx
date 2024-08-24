@@ -20,6 +20,7 @@ import useMessageStore from '~/store/message.store'
 import useMessageFixStore, { MessageFix } from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
+import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
 
 type SendMessageType = {
   boxReplyRef: React.LegacyRef<HTMLDivElement>
@@ -34,7 +35,8 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
   const sendMessageMutation = useMutationSendMessage()
   const replyMessageMutation = useMutationReplyMessage()
   const deleteNotify = useMutationDeleteNotify()
-  const { data: notify } = useQueryNotifyMessage()
+  // const { data: notify } = useQueryNotifyMessage()
+
   const { refetch: refetchInfinifyMessageFix } = useQueryInfinifyMessageFix(message_fix)
 
   const sendMedia = useMutationSendMessageAttach()
@@ -62,11 +64,11 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
   const user_name = toggleBoxReply?.createdBy === profile.user_id ? 'chính mình' : toggleBoxReply?.user_name
 
   //  notify
-  let uniqueNotify: any = new Set()
-  notify?.data?.data.forEach((data: any) => {
-    uniqueNotify.add(data.group_message_id)
-  })
-  uniqueNotify = Array.from(uniqueNotify)
+  // let uniqueNotify: any = new Set()
+  // notify?.data?.data.forEach((data: any) => {
+  //   uniqueNotify.add(data.group_message_id)
+  // })
+  // uniqueNotify = Array.from(uniqueNotify)
 
   useEffect(() => {
     preview && setPreviewImg(preview?.file)
@@ -215,8 +217,8 @@ function SendMessageFixed({ boxReplyRef, previewUploadRef, infoMessage, message_
       user_id: profile.user_id
     }
     if (groupID) {
-      socket?.emit('seenMessage', JSON.stringify(dataSeen))
       socket?.emit('isTyping', JSON.stringify(data))
+      socket?.emit('seenMessage', JSON.stringify(dataSeen))
       deleteNotify.mutate(groupID)
     }
   }
