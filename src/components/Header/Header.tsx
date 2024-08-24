@@ -92,7 +92,7 @@ function Header() {
                 className='border2 uk-drop hidden w-screen overflow-hidden rounded-lg bg-white p-4 drop-shadow-xl md:w-[324px] dark:bg-slate-700'
                 uk-drop='offset:6;pos: bottom-right; mode: click; animate-out: true; animation: uk-animation-scale-up uk-transform-origin-top-right '
               >
-                <h3 className='text-md font-bold'> Create</h3>
+                <h3 className='text-md font-bold'> Tạo</h3>
                 {/* slider */}
                 <div className='uk-slider mt-4' tabIndex={-1} uk-slider='finite:true;sets: true'>
                   <div className='uk-slider-container pb-1'>
@@ -114,7 +114,7 @@ function Header() {
                             role='img'
                             aria-label='book'
                           />
-                          <div className='mt-1.5 text-sm font-medium'> Story </div>
+                          <div className='mt-1.5 text-sm font-medium'> Tin </div>
                         </div>
                       </li>
                       <li className='uk-active w-28' tabIndex={-1} style={{ opacity: 0 }}>
@@ -126,7 +126,7 @@ function Header() {
                             aria-label='camera'
                           />
 
-                          <div className='mt-1.5 text-sm font-medium'> Post </div>
+                          <div className='mt-1.5 text-sm font-medium'> Bài viết </div>
                         </div>
                       </li>
                       <li className='uk-active w-28' tabIndex={-1} style={{ opacity: 0 }}>
@@ -149,7 +149,7 @@ function Header() {
                             role='img'
                             aria-label='location'
                           />
-                          <div className='mt-1.5 text-sm font-medium'> location </div>
+                          <div className='mt-1.5 text-sm font-medium'> Địa điểm </div>
                         </div>
                       </li>
                       <li className='uk-active w-28' tabIndex={-1} style={{ opacity: 0 }}>
@@ -161,7 +161,7 @@ function Header() {
                             aria-label='happy'
                           />
 
-                          <div className='mt-1.5 text-sm font-medium'> Status </div>
+                          <div className='mt-1.5 text-sm font-medium'> Trạng thái </div>
                         </div>
                       </li>
                     </ul>
@@ -170,7 +170,6 @@ function Header() {
                   <div className='dark:hidden'>
                     <a
                       className='absolute -left-4 top-1/2 flex h-full w-8 -translate-y-1/2 items-center justify-start bg-gradient-to-r from-white via-white px-1.5 dark:from-slate-600 dark:from-transparent dark:via-slate-500 dark:via-transparent'
-                      href='#!'
                       uk-slider-item='previous'
                     >
                       <IonIcon
@@ -226,11 +225,8 @@ function Header() {
                     <img src='/src/assets/images/icons/group.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <a href='timeline.html'>
-                        <h4 className='text-sm font-medium text-black dark:text-white'> Groups </h4>
+                        <h4 className='text-sm font-medium text-black dark:text-white'> Nhóm </h4>
                       </a>
-                      <div className='mt-1 text-xs text-gray-500 dark:text-white'>
-                        Meet people with similar interests.
-                      </div>
                     </div>
                   </li>
                   <li
@@ -240,33 +236,8 @@ function Header() {
                     <img src='/src/assets/images/icons/page.png' alt='' className='w-7' />
                     <div className='flex-1'>
                       <Link to={'/fanpage-create'}>
-                        <h4 className='text-sm font-medium text-black dark:text-white'> Pages </h4>
+                        <h4 className='text-sm font-medium text-black dark:text-white'> Trang </h4>
                       </Link>
-                      <div className='mt-1'> Find and connect with businesses.</div>
-                    </div>
-                  </li>
-                  <li
-                    className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                    style={{ opacity: 0 }}
-                  >
-                    <img src='/src/assets/images/icons/event.png' className='w-7' />
-                    <div className='flex-1'>
-                      <a href='timeline.html'>
-                        <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
-                      </a>
-                      <div className='mt-1'>Discover fun activities near you .</div>
-                    </div>
-                  </li>
-                  <li
-                    className='flex cursor-pointer items-center gap-4 rounded-md p-1.5 hover:bg-secondery dark:hover:bg-white/10'
-                    style={{ opacity: 0 }}
-                  >
-                    <img src='/src/assets/images/icons/market.png' className='-ml-1 w-8' />
-                    <div className='flex-1'>
-                      <a href='timeline.html'>
-                        <h4 className='text-sm font-medium text-black dark:text-white'> Event </h4>
-                      </a>
-                      <div className='mt-1'>Find local buyers and sellers .</div>
                     </div>
                   </li>
                   <li
@@ -275,10 +246,9 @@ function Header() {
                   >
                     <img src='/src/assets/images/icons/game.png' alt='' className='w-7' />
                     <div className='flex-1'>
-                      <a href='timeline.html'>
-                        <h4 className='text-sm font-medium text-black dark:text-white'> Games </h4>
+                      <a>
+                        <h4 className='text-sm font-medium text-black dark:text-white'> Trò chơi </h4>
                       </a>
-                      <div className='mt-1'> play game with friends have fun. </div>
                     </div>
                   </li>
                 </ul>
