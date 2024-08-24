@@ -89,7 +89,6 @@ function Sidebar() {
                           <span> Trang </span>
                         </Link>
                       </li>
-
                       <li>
                         <a>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />
