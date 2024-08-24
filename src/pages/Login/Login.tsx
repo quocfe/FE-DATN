@@ -139,29 +139,6 @@ function Login() {
                 Đăng nhập
               </button>
             </div>
-            <div className='flex items-center gap-6 text-center'>
-              <hr className='flex-1 border-slate-200 dark:border-slate-800' />
-              Hoặc đăng nhập với
-              <hr className='flex-1 border-slate-200 dark:border-slate-800' />
-            </div>
-            {/* social login */}
-            <div
-              className='flex gap-2'
-              uk-scrollspy='target: > *; cls: uk-animation-scale-up; delay: 400 ;repeat: true'
-            >
-              <a href='#' className='button flex flex-1 items-center gap-2 bg-primary text-sm text-white'>
-                <IonIcon icon='logo-facebook' className='text-lg' />
-                Facebook
-              </a>
-              <a href='#' className='button flex flex-1 items-center gap-2 bg-sky-600 text-sm text-white'>
-                <IonIcon icon='logo-twitter' className='text-lg' />
-                Twitter
-              </a>
-              <a href='#' className='button flex flex-1 items-center gap-2 bg-black text-sm text-white'>
-                <IonIcon icon='logo-github' className='text-lg' />
-                Github
-              </a>
-            </div>
           </form>
         </div>
       </div>

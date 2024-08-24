@@ -3,14 +3,14 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import fanpageMemberApi from '~/apis/fanpage-member.api'
 import FanpageApi from '~/apis/fanpage.api'
-import uploadFileApi from '~/apis/uploadFileApi'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import { FanpageNoId, FanpageResponse, Fanpage as FanpageType } from '~/@types/fanpage'
 import Modal from '~/components/Modal'
 import CreatePost from '~/components/CreatePost'
 import usePostStore from '~/store/post.store'
 import useQueryListPostFanpage from '~/hooks/queries/post/useQueryListPostFanpage'
 import Post from '~/components/Post'
+import useFileUpload from '~/pages/Message/utils/uploadApi'
+import Spinner from '~/pages/Message/components/Skelaton/Spinner'
 //FanpageMember
 function FanpageDetail() {
   const { isCreatePost, setIsCreatePost } = usePostStore()
@@ -24,6 +24,7 @@ function FanpageDetail() {
   const [inviteUserId, setInviteUserId] = React.useState<string>('')
   const [likesCount, setLikesCount] = React.useState<number>(0)
   const [followsCount, setFollowsCount] = React.useState<number>(0)
+  const { upload } = useFileUpload()
 
   const pages = data?.data.data.pages ?? 0
   const total = data?.data.data.total ?? 0
@@ -115,13 +116,12 @@ function FanpageDetail() {
 
   // upload ảnh
   const handleChangeImage = async (e: any) => {
-    alert('Bạn chắn chắn muốn thay đổi')
-
     setLoading(true)
     try {
-      const response = await uploadFileApi.uploadFile(e)
-      console.log('response', response)
-      if (typeof response === 'string') {
+      const response = await upload(e.target.files[0])
+      // console.log(e.current.files[0])
+      // console.log('response', response)
+      if (typeof response.url === 'string') {
         const updatedFanpage: FanpageNoId = {
           group_name: fanpage.group_name,
           description: fanpage.description,
@@ -132,7 +132,7 @@ function FanpageDetail() {
           phone: fanpage.phone,
           is_public: fanpage.is_public,
           role_id: fanpage.role_id,
-          image_url: response,
+          image_url: response.url,
           createdAt: new Date(fanpage.createdAt),
           updatedAt: new Date(fanpage.updatedAt)
         }
@@ -157,10 +157,6 @@ function FanpageDetail() {
     return <div>Loading...</div>
   }
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
   const hasMyFanpages = new URLSearchParams(location.search).has('my-fanpages')
 
   return (
@@ -170,7 +166,7 @@ function FanpageDetail() {
         {/* Cover image */}
         <div className='relative h-40 w-full overflow-hidden lg:h-60'>
           <img
-            src={fanpage.image_url || 'https://i.pinimg.com/originals/b4/4a/ae/b44aae119e1a1334eb416905f2082ad1.jpg'}
+            src={'https://i.pinimg.com/originals/b4/4a/ae/b44aae119e1a1334eb416905f2082ad1.jpg'}
             alt='Cover'
             className='inset-0 h-full w-full object-cover'
           />
@@ -182,7 +178,7 @@ function FanpageDetail() {
             </label>
             <input
               type='file'
-              onChange={handleChangeImage}
+              // onChange={handleChangeImage}
               hidden
               id='edit'
               name='file'
@@ -195,24 +191,31 @@ function FanpageDetail() {
           <div className='-mt-20 flex flex-col justify-center'>
             <div className='relative z-10 mb-4 h-20 w-20'>
               <div className='group relative shrink-0 overflow-hidden rounded-full border-gray-100 shadow md:border-[2px] dark:border-slate-900'>
-                <img
-                  src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
-                  alt='Avatar'
-                  className='inset-0 h-full w-full object-cover'
-                />
-                <div className='z-60 absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform group-hover:block'>
-                  <label htmlFor='icons'>
-                    <IonIcon name='camera' style={{ fontSize: '30px', color: 'gray' }}></IonIcon>
-                  </label>
-                  <input
-                    type='file'
-                    hidden
-                    onChange={handleChangeImage}
-                    id='icons'
-                    name='file'
-                    accept='image/png, image/jpeg'
-                  />
-                </div>
+                {loading ? (
+                  <Spinner classNames='h-[74px] h-[74px] flex items-center justify-center' />
+                ) : (
+                  <>
+                    <img
+                      src={fanpage.image_url}
+                      // src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                      alt='Avatar'
+                      className='inset-0 h-[78px] w-[78px] object-cover'
+                    />
+                    <div className='z-60 absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform group-hover:block'>
+                      <label htmlFor='icons'>
+                        <IonIcon name='camera' style={{ fontSize: '30px', color: 'gray' }}></IonIcon>
+                      </label>
+                      <input
+                        type='file'
+                        hidden
+                        onChange={handleChangeImage}
+                        id='icons'
+                        name='file'
+                        accept='image/png, image/jpeg'
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <div className='flex justify-between max-md:flex-col max-md:gap-3 lg:items-center'>
@@ -485,28 +488,28 @@ function FanpageDetail() {
               <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-5.jpg'
+                    src='https://images5.alphacoders.com/135/thumb-1920-1355115.jpeg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
                 </div>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-7.jpg'
+                    src='https://c4.wallpaperflare.com/wallpaper/18/776/964/one-piece-monkey-d-luffy-hd-wallpaper-preview.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
                 </div>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-4.jpg'
+                    src='https://moewalls.com/wp-content/uploads/2024/03/roronoa-zoro-one-piece-thumb.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
                 </div>
                 <div className='relative aspect-[4/3] w-full'>
                   <img
-                    src='src/assets/images/avatars/avatar-6.jpg'
+                    src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/d96bb958-4e6c-4ce0-9447-fbe226fbbecf/dftcoip-9df651bc-fd92-4d3c-a8e5-5e72dbf5a156.jpg'
                     alt=''
                     className='inset-0 h-full w-full object-cover'
                   />
@@ -514,57 +517,9 @@ function FanpageDetail() {
               </div>
             </div>
             {/* related pages  */}
-            <div className='box p-5 px-6'>
-              <div className='flex items-baseline justify-between text-black dark:text-white'>
-                <h3 className='text-base font-bold'> Trang bạn quản lý </h3>
-                <a href='#' className='text-sm text-blue-500'>
-                  Xem tất cả
-                </a>
-              </div>
-              <div className='side-list'>
-                <div className='side-list-item'>
-                  <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-full' />
-                  </a>
-                  <div className='flex-1'>
-                    <a href='timeline-page.html'>
-                      <h4 className='side-list-title'> Martin Gray</h4>
-                    </a>
-                    <div className='side-list-info'> 320k Following </div>
-                  </div>
-                  <button className='button bg-secondery'>Chỉnh sửa</button>
-                  <button className='button bg-secondery'>Xóa</button>
-                </div>
-                <div className='side-list-item'>
-                  <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-3.jpg' alt='' className='side-list-image rounded-full' />
-                  </a>
-                  <div className='flex-1'>
-                    <a href='timeline-page.html'>
-                      <h4 className='side-list-title'> Monroe Parker</h4>
-                    </a>
-                    <div className='side-list-info'> 125k Following</div>
-                  </div>
-                  <button className='button bg-secondery'>Chỉnh sửa</button>
-                  <button className='button bg-secondery'>Xóa</button>
-                </div>
-                <div className='side-list-item'>
-                  <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-full' />
-                  </a>
-                  <div className='flex-1'>
-                    <a href='timeline-page.html'>
-                      <h4 className='side-list-title'> John Michael</h4>
-                    </a>
-                    <div className='side-list-info'> 320k Following </div>
-                  </div>
-                  <button className='button bg-secondery'>Chỉnh sửa</button>
-                  <button className='button bg-secondery'>Xóa</button>
-                </div>
-              </div>
-            </div>
+
             {/* related pages  */}
-            {/* <div className='box p-5 px-6'>
+            {/* <div className='p-5 px-6 box'>
               <div className='flex items-baseline justify-between text-black dark:text-white'>
                 <h3 className='text-base font-bold'> Trang được đề xuất </h3>
                 <a href='#' className='text-sm text-blue-500'>
@@ -574,7 +529,7 @@ function FanpageDetail() {
               <div className='side-list'>
                 <div className='side-list-item'>
                   <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='side-list-image rounded-full' />
+                    <img src='src/assets/images/avatars/avatar-5.jpg' alt='' className='rounded-full side-list-image' />
                   </a>
                   <div className='flex-1'>
                     <a href='timeline-page.html'>
@@ -582,11 +537,11 @@ function FanpageDetail() {
                     </a>
                     <div className='side-list-info'> 192k Following </div>
                   </div>
-                  <button className='button border'>Theo dõi</button>
+                  <button className='border button'>Theo dõi</button>
                 </div>
                 <div className='side-list-item'>
                   <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='side-list-image rounded-full' />
+                    <img src='src/assets/images/avatars/avatar-4.jpg' alt='' className='rounded-full side-list-image' />
                   </a>
                   <div className='flex-1'>
                     <a href='timeline-page.html'>
@@ -594,11 +549,11 @@ function FanpageDetail() {
                     </a>
                     <div className='side-list-info'> 320k Following </div>
                   </div>
-                  <button className='button border'>Theo dõi</button>
+                  <button className='border button'>Theo dõi</button>
                 </div>
                 <div className='side-list-item'>
                   <a href='timeline-page.html'>
-                    <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='side-list-image rounded-full' />
+                    <img src='src/assets/images/avatars/avatar-2.jpg' alt='' className='rounded-full side-list-image' />
                   </a>
                   <div className='flex-1'>
                     <a href='timeline-page.html'>
@@ -606,7 +561,7 @@ function FanpageDetail() {
                     </a>
                     <div className='side-list-info'> 260k Following </div>
                   </div>
-                  <button className='button border'>Theo dõi</button>
+                  <button className='border button'>Theo dõi</button>
                 </div>
               </div>
             </div> */}

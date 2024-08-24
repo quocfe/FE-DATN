@@ -1,12 +1,12 @@
 import useConversationStore from '~/store/conversation.store'
-import useMutationSearchMessage from '../hooks/useSearchMessage'
+import useMutationSearchMessage from '../hooks/useQuery/useSearchMessage'
 import { useEffect, useRef, useState } from 'react'
 import ResultSearchMessageSkelaton from './Skelaton/ResultSearchMessageSkelaton'
 import { highlightMatchedText } from '../utils/highlightMatchedText'
 import { handleToOldMessage } from '../utils/handleToOldMessage'
 import BoxSearchMessage from './BoxSearchMessage'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 
 function ResultSearchMessage() {
   const boxSearchRef = useRef<HTMLDivElement>(null)
@@ -21,7 +21,7 @@ function ResultSearchMessage() {
       {
         query,
         conversationId: selectedConversation?.group_id ? selectedConversation?.group_id : ''
-      }, // Fix the argument structure
+      },
       {
         onSuccess: (data: any) => {
           const message = data?.data.data
@@ -39,22 +39,43 @@ function ResultSearchMessage() {
   }, [])
 
   const handleClickToOldMessage = async (message_id: string) => {
-    const messageOldId = message_id
-    const element = document.getElementById(messageOldId)
-    if (element) {
-      handleToOldMessage(messageOldId)
-    } else {
-      let totalPage = temp?.data.data.pagination.totalPage || 0
+    let checkEl = document.getElementById(message_id)
 
-      for (let i = 0; i < totalPage; i++) {
-        if (hasNextPage) await fetchNextPage()
+    while (!checkEl) {
+      // Gọi hàm loadMoreMessages để tải thêm dữ liệu
+      const fetch = await fetchNextPage()
+
+      setTimeout(() => {
+        const element = document.getElementById(message_id)
+        if (element) {
+          handleToOldMessage(message_id)
+        } else {
+          console.log(' không tìm thấy tin nhắn cần tìm trong setTimeout')
+          return
+        }
+      }, 300)
+
+      if (!fetch.hasNextPage) {
+        console.log('Đã tải hết tin nhắn, không tìm thấy tin nhắn cần tìm.')
+        return
       }
-      handleToOldMessage(messageOldId)
+    }
+
+    if (checkEl) {
+      setTimeout(() => {
+        const element = document.getElementById(message_id)
+        if (element) {
+          handleToOldMessage(message_id)
+        }
+      }, 300)
+      console.log('Đã di chuyển tới tin nhắn.')
+    } else {
+      console.log('Không tìm thấy tin nhắn.')
     }
   }
 
   return (
-    <div className=' relative border-r md:w-[360px] dark:border-slate-700'>
+    <div className='relative hidden border-r md:block md:w-[360px] dark:border-slate-700'>
       <div
         id='side-chat'
         className='dark:bg-dark2 left-0 top-0 z-50 bg-white max-md:fixed max-md:h-screen max-md:w-5/6 max-md:-translate-x-full max-md:shadow'
@@ -66,8 +87,8 @@ function ResultSearchMessage() {
         </div>
         {searchMutation.status === 'success' ? (
           <>
-            <p className='p-2 text-[16px] font-bold text-[#000]'>Tin nhắn</p>
             <div className='h-[calc(100vh-130px)] space-y-2 overflow-y-auto p-2 md:h-[calc(100vh-204px)]'>
+              <p className='p-2 text-[16px] font-bold text-[#000]'>Tin nhắn</p>
               {searchMessages.length > 0 ? (
                 searchMessages.map((message) => (
                   <div

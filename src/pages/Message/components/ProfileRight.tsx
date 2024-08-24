@@ -7,22 +7,22 @@ import Loading from '~/components/Loading'
 import useConversationStore from '~/store/conversation.store'
 import useEmojiStore from '~/store/emoji.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
-import useMutationChangeGroupName from '../hooks/useMutaionChangeGroupName'
-import useMutationChangeImageGroup from '../hooks/useMutaionChangeImageGroup'
-import { useQueryConversation } from '../hooks/useQueryConversation'
-import { useQueryMembers } from '../hooks/useQueryMembers'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import useMutationChangeGroupName from '../hooks/useMutaion/useMutaionChangeGroupName'
+import useMutationChangeImageGroup from '../hooks/useMutaion/useMutaionChangeImageGroup'
+import { useQueryConversation } from '../hooks/useQuery/useQueryConversation'
+import { useQueryMembers } from '../hooks/useQuery/useQueryMembers'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import useFileUpload from '../utils/uploadApi'
 import ProfileRightOption from './ProfileRightOption'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 import ModalAddMember from './ModalAddMember'
 import Dialog from '~/components/Dialog'
 import ModalChageRole from './ModalChageRole'
-import useMutationDeleteOrLeaveMember from '../hooks/useMutationDeleteOrLeaveMember'
+import useMutationDeleteOrLeaveMember from '../hooks/useMutaion/useMutationDeleteOrLeaveMember'
 import { renderTypeFile } from '../utils/renderTypeFile'
-import { useQueryStatusMessage } from '../hooks/useQueryStatusMessage'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 import FeatureNotAllow from '~/components/FeatureNotAllow'
 import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 import DeleteConversationMsg from '~/components/DeleteConversationMsg'
@@ -66,7 +66,8 @@ function ProfileRight() {
   // useQuery
   const { refetch: refetchMsgInfi } = useQueryInfinifyMessage()
   const { data: dataMessage, refetch: refetchMsg } = useQueryMessage()
-  const { refetch: refetchConver } = useQueryConversation()
+  const { data: dataConver, refetch: refetchConver } = useQueryConversation()
+
   const info = dataMessage?.data?.data?.info
   const avatar = info?.avatar
   const group_name = info?.group_name
@@ -76,7 +77,8 @@ function ProfileRight() {
   const isBlocked = info?.list_blocked_user?.some((id) => id === info?.group_id)
   const isBlockedOrBlocking =
     info?.list_block_user?.includes(info?.group_id) || info?.list_blocked_user?.includes(info?.group_id)
-  const { data, refetch: refetchMembers } = useQueryMembers(group_id)
+
+  const { data, refetch: refetchMembers } = useQueryMembers(selectedConversation.group_id, selectedConversation.type)
   const changeImage = useMutationChangeImageGroup()
   const members = data?.data.data
   const changeGroupNameMutation = useMutationChangeGroupName()
@@ -85,6 +87,9 @@ function ProfileRight() {
   const { refetch: refetchConversation } = useQueryInfinifyConversation()
   const { refetch: refetchMessage } = useQueryInfinifyMessage()
   //
+  const checkRuleUserLogin = members?.filter((member) => member.user_id === user_id)
+  const admin = checkRuleUserLogin && checkRuleUserLogin[0]?.role
+  // const userLogin = members?.filter((m) => m.user_id === user_id)
 
   const renderMessageList = (type: number) => {
     const listTemp = messages?.filter((message: TypeMessage) => {
@@ -182,6 +187,7 @@ function ProfileRight() {
     deleteOrLeaveMember.mutate(dataDelete, {
       onSuccess: () => {
         setShowDiaLogDeleteOrLeaveMember(false)
+        if (dataConver?.data.data.data) setSelectedConversation(dataConver?.data.data.data[0])
         refetchMembers()
         refetchConversation()
         refetchStatusMessage()
@@ -392,8 +398,6 @@ function ProfileRight() {
                     <div className='uk-accordion-content dark:text-white/80'>
                       <div className='flex w-full flex-col gap-2'>
                         {members?.map((member) => {
-                          const checkRuleUserLogin = members.filter((member) => member.user_id === user_id)
-                          const admin = checkRuleUserLogin[0]?.role
                           const userLogin = member.user_id === user_id
                           return (
                             <div key={member.user_id}>
@@ -541,7 +545,7 @@ function ProfileRight() {
                   </a>
                   <div className='uk-accordion-content dark:text-white/80'>
                     <ul className='p-3 text-base font-medium'>
-                      {selectedConversation.type === 1 && (
+                      {selectedConversation.type === 1 && !isBlocked && (
                         <li>
                           <button
                             onClick={() => setShowDialogBlock(true)}
@@ -550,6 +554,21 @@ function ProfileRight() {
                           >
                             <IonIcon icon='stop-circle-outline' className='text-2xl' />
                             {isBlock ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
+                          </button>
+                        </li>
+                      )}
+                      {selectedConversation.type === 2 && (
+                        <li>
+                          <button
+                            onClick={() => {
+                              admin ? setShowModalChangeRole(true) : setShowDiaLogDeleteOrLeaveMember(true)
+                              setDataDelete({ user_id: user_id, group_id: group_id })
+                            }}
+                            type='button'
+                            className='flex w-full items-center gap-5 rounded-md p-3 text-red-500 hover:bg-secondery'
+                          >
+                            <IonIcon icon='stop-circle-outline' className='text-2xl' />
+                            Rời khỏi nhóm
                           </button>
                         </li>
                       )}
@@ -569,10 +588,15 @@ function ProfileRight() {
         />
       </div>
       <>
-        {/* modal add member */}
-        <ModalAddMember isOpen={openModalAddMember} onClose={() => setOpenModalAddMember(false)} />
-        {/* modal change role */}
-        <ModalChageRole isOpen={showModalChangeRole} onClose={() => setShowModalChangeRole(false)} />
+        {selectedConversation.type === 2 && (
+          <>
+            {/* modal add member */}
+            <ModalAddMember isOpen={openModalAddMember} onClose={() => setOpenModalAddMember(false)} />
+            {/* modal change role */}
+
+            <ModalChageRole isOpen={showModalChangeRole} onClose={() => setShowModalChangeRole(false)} />
+          </>
+        )}
         {/* Dialog */}
         <Dialog
           isVisible={showDiaLogDeleteOrLeaveMember}

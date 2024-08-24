@@ -1,15 +1,16 @@
 import { IonIcon } from '@ionic/react'
 import _ from 'lodash'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSocketContext } from '~/context/socket'
 import useNotifyMessageSocket from '~/hooks/socket/useNotifyMessageSocket'
 import useConversationStore from '~/store/conversation.store'
-import useMutaionSearchFriendAndGrMsg from '../hooks/useMutationSearchFriendAndGrMsg'
-import { useQueryInfinifyConversation } from '../hooks/useQueryInfinifyConversation'
+import useMutaionSearchFriendAndGrMsg from '../hooks/useMutaion/useMutationSearchFriendAndGrMsg'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
 import ModalCreateGroup from './ModalCreateGroup'
 import SideBarMessageSkelaton from './Skelaton/SideBarMessageSkelaton'
 import Conversation from './components/Conversation'
+import { useLocation } from 'react-router-dom'
 
 const SideBarMessage = () => {
   const { setSelectedConversation } = useConversationStore()
@@ -18,6 +19,10 @@ const SideBarMessage = () => {
   const searchMutation = useMutaionSearchFriendAndGrMsg()
   const { onlineUsers } = useSocketContext()
   const inputSearchRef = useRef<HTMLInputElement>(null)
+  const location = useLocation()
+  const stateLocation = location.state
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useQueryInfinifyConversation()
+
   // const { data: conversation, isLoading } = useQueryConversation()
   const { ref, inView } = useInView()
 
@@ -61,13 +66,51 @@ const SideBarMessage = () => {
     }
   }
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useQueryInfinifyConversation()
-
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage()
     }
   }, [inView, isFetchingNextPage])
+
+  const { selectedConversation } = useConversationStore()
+
+  let showMessageSelect = Object.keys(selectedConversation).length > 0 ? true : false
+  const handleSelectedConversation = (item: GroupMessage) => {
+    if (item.type == 1) {
+      setSelectedConversation({
+        group_id: item.group_message_id,
+        id: item.user_id,
+        type: 1
+      })
+    } else if (item.type == 2) {
+      setSelectedConversation({
+        group_id: item.group_message_id,
+        id: item.group_message_id,
+        type: 2
+      })
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (showMessageSelect && !stateLocation) {
+      const item = data?.pages?.flat()[0]
+      if (item) {
+        console.log('select 1')
+        handleSelectedConversation(item)
+      }
+    }
+  }, [data?.pages.flat()[0]?.group_message_id])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const item = data?.pages?.flat()[0]
+      if (item) {
+        console.log('select 2')
+        handleSelectedConversation(item)
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   if (status === 'pending') {
     return <SideBarMessageSkelaton />
@@ -85,25 +128,6 @@ const SideBarMessage = () => {
             <h2 className='ml-1 text-2xl font-bold text-black dark:text-white'> Đoạn chat </h2>
             {/* right action buttons */}
             <div className='flex items-center gap-2.5'>
-              <button className='group'>
-                <IonIcon icon='settings-outline' className='flex text-2xl group-aria-expanded:rotate-180' />
-              </button>
-              <div
-                className='w-full md:w-[270px]'
-                uk-dropdown='pos: bottom-left; offset:10; animation: uk-animation-slide-bottom-small'
-              >
-                <nav>
-                  <a href='#'>
-                    <IonIcon className='-ml-1 shrink-0 text-2xl' icon='checkmark-outline' /> Mark all as read{' '}
-                  </a>
-                  <a href='#'>
-                    <IonIcon className='-ml-1 shrink-0 text-2xl' icon='notifications-outline' /> notifications setting{' '}
-                  </a>
-                  <a href='#'>
-                    <IonIcon className='-ml-1 shrink-0 text-xl' icon='volume-mute-outline' /> Mute notifications{' '}
-                  </a>
-                </nav>
-              </div>
               <button
                 type='button'
                 aria-expanded='false'

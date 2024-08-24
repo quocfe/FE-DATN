@@ -46,6 +46,7 @@ import Profile from '~/pages/Profile'
 import Game from '~/pages/Game/Game'
 import GamePlay from '~/pages/Game/GamePlay'
 import WatchSearch from '~/pages/WatchSearch'
+import UserMediaResources from '~/pages/PublicProfile/UserMediaResources'
 
 function useRouteElements() {
   const routeElements = useRoutes([
@@ -153,7 +154,6 @@ function useRouteElements() {
           path: '/story/archive',
           element: <ArchiveStory />
         },
-
         {
           path: 'profile',
           children: [
@@ -167,7 +167,6 @@ function useRouteElements() {
                 </MainLayout>
               )
             },
-
             {
               path: 'my_friends',
               element: (
@@ -207,6 +206,16 @@ function useRouteElements() {
                     <MainLayout>
                       <PublicProfile>
                         <FriendInfoDisplay />
+                      </PublicProfile>
+                    </MainLayout>
+                  )
+                },
+                {
+                  path: 'resources',
+                  element: (
+                    <MainLayout>
+                      <PublicProfile>
+                        <UserMediaResources />
                       </PublicProfile>
                     </MainLayout>
                   )

@@ -26,3 +26,11 @@ type PostResponse = SuccessResponse<{
     image_url: string | null
   }
 }>
+
+type PostUpdate = {
+  content?: string | undefined
+  privary?: string | undefined
+  location?: string | undefined
+  post_type?: string | undefined
+  fanpage_id?: string | undefined
+}

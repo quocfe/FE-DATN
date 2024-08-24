@@ -42,6 +42,10 @@ class PostApi {
   getAllFanpagePosts(fanpage_id: string) {
     return http.get<PostResponse>(`${POST.FANPAGE_POST}/${fanpage_id}`)
   }
+
+  updatePost(data: { post_id: string; data: PostUpdate }) {
+    return http.post(`${POST.UPDATE}/${data.post_id}`, data.data)
+  }
 }
 
 export default new PostApi()

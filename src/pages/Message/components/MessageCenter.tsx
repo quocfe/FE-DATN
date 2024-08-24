@@ -2,7 +2,7 @@ import { IonIcon } from '@ionic/react'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { SocketContextProvider, useSocketContext } from '~/context/socket'
 import useConversationStore from '~/store/conversation.store'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import ChatMessage from './ChatMessage'
 import PinMessage from './PinMessage'
 import SendMessage from './SendMessage'
@@ -15,22 +15,36 @@ import InComingCallVideo from './InComingCallVideo'
 import BlockUi from './components/BlockUi'
 import BlockedUi from './components/BlockedUi'
 import FeatureNotAllow from '~/components/FeatureNotAllow'
-import useCallVideo from '../hooks/useCallVideo'
+import useCallVideo from '../hooks/useMutaion/useCallVideo'
+import { useMutationSendMessageAttach } from '../hooks/useMutaion/useMutationSendMessage'
+import useFileUpload from '../utils/uploadApi'
+import { useQueryStatusMessage } from '../hooks/useQuery/useQueryStatusMessage'
+import { useQueryInfinifyConversation } from '../hooks/useQuery/useQueryInfinifyConversation'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
 
 function MessageCenter() {
   const { toggleBoxReply, togglePreviewBox, setToggleBoxSearchMessage, pinMessage, selectedConversation } =
     useConversationStore()
   const { user_id, first_name, last_name, Profile } = getProfileFromLocalStorage()
-  const { isLoading, data } = useQueryMessage()
+  const { isLoading, data } = useQueryMessage(1, 10)
+  const sendMedia = useMutationSendMessageAttach()
+  const { upload } = useFileUpload()
+  const { refetch: refetchStatusMessage } = useQueryStatusMessage()
+  const { refetch: refetchConversation } = useQueryInfinifyConversation()
+  const { refetch: refetchMessage } = useQueryInfinifyMessage()
 
   const chatMessageRef = useRef<HTMLInputElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState<boolean>(false)
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false)
   const [featureNotAllow, setFeatureNotAllow] = useState<boolean>(false)
   const [file, setFile] = useState<File | null>(null)
+  const [isDragAccept, setIsDragAccept] = useState<boolean>(false)
   const boxReplyRef = useRef<HTMLDivElement>(null)
   const previewUploadRef = useRef<HTMLDivElement>(null)
   const infoMessage = data?.data?.data?.info
+  const receiverID = data?.data?.data?.info?.group_id
+  let groupID = selectedConversation?.group_id
+
   const { onlineUsers } = useSocketContext()
   const isOnline =
     selectedConversation.type == 1 && onlineUsers?.some((user_socket) => user_socket == selectedConversation.id)
@@ -38,6 +52,7 @@ function MessageCenter() {
     infoMessage?.list_block_user?.includes(infoMessage.group_id) ||
     infoMessage?.list_blocked_user?.includes(infoMessage.group_id)
   const [calculateHeight, setCalculateHeight] = useState<number>(204)
+
   const handleScroll = useCallback(() => {
     if (chatMessageRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessageRef.current
@@ -46,11 +61,52 @@ function MessageCenter() {
     }
   }, [])
 
+  const handleFileUpload = useCallback(async () => {
+    if (file) {
+      try {
+        const url = await upload(file)
+
+        if (url === null) {
+          setIsDragAccept(false)
+        }
+        const mediaData = {
+          body: `${url.original_filename}.${url.url.split('.').pop()}`,
+          sub_body: url.url,
+          receiver: receiverID,
+          group_message_id: groupID,
+          type: 0
+        }
+
+        if (url.resource_type === 'raw' || url.format === 'pdf') {
+          mediaData.type = 3
+        } else if (url.resource_type === 'video') {
+          mediaData.type = 4
+        } else {
+          mediaData.type = 2
+        }
+
+        await sendMedia.mutateAsync(mediaData)
+        setIsDragAccept(false)
+        refetchConversation()
+        refetchStatusMessage()
+        refetchMessage()
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }, [file, groupID, receiverID])
+
+  useEffect(() => {
+    if (isDragAccept) {
+      handleFileUpload()
+    }
+  }, [isDragAccept])
+
   const handleClickVideoCall = useCallVideo({
     group_message_id: selectedConversation?.group_id,
-    user_id: user_id,
-    group_name: selectedConversation.type === 1 ? first_name + ' ' + last_name : infoMessage?.group_name,
-    avatar: selectedConversation.type === 1 ? Profile.profile_picture : infoMessage?.avatar,
+    user_id: selectedConversation?.id,
+    group_name: infoMessage?.group_name,
+    avatar: infoMessage?.avatar as string,
     type: selectedConversation.type,
     setFeatureNotAllow: setFeatureNotAllow
   })
@@ -75,14 +131,14 @@ function MessageCenter() {
     } else {
       setCalculateHeight(selectedConversation.type === 1 && isBlockedOrBlocking ? 240 : 204)
     }
-  }, [toggleBoxReply, togglePreviewBox, selectedConversation])
+  }, [toggleBoxReply, togglePreviewBox, selectedConversation, isBlockedOrBlocking])
 
   if (isLoading) {
     return <ChatMessageSkelaton />
   }
 
   return (
-    <div className='flex-1 '>
+    <div className='relative flex-1'>
       {/* chat heading */}
       <div className='w- uk-animation-slide-top-medium relative z-10 flex  items-center justify-between gap-2 border-b px-6 py-3.5 dark:border-slate-700'>
         <div className='flex items-center gap-2 sm:gap-4'>
@@ -99,8 +155,8 @@ function MessageCenter() {
               <div className='absolute bottom-0 right-0 m-px h-2 w-2 rounded-full bg-teal-500' />
             )}
           </div>
-          <div className='w-[80%] cursor-pointer' uk-toggle='target: .rightt ; cls: hidden'>
-            <p className='truncate text-base font-bold'> {infoMessage?.group_name}</p>
+          <div className='flex cursor-pointer flex-col items-start justify-start '>
+            <p className='w-[340px] truncate text-base font-bold text-black md:w-[200px]'> {infoMessage?.group_name}</p>
             {isOnline && !isBlockedOrBlocking && (
               <div className='text-xs font-semibold text-green-500'>Đang hoạt động</div>
             )}
@@ -136,7 +192,7 @@ function MessageCenter() {
               <button
                 onClick={() => setToggleBoxSearchMessage(true)}
                 type='button'
-                className='flex items-center rounded-full p-1.5 hover:bg-slate-100'
+                className='hidden items-center rounded-full p-1.5 hover:bg-slate-100 md:flex'
               >
                 <IonIcon icon='search-outline' className='h-6 w-6' />
               </button>
@@ -169,7 +225,7 @@ function MessageCenter() {
       </div>
 
       {/* chats bubble */}
-      <CustomFileInput setPreview={() => {}} type={3} setFile={setFile} file={file}>
+      <CustomFileInput setIsDragAccept={setIsDragAccept} setPreview={() => {}} type={3} setFile={setFile} file={file}>
         <div
           style={{
             height: `calc(100vh - ${selectedConversation.type === 1 && isBlockedOrBlocking ? 240 : calculateHeight}px)`

@@ -28,7 +28,10 @@ function BoxSearchMessage({ boxSearchRef }: BoxSearchMessageType) {
           className='w-full !rounded-lg !py-2 !pl-10 !pr-12 !text-[13px]'
         />
         <div
-          onClick={() => setToggleBoxSearchMessage(false)}
+          onClick={() => {
+            setToggleBoxSearchMessage(false)
+            setSearchParam('')
+          }}
           className='absolute bottom-1/2 right-3 flex translate-y-1/2 cursor-pointer rounded-full bg-slate-200 p-2'
         >
           <IonIcon icon='close' className='md hydrated text-[13px]' role='img' aria-label='search' />

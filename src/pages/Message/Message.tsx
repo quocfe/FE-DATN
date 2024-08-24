@@ -4,7 +4,7 @@ import MessageCenter from './components/MessageCenter'
 import ProfileRight from './components/ProfileRight'
 import ResultSearchMessage from './components/ResultSearchMessage'
 import SideBarMessage from './components/SideBarMessage'
-import { useQueryInfinifyConversation } from './hooks/useQueryInfinifyConversation'
+import { useQueryInfinifyConversation } from './hooks/useQuery/useQueryInfinifyConversation'
 import EmptyMessage from './components/EmptyMessage'
 
 const Message = () => {

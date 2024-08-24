@@ -1,18 +1,18 @@
 import { IonIcon } from '@ionic/react'
-import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
 import useAuthStore from '~/store/auth.store'
 import useConversationStore from '~/store/conversation.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 import { formatDate } from '~/utils/helpers'
-import { useQueryInfinifyMessage } from '../hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '../hooks/useQueryMessage'
+import { useQueryInfinifyMessage } from '../hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryMessage } from '../hooks/useQuery/useQueryMessage'
 import Spinner from './Skelaton/Spinner'
 import { AudioMsg, FileMsg, ImageMsg, TextMsg, VideoCallMsg, VideoMsg } from './TypeMessage'
 import PreviewFileUpload from './components/PreviewFileUpload'
 import StatusMessage from './components/StatusMessage'
-import useFileUploadStore from '~/store/fileUpload.store'
+import { milliseconds } from 'date-fns'
 
 interface ChatMessageProps {
   showScrollBtn: boolean
@@ -42,10 +42,21 @@ const shouldShowTime = (currentMessage: TypeMessage, previousMessage?: TypeMessa
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) => {
-  const { selectedConversation, previewImg } = useConversationStore()
+  const { selectedConversation } = useConversationStore()
+
+  const scrollIntoViewFn = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ block: 'end' })
+    }
+  }
+
+  useLayoutEffect(() => {
+    scrollIntoViewFn()
+  }, [selectedConversation.group_id])
+
   const { profile } = useAuthStore()
   const bottomRef = useRef<HTMLDivElement>(null)
-  const { data: messageData } = useQueryMessage()
+  const { data: messageData } = useQueryMessage(1, 3)
   const infoMessage = messageData?.data?.data?.info
   const { data: dataMsg, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
   const { ref, inView } = useInView({ threshold: 0.25 })
@@ -54,6 +65,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
 
   const newArr = useMemo(() => {
     if (dataMsg?.pages?.length) {
+      // slice: sao chép data
       return dataMsg.pages.slice().reverse()
     }
     return []
@@ -62,27 +74,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   const lastArrRefs = newArr[0]
   const lastRef = lastArrRefs && lastArrRefs[0]
 
-  const scrollIntoViewFn = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ block: 'end' })
-    }
-  }
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      scrollIntoViewFn()
-    }, 100)
-    return () => clearTimeout(timeoutId)
-  }, [selectedConversation.group_id])
-
-  useEffect(() => {
-    if (!isAtBottom && isFetchingNextPage) {
-      scrollIntoViewFn()
-    }
-  }, [newArr.flat().length])
+  // useEffect(() => {
+  //   console.log('test 1')
+  //   if (!isAtBottom && isFetchingNextPage) {
+  //     console.log('scrolling 1')
+  //     scrollIntoViewFn()
+  //   }
+  // }, [newArr.flat().length])
 
   useEffect(() => {
     if (isAtBottom) {
+      console.log('scrolling 2')
       scrollIntoViewFn()
     } else {
       setShowNewMsg(true)
@@ -91,7 +93,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
 
   useEffect(() => {
     if (inView && hasNextPage) {
-      console.log('fire')
       fetchNextPage()
     }
   }, [inView, hasNextPage, fetchNextPage])
@@ -103,16 +104,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
   const groupedMessagesByDate = useMemo(() => groupMessagesByDate(newArr.flat() as TypeMessage[]), [newArr])
   const showStatus =
     newArr.flat()[newArr.flat().length - 1]?.createdBy === user_id && newArr.flat()[newArr.flat().length - 1]?.type != 0
-
+  // console.log('groupedMessagesByDate', groupedMessagesByDate)
   return (
     <div className='relative'>
       {!hasNextPage && (
         <div className='py-10 text-center text-sm lg:pt-8'>
           <img src={infoMessage?.avatar} className='mx-auto mb-3 h-24 w-24 rounded-full object-cover' />
-          <div className='mt-4'>
-            <div className='text-base font-medium text-black md:text-xl dark:text-white '>
+          <div className='mx-auto mt-4 w-[70%]'>
+            <h3 className='truncate text-center text-base font-medium text-black md:text-xl'>
               {infoMessage?.group_name}
-            </div>
+            </h3>
           </div>
 
           {selectedConversation.type != 2 && (
@@ -134,14 +135,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
       )}
       <div className='space-y-2 text-sm font-medium'>
         {Object.entries(groupedMessagesByDate).map(([date, dayMessages]) => (
-          <div className='space-y-2' key={date}>
+          <div className='space-y-2'>
             <div className='text-center text-xs text-gray-500 dark:text-gray-400'>{formatDate(date)}</div>
             {dayMessages.map((item, index) => {
               const previousMessage = index > 0 ? dayMessages[index - 1] : undefined
               const nextMessage = index < dayMessages.length - 1 ? dayMessages[index + 1] : undefined
               const showTime = shouldShowTime(item, previousMessage)
               const showImg =
-                !nextMessage || nextMessage.createdBy !== item.createdBy || shouldShowTime(nextMessage, item)
+                !nextMessage || nextMessage.createdBy !== item?.createdBy || shouldShowTime(nextMessage, item)
               return (
                 <>
                   {showTime && (
@@ -149,14 +150,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
                       {new Date(item?.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   )}
-                  {item.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
-                  {item.type === 0 && <p className='my-2 text-center text-[10px]'>{item.body}</p>}
-                  {item.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
-                  {item.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.message_id === lastRef?.message_id ? <div className='ref' ref={ref} /> : null}
+                  {item?.type === 0 && <p className='my-2 text-center text-[10px]'>{item?.body}</p>}
+                  {item?.type === 1 && <TextMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 2 && <ImageMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 3 && <FileMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 4 && <VideoMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 5 && <AudioMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
+                  {item?.type === 6 && <VideoCallMsg showImg={showImg} item={item} userid={profile?.user_id || ''} />}
                 </>
               )
             })}
@@ -177,7 +178,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ showScrollBtn, isAtBottom }) 
         </div>
       </div>
       {showStatus && <StatusMessage />}
-      <div ref={bottomRef} className='h-[10px]' />
+      <div ref={bottomRef} className='refMsg h-[1px]' />
     </div>
   )
 }

@@ -3,10 +3,9 @@ import HomeTownIcon from '~/components/icons/Profile/HomeTownIcon'
 import JobIcon from '~/components/icons/Profile/JobIcon'
 import RelationshipIcon from '~/components/icons/Profile/RelationshipIcon'
 import MyFriends from './MyFriends'
-
-interface Props {
-  profile: UserProfile | null
-}
+import useQueryPublicProfile from '~/hooks/queries/user/useQueryPublicProfile'
+import { useParams } from 'react-router-dom'
+import useQueryUserMediaResources from '~/hooks/queries/user/useQueryUserMediaResources'
 
 const relationshipStatuses = [
   'Độc thân',
@@ -28,8 +27,14 @@ const ProfileItem = ({ icon, title, text }: { icon: JSX.Element; title: string; 
   </li>
 )
 
-function Introduce({ profile }: Props) {
+function Introduce() {
+  const { user_id } = useParams()
+  const { data } = useQueryPublicProfile(user_id ?? '')
   const getRelationshipStatus = (status: number) => relationshipStatuses[status] || 'Không xác định'
+  const { data: dataMediaResouces } = useQueryUserMediaResources(user_id ?? '')
+  const media_resources = dataMediaResouces?.data.data.media_resources ?? []
+
+  const profile = data?.data.data.user
 
   return (
     <div className='lg:w-[400px]'>
@@ -73,7 +78,7 @@ function Introduce({ profile }: Props) {
                 />
               </svg>
               <div>
-Có <span className='font-semibold text-black dark:text-white'> 3,240 </span> người theo dõi
+                Có <span className='font-semibold text-black dark:text-white'> 3,240 </span> người theo dõi
               </div>
             </li>
           </ul>
@@ -90,36 +95,28 @@ Có <span className='font-semibold text-black dark:text-white'> 3,240 </span> ng
               ))}
             </div>
           )}
-          <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
-            <div className='relative aspect-[4/3] w-full'>
-              <img
-                src='/src/assets/images/avatars/avatar-5.jpg'
-                alt=''
-                className='inset-0 h-full w-full object-cover'
-              />
+          {media_resources.length !== 0 && (
+            <div className='mb-2 mt-4 grid grid-cols-2 gap-1 overflow-hidden rounded-lg text-center text-sm'>
+              {media_resources.slice(0, 4).map((media) => {
+                if (media.media_type === 'image') {
+                  return (
+                    <div className='relative aspect-[4/3] w-full' key={media.media_id}>
+                      <img src={media.media_url} alt='' className='inset-0 h-full w-full object-cover object-center' />
+                    </div>
+                  )
+                } else {
+                  return (
+                    <video
+                      key={media.media_id}
+                      src={media.media_url}
+                      className='h-full w-full object-cover'
+                      controls
+                    ></video>
+                  )
+                }
+              })}
             </div>
-            <div className='relative aspect-[4/3] w-full'>
-              <img
-                src='/src/assets/images/avatars/avatar-7.jpg'
-                alt=''
-                className='inset-0 h-full w-full object-cover'
-              />
-            </div>
-            <div className='relative aspect-[4/3] w-full'>
-              <img
-                src='/src/assets/images/avatars/avatar-4.jpg'
-                alt=''
-                className='inset-0 h-full w-full object-cover'
-              />
-            </div>
-            <div className='relative aspect-[4/3] w-full'>
-              <img
-                src='/src/assets/images/avatars/avatar-6.jpg'
-                alt=''
-                className='inset-0 h-full w-full object-cover'
-              />
-            </div>
-          </div>
+          )}
         </div>
         {/* Bạn bè */}
         <MyFriends />
