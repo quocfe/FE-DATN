@@ -28,7 +28,7 @@ function PublicProfile({ children }: Props) {
   const profile = data?.data.data.user ?? null
 
   if (relationship?.status === 'Đã chặn') {
-    navigate('/setting/blocks')
+    navigate('*')
   }
 
   return (
