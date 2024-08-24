@@ -9,6 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 function Watch() {
   const [videos, setVideos] = useState<DataVideoResponse[]>([])
+  // const [isScroll, setIsScroll] = useState<boolean>(false)
   const [loadMoreNumber, setLoadMoreNumber] = useState(1) // Trang hiện tại, bắt đầu từ trang 1
 
   const { data, refetch, isSuccess } = useQuery({

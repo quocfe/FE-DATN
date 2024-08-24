@@ -3,6 +3,7 @@ import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage
 
 const useNotifyMessage = (group_message_id?: string, user_id?: string) => {
   const { data: notify } = useQueryNotifyMessage()
+
   const notifyData = notify?.data?.data.filter((data: any) => {
     return data.group_message_id === group_message_id && data.receiver_id === user_id ? data : null
   })

@@ -104,7 +104,7 @@ function MessageCenter() {
 
   const handleClickVideoCall = useCallVideo({
     group_message_id: selectedConversation?.group_id,
-    user_id: user_id,
+    user_id: selectedConversation?.id,
     group_name: infoMessage?.group_name,
     avatar: infoMessage?.avatar as string,
     type: selectedConversation.type,
@@ -131,7 +131,7 @@ function MessageCenter() {
     } else {
       setCalculateHeight(selectedConversation.type === 1 && isBlockedOrBlocking ? 240 : 204)
     }
-  }, [toggleBoxReply, togglePreviewBox, selectedConversation])
+  }, [toggleBoxReply, togglePreviewBox, selectedConversation, isBlockedOrBlocking])
 
   if (isLoading) {
     return <ChatMessageSkelaton />

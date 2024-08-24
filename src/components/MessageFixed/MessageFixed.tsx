@@ -78,7 +78,7 @@ function MessageFixed({ message_fix }: { message_fix: MessageFix }) {
 
   const handleClickVideoCall = useCallVideo({
     group_message_id: message_fix?.group_id,
-    user_id: user_id,
+    user_id: message_fix.id,
     group_name: infoMessage?.group_name,
     avatar: infoMessage?.avatar,
     type: message_fix.type,

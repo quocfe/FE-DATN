@@ -4,7 +4,7 @@ function LastMarketplace() {
   return (
     <div className='box border1 dark:bg-dark2 p-5 px-6'>
       <div className='flex justify-between text-black dark:text-white'>
-        <h3 className='text-base font-bold'> Premium Photos </h3>
+        <h3 className='text-base font-bold'> 123 </h3>
         <button type='button'>
           <IonIcon icon='sync-outline' className='text-xl' />
         </button>

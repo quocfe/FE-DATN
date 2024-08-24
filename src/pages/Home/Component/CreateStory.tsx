@@ -68,7 +68,8 @@ function CreateStory({ closeStory }: any) {
       text: dataStory,
       privacy: '1',
       tag: '1231323',
-      music: 'ccc'
+      music: 'ccc',
+      is_archived: false
     }
     idSearch ? handelEdit(idSearch2, test) : handelCreate(test)
     queryClient.invalidateQueries()
@@ -162,7 +163,7 @@ function CreateStory({ closeStory }: any) {
             >
               <label
                 htmlFor='createStatusUrl'
-                className='absolute bottom-0 left-1/2 z-10 flex w-full -translate-x-1/2 cursor-pointer flex-col items-center justify-center bg-gradient-to-t from-gray-700/60 pb-6 pt-10'
+                className='absolute bottom-0 left-1/2 top-0 z-10 flex w-full -translate-x-1/2 cursor-pointer flex-col items-center justify-center bg-gradient-to-t from-gray-700/60 pb-6 pt-10'
               >
                 <div {...getRootProps()}>
                   <input {...getInputProps()} className='hidden' />
@@ -172,7 +173,9 @@ function CreateStory({ closeStory }: any) {
               {isVideo ? (
                 <video id='createStatusVideo' src={preview} controls className='absolute h-full w-full object-cover' />
               ) : (
-                <img id='createStatusImage' src={preview} alt='' className='absolute h-full w-full object-cover' />
+                preview != '' && (
+                  <img id='createStatusImage' src={preview} alt='' className='absolute h-full w-full object-cover' />
+                )
               )}
             </div>
             <div className='flex items-center justify-between'>

@@ -1,4 +1,4 @@
-export interface Fanpage {
+type FanpageType = {
   fanpage_id: string
   group_name: string
   description: string | null
@@ -14,7 +14,7 @@ export interface Fanpage {
   image_url: string | null
 }
 
-export type FanpageResponse = {
+type FanpageResponse = {
   first: number
   prev: null | number
   next: number | null
@@ -26,14 +26,14 @@ export type FanpageResponse = {
   }
 }
 
-export type FanpageNoId = Omit<Fanpage, 'fanpage_id'>
+type FanpageNoId = Omit<Fanpage, 'fanpage_id'>
 
-export type FanpageConfigParams = {
+type FanpageConfigParams = {
   _page: string
   _per_page: string
 }
 
-export type FanpageUpdate = {
+type FanpageUpdate = {
   id: string
   fanpage: FanpageNoId
 }

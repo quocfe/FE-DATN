@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import { FanpageNoId, FanpageResponse, Fanpage as FanpageType } from '~/@types/fanpage'
-import FanpageApi from '~/apis/fanpage.api'
-import { Link } from 'react-router-dom'
-import uploadFileApi from '~/apis/uploadFileApi'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import FanpageApi from '~/apis/fanpage.api'
+import useFileUpload from '~/pages/Message/utils/uploadApi'
 
 function FanpageCreate() {
   const [loading, setLoading] = useState(false)
   const [file, setUploadFile] = useState<string>('')
   const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
+  const { upload } = useFileUpload()
 
   const [newFanpageData, setNewFanpageData] = useState<FanpageNoId>({
     group_name: '',
@@ -61,11 +60,11 @@ function FanpageCreate() {
   const handleChangeImage = async (e: any) => {
     setLoading(true)
     try {
-      const response = await uploadFileApi.uploadFile(e)
-      if (typeof response === 'string') {
-        setUploadFile(response)
+      const response = await upload(e.current.files[0])
+      if (typeof response.url === 'string') {
+        setUploadFile(response.url)
       } else {
-        console.error('Invalid response:', response)
+        console.error('Invalid response:', response.url)
       }
     } catch (error) {
       console.error('Error uploading file:', error)

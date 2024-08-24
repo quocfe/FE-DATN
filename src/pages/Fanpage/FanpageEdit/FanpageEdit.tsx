@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { FanpageNoId, FanpageResponse, Fanpage as FanpageType } from '~/@types/fanpage'
-import FanpageApi from '~/apis/fanpage.api'
-import { Link } from 'react-router-dom'
-import uploadFileApi from '~/apis/uploadFileApi'
+import { IonIcon } from '@ionic/react'
+import React, { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
-import { useParams, useLocation } from 'react-router-dom'
+import FanpageApi from '~/apis/fanpage.api'
+import Spinner from '~/pages/Message/components/Skelaton/Spinner'
+import useFileUpload from '~/pages/Message/utils/uploadApi'
 
 function FanpageEdit() {
   const { fanpageId } = useParams<{ fanpageId: any }>()
@@ -14,6 +13,7 @@ function FanpageEdit() {
   const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
   const [fanpage, setFanpage] = React.useState<any | null>(null)
+  const { upload } = useFileUpload()
 
   const fetchFanpage = async () => {
     try {
@@ -32,6 +32,7 @@ function FanpageEdit() {
     try {
       if (file) {
         fanpage.image_url = file
+        console.log(' fanpage.image_url ', fanpage.image_url)
       }
       const response = await FanpageApi.updateFanpage(fanpageId, fanpage)
       if (response) {
@@ -47,11 +48,11 @@ function FanpageEdit() {
   const handleChangeImage = async (e: any) => {
     setLoading(true)
     try {
-      const response = await uploadFileApi.uploadFile(e)
-      if (typeof response === 'string') {
-        setUploadFile(response)
+      const response = await upload(e.target.files[0])
+      if (typeof response.url === 'string') {
+        setUploadFile(response.url)
       } else {
-        console.error('Invalid response:', response)
+        console.error('Invalid response:', response.url)
       }
     } catch (error) {
       console.error('Error uploading file:', error)
@@ -145,11 +146,7 @@ function FanpageEdit() {
           {/* Cover image */}
           <div className='relative h-40 w-full overflow-hidden lg:h-60'>
             <img
-              src={
-                fanpage?.image_url ||
-                file ||
-                'https://i.pinimg.com/originals/b4/4a/ae/b44aae119e1a1334eb416905f2082ad1.jpg'
-              }
+              src={'https://i.pinimg.com/originals/b4/4a/ae/b44aae119e1a1334eb416905f2082ad1.jpg'}
               alt='Cover'
               className='inset-0 h-full w-full object-cover'
             />
@@ -160,11 +157,12 @@ function FanpageEdit() {
           <div className='p-3 md:p-5 lg:px-10'>
             <div className='-mt-20 flex flex-col justify-center'>
               <div className='relative z-10 mb-4 h-20 w-20'>
-                <div className='relative shrink-0 overflow-hidden rounded-full border-gray-100 shadow md:border-[2px] dark:border-slate-900'>
+                <div className='group relative shrink-0 overflow-hidden rounded-full border-gray-100 shadow md:border-[2px] dark:border-slate-900'>
                   <img
-                    src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                    src={file || fanpage?.image_url}
+                    // src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
                     alt='Avatar'
-                    className='inset-0 h-full w-full object-cover'
+                    className='inset-0 h-[78px] w-[78px] object-cover'
                   />
                 </div>
               </div>

@@ -1,21 +1,14 @@
 import { IonIcon } from '@ionic/react'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 import DeleteConversationMsg from '~/components/DeleteConversationMsg'
-import Dialog from '~/components/Dialog'
 import { useSocketContext } from '~/context/socket'
 import useMutationDeleteNotify from '~/hooks/mutations/message/useMutationDeleteNotify'
-import useQueryNotifyMessage from '~/hooks/queries/message/useQueryNotifyMessage'
 import TimeAgo from '~/pages/Message/components/components/TimeAgo'
-import useMutationDeleteMessage from '~/pages/Message/hooks/useMutaion/useMutationDeleteGroup'
 import useNotifyMessage from '~/pages/Message/hooks/useMutaion/useNotifyMessage'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQuery/useQueryInfinifyMessage'
 import { checkBodyMessage } from '~/pages/Message/utils/checkBodyMessage'
-import useConversationStore from '~/store/conversation.store'
 import useMessageFixStore from '~/store/messageFix.store'
 import { getProfileFromLocalStorage } from '~/utils/auth'
 
@@ -79,9 +72,9 @@ function Conversation({ item, isOnline, innerRef }: ConversationType) {
       user_id: user_id,
       message_id: message_id
     }
-    socket?.emit('seenMessage', JSON.stringify(dataSeen))
-    if (item.group_message_id) {
-      showNotify && deleteNotify.mutate(item.group_message_id)
+    if (item.group_message_id && numberNotify) {
+      deleteNotify.mutate(item.group_message_id)
+      isBlockedOrBlocking && socket?.emit('seenMessage', JSON.stringify(dataSeen))
     }
   }
 

@@ -113,7 +113,7 @@ const CommnetReplyItem = ({ comment_reply, handClickReply, comment, getCommentPa
       <div className='w-full flex-1'>
         <div className='flex w-full items-start space-x-2 p-1'>
           <div className='w-8'>
-            <img src={comment_reply?.user?.Profile.cover_photo} alt='profile' className='h-8 w-8 rounded-full' />
+            <img src={comment_reply?.user?.Profile.profile_picture} alt='profile' className='h-8 w-8 rounded-full' />
           </div>
           <div className='group relative flex w-full flex-1 items-center gap-x-2'>
             <div className={editComment ? 'mb-2 w-full' : 'w-full'}>

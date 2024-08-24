@@ -21,7 +21,7 @@ function ResultSearchMessage() {
       {
         query,
         conversationId: selectedConversation?.group_id ? selectedConversation?.group_id : ''
-      }, // Fix the argument structure
+      },
       {
         onSuccess: (data: any) => {
           const message = data?.data.data
@@ -60,6 +60,7 @@ function ResultSearchMessage() {
         return
       }
     }
+
     if (checkEl) {
       setTimeout(() => {
         const element = document.getElementById(message_id)

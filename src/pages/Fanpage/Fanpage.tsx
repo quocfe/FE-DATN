@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { FanpageNoId, FanpageResponse, Fanpage as FanpageType, FanpageMember } from '~/@types/fanpage'
-import FanpageApi from '~/apis/fanpage.api'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getProfileFromLocalStorage } from '~/utils/auth'
 import fanpageMemberApi from '~/apis/fanpage-member.api'
-import uploadFileApi from '~/apis/uploadFileApi'
+import FanpageApi from '~/apis/fanpage.api'
+import { getProfileFromLocalStorage } from '~/utils/auth'
+import { calculateTimeAgo } from '~/utils/helpers'
 
 function Fanpage() {
   const [fanpages, setFanpages] = useState<FanpageType[]>([])
   const [fanpagesDifferent, setFanpagesDifferent] = useState<FanpageType[]>([])
-  const [fanpageMembers, setFanpageMembers] = useState<FanpageMember[]>([])
+  const [fanpageMembers, setFanpageMembers] = useState<any[]>([])
   const [showModal, setShowModal] = useState(false)
   const [newFanpageData, setNewFanpageData] = useState<FanpageNoId>({
     group_name: '',
@@ -188,15 +187,15 @@ function Fanpage() {
                       <h4 className='card-title'>{fanpage.group_name}</h4>
                     </Link>
                     {/* <p className='card-text'>{fanpage.followers_count} Following</p>
-                    <button type='button' className='button bg-primary text-white' onClick={() => handleFollowFanpage(fanpage.fanpage_id)}>
+                    <button type='button' className='text-white button bg-primary' onClick={() => handleFollowFanpage(fanpage.fanpage_id)}>
                       Follow
                     </button> */}
                   </div>
                 </div>
               ))}
 
-              {/* <div className='col-span-2 my-6 flex justify-center lg:col-span-3'>
-                <button type='button' className='dark:bg-dark2 rounded-full bg-white px-5 py-2 text-sm font-semibold shadow-md'>
+              {/* <div className='flex justify-center col-span-2 my-6 lg:col-span-3'>
+                <button type='button' className='px-5 py-2 text-sm font-semibold bg-white rounded-full shadow-md dark:bg-dark2'>
                   Load more...
                 </button>
               </div> */}
@@ -219,15 +218,15 @@ function Fanpage() {
                       <h4 className='card-title'>{fanpage.group_name}</h4>
                     </Link>
                     {/* <p className='card-text'>{fanpage.followers_count} Following</p> */}
-                    {/* <button type='button' className='button bg-primary text-white' onClick={() => handleFollowFanpage(fanpage.fanpage_id)}>
+                    {/* <button type='button' className='text-white button bg-primary' onClick={() => handleFollowFanpage(fanpage.fanpage_id)}>
                       Follow
                     </button> */}
                   </div>
                 </div>
               ))}
 
-              {/* <div className='col-span-2 my-6 flex justify-center lg:col-span-3'>
-                <button type='button' className='dark:bg-dark2 rounded-full bg-white px-5 py-2 text-sm font-semibold shadow-md'>
+              {/* <div className='flex justify-center col-span-2 my-6 lg:col-span-3'>
+                <button type='button' className='px-5 py-2 text-sm font-semibold bg-white rounded-full shadow-md dark:bg-dark2'>
                   Load more...
                 </button>
               </div> */}
@@ -251,7 +250,7 @@ function Fanpage() {
                   <Link to={`/fanpage/${fanpage.fanpage_id}?my-fanpages`}>
                     <img
                       src={fanpage.image_url || 'default_image_url.jpg'}
-                      className='side-list-image rounded-full'
+                      className='side-list-image h-[40px] w-[40px] rounded-full object-cover'
                       alt={fanpage.group_name}
                     />
                   </Link>
@@ -259,21 +258,17 @@ function Fanpage() {
                     <Link to={`/fanpage/${fanpage.fanpage_id}?my-fanpages`}>
                       <h4 className='side-list-title'>{fanpage.group_name}</h4>
                     </Link>
-                    <div className='side-list-info'>
-                      Cập nhật{' '}
-                      {Math.floor(
-                        (new Date().getTime() - new Date(fanpage.updatedAt).getTime()) / (1000 * 60 * 60 * 24)
-                      )}{' '}
-                      ngày trước
-                    </div>
+                    <div className='side-list-info'>Cập nhật {calculateTimeAgo(fanpage.updatedAt)} trước</div>
                   </div>
-                  <Link to={`/fanpage-edit/${fanpage.fanpage_id}`}>
-                    <button className='button bg-secondery'>Chỉnh sửa</button>
-                  </Link>
+                  <div className='flex flex-col gap-2'>
+                    <Link to={`/fanpage-edit/${fanpage.fanpage_id}`}>
+                      <button className='button bg-secondery'>Chỉnh sửa</button>
+                    </Link>
 
-                  <button className='button bg-secondery' onClick={() => openDeleteModal(fanpage.fanpage_id)}>
-                    Xóa
-                  </button>
+                    <button className='button bg-secondery' onClick={() => openDeleteModal(fanpage.fanpage_id)}>
+                      Xóa
+                    </button>
+                  </div>
                 </div>
               ))}
               <button className='mt-3 w-full rounded-md bg-secondery px-3.5 py-1.5 text-sm font-medium text-black dark:text-white'>
@@ -300,13 +295,7 @@ function Fanpage() {
                     <Link to={`/fanpage/${fanpage.fanpage_id}`}>
                       <h4 className='side-list-title'>{fanpage.group_name}</h4>
                     </Link>
-                    <div className='side-list-info'>
-                      Cập nhật{' '}
-                      {Math.floor(
-                        (new Date().getTime() - new Date(fanpage.updatedAt).getTime()) / (1000 * 60 * 60 * 24)
-                      )}{' '}
-                      Ngày trước
-                    </div>
+                    <div className='side-list-info'>Cập nhật {calculateTimeAgo(fanpage.updatedAt)} trước</div>
                   </div>
                   <button
                     className='button bg-primary-soft text-primary dark:text-white'

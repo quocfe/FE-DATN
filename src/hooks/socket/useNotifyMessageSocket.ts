@@ -12,18 +12,18 @@ const useNotifyMessageSocket = () => {
   let audio = new Audio(soundNewMessage)
 
   useEffect(() => {
-    ;(socket as Socket | null)?.on('newNotifyMessage', () => {
+    socket?.on('newNotifyMessage', () => {
       refetchNotifyMessage()
       audio.play()
     })
-    ;(socket as Socket | null)?.on('deleteNotifyMessage', () => {
+    socket?.on('deleteNotifyMessage', () => {
       refetchNotifyMessage()
       // audio.play()
     })
 
     return () => {
-      ;(socket as Socket | null)?.off('newNotifyMessage')
-      ;(socket as Socket | null)?.off('deleteNotifyMessage')
+      socket?.off('newNotifyMessage')
+      socket?.off('deleteNotifyMessage')
     }
   }, [socket])
 }

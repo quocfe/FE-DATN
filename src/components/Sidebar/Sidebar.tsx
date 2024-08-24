@@ -74,19 +74,27 @@ function Sidebar() {
                         </Link>
                       </li>
                       <li>
-                        <a href='event.html'>
+                        <a>
                           <img src='/src/assets/images/icons/event.png' alt='messages' className='w-6' />
                           <span> Sự kiện </span>
                         </a>
                       </li>
-                      <li className='fanpage'>
+                      <li
+                        className={classNames('', {
+                          active: pathname === 'fanpage'
+                        })}
+                      >
                         <Link to={'/fanpage'}>
                           <img src='/src/assets/images/icons/page.png' alt='pages' className='w-6' />
                           <span> Trang </span>
                         </Link>
                       </li>
+<<<<<<< HEAD
+=======
+
+>>>>>>> e416ffbfcf129b44097f2796c3c906f9986710c5
                       <li>
-                        <a href='blog.html'>
+                        <a>
                           <img src='/src/assets/images/icons/blog.png' alt='blog' className='w-6' />
                           <span> Blog </span>
                         </a>
@@ -95,30 +103,6 @@ function Sidebar() {
                         <a href='games.html'>
                           <img src='/src/assets/images/icons/game.png' alt='games' className='w-6' />
                           <span> Games </span>
-                        </a>
-                      </li>
-                      <li className='!hidden' id='show__more'>
-                        <a href='funding.html'>
-                          <img src='/src/assets/images/icons/fund.png' alt='messages' className='w-6' />
-                          <span> Fundraiser</span>
-                        </a>
-                      </li>
-                      <li className='!hidden' id='show__more'>
-                        <a href='blog-2.html'>
-                          <img src='/src/assets/images/icons/blog-2.png' alt='blog' className='w-6' />
-                          <span> blog II </span>
-                        </a>
-                      </li>
-                      <li className='!hidden' id='show__more'>
-                        <a href='event-2.html'>
-                          <img src='/src/assets/images/icons/event-2.png' alt='event' className='w-6' />
-                          <span> Event II </span>
-                        </a>
-                      </li>
-                      <li className='!hidden' id='show__more'>
-                        <a href='groups-2.html'>
-                          <img src='/src/assets/images/icons/group-2.png' alt='groups' className='w-6' />
-                          <span> Groups II </span>
                         </a>
                       </li>
                     </ul>
@@ -155,7 +139,7 @@ function Sidebar() {
                     </div>
                     <ul className='uk-nav mt-2 -space-y-2' uk-nav='multiple: true'>
                       <li>
-                        <a href='setting.html'>
+                        <a>
                           <svg
                             xmlns='http://www.w3.org/2000/svg'
                             fill='none'
@@ -174,25 +158,7 @@ function Sidebar() {
                           <span> Cài đặt </span>
                         </a>
                       </li>
-                      <li>
-                        <a href='upgrade.html'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            className='h-4 w-4'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z'
-                            />
-                          </svg>
-                          <span> Nâng cấp </span>
-                        </a>
-                      </li>
+
                       <li>
                         <a href='form-login.html'>
                           <svg

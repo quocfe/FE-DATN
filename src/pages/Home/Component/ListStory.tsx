@@ -25,7 +25,7 @@ function ListStory({ handelCheckToggle }: any) {
 
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  
+
   const handleCreate = (data: any) => {
     mutation.mutate(data, {
       onSuccess: () => {
