@@ -138,21 +138,6 @@ const FormCreateVideo = ({ getVideos }: FormCreateVideoProps) => {
                     <SvgIcon name='video-camera' className='h-4 w-4 text-teal-600' />
                     Video
                   </button>
-
-                  <button
-                    type='button'
-                    className='flex items-center gap-1.5 rounded-full border-2 border-orange-100 bg-orange-50 px-2 py-1 text-orange-600 dark:border-yellow-900 dark:bg-yellow-950'
-                  >
-                    <SvgIcon name='happy' className='h-4 w-4 ' />
-                    Feeling
-                  </button>
-                  <button
-                    type='button'
-                    className='flex items-center gap-1.5 rounded-full border-2 border-rose-100 bg-red-50 px-2 py-1 text-red-600 dark:border-rose-900 dark:bg-rose-950'
-                  >
-                    <SvgIcon name='location' className='h-4 w-4 text-red-600' />
-                    Check in
-                  </button>
                   <SubjectArticle setValue={setValue} watch={watch} />
                 </div>
                 <div className='flex justify-between gap-2 p-4'>
