@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
 import { createEditor, Node, Text } from 'slate'
 import type { BaseEditor, BaseRange, Descendant } from 'slate'
@@ -124,4 +124,4 @@ const SlateEditor = ({
   )
 }
 
-export default React.memo(SlateEditor)
+export default SlateEditor

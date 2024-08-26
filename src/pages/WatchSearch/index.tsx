@@ -53,11 +53,15 @@ const WatchSearch = () => {
         endMessage={<p>No more data to load.</p>}
         // scrollableTarget='scrollableDiv'
       >
-        {videos.map((item: DataVideoResponse) => (
-          <div className='mt-6 flex flex-col gap-y-10 rounded-lg bg-white py-2 shadow-sm' key={item.id}>
-            <HorizontalVideoCard video={item} setVideoData={setVideos} />
-          </div>
-        ))}
+        {videos.length > 0 ? (
+          videos.map((item: DataVideoResponse) => (
+            <div className='relative mt-6 flex flex-col gap-y-10 rounded-lg bg-white py-2 shadow-sm' key={item.id}>
+              <HorizontalVideoCard video={item} setVideoData={setVideos} />
+            </div>
+          ))
+        ) : (
+          <h4 className='mt-4 py-10 text-center text-[36px] font-bold !text-gray-500'>Không tìm thấy video phù hợp</h4>
+        )}
       </InfiniteScroll>
       {/* )} */}
     </div>
