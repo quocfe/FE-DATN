@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {  useState } from 'react'
+import React, { useState } from 'react'
 import { NavLink, useNavigate, useSearchParams } from 'react-router-dom'
 import Header from '~/components/Header'
 import { ROUTE_PATH } from '~/constants'
@@ -20,8 +20,11 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
   const handleKeyDown = (event: any) => {
     if (event.key === 'Enter') {
       // Ngăn gửi form nếu muốn xử lý bằng cách khác
-      console.log('Enter')
       event.preventDefault()
+      if (value.trim().length === 0) {
+        return navigate('/watch')
+      }
+
       if (value.trim() !== '' && currentPath !== `watch/search?q=${value}`) {
         return navigate(`/watch/search?q=${value}`)
       }
@@ -31,6 +34,10 @@ const VideoLayout = ({ children }: VideoLayoutProps) => {
   }
 
   const onClickSearch = () => {
+    if (value.trim().length === 0) {
+      return navigate('/watch')
+    }
+
     if (value.trim() !== '' && currentPath !== `watch/search?q=${value}`) {
       return navigate(`/watch/search?q=${value}`)
     }
