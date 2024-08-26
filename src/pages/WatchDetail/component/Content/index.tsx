@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { Video } from '~/components/design-systems'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -39,7 +40,7 @@ const Content = () => {
       refetchGetOneVideo()
     }
   })
-
+  console.log(videoData)
   return (
     <div className='container mx-auto grid w-full grid-cols-3 gap-6 pt-4'>
       <div className='col-span-3 lg:col-span-3'>
@@ -165,11 +166,18 @@ const Content = () => {
                   {videoData && <VideoAction dataVideo={videoData as never} />}
                 </div>
                 {/* <p className='px-6 text-sm font-normal leading-6'>{videoData?.content}</p> */}
-                <SlateEditor
+                {/* <SlateEditor
                   className='!my-5 overflow-y-auto overflow-x-hidden px-6'
                   valueSaleRender={videoData?.content && JSON.parse(videoData.content)}
                   readOnly
-                />
+                /> */}
+                {videoData && (
+                  <SlateEditor
+                    className='max-h-10 overflow-hidden overflow-y-auto overflow-x-hidden px-2'
+                    valueSaleRender={JSON.parse(videoData?.content as any)}
+                    readOnly
+                  />
+                )}
               </div>
 
               <div id='scroll-base' className='px-4 lg:h-[240px]'>
