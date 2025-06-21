@@ -1,9 +1,9 @@
 import { toast } from 'react-toastify'
-import useMutationDeleteMessage from '~/pages/Message/hooks/useMutationDeleteGroup'
-import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQueryInfinifyConversation'
+import useMutationDeleteMessage from '~/pages/Message/hooks/useMutaion/useMutationDeleteGroup'
+import { useQueryInfinifyConversation } from '~/pages/Message/hooks/useQuery/useQueryInfinifyConversation'
 import useMessageFixStore from '~/store/messageFix.store'
 import Dialog from '../Dialog'
-import useMutationReportMessage from '~/pages/Message/hooks/useMutationReportMessage'
+import useMutationReportMessage from '~/pages/Message/hooks/useMutaion/useMutationReportMessage'
 
 interface props {
   showDiaLogReportMessage: boolean

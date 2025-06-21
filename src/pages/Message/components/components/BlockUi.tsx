@@ -2,13 +2,12 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import Dialog from '~/components/Dialog'
 import useMutationUnblockedUser from '~/hooks/mutations/user/useMutationUnblockedUser'
-import { useQueryInfinifyMessage } from '../../hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '../../hooks/useQueryMessage'
+import { useQueryInfinifyMessage } from '../../hooks/useQuery/useQueryInfinifyMessage'
+import { useQueryMessage } from '../../hooks/useQuery/useQueryMessage'
 import BlockOrUnBlockUserInMsg from '~/components/BlockOrUnBlockUserInMsg'
 
 function BlockUi({ user_id }: { user_id: string }) {
   const [showDiaLog, setShowDiaLog] = useState<boolean>(false)
-  const { refetch: refreshMsg } = useQueryMessage()
 
   return (
     <>

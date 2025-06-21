@@ -8,19 +8,19 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useWavesurfer } from '@wavesurfer/react'
 import ModalMemberReact from '~/pages/Message/components/ModalMemberReact'
 import ModalUnSendOption from '~/pages/Message/components/ModalUnSendOption'
-import useMutationSendReactMessage from '~/pages/Message/hooks/useMutationSendReactMessage'
-import { useQueryInfinifyMessage } from '~/pages/Message/hooks/useQueryInfinifyMessage'
-import { useQueryMessage } from '~/pages/Message/hooks/useQueryMessage'
+import useMutationSendReactMessage from '~/pages/Message/hooks/useMutaion/useMutationSendReactMessage'
+import { useQueryMessage } from '~/pages/Message/hooks/useQuery/useQueryMessage'
 import { downloadFileFormLink } from '~/pages/Message/utils/downloadFileFormLink'
 import { handleToOldMessage } from '~/pages/Message/utils/handleToOldMessage'
 import { renderTypeFile } from '~/pages/Message/utils/renderTypeFile'
 import { MessageFix } from '~/store/messageFix.store'
+import { useQueryInfinifyMessageFix } from './hooks/useQueryInfinifyMessageFix'
 
 interface props {
   infoMessage: InfoMessage
   recall: boolean
   me: boolean
-  item: TypeMessage
+  item: TypeMessage | any
   type?: string
   message_fix: MessageFix
 }
@@ -37,9 +37,8 @@ const ContentMessage = (params: props) => {
   const [isOpenModalOption, setIsOpenModalOption] = useState(false)
   const [isOpenModalReactMsg, setIsOpenModalReactMsg] = useState(false)
   const sendReactMessageMutaion = useMutationSendReactMessage()
-  const { setToggleBoxReply, setPinMessage, selectedConversation } = useConversationStore()
-  const { hasNextPage, fetchNextPage } = useQueryInfinifyMessage()
-  const { data: temp } = useQueryMessage(1, 30)
+  const { setToggleBoxReply } = useConversationStore()
+  const { fetchNextPage } = useQueryInfinifyMessageFix(params.message_fix)
   const { user_id } = getProfileFromLocalStorage()
   const queryClient = useQueryClient()
   const emojiUserSelected = item.reactions?.filter((reaction: any) => reaction.createdBy === user_id)
@@ -71,7 +70,6 @@ const ContentMessage = (params: props) => {
         setIsOpenModalOption(true)
         break
       case 'pin':
-        setPinMessage(item)
         break
       default:
         break
@@ -116,7 +114,9 @@ const ContentMessage = (params: props) => {
     const isUnsent = item.status === false
     const isReply = params.type === 'reply'
     const linkRegex = /(https?:\/\/[^\s]+)/g
-
+    if (Object.keys(params.item).length == 0 && params.type == 'reply') {
+      return <p className={`-mt-[10px]  truncate break-words text-[13px] text-gray-400`}>Bạn đã xóa tin nhắn này</p>
+    }
     switch (item.type) {
       case 1:
         return item.body.match(linkRegex) ? (
@@ -265,12 +265,9 @@ const ContentMessage = (params: props) => {
             {params.message_fix.type === 2
               ? params.item.reactions?.length > 2
                 ? params.item.reactions?.slice(0, 2).map((item: any, index: number) => (
-                    <>
-                      <p key={index} className='text-[12px]'>
-                        {item.emoji ?? ''}
-                      </p>
-                      <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
-                    </>
+                    <p key={index} className='text-[12px]'>
+                      {item.emoji ?? ''}
+                    </p>
                   ))
                 : params.item.reactions.map((item: any, index: number) => (
                     <p key={index} className='text-[12px]'>
@@ -284,27 +281,56 @@ const ContentMessage = (params: props) => {
                     </p>
                   ))
                 : null}
+            {params.message_fix.type === 2 && params.item.reactions?.length > 2 && (
+              <p className='text-[12px]'>+{(params.item.reactions?.length ?? 0) - 2}</p>
+            )}
           </div>
-          <ModalMemberReact
-            group_id={item.group_message_id}
-            reactArr={item.reactions}
-            isOpen={isOpenModalReactMsg}
-            onClose={() => setIsOpenModalReactMsg(false)}
-          />
+          {params.message_fix.type === 2 && (
+            <ModalMemberReact
+              group_id={item.group_message_id}
+              reactArr={item.reactions}
+              isOpen={isOpenModalReactMsg}
+              onClose={() => setIsOpenModalReactMsg(false)}
+            />
+          )}
         </>
       )
     )
   }
 
   const handleGoToOldMessage = async () => {
-    let totalPage = temp?.data.data.pagination.totalPage || 0
-    const checkEl = document.getElementById(item.message_id)
-    if (!checkEl) {
-      for (let i = 0; i < totalPage; i++) {
-        if (hasNextPage) await fetchNextPage()
+    let checkEl = document.getElementById(params.item.message_id)
+
+    while (!checkEl) {
+      // Gọi hàm loadMoreMessages để tải thêm dữ liệu
+      const fetch = await fetchNextPage()
+
+      setTimeout(() => {
+        const element = document.getElementById(params.item.message_id)
+        if (element) {
+          handleToOldMessage(params.item.message_id)
+        } else {
+          console.log(' không tìm thấy tin nhắn cần tìm trong setTimeout')
+          return
+        }
+      }, 300)
+
+      if (!fetch.hasNextPage) {
+        console.log('Đã tải hết tin nhắn, không tìm thấy tin nhắn cần tìm.')
+        return
       }
     }
-    handleToOldMessage(item.message_id)
+    if (checkEl) {
+      setTimeout(() => {
+        const element = document.getElementById(params.item.message_id)
+        if (element) {
+          handleToOldMessage(params.item.message_id)
+        }
+      }, 300)
+      console.log('Đã di chuyển tới tin nhắn.')
+    } else {
+      console.log('Không tìm thấy tin nhắn.')
+    }
   }
 
   function handleMouseLeave() {

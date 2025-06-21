@@ -1,7 +1,8 @@
 import { IonIcon } from '@ionic/react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useIsMutating, useQueryClient } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
+import Loading from '~/components/Loading'
 import useMutationAddPostComment from '~/hooks/mutations/postComment/useMutationAddPostComment'
 import useMutationUpdatePostComment from '~/hooks/mutations/postComment/useMutationUpdatePostComment'
 import useMutationAddPostCommentReply from '~/hooks/mutations/postCommentReply/useMutationAddPostCommentReply'
@@ -32,6 +33,8 @@ function PostAddComment({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { profile } = useAuthStore()
   const inputMediaRef = useRef<HTMLInputElement | null>(null)
+  const isFetching = useIsFetching()
+  const isMutating = useIsMutating()
 
   // React Query
   const addPostCommentMutation = useMutationAddPostComment()

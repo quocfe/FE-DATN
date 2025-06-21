@@ -1,7 +1,6 @@
 import { IonIcon } from '@ionic/react'
 import Trend from './Trend'
 import ProMembers from './ProMembers'
-import LastMarketplace from './LastMarketplace'
 import SuggestMakeFriends from './SuggestMakeFriends'
 import ReceivedRequestFriends from './ReceivedRequestFriends'
 
@@ -118,11 +117,11 @@ function Sidebar() {
           </div>
         </div>
         {/* latest marketplace items */}
-        <LastMarketplace />
+        {/* <LastMarketplace /> */}
         {/* Pro Members */}
-        <ProMembers />
+        {/* <ProMembers /> */}
         {/* Trends */}
-        <Trend />
+        {/* <Trend /> */}
       </div>
     </div>
   )

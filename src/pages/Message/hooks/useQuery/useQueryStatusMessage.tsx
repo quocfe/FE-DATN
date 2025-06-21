@@ -8,6 +8,7 @@ export const useQueryStatusMessage = (group_id?: string) => {
   return useQuery({
     queryKey: ['statusMessage', id],
     queryFn: () => messageApi.statusMessage(id),
-    enabled: id != undefined
+    enabled: id != undefined,
+    staleTime: Infinity
   })
 }

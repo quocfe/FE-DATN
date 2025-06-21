@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import { FanpageNoId, FanpageResponse, Fanpage as FanpageType } from '~/@types/fanpage'
-import FanpageApi from '~/apis/fanpage.api'
-import { Link } from 'react-router-dom'
-import uploadFileApi from '~/apis/uploadFileApi'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import FanpageApi from '~/apis/fanpage.api'
+import useFileUpload from '~/pages/Message/utils/uploadApi'
 
 function FanpageCreate() {
   const [loading, setLoading] = useState(false)
   const [file, setUploadFile] = useState<string>('')
   const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
+  const { upload } = useFileUpload()
 
   const [newFanpageData, setNewFanpageData] = useState<FanpageNoId>({
     group_name: '',
@@ -60,12 +59,13 @@ function FanpageCreate() {
 
   const handleChangeImage = async (e: any) => {
     setLoading(true)
+
     try {
-      const response = await uploadFileApi.uploadFile(e)
-      if (typeof response === 'string') {
-        setUploadFile(response)
+      const response = await upload(e.target.files[0])
+      if (typeof response.url === 'string') {
+        setUploadFile(response.url)
       } else {
-        console.error('Invalid response:', response)
+        console.error('Invalid response:', response.url)
       }
     } catch (error) {
       console.error('Error uploading file:', error)
@@ -109,7 +109,13 @@ function FanpageCreate() {
             </div>
             <div className='mb-4'>
               <label className='block text-sm font-medium text-gray-700'>Ảnh:</label>
-              <input type='file' onChange={handleChangeImage} id='avatar' name='file' accept='image/png, image/jpeg' />
+              <input
+                type='file'
+                onChange={(e) => handleChangeImage(e)}
+                id='avatar'
+                name='file'
+                accept='image/png, image/jpeg'
+              />
             </div>
             <div className='mb-4'>
               <label className='block text-sm font-medium text-gray-700'>Loại:</label>
@@ -168,9 +174,10 @@ function FanpageCreate() {
               <div className='relative z-10 mb-4 h-20 w-20'>
                 <div className='relative shrink-0 overflow-hidden rounded-full border-gray-100 shadow md:border-[2px] dark:border-slate-900'>
                   <img
-                    src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                    // src='https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png'
+                    src={file || 'https://i.pinimg.com/originals/b4/4a/ae/b44aae119e1a1334eb416905f2082ad1.jpg'}
                     alt='Avatar'
-                    className='inset-0 h-full w-full object-cover'
+                    className='inset-0 h-[78px] w-full object-cover'
                   />
                 </div>
               </div>

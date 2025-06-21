@@ -7,11 +7,13 @@ interface Props {
 
 function Post({ posts, fanpage }: Props) {
   return (
-    <div className='flex flex-col gap-5 text-sm font-medium'>
-      {posts.map((post) => (
-        <PostItem key={post.post_id} post={post} fanpage={fanpage} />
-      ))}
-    </div>
+    <>
+      <div className='flex flex-col gap-5 text-sm font-medium'>
+        {posts.map((post) => (
+          <PostItem key={post.post_id} post={post} fanpage={fanpage} />
+        ))}
+      </div>
+    </>
   )
 }
 

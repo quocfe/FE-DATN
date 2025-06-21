@@ -28,7 +28,7 @@ function useCallVideo({ group_message_id, user_id, group_name, avatar, type, set
     if (type === 1) {
       const dataToSocket = {
         group_message_id: group_message_id,
-        user_id: user_id,
+        user_id: user_login,
         room_id: `123${Date.now()}`,
         group_name: first_name + ' ' + last_name,
         avatar: Profile.profile_picture
@@ -39,7 +39,7 @@ function useCallVideo({ group_message_id, user_id, group_name, avatar, type, set
         avatar,
         user_id
       }
-      console.log('dataToSocket', dataToSocket)
+
       setAcceptCall(false)
       setVideoCall(dataVideoCall as {})
 

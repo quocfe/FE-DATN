@@ -1,10 +1,9 @@
-import { memo, useCallback, useMemo } from 'react'
-import { useQueryStatusMessage } from '../../hooks/useQueryStatusMessage'
 import { IonIcon } from '@ionic/react'
-import { calculateTimeAgo } from '~/utils/helpers'
-import useMessageStore from '~/store/message.store'
+import { memo, useCallback, useMemo } from 'react'
 import useConversationStore from '~/store/conversation.store'
-import { useMutationSendMessage } from '../../hooks/useMutationSendMessage'
+import useMessageStore from '~/store/message.store'
+import { calculateTimeAgo } from '~/utils/helpers'
+import { useQueryStatusMessage } from '../../hooks/useQuery/useQueryStatusMessage'
 
 const STATUS_ORDER = ['đã xem', 'đã nhận', 'đã gửi']
 
@@ -13,15 +12,12 @@ const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
   let idQueryStatusMessage =
     Object.keys(selectedConversation).length != 0 ? selectedConversation.group_id : group_id_fixed
   const { data: dataStatus } = useQueryStatusMessage(idQueryStatusMessage)
-  const { loadingMessage, errorMessage } = useMessageStore()
 
   const highestStatus = useMemo(() => {
     return STATUS_ORDER.find((status) =>
       dataStatus?.data.data?.some((item) => item.status === status && item.group_message_id === idQueryStatusMessage)
     )
   }, [dataStatus?.data.data])
-
-  // console.log(group_id_fixed)
 
   const renderContent = useCallback(
     (status: string) => {
@@ -72,7 +68,14 @@ const StatusMessage = ({ group_id_fixed }: { group_id_fixed?: string }) => {
             </div>
           )
         default:
-          return null
+          return (
+            <div className='group relative'>
+              <IonIcon className='my-anchor-element' name='checkmark-circle' />
+              <div className='absolute -top-6 right-0 hidden min-w-[60px] items-center justify-center rounded-sm bg-white p-1 shadow-sm group-hover:flex'>
+                <p className='text-[11px] font-semibold'>đã gửi</p>
+              </div>
+            </div>
+          )
       }
     },
     [dataStatus?.data.data]

@@ -66,7 +66,7 @@ function MyFriendItem({ friend }: Props) {
           )}
           <div className='flex gap-2'>
             <Link to={`${ENDPOINT.PROFILE}/${friend.user_id}`} className='button flex-1 bg-primary text-white'>
-              Thêm bạn bè
+              Trang các nhân
             </Link>
             <a
               onClick={() => setShowDialogBlockUser(true)}

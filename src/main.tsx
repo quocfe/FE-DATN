@@ -5,6 +5,7 @@ import App from './App.tsx'
 import ConfirmProvider from './components/design-systems/comfirm/confirm-provider.tsx'
 import { SocketContextProvider } from './context/socket.tsx'
 import './index.css'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
   defaultOptions: {
